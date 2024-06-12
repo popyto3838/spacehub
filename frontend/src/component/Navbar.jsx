@@ -68,6 +68,18 @@ export function Navbar() {
           <FontAwesomeIcon icon={faPlus} />
         </Box>
       </Center>
+      <Center
+        onClick={()=> navigate(`/space/option`)}
+        cursor={"pointer"}
+        _hover={{
+          bgColor: "gray.200",
+        }}
+        p={6}
+        fontSize={20}
+        fontWeight={600}
+      >
+        공간옵션등록
+      </Center>
       <Spacer />
       <Center
         cursor={"pointer"}
