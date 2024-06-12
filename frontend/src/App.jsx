@@ -31,11 +31,11 @@ function App() {
 
   return (
     <>
-      <ChakraProvider>
-        <ThemeProvider theme={theme}>
+      <ThemeProvider theme={theme}>
+        <ChakraProvider>
           <RouterProvider router={router}/>
-        </ThemeProvider>
-      </ChakraProvider>
+        </ChakraProvider>
+      </ThemeProvider>
     </>
   );
 }

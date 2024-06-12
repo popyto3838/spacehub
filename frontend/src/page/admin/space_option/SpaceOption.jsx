@@ -1,4 +1,4 @@
-import {Box, Heading, useTheme} from "@chakra-ui/react";
+import {Box, Heading} from "@chakra-ui/react";
 import {Button} from "@mui/material";
 import {useNavigate} from "react-router-dom";
 

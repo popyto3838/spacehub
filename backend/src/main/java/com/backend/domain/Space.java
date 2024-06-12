@@ -9,19 +9,18 @@ import java.util.List;
 @Data
 public class Space {
 
-    private int id;
+    private int spaceId;
     private int hostId;
-
     private String title;
     private String subTitle;
-    private BigDecimal price;
     private String type;
     private String location;
-    private Integer capacity;
     private String intro;
     private String facilityInfo;
+    private int price;
+    private int capacity;
+    private int floor;
+    private int parkingSpaces;
     private LocalDateTime inputDt;
     private LocalDateTime updateDt;
-
-    private List<FileList> fileList;
 }

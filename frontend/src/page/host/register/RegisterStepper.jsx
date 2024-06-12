@@ -23,11 +23,7 @@ const StepContent = ({ step, formData, setFormData }) => {
 const RegisterStepper = () => {
   const [activeStep, setActiveStep] = useState(0);
   const [formData, setFormData] = useState({
-    Auth: {
-      authName: efij,
-
-    }
-
+    page1Data: "",
     page2Data: "",
     page3Data: "",
   });
