@@ -8,12 +8,12 @@ import {
   Input,
   IconButton,
 } from "@chakra-ui/react";
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, {useState} from "react";
+import {useNavigate} from "react-router-dom";
 import axios from "axios";
-import { AddIcon, DeleteIcon } from "@chakra-ui/icons";
+import {AddIcon, DeleteIcon} from "@chakra-ui/icons";
 
-export function SpaceOptionWrite() {
+export function SpaceOptionWrite({setActiveView}) {
   const [optionNames, setOptionNames] = useState([""]);
   const navigate = useNavigate();
 
@@ -43,12 +43,12 @@ export function SpaceOptionWrite() {
     const filteredOptionNames = optionNames.filter((name) => name.trim() !== "");
     // optionNames 배열을 OptionList 객체 배열로 변환
     // 각 옵션명을 name 프로퍼티로 갖는 객체 생성
-    const optionLists = filteredOptionNames.map((name)=>({name}));
+    const optionLists = filteredOptionNames.map((name) => ({name}));
     axios
       .post("/api/space/option/write", optionLists)
       .then(() => {
-        // 성공 시 처리
-        navigate(-1); // 이전 페이지로 이동
+        // 성공 시 activeView 상태값 'list'로 바꾸기
+        setActiveView('list');
       })
       .catch(() => {
         // 에러 시 처리
@@ -72,7 +72,7 @@ export function SpaceOptionWrite() {
                 />
                 <IconButton
                   aria-label="옵션 삭제"
-                  icon={<DeleteIcon />}
+                  icon={<DeleteIcon/>}
                   onClick={() => handleDeleteOption(index)}
                   ml={2}
                 />
@@ -80,7 +80,7 @@ export function SpaceOptionWrite() {
             </Box>
           ))}
           <Button
-            leftIcon={<AddIcon />}
+            leftIcon={<AddIcon/>}
             colorScheme="teal"
             onClick={handleAddOption}
           >
