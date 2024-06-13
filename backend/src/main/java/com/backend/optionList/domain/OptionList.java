@@ -1,4 +1,4 @@
-package com.backend.domain;
+package com.backend.optionList.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

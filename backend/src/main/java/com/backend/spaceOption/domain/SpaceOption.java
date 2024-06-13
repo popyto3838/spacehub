@@ -1,4 +1,4 @@
-package com.backend.domain;
+package com.backend.spaceOption.domain;
 
 import lombok.Data;
 

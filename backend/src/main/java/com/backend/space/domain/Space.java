@@ -1,10 +1,8 @@
-package com.backend.domain;
+package com.backend.space.domain;
 
 import lombok.Data;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Data
 public class Space {

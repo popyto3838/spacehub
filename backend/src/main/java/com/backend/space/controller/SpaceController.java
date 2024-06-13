@@ -1,7 +1,6 @@
-package com.backend.controller;
+package com.backend.space.controller;
 
-import com.backend.domain.Space;
-import com.backend.service.SpaceService;
+import com.backend.space.service.impl.SpaceServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -15,7 +14,7 @@ import java.util.Map;
 @RequestMapping("/api/space")
 public class SpaceController {
 
-    private final SpaceService service;
+    private final SpaceServiceImpl service;
 
     @PostMapping("register")
     public void add(@RequestBody Map<String, Object> map) {
