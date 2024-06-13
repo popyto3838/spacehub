@@ -5,7 +5,15 @@ import {
   FormLabel,
   Heading,
   Input,
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
   Textarea,
+  useDisclosure,
+  useToast,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import axios from "axios";
@@ -16,6 +24,8 @@ export function BoardEdit() {
   const [board, setBoard] = useState({});
 
   const navigate = useNavigate();
+  const toast = useToast();
+  const { isOpen, onClose, onOpen } = useDisclosure();
 
   useEffect(() => {
     axios.get(`/api/board/${boardId}`).then((res) => {
@@ -26,6 +36,12 @@ export function BoardEdit() {
   function handleClickSave() {
     axios.put(`/api/board/${boardId}/edit`, board).then((res) => {
       setBoard(res.data);
+      toast({
+        status: "success",
+        description: "게시물이 수정되었습니다.",
+        position: "top",
+      });
+      navigate(`/board/${boardId}`);
     });
   }
 
@@ -66,10 +82,21 @@ export function BoardEdit() {
           </FormControl>
         </Box>
         <Box>
-          <Button>취소</Button>
-          <Button onClick={handleClickSave}>확인</Button>
+          <Button onClick={() => navigate(-1)}>취소</Button>
+          <Button onClick={onOpen}>확인</Button>
         </Box>
       </Box>
+      <Modal isOpen={isOpen} onClose={onClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>게시물 수정</ModalHeader>
+          <ModalBody>수정하시겠습니까?</ModalBody>
+          <ModalFooter>
+            <Button onClick={onClose}>취소</Button>
+            <Button onClick={handleClickSave}>수정</Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </Box>
   );
 }

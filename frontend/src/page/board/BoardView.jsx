@@ -30,18 +30,36 @@ export function BoardView() {
   const account = useContext(LoginContext);
 
   useEffect(() => {
-    axios.get(`/api/board/${boardId}`).then((res) => setBoard(res.data));
+    axios
+      .get(`/api/board/${boardId}`)
+      .then((res) => setBoard(res.data))
+      .catch((err) => {
+        if (err.response.status === 404) {
+          toast({
+            status: "error",
+            description: "잘못된 페이지 요청입니다.",
+            position: "top",
+          });
+          navigate("/");
+        }
+      });
   }, []);
 
   function handleClickRemove() {
-    axios.delete(`/api/board/${boardId}/delete`).then(() => {
-      toast({
-        status: "success",
-        description: "게시물이 삭제되었습니다.",
-        position: "top",
+    axios
+      .delete(`/api/board/${boardId}/delete`)
+      .then(() => {
+        toast({
+          status: "success",
+          description: "게시물이 삭제되었습니다.",
+          position: "top",
+        });
+        navigate("/board/list");
+      })
+      .catch((err) => {})
+      .finally(() => {
+        onClose();
       });
-      navigate("/board/list");
-    });
   }
 
   return (

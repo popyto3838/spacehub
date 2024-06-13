@@ -3,6 +3,7 @@ package com.backend.controller.board;
 import com.backend.domain.board.Board;
 import com.backend.service.board.BoardService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -25,8 +26,12 @@ public class BoardController {
     }
 
     @GetMapping("{boardId}")
-    public Board view(@PathVariable Integer boardId) {
-        return service.view(boardId);
+    public ResponseEntity view(@PathVariable Integer boardId) {
+        Board board = service.view(boardId);
+        if (board == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok().body(board);
     }
 
     @PutMapping("{boardId}/edit")

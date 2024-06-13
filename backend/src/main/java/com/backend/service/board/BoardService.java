@@ -38,4 +38,5 @@ public class BoardService {
     public void updateViews(Integer boardId) {
         mapper.updateViews(boardId);
     }
+
 }
