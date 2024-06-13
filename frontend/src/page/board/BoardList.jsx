@@ -29,8 +29,21 @@ export function BoardList() {
     });
   }, []);
 
+  const handleClickCountViews = (board) => {
+    console.log(board.views);
+    axios
+      .put(`/api/board/${board.boardId}/views`, {
+        views: board.views + 1,
+      })
+      .then(() => {
+        console.log(board.views);
+        navigate(`/board/${board.boardId}`);
+      });
+  };
+
   // const handleClickCountViews = (boardId) => {
   //   axios.put(`/api/board/${boardId}`);
+  //
   //   setBoardList((prevBoardList) =>
   //     prevBoardList.map((board) =>
   //       board.boardId === boardId
@@ -81,8 +94,7 @@ export function BoardList() {
               <Tr
                 key={board.boardId}
                 onClick={() => {
-                  // handleClickCountViews(board.boardId);
-                  navigate(`/board/${board.boardId}`);
+                  handleClickCountViews(board);
                 }}
                 cursor={"pointer"}
                 _hover={{ bgColor: "blue.200" }}

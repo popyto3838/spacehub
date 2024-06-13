@@ -38,4 +38,9 @@ public class BoardController {
     public void remove(@PathVariable Integer boardId) {
         service.remove(boardId);
     }
+
+    @PutMapping("{boardId}/views")
+    public void views(@PathVariable Integer boardId) {
+        service.updateViews(boardId);
+    }
 }

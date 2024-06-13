@@ -40,4 +40,11 @@ public interface BoardMapper {
             WHERE BOARD_ID = #{boardId}
             """)
     int deleteByBoardId(Integer boardId);
+
+    @Update("""
+            UPDATE BOARD
+            SET VIEWS = VIEWS + 1
+            WHERE BOARD_ID = #{boardId}
+            """)
+    int updateViews(Integer boardId);
 }
