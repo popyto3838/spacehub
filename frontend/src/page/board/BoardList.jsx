@@ -29,29 +29,16 @@ export function BoardList() {
     });
   }, []);
 
+  // todo: 게시물 클릭하면 클릭한 시간으로 작성일시 바뀌는거 수정
   const handleClickCountViews = (board) => {
-    console.log(board.views);
     axios
       .put(`/api/board/${board.boardId}/views`, {
         views: board.views + 1,
       })
       .then(() => {
-        console.log(board.views);
         navigate(`/board/${board.boardId}`);
       });
   };
-
-  // const handleClickCountViews = (boardId) => {
-  //   axios.put(`/api/board/${boardId}`);
-  //
-  //   setBoardList((prevBoardList) =>
-  //     prevBoardList.map((board) =>
-  //       board.boardId === boardId
-  //         ? { ...board, views: board.views + 1 }
-  //         : board,
-  //     ),
-  //   );
-  // };
 
   return (
     <Box>

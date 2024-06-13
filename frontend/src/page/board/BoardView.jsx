@@ -5,7 +5,15 @@ import {
   FormLabel,
   Heading,
   Input,
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
   Textarea,
+  useDisclosure,
+  useToast,
 } from "@chakra-ui/react";
 import { useContext, useEffect, useState } from "react";
 import axios from "axios";
@@ -17,21 +25,24 @@ export function BoardView() {
   const [board, setBoard] = useState({});
 
   const navigate = useNavigate();
+  const toast = useToast();
+  const { isOpen, onClose, onOpen } = useDisclosure();
   const account = useContext(LoginContext);
 
   useEffect(() => {
     axios.get(`/api/board/${boardId}`).then((res) => setBoard(res.data));
   }, []);
 
-  // if (board === null) {
-  //   return <Spinner />;
-  // }
-
   function handleClickRemove() {
-    axios.delete(`/api/board/${boardId}/delete`).then((res) => {});
+    axios.delete(`/api/board/${boardId}/delete`).then(() => {
+      toast({
+        status: "success",
+        description: "게시물이 삭제되었습니다.",
+        position: "top",
+      });
+      navigate("/board/list");
+    });
   }
-
-  let time = Date.now();
 
   return (
     <Box>
@@ -70,12 +81,23 @@ export function BoardView() {
           </FormControl>
         </Box>
         <Box>
-          <Button onClick={handleClickRemove}>삭제</Button>
+          <Button onClick={onOpen}>삭제</Button>
           <Button onClick={() => navigate(`/board/${boardId}/edit`)}>
             수정
           </Button>
         </Box>
       </Box>
+      <Modal isOpen={isOpen} onClose={onClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>게시물 삭제</ModalHeader>
+          <ModalBody>정말 삭제하시겠습니까?</ModalBody>
+          <ModalFooter>
+            <Button onClick={onClose}>취소</Button>
+            <Button onClick={handleClickRemove}>삭제</Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </Box>
   );
 }
