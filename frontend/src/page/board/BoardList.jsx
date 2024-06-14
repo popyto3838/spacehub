@@ -13,9 +13,10 @@ import {
   Thead,
   Tr,
 } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
+import {useContext, useEffect, useState} from "react";
 import axios from "axios";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import {LoginContext} from "../../component/LoginProvider.jsx";
 
 export function BoardList() {
   const [boardList, setBoardList] = useState([]);
@@ -24,6 +25,7 @@ export function BoardList() {
   const [searchType, setSearchType] = useState("titleContent");
   const [searchKeyword, setSearchKeyword] = useState("");
   const [searchParams] = useSearchParams();
+  const account = useContext(LoginContext);
 
   const navigate = useNavigate();
 
@@ -68,6 +70,10 @@ export function BoardList() {
   function handleClickPageButton(pageNumber) {
     searchParams.set("page", pageNumber);
     navigate(`/board/list/?${searchParams}`);
+  }
+
+  function handleClickLogout() {
+
   }
 
   return (
@@ -165,6 +171,12 @@ export function BoardList() {
           </Box>
         )}
       </Center>
+      <Button
+        onClick={() => {
+          account.logout();
+          navigate("/");
+        }}
+      >로그아웃</Button>
     </Box>
   );
 }

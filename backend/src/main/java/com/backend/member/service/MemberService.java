@@ -32,6 +32,10 @@ public interface MemberService {
 
      void addMemberByEmail(Member member);
 
+     Member findByEmail(String email);
+
+    void insertMember(Member member);
+
 
 
 

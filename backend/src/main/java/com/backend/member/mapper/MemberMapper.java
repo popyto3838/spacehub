@@ -104,4 +104,17 @@ public interface MemberMapper {
             """)
     List<String> selectByMemberId(Integer memberId);
 
+
+    @Select("""
+        SELECT * 
+        FROM MEMBER 
+        WHERE email = #{email}
+    """)
+    Member findByEmail(String email);
+
+    @Insert("""
+        INSERT INTO MEMBER (EMAIL, PASSWORD, NICKNAME, NAVER_ID, INPUT_DT, AUTH)
+        VALUES (#{email}, #{password}, #{nickname}, #{naverId}, #{inputDt}, #{auth})
+    """)
+    void insertMember(Member member);
 }

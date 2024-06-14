@@ -202,6 +202,17 @@ public class MemberServiceImpl implements MemberService {
     }
 
 
+    @Override
+    public Member findByEmail(String email) {
+        return mapper.findByEmail(email);
+    }
+
+    @Override
+    public void insertMember(Member member) {
+        mapper.insertMember(member);
+    }
+
+
 //    public void addAuthByEmail(Auth auth) {
 //        mapper.insert(auth);
 //    }

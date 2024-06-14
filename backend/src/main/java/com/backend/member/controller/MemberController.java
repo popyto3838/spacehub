@@ -6,11 +6,15 @@ import com.backend.member.domain.member.Member;
 import com.backend.member.service.MailService;
 import com.backend.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -91,8 +95,7 @@ public class MemberController {
 
     @DeleteMapping("{id}")
     public ResponseEntity delete(@RequestBody Member member, Authentication authentication) {
-        System.out.println(authentication);
-        System.out.println(member);
+
         if (service.hasAccess(member, authentication)) {
             service.remove(member.getMemberId());
             return ResponseEntity.ok().build();
@@ -123,6 +126,45 @@ public class MemberController {
         } else {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
+    }
+
+    @PostMapping("naverlogin")
+    public String processNaverLogin(@RequestBody Map<String, String> params) {
+        String accessToken = params.get("access_token");
+
+        System.out.println("params = " + params);
+
+        // 네이버 API를 사용하여 사용자 정보 가져오기
+        String userInfoUrl = "https://openapi.naver.com/v1/nid/me";
+        RestTemplate restTemplate = new RestTemplate();
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Authorization", "Bearer " + accessToken);
+
+        HttpEntity<String> entity = new HttpEntity<>("", headers);
+        ResponseEntity<Map> response = restTemplate.postForEntity(userInfoUrl, entity, Map.class);
+
+        Map<String, Object> responseBody = response.getBody();
+        Map<String, Object> responseData = (Map<String, Object>) responseBody.get("response");
+
+        String extractedEmail = (String) responseData.get("email");
+        String extractedNickname = (String) responseData.get("nickname");
+        String extractedNaverId = (String) responseData.get("id");
+
+        // 사용자 정보 추출 후 Member 객체 생성
+        Member member = new Member();
+        member.setEmail(extractedEmail);
+        member.setPassword(""); // 비밀번호는 네이버 로그인의 경우 사용하지 않음
+        member.setNickname(extractedNickname);
+        member.setNaverId(extractedNaverId);
+        member.setInputDt(LocalDateTime.now());
+        member.setAuth("USER"); // 기본 권한 설정
+
+        // 데이터베이스에 사용자 정보 저장
+        service.insertMember(member);
+
+        return "success";
+
     }
 
 
