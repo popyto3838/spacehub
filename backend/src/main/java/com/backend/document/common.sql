@@ -182,5 +182,37 @@ ALTER TABLE BOARD
     ADD COLUMN CATEGORY ENUM ('NOTICE', 'FAQ');
 # BOARD 테이블은 만들고 어디로 이동시킬지에 따라서 DEFAULT 값은 0으로 줄지 1으로 줄지 생각
 
+SELECT *
+FROM MEMBER;
+# 검색 sql 조회를 위해 가장 최근에 가입한 2명 이름을 변경
+UPDATE MEMBER
+SET NICKNAME = 'abcd'
+WHERE MEMBER_ID = 7;
+UPDATE MEMBER
+SET NICKNAME = 'efgh'
+WHERE MEMBER_ID = 8;
+
+# 작성자 조회를 위해 게시물 작성자 변경
+UPDATE BOARD
+SET member_id =7
+WHERE BOARD_ID % 2 = 0;
+UPDATE BOARD
+SET member_id =8
+WHERE BOARD_ID % 2 = 1;
+
+# 글 조회를 위해 게시물 수정
+UPDATE BOARD
+SET title   = 'abc def',
+    content = 'ghi jkl'
+WHERE BOARD_ID % 3 = 0;
+UPDATE BOARD
+SET title   = 'mno pqr',
+    content = 'stu vwx'
+WHERE BOARD_ID % 3 = 1;
+UPDATE BOARD
+SET title   = 'yz1 234',
+    content = '567 890'
+WHERE BOARD_ID % 3 = 2;
+
 
 

@@ -7,7 +7,7 @@ import java.util.Map;
 public interface BoardService {
     void insert(Board board);
 
-    Map<String, Object> list(Integer page);
+    Map<String, Object> list(Integer page, String searchType, String searchKeyword);
 
     Board view(Integer boardId);
 

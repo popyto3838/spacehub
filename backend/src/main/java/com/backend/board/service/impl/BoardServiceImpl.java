@@ -23,11 +23,10 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
-    public Map<String, Object> list(Integer page) {
-//        return mapper.selectAll();
+    public Map<String, Object> list(Integer page, String searchType, String searchKeyword) {
 
         Map pageInfo = new HashMap();
-        Integer countAll = mapper.countAll();
+        Integer countAll = mapper.countAllWithSearch(searchType, searchKeyword);
 
         Integer offset = (page - 1) * 10;
         Integer lastPageNumber = (countAll - 1) / 10 + 1;
@@ -35,9 +34,9 @@ public class BoardServiceImpl implements BoardService {
         Integer rightPageNumber = leftPageNumber + 9;
         Integer prevPageNumber = leftPageNumber - 1;
         Integer nextPgeNumber = rightPageNumber + 1;
+        rightPageNumber = Math.min(rightPageNumber, lastPageNumber);
         leftPageNumber = rightPageNumber - 9;
         leftPageNumber = Math.max(leftPageNumber, 1);
-        rightPageNumber = Math.min(rightPageNumber, lastPageNumber);
 
         if (prevPageNumber > 0) {
             pageInfo.put("prevPageNumber", prevPageNumber);
@@ -50,7 +49,7 @@ public class BoardServiceImpl implements BoardService {
         pageInfo.put("leftPageNumber", leftPageNumber);
         pageInfo.put("rightPageNumber", rightPageNumber);
 
-        return Map.of("pageInfo", pageInfo, "boardList", mapper.selectAllPaging(offset));
+        return Map.of("pageInfo", pageInfo, "boardList", mapper.selectAllPaging(offset, searchType, searchKeyword));
     }
 
     @Override

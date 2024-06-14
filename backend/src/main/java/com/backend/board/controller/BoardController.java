@@ -22,8 +22,10 @@ public class BoardController {
 
     // todo: 게시판 페이징
     @GetMapping("list")
-    public Map<String, Object> list(@RequestParam(defaultValue = "1") Integer page) {
-        return boardService.list(page);
+    public Map<String, Object> list(@RequestParam(defaultValue = "1") Integer page,
+                                    @RequestParam(value = "type", required = false) String searchType,
+                                    @RequestParam(value = "keyword", defaultValue = "") String searchKeyword) {
+        return boardService.list(page, searchType, searchKeyword);
     }
 
     @GetMapping("{boardId}")

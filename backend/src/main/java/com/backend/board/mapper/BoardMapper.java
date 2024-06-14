@@ -50,16 +50,62 @@ public interface BoardMapper {
 
 
     @Select("""
-            SELECT TITLLE, CONTENT, VIEWS, CATEGORY
-            FORM BOARD
+            <script>
+            SELECT *
+            FROM BOARD
+                <trim prefix="WHERE" prefixOverrides="OR">
+                    <if test="searchType != null">
+                        <bind name="pattern" value="'%' + searchKeyword + '%'" />
+                        <if test="searchType == 'titleContent'">
+                            OR TITLE LIKE #{pattern}
+                            OR CONTENT LIKE #{pattern}
+                        </if>
+                        <if test="searchType == 'title'">
+                            OR TITLE LIKE #{pattern}
+                        </if>
+                        <if test="searchType == 'content'">
+                            OR CONTENT LIKE #{pattern}
+                        </if>
+                        <if test="searchType == 'nickname'">
+                            OR NICKNAME LIKE #{pattern}
+                        </if>
+                    </if>
+                </trim>
             ORDER BY BOARD_ID DESC
             LIMIT #{offset}, 10
+            </script>
             """)
-    List<Board> selectAllPaging(Integer offset);
+    List<Board> selectAllPaging(Integer offset, String searchType, String searchKeyword);
 
     @Select("""
             SELECT COUNT(*)
             FROM BOARD
             """)
     Integer countAll();
+
+    @Select("""
+            <script>
+            SELECT COUNT(BOARD_ID)
+            FROM BOARD
+                <trim prefix="WHERE" prefixOverrides="OR">
+                    <if test="searchType != null">
+                        <bind name="pattern" value="'%' + searchKeyword + '%'" />
+                        <if test="searchType == 'titleContent'">
+                            OR TITLE LIKE #{pattern}
+                            OR CONTENT LIKE #{pattern}
+                        </if>
+                        <if test="searchType == 'title'">
+                            OR TITLE LIKE #{pattern}
+                        </if>
+                        <if test="searchType == 'content'">
+                            OR CONTENT LIKE #{pattern}
+                        </if>
+                        <if test="searchType == 'nickname'">
+                            OR NICKNAME LIKE #{pattern}
+                        </if>
+                    </if>
+                </trim>
+            </script>
+            """)
+    Integer countAllWithSearch(String searchType, String searchKeyword);
 }
