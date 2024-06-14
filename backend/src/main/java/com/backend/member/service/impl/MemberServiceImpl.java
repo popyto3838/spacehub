@@ -1,7 +1,9 @@
-package com.backend.service;
+package com.backend.member.service.impl;
 
-import com.backend.domain.member.Member;
-import com.backend.mapper.MemberMapper;
+
+import com.backend.member.service.MemberService;
+import com.backend.member.domain.member.Member;
+import com.backend.member.mapper.MemberMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -16,37 +18,36 @@ import java.time.Instant;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
-@Transactional(rollbackFor = Exception.class)
 @RequiredArgsConstructor
-public class MemberService {
+@Transactional(readOnly = true)
+public class MemberServiceImpl implements MemberService {
+
     final MemberMapper mapper;
     private final BCryptPasswordEncoder passwordEncoder;
     private final JwtEncoder jwtEncoder;
 
 
-    public void add(Member member) {
-        member.setPassword(passwordEncoder.encode(member.getPassword()));
-        member.setEmail(member.getEmail().trim());
-        member.setNickName(member.getNickName().trim());
-
-        mapper.add(member);
-    }
-
+    @Override
     public Member checkByEmail(String email) {
         return mapper.checkByEmail(email);
     }
 
+    @Override
     public Member checkByNickName(String nickName) {
         return mapper.checkBynickName(nickName);
     }
 
+    @Override
     public boolean validate(Member member) {
+
+        System.out.println(member.getEmail());
         if (member.getEmail() == null || member.getEmail().isBlank()) {
             return false;
         }
-        if (member.getNickName() == null || member.getNickName().isBlank()) {
+        if (member.getNickname() == null || member.getNickname().isBlank()) {
             return false;
         }
         if (member.getPassword() == null || member.getPassword().isBlank()) {
@@ -57,6 +58,7 @@ public class MemberService {
         return true;
     }
 
+    @Override
     public boolean validateChckEmail(String email) {
         String emailpattern = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
 
@@ -66,79 +68,92 @@ public class MemberService {
         return true;
     }
 
+    @Override
     public List<Member> list() {
         return mapper.list();
     }
 
-    public Member getById(int id) {
-        return mapper.selectById(id);
+    @Override
+    public Member getById(int memberId) {
+        return mapper.selectById(memberId);
     }
 
+    @Override
     public boolean hasAccess(Member member, Authentication authentication) {
-        if (!member.getId().toString().equals(authentication.getName())) {
+
+        if (!member.getMemberId().toString().equals(authentication.getName())) {
             return false;
         }
 
-        Member dbMember = mapper.selectById(member.getId());
+        Member dbMember = mapper.selectById(member.getMemberId());
+        System.out.println("dbMember = " + dbMember);
 
         if (dbMember == null) {
             return false;
 
         }
+
         return passwordEncoder.matches(member.getPassword(), dbMember.getPassword());
 
     }
 
-    public void remove(Integer id) {
+    @Override
+    public void remove(Integer memberId) {
 
-        mapper.deleteById(id);
+        mapper.deleteById(memberId);
     }
 
+    @Override
     public Map<String, Object> getToken(Member member) {
-
         Map<String, Object> result = null;
 
         Member db = mapper.selectByEmail(member.getEmail());
 
-        if (db != null) {
-            if (passwordEncoder.matches(member.getPassword(), db.getPassword())) {
-                result = new HashMap<>();
+        if (db != null ) {
+            System.out.println("db = " + db.getWithdrawn());
+            if (!db.getWithdrawn().toString().equals("Y")) {
+                if (passwordEncoder.matches(member.getPassword(), db.getPassword())) {
 
-                String token = "";
-                Instant now = Instant.now();
+                    result = new HashMap<>();
+                    String token = "";
+                    Instant now = Instant.now();
 
-                String authority = mapper.selectAuthorityByMemberId(db.getId());
+                    List<String> authority = mapper.selectAuthorityByMemberId(db.getMemberId());
 
-                System.out.println(authority);
-                System.out.println(authority);
+                    String authorityString = authority.stream()
+                            .collect(Collectors.joining(" "));
 
-                JwtClaimsSet claims = JwtClaimsSet.builder()
-                        .issuer("self")
-                        .issuedAt(now)
-                        .expiresAt(now.plusSeconds(60 * 60 * 24 * 7))
-                        .subject(db.getId().toString())
-                        .claim("scope", authority)
-                        .claim("nickName", db.getNickName())
-                        .build();
+                    System.out.println(authorityString);
 
+                    // https://github.com/spring-projects/spring-security-samples/blob/main/servlet/spring-boot/java/jwt/login/src/main/java/example/web/TokenController.java
+                    JwtClaimsSet claims = JwtClaimsSet.builder()
+                            .issuer("self")
+                            .issuedAt(now)
+                            .expiresAt(now.plusSeconds(60 * 60 * 24 * 7))
+                            .subject(db.getMemberId().toString())
+                            .claim("scope", authorityString) // 권한
+                            .claim("nickName", db.getNickname())
+                            .build();
 
-                token = jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
+                    token = jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
 
-                result.put("token", token);
+                    result.put("token", token);
+
+                }
             }
-
-
         }
-        return result;
 
+        return result;
     }
 
+
+    @Override
     public boolean hasAccessModify(Member member, Authentication authentication) {
-        if (!authentication.getName().equals(member.getId().toString())) {
+        if (!authentication.getName().equals(member.getMemberId().toString())) {
             return false;
         }
 
-        Member dbMember = mapper.selectById(member.getId());
+        Member dbMember = mapper.selectById(member.getMemberId());
         if (dbMember == null) {
             return false;
         }
@@ -150,12 +165,13 @@ public class MemberService {
         return true;
     }
 
+    @Override
     public Map<String, Object> modify(Member member, Authentication authentication) {
         if (member.getPassword() != null && member.getPassword().length() > 0) {
 
             member.setPassword(passwordEncoder.encode(member.getPassword()));
         } else {
-            Member dbMember = mapper.selectById(member.getId());
+            Member dbMember = mapper.selectById(member.getMemberId());
             member.setPassword(dbMember.getPassword());
         }
         mapper.update(member);
@@ -166,12 +182,30 @@ public class MemberService {
         Map<String, Object> claims = jwt.getClaims();
         JwtClaimsSet.Builder jwtClaimsSetBuilder = JwtClaimsSet.builder();
         claims.forEach(jwtClaimsSetBuilder::claim);
-        jwtClaimsSetBuilder.claim("nickName", member.getNickName());
+        jwtClaimsSetBuilder.claim("nickName", member.getNickname());
 
         JwtClaimsSet jwtClaimsSet = jwtClaimsSetBuilder.build();
         token = jwtEncoder.encode(JwtEncoderParameters.from(jwtClaimsSet)).getTokenValue();
         return Map.of("token", token);
     }
+
+    @Override
+    public void addMemberByEmail(Member member) {
+
+        member.setPassword(passwordEncoder.encode(member.getPassword()));
+        member.setEmail(member.getEmail().trim());
+        member.setNickname(member.getNickname().trim());
+
+        mapper.insert(member);
+
+
+    }
+
+
+
+//    public void addAuthByEmail(Auth auth) {
+//        mapper.insert(auth);
+//    }
 
 
 //    public void add2(Member member) {

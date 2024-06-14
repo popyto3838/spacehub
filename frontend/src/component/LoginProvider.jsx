@@ -26,15 +26,15 @@ export function LoginProvider({ children }) {
   }
 
   function isAdmin() {
-    return authority.includes("admin");
+    return authority.includes("ADMIN");
   }
 
   function isSupplier() {
-    return authority.includes("supplier");
+    return authority.includes("HOST");
   }
 
   function isBuyer() {
-    return authority.includes("buyer");
+    return authority.includes("USER");
   }
 
   function login(token) {
@@ -44,6 +44,7 @@ export function LoginProvider({ children }) {
     setId(payload.sub);
     setNickName(payload.nickName);
     setAuthority(payload.scope.split(" "));
+    console.log(payload);
   }
   function logout() {
     localStorage.removeItem("token");

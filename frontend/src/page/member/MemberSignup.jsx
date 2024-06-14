@@ -13,13 +13,14 @@ import {
 import { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import TimerComponent from "./TimerComponent.jsx";
 
 export function MemberSignup() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [nickName, setNickName] = useState("");
+  const [nickname, setNickname] = useState("");
   const [passwordCheck, setPasswordCheck] = useState("");
-  const [role, setRole] = useState("");
+  const [authName, setAuthName] = useState()
   const [isLoading, setIsLoading] = useState(false);
   const [isCheckedEmail, setIsCheckedEmail] = useState(false);
   const [isCheckedNickName, setIsCheckedNickName] = useState(false);
@@ -27,13 +28,20 @@ export function MemberSignup() {
   const [verificationCode, setVerificationCode] = useState("");
   const [inputCode, setInputCode] = useState("");
   const [isCodeSent, setIsCodeSent] = useState(false);
+  const [expirationTime, setExpirationTime] = useState(null);
   const toast = useToast();
   const navigate = useNavigate();
 
   function handleSignup() {
     setIsLoading(true);
     axios
-      .post("/api/member/signup", { email, password, nickName, role })
+      .post("/api/member/signup",
+        {
+          email: email,
+          password: password,
+          nickname: nickname
+        }
+      )
       .then((res) => {
         toast({
           status: "success",
@@ -84,7 +92,7 @@ export function MemberSignup() {
 
   function handleCheckNickName() {
     axios
-      .get(`/api/member/check?nickName=${nickName}`)
+      .get(`/api/member/check?nickName=${nickname}`)
       .then((res) => {
         toast({
           status: "warning",
@@ -111,7 +119,7 @@ export function MemberSignup() {
     !(
       email.trim().length > 0 &&
       password.trim().length > 0 &&
-      nickName.trim().length > 0
+      nickname.trim().length > 0
     )
   ) {
     isDisabled = true;
@@ -136,7 +144,8 @@ export function MemberSignup() {
       .get(`/api/member/e1?mail=${email}`)
       .then((response) => {
         alert("인증번호 발송");
-        setVerificationCode(response.data);
+        setVerificationCode(response.data.number);
+        setExpirationTime(response.data.expirationTime);
         setIsCodeSent(true);
       })
       .catch((error) => {
@@ -201,9 +210,10 @@ export function MemberSignup() {
               인증번호받기
             </Button>
             {isCodeSent && (
+              <Box>
               <InputGroup>
                 <Input
-                  type={"email"}
+                  type={"text"}
                   onChange={(e) => {
                     setInputCode(e.target.value);
                   }}
@@ -212,6 +222,8 @@ export function MemberSignup() {
                   <Button onClick={confirmNumber}>이메일 인증</Button>
                 </InputRightElement>
               </InputGroup>
+                {expirationTime && <TimerComponent expirationTime={expirationTime} />}
+              </Box>
             )}
           </FormControl>
         </Box>
@@ -236,13 +248,13 @@ export function MemberSignup() {
             <InputGroup>
               <Input
                 onChange={(e) => {
-                  setNickName(e.target.value);
+                  setNickname(e.target.value);
                   setIsCheckedNickName(false);
                 }}
               />
               <InputRightElement w={"75px"} mr={1}>
                 <Button
-                  isDisabled={nickName.trim().length == 0}
+                  isDisabled={nickname.trim().length == 0}
                   onClick={handleCheckNickName}
                 >
                   중복확인
@@ -252,18 +264,6 @@ export function MemberSignup() {
             {isCheckedNickName || (
               <FormHelperText>별명 중복확인을 해주세요.</FormHelperText>
             )}
-          </FormControl>
-        </Box>
-        <Box>
-          <FormControl>
-            <FormLabel>권한</FormLabel>
-            <Select
-              placeholder="권한을 선택하세요"
-              onChange={(e) => setRole(e.target.value)}
-            >
-              <option value="supplier">판매하고 싶은 사장님</option>
-              <option value="buyer">구매하고 싶어요</option>
-            </Select>
           </FormControl>
         </Box>
         <Box>

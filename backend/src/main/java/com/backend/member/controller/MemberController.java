@@ -1,10 +1,11 @@
-package com.backend.controller;
+package com.backend.member.controller;
 
-import com.backend.domain.member.Member;
-import com.backend.service.MailService;
-import com.backend.service.MemberService;
+
+import com.backend.member.domain.member.Member;
+
+import com.backend.member.service.MailService;
+import com.backend.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -16,16 +17,18 @@ import java.util.Map;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/member")
-@Log4j2
+
 public class MemberController {
     final MailService mailService;
     final MemberService service;
 
+
     @PostMapping("signup")
     public ResponseEntity signup(@RequestBody Member member) {
+        System.out.println("member 1= " + member);
         if (service.validate(member)) {
-            System.out.println(member);
-            service.add(member);
+            System.out.println("member2 = " + member);
+            service.addMemberByEmail(member);
 
             return ResponseEntity.ok().build();
         } else {
@@ -59,28 +62,29 @@ public class MemberController {
 
 
     @GetMapping(value = "e1")
-    public String e1(@RequestParam String mail) {
+    public Map<String,Object> e1(@RequestParam String mail) {
 
 
         int number = mailService.sendMail(mail);
 
-        String num = "" + number;
-
-        return num;
+        long expirationTime = mailService.getExpirationTime();
+        return Map.of("number", number, "expirationTime", expirationTime);
 
     }
 
     @GetMapping("list")
     public List<Member> list() {
+
         return service.list();
     }
 
-    @GetMapping("{id}")
-    public ResponseEntity get(@PathVariable Integer id) {
-        Member member = service.getById(id);
+    @GetMapping("{memberId}")
+    public ResponseEntity get(@PathVariable Integer memberId) {
+        Member member = service.getById(memberId);
         if (member == null) {
             return ResponseEntity.notFound().build();
         } else {
+
             return ResponseEntity.ok(member);
         }
     }
@@ -88,8 +92,9 @@ public class MemberController {
     @DeleteMapping("{id}")
     public ResponseEntity delete(@RequestBody Member member, Authentication authentication) {
         System.out.println(authentication);
+        System.out.println(member);
         if (service.hasAccess(member, authentication)) {
-            service.remove(member.getId());
+            service.remove(member.getMemberId());
             return ResponseEntity.ok().build();
         }
         return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -103,7 +108,7 @@ public class MemberController {
         if (map == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        return ResponseEntity.ok(map);
+        return  ResponseEntity.ok(map);
     }
 
 

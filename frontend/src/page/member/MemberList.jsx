@@ -8,13 +8,17 @@ import {
   Thead,
   Tr,
 } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
+import {useContext, useEffect, useState} from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import {LoginContext} from "../../component/LoginProvider.jsx";
 
 export function MemberList() {
   const [memberList, setMemberList] = useState([]);
+
+  console.log(memberList);
   const navigate = useNavigate();
+  const account = useContext(LoginContext);
 
   useEffect(() => {
     axios.get("/api/member/list").then((res) => setMemberList(res.data));
@@ -23,6 +27,7 @@ export function MemberList() {
   if (memberList.length === 0) {
     return <Spinner />;
   }
+
 
   return (
     <Box overflowX="auto">
@@ -41,15 +46,15 @@ export function MemberList() {
           <Tbody>
             {memberList.map((member) => (
               <Tr
-                onClick={() => navigate(`/member/${member.id}`)}
+                onClick={() => navigate(`/member/${member.memberId}`)}
                 cursor={"pointer"}
                 _hover={{ bgColor: "blue.300" }}
-                key={member.id}
+                key={member.memberId}
               >
-                <Td>{member.id}</Td>
+                <Td>{member.memberId}</Td>
                 <Td>{member.email}</Td>
-                <Td>{member.nickName}</Td>
-                <Td>{member.role}</Td>
+                <Td>{member.nickname}</Td>
+                <Td>{member.authName}</Td>
                 <Td>{member.signupDateAndTime}</Td>
               </Tr>
             ))}

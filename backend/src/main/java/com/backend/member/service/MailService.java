@@ -1,4 +1,4 @@
-package com.backend.service;
+package com.backend.member.service;
 
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
@@ -13,9 +13,11 @@ public class MailService {
     private final JavaMailSender javaMailSender;
     private static final String senderEmail = "popyto3838@gmail.com";
     private static int number;
+    private static long expirationTime;
 
     public static void createNumber() {
         number = (int) (Math.random() * (90000)) + 100000;// (int) Math.random() * (최댓값-최소값+1) + 최소값
+        expirationTime = System.currentTimeMillis() + 5 * 60 * 1000;
     }
 
     public MimeMessage CreateMail(String mail) {
@@ -45,5 +47,9 @@ public class MailService {
         javaMailSender.send(message);
 
         return number;
+    }
+
+    public long getExpirationTime() {
+        return expirationTime;
     }
 }

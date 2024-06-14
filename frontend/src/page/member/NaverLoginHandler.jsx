@@ -2,6 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import axios from "axios";
 
+
 export const NaverLoginHandler = () => {
   // useHistory 훅을 사용해 history 객체를 가져옵니다. 이 객체를 사용하여 라우터 내에서 리다이렉션을 수행할 수 있습니다.
   const navigate = useNavigate();
@@ -22,22 +23,21 @@ export const NaverLoginHandler = () => {
 
       try {
         const response = await axios.post(
-          "http://localhost:5173/auth/naverlogin",
+          "http://localhost:5173/api/member/naverlogin",
           params,
         );
 
         // console.log("서버에서 naverLogin 응답 옴!");
         // console.log(response);
 
-        if (response.data.status === "failure") {
-          if (response.data.errorCode == "502") {
-            alert("Artify 계정으로 로그인 하세요");
-          }
+        if (response.data.status === "success") {
+          localStorage.setItem("token", response.data.token);
+          navigate("/");
+        } else {
+          alert("로그인 실패: " + response.data.message);
         }
-        window.location.href = "/"; // 인덱스 페이지로 이동
       } catch (error) {
-        // console.error("서버에서 naverlogin 에러 옴!");
-        // console.error(error);
+        console.error("Error processing Naver login:", error);
       }
     };
 

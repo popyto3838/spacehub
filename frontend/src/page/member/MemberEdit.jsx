@@ -29,18 +29,18 @@ export function MemberEdit() {
   const [isCheckedNickName, setIsCheckedNickName] = useState(true);
   const [oldNickName, setOldNickName] = useState("");
   const account = useContext(LoginContext);
-  const { id } = useParams();
+  const { memberId } = useParams();
   const toast = useToast();
   const navigate = useNavigate();
   const { isOpen, onClose, onOpen } = useDisclosure();
 
   useEffect(() => {
     axios
-      .get(`/api/member/${id}`)
+      .get(`/api/member/${memberId}`)
       .then((res) => {
         const member1 = res.data;
         setMember({ ...member1, password: "" });
-        setOldNickName(member1.nickName);
+        setOldNickName(member1.nickname);
       })
       .catch(() => {
         toast({
@@ -70,7 +70,7 @@ export function MemberEdit() {
           position: "top",
         });
         account.login(res.data.token);
-        navigate(`/member/${id}`);
+        navigate(`/member/${memberId}`);
       })
       .catch(() => {
         toast({
@@ -91,11 +91,11 @@ export function MemberEdit() {
 
   let isDisableNickNameCheckButton = false;
 
-  if (member.nickName === oldNickName) {
+  if (member.nickname === oldNickName) {
     isDisableNickNameCheckButton = true;
   }
 
-  if (member.nickName.length == 0) {
+  if (member.nickname.length == 0) {
     isDisableNickNameCheckButton = true;
   }
 
@@ -105,7 +105,7 @@ export function MemberEdit() {
 
   function handleCheckNickName() {
     axios
-      .get(`/api/member/check?nickName=${member.nickName}`)
+      .get(`/api/member/check?nickName=${member.nickname}`)
       .then((res) => {
         toast({
           status: "warning",
@@ -128,7 +128,7 @@ export function MemberEdit() {
   if (member.password !== passwordCheck) {
     isDisableSaveButton = true;
   }
-  if (member.nickName.trim().length === 0) {
+  if (member.nickname.trim().length === 0) {
     isDisableSaveButton = true;
   }
 
@@ -174,10 +174,10 @@ export function MemberEdit() {
             <Input
               onChange={(e) => {
                 const newNickName = e.target.value.trim();
-                setMember({ ...member, nickName: newNickName });
+                setMember({ ...member, nickname: newNickName });
                 setIsCheckedNickName(newNickName === oldNickName);
               }}
-              value={member.nickName}
+              value={member.nickname}
             />
             <InputRightElement w={"75px"} mr={1}>
               <Button

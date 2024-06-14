@@ -23,14 +23,14 @@ export function MemberInfo() {
   const [member, setMember] = useState(null);
   const [password, setPassword] = useState();
   const [isLoading, setIsLoading] = useState(false);
-  const { id } = useParams();
+  const { memberId } = useParams();
   const toast = useToast();
   const navigate = useNavigate();
   const { isOpen, onClose, onOpen } = useDisclosure();
 
   useEffect(() => {
     axios
-      .get(`/api/member/${id}`, {
+      .get(`/api/member/${memberId}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
@@ -64,11 +64,11 @@ export function MemberInfo() {
     setIsLoading(true);
 
     axios
-      .delete(`/api/member/${id}`, {
+      .delete(`/api/member/${memberId}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
-        data: { id, password },
+        data: { memberId, password },
       })
       .then(() => {
         toast({
@@ -116,7 +116,7 @@ export function MemberInfo() {
           <Box>
             <FormControl>
               <FormLabel>별명</FormLabel>
-              <Input isReadOnly value={member.nickName} />
+              <Input isReadOnly value={member.nickname} />
             </FormControl>
           </Box>
           <Box>
@@ -124,14 +124,23 @@ export function MemberInfo() {
               <FormLabel>가입일시</FormLabel>
               <Input
                 isReadOnly
-                value={member.inserted}
+                value={member.inputDt}
                 type={"datetime-local"}
               />
             </FormControl>
           </Box>
           <Box>
+            <FormControl>
+              <FormLabel>권한</FormLabel>
+              <Input
+                isReadOnly
+                value={member.authName}
+              />
+            </FormControl>
+          </Box>
+          <Box>
             <Button
-              onClick={() => navigate(`/member/edit/${member.id}`)}
+              onClick={() => navigate(`/member/edit/${member.memberId}`)}
               colorScheme={"purple"}
             >
               수정

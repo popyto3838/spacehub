@@ -67,7 +67,9 @@ export function MemberLogin() {
         <Box mt={4}>
           <FormControl>
             <FormLabel>패스워드</FormLabel>
-            <Input onChange={(e) => setPassword(e.target.value)} />
+            <Input
+              type="password"
+              onChange={(e) => setPassword(e.target.value)} />
           </FormControl>
         </Box>
         <Box mt={6}>
@@ -75,7 +77,9 @@ export function MemberLogin() {
             로그인
           </Button>
         </Box>
+        <Box w="50px" h="100px">
         <NaverLogin />
+        </Box>
       </Box>
     </Box>
   );

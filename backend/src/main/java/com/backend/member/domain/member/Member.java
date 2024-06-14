@@ -1,4 +1,4 @@
-package com.backend.domain.member;
+package com.backend.member.domain.member;
 
 import lombok.Data;
 
@@ -7,21 +7,22 @@ import java.time.format.DateTimeFormatter;
 
 @Data
 public class Member {
-    private Integer id;
+    private Integer memberId;
     private String email;
     private String password;
     private String oldPassword;
-    private String nickName;
-    private LocalDateTime inserted;
-
+    private String nickname;
+    private LocalDateTime inputDt;
+    private String auth;
+    private AuthName authName;
+    private Withdrawn withdrawn;
     public String getSignupDateAndTime() {
         DateTimeFormatter formatter
                 = DateTimeFormatter.ofPattern("yyyy년 MM월 dd일 HH시 mm분 ss초");
 
-        return inserted.format(formatter);
+        return inputDt.format(formatter);
     }
 
-    private Role role;
     private String link;
 
 

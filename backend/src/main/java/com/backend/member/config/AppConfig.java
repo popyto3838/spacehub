@@ -1,4 +1,5 @@
-package com.backend.config;
+package com.backend.member.config;
+
 
 import com.nimbusds.jose.jwk.JWK;
 import com.nimbusds.jose.jwk.JWKSet;
@@ -60,4 +61,5 @@ public class AppConfig {
 
         return http.build();
     }
+
 }
