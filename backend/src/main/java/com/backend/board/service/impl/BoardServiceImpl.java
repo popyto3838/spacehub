@@ -1,7 +1,8 @@
-package com.backend.service.board;
+package com.backend.board.service.impl;
 
-import com.backend.domain.board.Board;
-import com.backend.mapper.board.BoardMapper;
+import com.backend.board.domain.Board;
+import com.backend.board.mapper.BoardMapper;
+import com.backend.board.service.BoardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,14 +13,16 @@ import java.util.Map;
 @Service
 @Transactional(rollbackFor = Exception.class)
 @RequiredArgsConstructor
-public class BoardService {
+public class BoardServiceImpl implements BoardService {
 
     final BoardMapper mapper;
 
-    public void write(Board board) {
+    @Override
+    public void insert(Board board) {
         mapper.insert(board);
     }
 
+    @Override
     public Map<String, Object> list(Integer page) {
 //        return mapper.selectAll();
 
@@ -50,18 +53,22 @@ public class BoardService {
         return Map.of("pageInfo", pageInfo, "boardList", mapper.selectAllPaging(offset));
     }
 
+    @Override
     public Board view(Integer boardId) {
         return mapper.selectByBoardId(boardId);
     }
 
-    public void edit(Board board) {
+    @Override
+    public void update(Board board) {
         mapper.update(board);
     }
 
-    public void remove(Integer boardId) {
+    @Override
+    public void delete(Integer boardId) {
         mapper.deleteByBoardId(boardId);
     }
 
+    @Override
     public void updateViews(Integer boardId) {
         mapper.updateViews(boardId);
     }

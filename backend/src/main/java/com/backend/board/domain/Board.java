@@ -1,4 +1,4 @@
-package com.backend.domain.board;
+package com.backend.board.domain;
 
 import lombok.Data;
 
@@ -25,5 +25,5 @@ public class Board {
     public String getUpdateDateAndTime() {
         return formatter.format(updateDt);
     }
-    
+
 }

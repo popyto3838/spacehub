@@ -1,6 +1,6 @@
-package com.backend.mapper.board;
+package com.backend.board.mapper;
 
-import com.backend.domain.board.Board;
+import com.backend.board.domain.Board;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;
