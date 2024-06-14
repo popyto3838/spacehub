@@ -1,4 +1,3 @@
-
 import {
   Box,
   Button,
@@ -19,7 +18,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 
 export function BoardList() {
   const [boardList, setBoardList] = useState([]);
-  // const [category, setCategory] = useState("all");
+  const [category, setCategory] = useState("all");
   const [pageInfo, setPageInfo] = useState({});
   const [searchType, setSearchType] = useState("titleContent");
   const [searchKeyword, setSearchKeyword] = useState("");
@@ -93,6 +92,25 @@ export function BoardList() {
         </Box>
         <Box>
           <Button onClick={handleClickSearch}>검색</Button>
+        </Box>
+      </Flex>
+      <Flex>
+        <Box>
+          <Button
+            value={"category"}
+            onClick={() => {
+              setCategory("all");
+              category === "all" && navigate("/board/list/?type='all'");
+            }}
+          >
+            전체글
+          </Button>
+          <Button value={"category"} onClick={() => setCategory("notice")}>
+            공지사항
+          </Button>
+          <Button value={"category"} onClick={() => setCategory("faq")}>
+            FAQ
+          </Button>
         </Box>
       </Flex>
       {boardList.length === 0 && <Center>조회 결과가 없습니다.</Center>}
