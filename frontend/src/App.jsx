@@ -19,6 +19,7 @@ import {MemberLogin} from "./page/member/MemberLogin.jsx";
 import {MemberEdit} from "./page/member/MemberEdit.jsx";
 import {NaverLoginHandler} from "./page/member/NaverLoginHandler.jsx";
 import {LoginProvider} from "./component/LoginProvider.jsx";
+import {SpaceType} from "./page/admin/space_config/SpaceType.jsx";
 
 // MUI 테마 설정
 const theme = createTheme();
@@ -40,6 +41,7 @@ function App() {
                 {path: "board/:boardId/edit", element: <BoardEdit/>},
                 {path: "space/register", element: <RegisterStepper/>},
                 {path: "space/option", element: <SpaceOption/>},
+                {path: "space/type", element: <SpaceType/>},
                 {path: "member/signup", element: <MemberSignup/>},
                 {path: "member/naver", element: <NaverLogin/>},
                 {path: "member/list", element: <MemberList/>},
