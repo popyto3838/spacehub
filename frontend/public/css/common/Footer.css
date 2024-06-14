@@ -1,0 +1,42 @@
+.footer {
+    border-top: 1px solid #bbbbbb;
+    height: 20vh;
+    justify-content: center;
+    align-items: center;
+    padding-top: 15px;
+    color: #bbbbbb;
+    font-size: 1rem;
+    font-family: 'MangoDdobak-B';
+    background: #fff1ca;
+}
+
+.footer a {
+    display: inline-block;
+    margin: 0 20px 10px 20px;
+    color: #000000;
+    font-size: 1.3rem;
+}
+
+.footer a:visited {
+    color: #795959;
+}
+
+.footer p {
+    margin-top: 2%;
+
+}
+
+.footer p span {
+    display: inline-block;
+    margin-left: 2%;
+    margin-bottom: 0.3%;
+}
+
+nav {
+    font-size: 1.2vw;
+    display: flex;
+    justify-content: center;
+    z-index: 10;
+}
+
+

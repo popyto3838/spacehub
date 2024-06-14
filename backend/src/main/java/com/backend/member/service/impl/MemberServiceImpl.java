@@ -109,7 +109,7 @@ public class MemberServiceImpl implements MemberService {
 
         Member db = mapper.selectByEmail(member.getEmail());
 
-        if (db != null ) {
+        if (db != null) {
             System.out.println("db = " + db.getWithdrawn());
             if (!db.getWithdrawn().toString().equals("Y")) {
                 if (passwordEncoder.matches(member.getPassword(), db.getPassword())) {
@@ -200,7 +200,6 @@ public class MemberServiceImpl implements MemberService {
 
 
     }
-
 
 
 //    public void addAuthByEmail(Auth auth) {
