@@ -1,4 +1,4 @@
-import {Box, Button, Heading, Spinner, Table, Tbody, Td, Th, Thead, Tr, useToast} from "@chakra-ui/react";
+import {Box, Button, Heading, Spinner, Switch, Table, Tbody, Td, Th, Thead, Tr, useToast} from "@chakra-ui/react";
 import {useEffect, useState} from "react";
 import axios from "axios";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -7,6 +7,7 @@ import {faTrashCan} from "@fortawesome/free-solid-svg-icons";
 export function SpaceOptionList() {
   const [isLoading, setIsLoading] = useState(true);
   const [optionLists, setOptionLists] = useState([]);
+  const [isActive, setIsActive] = useState(true);
   const toast = useToast();
 
   useEffect(() => {
@@ -60,6 +61,7 @@ export function SpaceOptionList() {
           <Tr>
             <Th>#</Th>
             <Th>옵션명</Th>
+            <Th>활성화</Th>
             <Th>삭제</Th>
           </Tr>
         </Thead>
@@ -74,8 +76,13 @@ export function SpaceOptionList() {
             >
               <Td>{optionList.optionListId}</Td>
               <Td>{optionList.name}</Td>
+              <Td><Switch
+                size='md'
+                onChange={e => setIsActive(e.target.value)}
+              />
+              </Td>
               <Td>
-                <Button onClick={()=>handleDeleteOption(optionList.optionListId)}><FontAwesomeIcon icon={faTrashCan} /></Button>
+                <Button onClick={() => handleDeleteOption(optionList.optionListId)}><FontAwesomeIcon icon={faTrashCan}/></Button>
               </Td>
             </Tr>
           ))}

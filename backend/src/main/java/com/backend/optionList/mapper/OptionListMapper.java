@@ -18,7 +18,7 @@ public interface OptionListMapper {
 
 
     @Select("""
-            SELECT OPTION_LIST_ID, NAME
+            SELECT *
             FROM OPTION_LIST
             ORDER BY OPTION_LIST_ID DESC 
             """)

@@ -5,9 +5,9 @@ import RegisterStepper from "./page/host/register/RegisterStepper.jsx";
 import {createTheme} from "@mui/material/styles";
 import {ThemeProvider} from "@mui/material";
 import {Reserve} from "./page/Reserve.jsx";
-import {SpaceOption} from "./page/admin/space_option/SpaceOption.jsx";
-import {SpaceOptionWrite} from "./page/admin/space_option/SpaceOptionWrite.jsx";
-import {SpaceOptionList} from "./page/admin/space_option/SpaceOptionList.jsx";
+import {SpaceOption} from "./page/admin/space_config/SpaceOption.jsx";
+import {SpaceOptionWrite} from "./page/admin/space_config/SpaceOptionWrite.jsx";
+import {SpaceOptionList} from "./page/admin/space_config/SpaceOptionList.jsx";
 
 // MUI 테마 설정
 const theme = createTheme();

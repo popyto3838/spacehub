@@ -9,4 +9,5 @@ public class OptionList {
 
     private int optionListId;
     private String name;
+    private boolean isActive;
 }
