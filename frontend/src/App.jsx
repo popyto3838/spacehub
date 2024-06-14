@@ -6,8 +6,6 @@ import {createTheme} from "@mui/material/styles";
 import {ThemeProvider} from "@mui/material";
 import {Reserve} from "./page/Reserve.jsx";
 import {SpaceOption} from "./page/admin/space_config/SpaceOption.jsx";
-import {SpaceOptionWrite} from "./page/admin/space_config/SpaceOptionWrite.jsx";
-import {SpaceOptionList} from "./page/admin/space_config/SpaceOptionList.jsx";
 
 // MUI 테마 설정
 const theme = createTheme();
@@ -27,8 +25,6 @@ function App() {
     },
     {path: "space/register", element: <RegisterStepper/>},
     {path: "space/option", element: <SpaceOption/>},
-    // {path: "space/option/write", element: <SpaceOptionWrite/>},
-    // {path: "space/option/list", element: <SpaceOptionList/>}
   ]);
 
   return (

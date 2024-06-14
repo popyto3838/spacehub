@@ -1,20 +1,18 @@
 import { Box, Flex } from "@chakra-ui/react";
-import { Navbar } from "../component/Navbar.jsx";
-import { Outlet } from "react-router-dom";
+import Header from "../common/Header.jsx";
+import Footer from "../common/Footer.jsx";
+import '/public/css/Home.css';
+import Content from "../common/Content.jsx";
+
 
 export function Home() {
   return (
-    <Flex direction={{ base: "column", lg: "row" }}>
-      <Box flex="1" p={4}>
-        <Navbar />
-        <Box
-          mx={{
-            base: 0,
-            lg: 200,
-          }}
-          mt={10}
-        >
-          <Outlet />
+    <Flex>
+      <Box flex="1">
+        <Header></Header>
+        <Box>
+            <Content></Content>
+            <Footer/>
         </Box>
       </Box>
     </Flex>
