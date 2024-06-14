@@ -1,4 +1,5 @@
-package com.backend.config;
+package com.backend.member.config;
+
 
 import com.nimbusds.jose.jwk.JWK;
 import com.nimbusds.jose.jwk.JWKSet;
@@ -24,7 +25,7 @@ import java.security.interfaces.RSAPublicKey;
 
 @Configuration
 @EnableMethodSecurity
-public class AppConfiguration {
+public class AppConfig {
     @Value("${jwt.public.key}")
     RSAPublicKey key;
 
@@ -60,4 +61,5 @@ public class AppConfiguration {
 
         return http.build();
     }
+
 }
