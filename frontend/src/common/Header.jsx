@@ -24,8 +24,9 @@ const Header = () => {
                 <nav className={isOpen ? 'menu open' : 'menu'}>
                     <ul>
                         <li><a href="#home">Home</a></li>
-                        <li><a href="#about">로그인</a></li>
-                        <li><a href="#services">공간등록</a></li>
+                        <li><a href="/member/login">로그인</a></li>
+                        <li><a href="/member/signup">회원가입</a></li>
+                        <li><a href="/board/list">게시판</a></li>
                         <li><a href="#contact">공간예약</a></li>
                     </ul>
                 </nav>
