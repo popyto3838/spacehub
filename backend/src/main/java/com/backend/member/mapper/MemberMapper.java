@@ -81,7 +81,6 @@ public interface MemberMapper {
               """)
     int update(Member member);
 
-
 // 테이블 바꾼 후 다시작성한 sql
     @Insert("""
            INSERT INTO MEMBER (EMAIL, PASSWORD, NICKNAME , AUTH_NAME)
@@ -89,15 +88,6 @@ public interface MemberMapper {
             """)
     @Options(useGeneratedKeys = true, keyProperty = "memberId")
     int insert(Member member);
-
-
-//    @Select("""
-//            SELECT  A.WITHDRAWN
-//
-//             FROM MEMBER M JOIN AUTH A ON M.MEMBER_ID = A.MEMBER_ID
-//            WHERE M.MEMBER_ID = #{memberId}
-//            """)
-//   List<Auth> selectByEmail2(Integer memberId);
 
     @Select("""
             SELECT MEMBER_ID
@@ -114,9 +104,4 @@ public interface MemberMapper {
             """)
     List<String> selectByMemberId(Integer memberId);
 
-//    @Insert("""
-//INSERT INTO AUTH (AUTH_NAME)
-//VALUES (#{auth_name})
-//""")
-//    int insert(Auth auth);
 }
