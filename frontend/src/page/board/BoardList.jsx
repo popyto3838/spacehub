@@ -18,7 +18,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 
 export function BoardList() {
   const [boardList, setBoardList] = useState([]);
-  const [category, setCategory] = useState("all");
+  // const [category, setCategory] = useState("all");
   const [pageInfo, setPageInfo] = useState({});
   const [searchType, setSearchType] = useState("titleContent");
   const [searchKeyword, setSearchKeyword] = useState("");
