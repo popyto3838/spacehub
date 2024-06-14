@@ -47,4 +47,19 @@ public interface BoardMapper {
             WHERE BOARD_ID = #{boardId}
             """)
     int updateViews(Integer boardId);
+
+
+    @Select("""
+            SELECT TITLLE, CONTENT, VIEWS, CATEGORY
+            FORM BOARD
+            ORDER BY BOARD_ID DESC
+            LIMIT #{offset}, 10
+            """)
+    List<Board> selectAllPaging(Integer offset);
+
+    @Select("""
+            SELECT COUNT(*)
+            FROM BOARD
+            """)
+    Integer countAll();
 }

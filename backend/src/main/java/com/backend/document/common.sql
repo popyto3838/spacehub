@@ -183,3 +183,4 @@ ALTER TABLE BOARD
 # BOARD 테이블은 만들고 어디로 이동시킬지에 따라서 DEFAULT 값은 0으로 줄지 1으로 줄지 생각
 
 
+

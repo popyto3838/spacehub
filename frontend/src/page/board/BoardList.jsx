@@ -1,6 +1,7 @@
 import {
   Box,
   Button,
+  Center,
   Flex,
   Input,
   Select,
@@ -13,21 +14,22 @@ import {
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 export function BoardList() {
   const [boardList, setBoardList] = useState([]);
-
   const [category, setCategory] = useState("all");
   const [keyword, setKeyword] = useState("");
-
+  const [pageInfo, setPageInfo] = useState({});
   const navigate = useNavigate();
+  const searchParams = useSearchParams();
 
   useEffect(() => {
-    axios.get("/api/board/list").then((res) => {
-      setBoardList(res.data);
+    axios.get(`/api/board/list?${searchParams}`).then((res) => {
+      setBoardList(res.data.boardList);
+      setPageInfo(res.data.pageInfo);
     });
-  }, []);
+  }, [searchParams]);
 
   // todo: 게시물 클릭하면 클릭한 시간으로 작성일시 바뀌는거 수정
   const handleClickCountViews = (board) => {
@@ -39,6 +41,11 @@ export function BoardList() {
         navigate(`/board/${board.boardId}`);
       });
   };
+
+  const pageNumber = [];
+  for (let i = pageInfo.leftPageNumber; i <= pageInfo.rightPageNumber; i++) {
+    pageNumber.push(i);
+  }
 
   return (
     <Box>
@@ -95,6 +102,16 @@ export function BoardList() {
           </Tbody>
         </Table>
       </Box>
+      <Center>
+        {pageNumber.map((pageNumber) => (
+          <Button
+            key={pageNumber}
+            onClick={() => navigate(`/board/?page=${pageNumber}`)}
+          >
+            {pageNumber}
+          </Button>
+        ))}
+      </Center>
     </Box>
   );
 }

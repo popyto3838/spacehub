@@ -6,7 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/board")
@@ -20,9 +20,10 @@ public class BoardController {
         service.write(board);
     }
 
+    // todo: 게시판 페이징
     @GetMapping("list")
-    public List<Board> list() {
-        return service.list();
+    public Map<String, Object> list(@RequestParam(defaultValue = "1") Integer page) {
+        return service.list(page);
     }
 
     @GetMapping("{boardId}")
