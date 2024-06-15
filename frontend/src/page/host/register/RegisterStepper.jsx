@@ -1,20 +1,34 @@
-import React, { useState } from "react";
-import { Box, Button, Step, StepLabel, Stepper } from "@mui/material";
-import axios from "axios";
-import RegisterPage1 from "./RegisterPage1";
-import RegisterPage2 from "./RegisterPage2";
-import RegisterPage3 from "./RegisterPage3";
+import React, { useState } from 'react';
+import {
+  Box,
+  Button,
+  Step,
+  StepDescription,
+  StepIcon,
+  StepIndicator,
+  StepNumber,
+  StepSeparator,
+  StepStatus,
+  StepTitle,
+  Stepper,
+  useSteps,
+} from '@chakra-ui/react';
 
-const steps = ["Step 1", "Step 2", "Step 3"];
+// Stepper steps definition
+const steps = [
+  { title: 'Step 1', description: '공간 소개' },
+  { title: 'Step 2', description: '상세 정보' },
+  { title: 'Step 3', description: '규칙 설정' },
+];
 
-const StepContent = ({ step, formData, setFormData }) => {
+const StepContent = ({ step }) => {
   switch (step) {
     case 0:
-      return <RegisterPage1 formData={formData} setFormData={setFormData} />;
+      return <Box>공간 소개 내용</Box>;
     case 1:
-      return <RegisterPage2 formData={formData} setFormData={setFormData} />;
+      return <Box>상세 정보 내용</Box>;
     case 2:
-      return <RegisterPage3 formData={formData} setFormData={setFormData} />;
+      return <Box>규칙 설정 내용</Box>;
     default:
       return null;
   }
@@ -22,77 +36,58 @@ const StepContent = ({ step, formData, setFormData }) => {
 
 const RegisterStepper = () => {
   const [activeStep, setActiveStep] = useState(0);
-  const [formData, setFormData] = useState({
-    page1Data: "",
-    page2Data: "",
-    page3Data: "",
-  });
+  const { steps: chakraSteps } = useSteps({ initialStep: activeStep });
 
   const handleNext = () => {
-    if (activeStep === steps.length - 1) {
-      handleFinish();
+    if (activeStep < steps.length - 1) {
+      setActiveStep(activeStep + 1);
     } else {
-      setActiveStep((prevActiveStep) => prevActiveStep + 1);
+      // Handle form submission here
+      alert('Form submitted');
     }
   };
 
   const handleBack = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep - 1);
-  };
-
-  const handleFinish = () => {
-    console.log("Finish button clicked, handle final registration here.");
-    console.log("Form Data:", formData);
-
-    // formData 객체를 구조화하여 새로운 객체 생성
-    const structuredFormData = {
-      spaceInfo: {
-        spaceTitle: formData.nickname, // spaceTitle 에 nickname 데이터 할당
-        // 다른 spaceInfo 필드 추가
-      },
-      spaceOptions: {
-        // spaceOptions 필드 추가
-      },
-      // 다른 필드 추가
-    };
-    axios
-      .post("/api/space/register", structuredFormData)
-      .then((response) => {
-        console.log("Data submitted successfully:", response.data);
-      })
-      .catch((error) => {
-        console.error("Error submitting data:", error);
-      });
+    setActiveStep(activeStep - 1);
   };
 
   return (
-    <Box>
-      <Stepper activeStep={activeStep} alternativeLabel>
-        {steps.map((label) => (
-          <Step key={label}>
-            <StepLabel>{label}</StepLabel>
+    <Box mt={4}>
+      <Stepper index={activeStep}>
+        {steps.map((step, index) => (
+          <Step key={index}>
+            <StepIndicator>
+              <StepStatus
+                complete={<StepIcon />}
+                incomplete={<StepNumber />}
+                active={<StepNumber />}
+              />
+            </StepIndicator>
+            <Box flexShrink='0'>
+              <StepTitle>{step.title}</StepTitle>
+              <StepDescription>{step.description}</StepDescription>
+            </Box>
+            <StepSeparator />
           </Step>
         ))}
       </Stepper>
-      <Box>
-        {steps.map((label, index) => (
-          <Box key={index} role="tabpanel" hidden={activeStep !== index} p={3}>
-            {activeStep === index && (
-              <StepContent
-                step={index}
-                formData={formData}
-                setFormData={setFormData}
-              />
-            )}
-          </Box>
-        ))}
+
+      <Box mt={6}>
+        <StepContent step={activeStep} />
       </Box>
-      <Box sx={{ display: "flex", justifyContent: "space-between", mt: 2 }}>
-        <Button disabled={activeStep === 0} onClick={handleBack}>
-          Back
+
+      <Box display="flex" justifyContent="space-between" mt={4}>
+        <Button
+          onClick={handleBack}
+          isDisabled={activeStep === 0}
+        >
+          Prev
         </Button>
-        <Button variant="contained" color="primary" onClick={handleNext}>
-          {activeStep === steps.length - 1 ? "Submit" : "Next"}
+        <Button
+          onClick={handleNext}
+          colorScheme="teal"
+        >
+          {activeStep === steps.length - 1 ? 'Submit' : 'Next'}
         </Button>
       </Box>
     </Box>
