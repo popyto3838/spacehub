@@ -13,6 +13,9 @@ import {
   Stepper,
   useSteps,
 } from '@chakra-ui/react';
+import RegisterPage1 from "./RegisterPage1.jsx";
+import RegisterPage2 from "./RegisterPage2.jsx";
+import RegisterPage3 from "./RegisterPage3.jsx";
 
 // Stepper steps definition
 const steps = [
@@ -21,14 +24,14 @@ const steps = [
   { title: 'Step 3', description: '규칙 설정' },
 ];
 
-const StepContent = ({ step }) => {
+const StepContent = ({ step, formData, setFormData}) => {
   switch (step) {
     case 0:
-      return <Box>공간 소개 내용</Box>;
+      return <><RegisterPage1 formData={formData} setFormData={setFormData}/></>;
     case 1:
-      return <Box>상세 정보 내용</Box>;
+      return <><RegisterPage2/></>;
     case 2:
-      return <Box>규칙 설정 내용</Box>;
+      return <><RegisterPage3/></>;
     default:
       return null;
   }

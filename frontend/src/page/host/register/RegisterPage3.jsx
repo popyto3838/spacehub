@@ -1,21 +1,17 @@
 import React from "react";
-import { Box, TextField } from "@mui/material";
+import { Box, FormControl, FormLabel, Textarea } from "@chakra-ui/react";
 
 const RegisterPage3 = ({ formData, setFormData }) => {
-  const handleChange = (event) => {
-    setFormData({ ...formData, page3Data: event.target.value });
-  };
+  const handleIntroChange = (e) => setFormData({ ...formData, intro: e.target.value });
+  // ... (다른 필드에 대한 onChange 핸들러 추가)
 
   return (
     <Box>
-      <TextField
-        label="비밀번호"
-        variant="outlined"
-        type="password"
-        value={formData.page3Data}
-        onChange={handleChange}
-        fullWidth
-      />
+      <FormControl mb={4}>
+        <FormLabel htmlFor="space-intro">공간 소개</FormLabel>
+        <Textarea id="space-intro" onChange={handleIntroChange} />
+      </FormControl>
+      {/* ... (나머지 입력 필드: facilityInfo, rules 등) */}
     </Box>
   );
 };

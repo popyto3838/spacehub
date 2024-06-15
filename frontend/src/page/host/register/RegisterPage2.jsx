@@ -1,20 +1,17 @@
 import React from "react";
-import { Box, TextField } from "@mui/material";
+import { Box, FormControl, FormLabel, Input } from "@chakra-ui/react";
 
 const RegisterPage2 = ({ formData, setFormData }) => {
-  const handleChange = (event) => {
-    setFormData({ ...formData, page2Data: event.target.value });
-  };
+  const handleCapacityChange = (e) => setFormData({ ...formData, capacity: e.target.value });
+  // ... (다른 필드에 대한 onChange 핸들러 추가)
 
   return (
     <Box>
-      <TextField
-        label="이메일 주소"
-        variant="outlined"
-        value={formData.page2Data}
-        onChange={handleChange}
-        fullWidth
-      />
+      <FormControl mb={4}>
+        <FormLabel htmlFor="space-capacity">수용 인원</FormLabel>
+        <Input id="space-capacity" type="number" onChange={handleCapacityChange} />
+      </FormControl>
+      {/* ... (나머지 입력 필드: floor, parkingSpaces, price 등) */}
     </Box>
   );
 };
