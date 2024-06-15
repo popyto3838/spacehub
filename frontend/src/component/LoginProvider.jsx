@@ -42,6 +42,7 @@ export function LoginProvider({ children }) {
   }
   function logout() {
     localStorage.removeItem("token");
+    localStorage.removeItem("com.naver.nid.oauth.state_token");
     setExpired(0);
     setId("");
     setAuthority([]);

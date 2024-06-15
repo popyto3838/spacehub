@@ -160,8 +160,16 @@ public class MemberController {
         member.setInputDt(LocalDateTime.now());
         member.setAuth("USER"); // 기본 권한 설정
 
+
+
         // 데이터베이스에 사용자 정보 저장
-        service.insertMember(member);
+
+        if(service.findByEmail(member.getEmail())==null){
+
+            service.insertMember(member);
+
+            return "success";
+        }
 
         return "success";
 

@@ -24,6 +24,7 @@ export const NaverLoginHandler = () => {
         const [key, value] = param.split("=");
         params[key] = value;
       });
+      console.log(params)
 
       try {
         const response = await axios.post(

@@ -14,6 +14,7 @@ import { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import TimerComponent from "./TimerComponent.jsx";
+import NaverLogin from "./NaverLogin.jsx";
 
 export function MemberSignup() {
   const [email, setEmail] = useState("");
@@ -163,7 +164,7 @@ export function MemberSignup() {
 
   return (
     <Box
-      maxW="md"
+      w="450px"
       mx="auto"
       mt={8}
       p={6}
@@ -276,6 +277,9 @@ export function MemberSignup() {
           >
             가입
           </Button>
+        </Box>
+        <Box w="266px" h="111px" mt={22}>
+          <NaverLogin />
         </Box>
       </Box>
     </Box>

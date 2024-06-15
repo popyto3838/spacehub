@@ -36,8 +36,8 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public Member checkByNickName(String nickName) {
-        return mapper.checkBynickName(nickName);
+    public Member checkByNickName(String nickname) {
+        return mapper.checkBynickName(nickname);
     }
 
     @Override
@@ -132,7 +132,7 @@ public class MemberServiceImpl implements MemberService {
                             .expiresAt(now.plusSeconds(60 * 60 * 24 * 7))
                             .subject(db.getMemberId().toString())
                             .claim("scope", authorityString) // 권한
-                            .claim("nickName", db.getNickname())
+                            .claim("nickname", db.getNickname())
                             .build();
 
                     token = jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
@@ -182,7 +182,7 @@ public class MemberServiceImpl implements MemberService {
         Map<String, Object> claims = jwt.getClaims();
         JwtClaimsSet.Builder jwtClaimsSetBuilder = JwtClaimsSet.builder();
         claims.forEach(jwtClaimsSetBuilder::claim);
-        jwtClaimsSetBuilder.claim("nickName", member.getNickname());
+        jwtClaimsSetBuilder.claim("nickname", member.getNickname());
 
         JwtClaimsSet jwtClaimsSet = jwtClaimsSetBuilder.build();
         token = jwtEncoder.encode(JwtEncoderParameters.from(jwtClaimsSet)).getTokenValue();
@@ -213,22 +213,5 @@ public class MemberServiceImpl implements MemberService {
     }
 
 
-//    public void addAuthByEmail(Auth auth) {
-//        mapper.insert(auth);
-//    }
 
-
-//    public void add2(Member member) {
-//        Member OldMember = member.checkByNickName(member.getNickName());
-//
-//        if (OldMember != null) {
-//            String signUpMemberNickname = member.getNickName();
-//
-//            if (signUpMemberNickname.equals(OldMember.getNickName()){
-//                member.setNickName(signUpMemberNickname + "+");
-//            }
-//        }
-//
-//        mapper.add(member);
-//    }
 }

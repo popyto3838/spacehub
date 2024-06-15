@@ -13,8 +13,8 @@ export const NaverLogin = () => {
     isPopup: false, // 네이버 로그인 확인 창을 팝업으로 띄울지 여부
     loginButton: {
       color: "white", // green, white
-      type: 1, // 1: 작은버튼, 2: 중간버튼, 3: 큰 버튼
-      height: 5, // 크기는 높이로 결정한다.
+      type: 3, // 1: 작은버튼, 2: 중간버튼, 3: 큰 버튼
+      height: 444, // 크기는 높이로 결정한다.
     },
   });
 

@@ -72,12 +72,12 @@ export function MemberLogin() {
               onChange={(e) => setPassword(e.target.value)} />
           </FormControl>
         </Box>
-        <Box mt={6}>
-          <Button onClick={handleLogin} colorScheme={"blue"}>
+        <Box mt={6} w={255}>
+          <Button w="255px" onClick={handleLogin} colorScheme={"blue"}>
             로그인
           </Button>
         </Box>
-        <Box w="50px" h="100px">
+        <Box w="255px" h="80px" mt={22}>
         <NaverLogin />
         </Box>
       </Box>
