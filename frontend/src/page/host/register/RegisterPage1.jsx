@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from "react";
 import { Box, FormControl, FormLabel, Input, Select } from "@chakra-ui/react";
 import axios from "axios";
+import KakaoMap from "../../../component/KakaoMap.jsx";
 
 const RegisterPage1 = ({ formData, setFormData }) => {
   const [typeLists, setTypeLists] = useState([]);
@@ -50,7 +51,7 @@ const RegisterPage1 = ({ formData, setFormData }) => {
       </FormControl>
       <FormControl mb={4}>
         <FormLabel htmlFor="space-location">위치 정보</FormLabel>
-        <Input id="space-location" onChange={handleLocationChange} />
+        <KakaoMap/>
       </FormControl>
     </Box>
   );
