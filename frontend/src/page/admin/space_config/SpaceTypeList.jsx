@@ -17,24 +17,24 @@ import axios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrashCan } from "@fortawesome/free-solid-svg-icons";
 
-export function SpaceOptionList() {
+export function SpaceTypeList() {
   const [isLoading, setIsLoading] = useState(true);
-  const [optionLists, setOptionLists] = useState([]);
-  const [optionStates, setOptionStates] = useState(new Map());
+  const [typeLists, setTypeLists] = useState([]);
+  const [typeStates, setTypeStates] = useState(new Map());
   const toast = useToast();
 
   useEffect(() => {
     axios
-      .get(`/api/space/option/list`)
+      .get(`/api/space/type/list`)
       .then((res) => {
-        const options = res.data;
-        setOptionLists(options);
-        const newOptionStates = new Map(options.map((option) => [option.optionListId, option.active]));
-        setOptionStates(newOptionStates);
+        const types = res.data;
+        setTypeLists(types);
+        const newTypeStates = new Map(types.map((type) => [type.typeListId, type.active]));
+        setTypeStates(newTypeStates);
       })
       .catch((err) => {
         toast({
-          title: "옵션 목록을 불러오는데 실패했습니다.",
+          title: "타입 목록을 불러오는데 실패했습니다.",
           description: err.message,
           status: "error",
           duration: 3000,
@@ -46,24 +46,24 @@ export function SpaceOptionList() {
       });
   }, [toast]);
 
-  const handleDeleteOption = async (optionListId) => {
+  const handleDeleteType = async (typeListId) => {
     try {
-      await axios.delete(`/api/space/option/${optionListId}`);
-      setOptionLists(optionLists.filter((option) => option.optionListId !== optionListId));
-      setOptionStates((prevState) => {
+      await axios.delete(`/api/space/type/${typeListId}`);
+      setTypeLists(typeLists.filter((type) => type.typeListId !== typeListId));
+      setTypeStates((prevState) => {
         const newState = new Map(prevState);
-        newState.delete(optionListId);
+        newState.delete(typeListId);
         return newState;
       });
       toast({
-        title: "옵션이 삭제되었습니다.",
+        title: "타입이 삭제되었습니다.",
         status: "success",
         duration: 3000,
         isClosable: true,
       });
     } catch (error) {
       toast({
-        title: "옵션 삭제에 실패했습니다.",
+        title: "타입 삭제에 실패했습니다.",
         description: error.message,
         status: "error",
         duration: 3000,
@@ -72,19 +72,19 @@ export function SpaceOptionList() {
     }
   };
 
-  const handleSwitchChange = async (optionListId) => {
-    const updatedStatus = !optionStates.get(optionListId);
-    const optionToUpdate = optionLists.find((option) => option.optionListId === optionListId);
+  const handleSwitchChange = async (typeListId) => {
+    const updatedStatus = !typeStates.get(typeListId);
+    const typeToUpdate = typeLists.find((type) => type.typeListId === typeListId);
 
-    if (optionToUpdate) {
-      const updatedOption = { ...optionToUpdate, active: updatedStatus };
+    if (typeToUpdate) {
+      const updatedType = { ...typeToUpdate, active: updatedStatus };
 
       try {
-        await axios.put(`/api/space/option/${optionListId}`, updatedOption); // 변경된 옵션만 업데이트
-        setOptionStates((prevOptionStates) => {
-          const newOptionStates = new Map(prevOptionStates);
-          newOptionStates.set(optionListId, updatedStatus);
-          return newOptionStates;
+        await axios.put(`/api/space/type/${typeListId}`, updatedType); // 변경된 옵션만 업데이트
+        setTypeStates((prevTypeStates) => {
+          const newTypeStates = new Map(prevTypeStates);
+          newTypeStates.set(typeListId, updatedStatus);
+          return newTypeStates;
         });
         toast({
           title: "옵션 상태가 업데이트되었습니다.",
@@ -105,13 +105,13 @@ export function SpaceOptionList() {
   };
 
   useEffect(() => {
-    for (const [optionListId, isActive] of optionStates) {
-      const optionToUpdate = optionLists.find((option) => option.optionListId === optionListId);
+    for (const [typeListId, isActive] of typeStates) {
+      const typeToUpdate = typeLists.find((type) => type.typeListId === typeListId);
 
-      if (optionToUpdate) {
-        const updatedOption = { ...optionToUpdate, active: isActive };
+      if (typeToUpdate) {
+        const updatedType = { ...typeToUpdate, active: isActive };
         axios
-          .put(`/api/space/option/${optionListId}`, updatedOption)
+          .put(`/api/space/type/${typeListId}`, updatedType)
           .then(() => {
             toast({
               title: "옵션 상태가 업데이트되었습니다.",
@@ -129,14 +129,14 @@ export function SpaceOptionList() {
     return <Spinner />;
   }
 
-  if (optionLists.length === 0 && !isLoading) {
+  if (typeLists.length === 0 && !isLoading) {
     return <Box>등록된 옵션이 없습니다.</Box>;
   }
 
   return (
     <>
       <Box>
-        <Heading>option list Read Page</Heading>
+        <Heading>type list Read Page</Heading>
       </Box>
       <Box>
         <Table>
@@ -149,19 +149,19 @@ export function SpaceOptionList() {
             </Tr>
           </Thead>
           <Tbody>
-            {optionLists.map((optionList) => (
-              <Tr key={optionList.optionListId} _hover={{ bgColor: "gray.200" }}>
-                <Td>{optionList.optionListId}</Td>
-                <Td>{optionList.name}</Td>
+            {typeLists.map((typeList) => (
+              <Tr key={typeList.typeListId} _hover={{ bgColor: "gray.200" }}>
+                <Td>{typeList.typeListId}</Td>
+                <Td>{typeList.name}</Td>
                 <Td>
                   <Switch
                     size="md"
-                    isChecked={optionStates.get(optionList.optionListId)}
-                    onChange={() => handleSwitchChange(optionList.optionListId)}
+                    isChecked={typeStates.get(typeList.typeListId)}
+                    onChange={() => handleSwitchChange(typeList.typeListId)}
                   />
                 </Td>
                 <Td>
-                  <Button onClick={() => handleDeleteOption(optionList.optionListId)}>
+                  <Button onClick={() => handleDeleteType(typeList.typeListId)}>
                     <FontAwesomeIcon icon={faTrashCan} />
                   </Button>
                 </Td>

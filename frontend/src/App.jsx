@@ -19,48 +19,45 @@ import {MemberLogin} from "./page/member/MemberLogin.jsx";
 import {MemberEdit} from "./page/member/MemberEdit.jsx";
 import {NaverLoginHandler} from "./page/member/NaverLoginHandler.jsx";
 import {LoginProvider} from "./component/LoginProvider.jsx";
-
-// MUI 테마 설정
-const theme = createTheme();
+import {SpaceType} from "./page/admin/space_config/SpaceType.jsx";
 
 function App() {
-    const router = createBrowserRouter([
+  const router = createBrowserRouter([
+    {
+      path: "/",
+      element: <Home/>,
+      children: [
         {
-            path: "/",
-            element: <Home/>,
-            children: [
-                {
-                    path: "reserve",
-                    element: <Reserve/>
-                },
-                {index: true, element: <MainPage/>},
-                {path: "board/write", element: <BoardWrite/>},
-                {path: "board/list", element: <BoardList/>},
-                {path: "board/:boardId", element: <BoardView/>},
-                {path: "board/:boardId/edit", element: <BoardEdit/>},
-                {path: "space/register", element: <RegisterStepper/>},
-                {path: "space/option", element: <SpaceOption/>},
-                {path: "member/signup", element: <MemberSignup/>},
-                {path: "member/naver", element: <NaverLogin/>},
-                {path: "member/list", element: <MemberList/>},
-                {path: "member/:memberId", element: <MemberInfo/>},
-                {path: "member/login", element: <MemberLogin/>},
-                {path: "member/edit/:memberId", element: <MemberEdit/>},
-                {path: "auth/naverlogin", element: <NaverLoginHandler/>},
-            ],
+          path: "reserve",
+          element: <Reserve/>
         },
-    ]);
-    return (
-        <>
-            <ThemeProvider theme={theme}>
-                <LoginProvider>
-                    <ChakraProvider>
-                        <RouterProvider router={router}/>
-                    </ChakraProvider>
-                </LoginProvider>
-            </ThemeProvider>
-        </>
-    );
+        {index: true, element: <MainPage/>},
+        {path: "board/write", element: <BoardWrite/>},
+        {path: "board/list", element: <BoardList/>},
+        {path: "board/:boardId", element: <BoardView/>},
+        {path: "board/:boardId/edit", element: <BoardEdit/>},
+        {path: "space/register", element: <RegisterStepper/>},
+        {path: "space/option", element: <SpaceOption/>},
+        {path: "space/type", element: <SpaceType/>},
+        {path: "member/signup", element: <MemberSignup/>},
+        {path: "member/naver", element: <NaverLogin/>},
+        {path: "member/list", element: <MemberList/>},
+        {path: "member/:memberId", element: <MemberInfo/>},
+        {path: "member/login", element: <MemberLogin/>},
+        {path: "member/edit/:memberId", element: <MemberEdit/>},
+        {path: "auth/naverlogin", element: <NaverLoginHandler/>},
+      ],
+    },
+  ]);
+  return (
+    <>
+      <LoginProvider>
+        <ChakraProvider>
+          <RouterProvider router={router}/>
+        </ChakraProvider>
+      </LoginProvider>
+    </>
+  );
 }
 
 

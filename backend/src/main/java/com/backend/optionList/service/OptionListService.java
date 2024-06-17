@@ -12,4 +12,6 @@ public interface OptionListService {
     List<OptionList> list();
 
     void deleteSpaceOption(int optionListId);
+
+    void update(OptionList optionList);
 }

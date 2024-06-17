@@ -41,4 +41,9 @@ public class OptionListController {
             return ResponseEntity.badRequest().body("옵션 삭제에 실패했습니다: " + e.getMessage());
         }
     }
+
+    @PutMapping("/{optionListId}")
+    public void update(@RequestBody OptionList optionList) {
+        service.update(optionList);
+    }
 }
