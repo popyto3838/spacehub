@@ -16,10 +16,13 @@ const Header = () => {
             <span> <p className="headerTitle title2">hub</p></span>
 
             <header className="header">
-                <div className="hamburger" onClick={toggleMenu}>
-                    <div className={isOpen ? 'bar open' : 'bar'}></div>
-                    <div className={isOpen ? 'bar open' : 'bar'}></div>
-                    <div className={isOpen ? 'bar open' : 'bar'}></div>
+                <div className="hamburgerArea" onClick={toggleMenu}>
+                    <div className="hamburger">
+
+                        <div className={isOpen ? 'bar open' : 'bar'}></div>
+                        <div className={isOpen ? 'bar open' : 'bar'}></div>
+                        <div className={isOpen ? 'bar open' : 'bar'}></div>
+                    </div>
                 </div>
                 <nav className={isOpen ? 'menu open' : 'menu'}>
                     <ul>
