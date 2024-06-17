@@ -18,6 +18,8 @@ import {MemberEdit} from "./page/member/MemberEdit.jsx";
 import {NaverLoginHandler} from "./page/member/NaverLoginHandler.jsx";
 import {LoginProvider} from "./component/LoginProvider.jsx";
 import {SpaceType} from "./page/admin/space_config/SpaceType.jsx";
+import {MemberHost} from "./page/member/MemberHost.jsx";
+import {MemberHostSignup} from "./page/member/MemberHostSignup.jsx";
 
 function App() {
   const router = createBrowserRouter([
@@ -43,7 +45,9 @@ function App() {
         {path: "member/:memberId", element: <MemberInfo/>},
         {path: "member/login", element: <MemberLogin/>},
         {path: "member/edit/:memberId", element: <MemberEdit/>},
-        {path: "auth/naverlogin", element: <NaverLoginHandler/>},
+        {path: "member/naverlogin", element: <NaverLoginHandler/>},
+        {path: "member/host", element: <MemberHost/>},
+        {path: "member/host/signup", element: <MemberHostSignup/>},
       ],
     },
   ]);

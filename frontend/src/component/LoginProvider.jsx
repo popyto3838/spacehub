@@ -8,6 +8,7 @@ export function LoginProvider({ children }) {
   const [expired, setExpired] = useState(0);
   const [authority, setAuthority] = useState("");
 
+
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (token === null) {
@@ -25,12 +26,15 @@ export function LoginProvider({ children }) {
   }
 
   function isAdmin() {
+    return authority.includes("ADMIN");
   }
 
-  function isSupplier() {
+  function isHost() {
+    return authority.includes("HOST");
   }
 
-  function isBuyer() {
+  function isUser() {
+    return authority.includes("USER");
   }
 
   function login(token) {
@@ -46,6 +50,7 @@ export function LoginProvider({ children }) {
     setExpired(0);
     setId("");
     setAuthority([]);
+
   }
 
   return (
@@ -57,8 +62,8 @@ export function LoginProvider({ children }) {
         isLoggedIn: isLoggedIn,
         hasAccess: hasAccess,
         isAdmin: isAdmin,
-        isSupplier: isSupplier,
-        isBuyer: isBuyer,
+        isHost: isHost,
+        isUser: isUser,
       }}
     >
       {children}
