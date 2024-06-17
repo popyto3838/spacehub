@@ -1,10 +1,7 @@
 package com.backend.optionList.mapper;
 
 import com.backend.optionList.domain.OptionList;
-import org.apache.ibatis.annotations.Delete;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.*;
 
 import java.util.List;
 
@@ -25,8 +22,15 @@ public interface OptionListMapper {
     List<OptionList> selectAll();
 
     @Delete("""
-DELETE FROM OPTION_LIST
-WHERE OPTION_LIST_ID = #{optionListId}
-""")
+            DELETE FROM OPTION_LIST
+            WHERE OPTION_LIST_ID = #{optionListId}
+            """)
     int deleteByOptionId(int optionListId);
+
+    @Update("""
+            UPDATE OPTION_LIST
+            SET IS_ACTIVE = #{isActive}
+            WHERE OPTION_LIST_ID = #{optionListId}
+            """)
+    int update(OptionList optionList);
 }

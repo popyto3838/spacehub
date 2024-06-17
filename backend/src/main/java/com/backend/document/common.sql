@@ -1,4 +1,3 @@
-USE prj4;
 -- MEMBER 테이블
 CREATE TABLE MEMBER
 (
