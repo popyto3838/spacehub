@@ -7,8 +7,6 @@ import {BoardList} from "./page/board/BoardList.jsx";
 import {BoardView} from "./page/board/BoardView.jsx";
 import {BoardEdit} from "./page/board/BoardEdit.jsx";
 import RegisterStepper from "./page/host/register/RegisterStepper.jsx";
-import {createTheme} from "@mui/material/styles";
-import {ThemeProvider} from "@mui/material";
 import {Reserve} from "./page/Reserve.jsx";
 import {SpaceOption} from "./page/admin/space_config/SpaceOption.jsx";
 import {MemberSignup} from "./page/member/MemberSignup.jsx";
