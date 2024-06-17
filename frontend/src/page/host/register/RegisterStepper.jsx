@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   Box,
   Button,
@@ -39,7 +39,34 @@ const StepContent = ({ step, formData, setFormData}) => {
 
 const RegisterStepper = () => {
   const [activeStep, setActiveStep] = useState(0);
+  const [formData, setFormData] = useState({
+    location: '',
+    // 다른 폼 데이터 초기화
+  })
   const { steps: chakraSteps } = useSteps({ initialStep: activeStep });
+
+  useEffect(() => {
+    const savedFormData = localStorage.getItem('formData');
+    const savedStep = localStorage.getItem('activeStep');
+
+    // 로컬 스토리지에서 상태 복원
+    if (savedStep) {
+      setFormData(JSON.parse(savedFormData));
+    }
+    if (savedStep) {
+      setActiveStep(parseInt(savedStep, 10));
+    }
+  }, []);
+
+  // 상태 변경 시 로컬 스토리지에 저장
+  useEffect(() => {
+    localStorage.setItem('formData', JSON.stringify(formData));
+  }, [formData]);
+
+  // 스텝 변경 시 로컬 스토리지에 저장
+  useEffect(() => {
+    localStorage.setItem('activeStep', activeStep);
+  }, [activeStep]);
 
   const handleNext = () => {
     if (activeStep < steps.length - 1) {
@@ -47,6 +74,9 @@ const RegisterStepper = () => {
     } else {
       // Handle form submission here
       alert('Form submitted');
+      // 폼 제출 후 로컬 스토리지 초기화
+      localStorage.removeItem('formData');
+      localStorage.removeItem('activeStep');
     }
   };
 
