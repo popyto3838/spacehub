@@ -16,22 +16,26 @@ import {
 import RegisterPage1 from "./RegisterPage1.jsx";
 import RegisterPage2 from "./RegisterPage2.jsx";
 import RegisterPage3 from "./RegisterPage3.jsx";
+import RegisterPage4 from "./RegisterPage4.jsx";
 
 // Stepper steps definition
 const steps = [
   { title: 'Step 1', description: '공간 소개' },
   { title: 'Step 2', description: '상세 정보' },
   { title: 'Step 3', description: '규칙 설정' },
+  { title: 'Step 4', description: '숫자 설정' },
 ];
 
 const StepContent = ({ step, formData, setFormData}) => {
   switch (step) {
     case 0:
-      return <><RegisterPage1 formData={formData} setFormData={setFormData}/></>;
+      return <RegisterPage1 formData={formData} setFormData={setFormData} />;
     case 1:
-      return <><RegisterPage2/></>;
+      return <RegisterPage2 formData={formData} setFormData={setFormData} />;
     case 2:
-      return <><RegisterPage3/></>;
+      return <RegisterPage3 formData={formData} setFormData={setFormData} />;
+    case 3:
+      return <RegisterPage4 formData={formData} setFormData={setFormData} />;
     default:
       return null;
   }
@@ -40,33 +44,17 @@ const StepContent = ({ step, formData, setFormData}) => {
 const RegisterStepper = () => {
   const [activeStep, setActiveStep] = useState(0);
   const [formData, setFormData] = useState({
-    location: '',
-    // 다른 폼 데이터 초기화
+    page1Data: {},
+    page2Data: {},
+    page3Data: {},
+    page4Data: {
+      price: "",
+      capacity: "",
+      floor: "",
+      parkingSpace: "",
+    },
   })
   const { steps: chakraSteps } = useSteps({ initialStep: activeStep });
-
-  useEffect(() => {
-    const savedFormData = localStorage.getItem('formData');
-    const savedStep = localStorage.getItem('activeStep');
-
-    // 로컬 스토리지에서 상태 복원
-    if (savedStep) {
-      setFormData(JSON.parse(savedFormData));
-    }
-    if (savedStep) {
-      setActiveStep(parseInt(savedStep, 10));
-    }
-  }, []);
-
-  // 상태 변경 시 로컬 스토리지에 저장
-  useEffect(() => {
-    localStorage.setItem('formData', JSON.stringify(formData));
-  }, [formData]);
-
-  // 스텝 변경 시 로컬 스토리지에 저장
-  useEffect(() => {
-    localStorage.setItem('activeStep', activeStep);
-  }, [activeStep]);
 
   const handleNext = () => {
     if (activeStep < steps.length - 1) {
@@ -74,9 +62,6 @@ const RegisterStepper = () => {
     } else {
       // Handle form submission here
       alert('Form submitted');
-      // 폼 제출 후 로컬 스토리지 초기화
-      localStorage.removeItem('formData');
-      localStorage.removeItem('activeStep');
     }
   };
 
@@ -106,7 +91,7 @@ const RegisterStepper = () => {
       </Stepper>
 
       <Box mt={6}>
-        <StepContent step={activeStep} />
+        <StepContent step={activeStep} formData={formData} setFormData={setFormData} />
       </Box>
 
       <Box display="flex" justifyContent="space-between" mt={4}>
