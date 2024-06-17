@@ -57,12 +57,23 @@
     justify-content: space-between;
     width: 30px;
     height: 25px;
-    cursor: pointer;
+    position: fixed;
+    top: 2rem;
+    left: 1rem
+}
+.hamburgerArea {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 2.5%;
+    height: 4%;
     position: fixed;
     top: 2rem;
     left: 1rem;
-}
+    cursor: pointer;
 
+
+}
 .hamburger .bar {
     width: 100%;
     height: 3px;
