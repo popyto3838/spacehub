@@ -1,16 +1,16 @@
 import React, {useEffect, useState} from "react";
-import { Box, FormControl, FormLabel, Input, Select } from "@chakra-ui/react";
+import {Box, FormControl, FormLabel, Input, Select} from "@chakra-ui/react";
 import axios from "axios";
-import KakaoMap from "../../../component/KakaoMap.jsx";
 
-const RegisterPage1 = ({ formData, setFormData }) => {
+const RegisterPage1 = ({formData, setFormData}) => {
   const [typeLists, setTypeLists] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [popup, setPopup] = useState(false);
 
-  const handleTypeChange = (e) => setFormData({ ...formData, type: e.target.value });
-  const handleTitleChange = (e) => setFormData({ ...formData, title: e.target.value });
-  const handleSubTitleChange = (e) => setFormData({ ...formData, subTitle: e.target.value });
-  const handleLocationChange = (e) => setFormData({ ...formData, location: e.target.value });
+  const handleTypeChange = (e) => setFormData({...formData, type: e.target.value});
+  const handleTitleChange = (e) => setFormData({...formData, title: e.target.value});
+  const handleSubTitleChange = (e) => setFormData({...formData, subTitle: e.target.value});
+  const handleLocationChange = (e) => setFormData({...formData, location: e.target.value});
 
   useEffect(() => {
     axios.get(`/api/space/type/list`)
@@ -32,7 +32,7 @@ const RegisterPage1 = ({ formData, setFormData }) => {
     <Box>
       <FormControl mb={4}>
         <FormLabel htmlFor="space-type">공간 유형</FormLabel>
-        <Select id="space-type" onChange={handleTypeChange}>
+        <Select id="space-type" onChange={handleTypeChange} >
           {typeLists.map((typeList) => (
             <option key={typeList.typeListId} value={typeList.name}>
               {typeList.name}
@@ -47,11 +47,7 @@ const RegisterPage1 = ({ formData, setFormData }) => {
       </FormControl>
       <FormControl mb={4}>
         <FormLabel htmlFor="space-subtitle">공간 한 줄 소개</FormLabel>
-        <Input id="space-subtitle" onChange={handleSubTitleChange} />
-      </FormControl>
-      <FormControl mb={4}>
-        <FormLabel htmlFor="space-location">위치 정보</FormLabel>
-        <KakaoMap/>
+        <Input id="space-subtitle" onChange={handleSubTitleChange}/>
       </FormControl>
     </Box>
   );
