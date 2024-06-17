@@ -19,6 +19,7 @@ public class BoardServiceImpl implements BoardService {
 
     @Override
     public void insert(Board board) {
+
         mapper.insert(board);
     }
 

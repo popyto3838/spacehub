@@ -10,7 +10,7 @@ public interface BoardMapper {
 
     @Insert("""
             INSERT INTO BOARD (MEMBER_ID, TITLE, CONTENT, CATEGORY)
-            VALUES (1, #{title}, #{content}, #{category})
+            VALUES (#{memberId}, #{title}, #{content}, #{category})
             """)
     int insert(Board board);
 
