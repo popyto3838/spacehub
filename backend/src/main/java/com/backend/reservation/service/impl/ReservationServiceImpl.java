@@ -33,7 +33,6 @@ public class ReservationServiceImpl implements ReservationService {
 
     @Override
     public void insert(Reservation reservation) {
-        log.info("============reservation============={}",reservation);
         reservation.setStatus(ReservationStatus.ACCEPT);
         reservationMapper.insert(reservation);
     }
@@ -45,6 +44,6 @@ public class ReservationServiceImpl implements ReservationService {
 
     @Override
     public Reservation view(Integer reservationId) {
-        return reservationMapper.selectByReservationId(reservationId)           ;
+        return reservationMapper.selectByReservationId(reservationId);
     }
 }
