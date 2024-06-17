@@ -20,7 +20,6 @@ public class ReservationController {
 
     @GetMapping("/list")
     public List<Reservation> list() {
-        log.info("=========리스트 호출==============");
         return reservationService.list();
     }
 
