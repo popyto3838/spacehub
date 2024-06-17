@@ -34,4 +34,10 @@ public class OptionListServiceImpl implements OptionListService {
         mapper.deleteByOptionId(optionListId);
     }
 
+    @Override
+    public void update(OptionList optionList) {
+
+        mapper.update(optionList);
+    }
+
 }

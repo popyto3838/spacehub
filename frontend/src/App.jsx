@@ -7,7 +7,6 @@ import { BoardList } from "./page/board/BoardList.jsx";
 import { BoardView } from "./page/board/BoardView.jsx";
 import { BoardEdit } from "./page/board/BoardEdit.jsx";
 import RegisterStepper from "./page/host/register/RegisterStepper.jsx";
-
 import { Reserve } from "./page/Reserve.jsx";
 import { SpaceOption } from "./page/admin/space_config/SpaceOption.jsx";
 import { MemberSignup } from "./page/member/MemberSignup.jsx";
@@ -18,6 +17,7 @@ import { MemberLogin } from "./page/member/MemberLogin.jsx";
 import { MemberEdit } from "./page/member/MemberEdit.jsx";
 import { NaverLoginHandler } from "./page/member/NaverLoginHandler.jsx";
 import { LoginProvider } from "./component/LoginProvider.jsx";
+import {SpaceType} from "./page/admin/space_config/SpaceType.jsx";
 import axios from "axios"; // axios interceptor 설정
 
 // axios interceptor 설정
@@ -50,6 +50,7 @@ function App() {
         { path: "board/:boardId/edit", element: <BoardEdit /> },
         { path: "space/register", element: <RegisterStepper /> },
         { path: "space/option", element: <SpaceOption /> },
+        { path: "space/type", element: <SpaceType/> },
         { path: "member/signup", element: <MemberSignup /> },
         { path: "member/naver", element: <NaverLogin /> },
         { path: "member/list", element: <MemberList /> },
@@ -70,5 +71,6 @@ function App() {
     </>
   );
 }
+
 
 export default App;

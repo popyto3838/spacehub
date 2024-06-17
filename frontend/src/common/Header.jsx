@@ -16,10 +16,13 @@ const Header = () => {
             <span> <p className="headerTitle title2">hub</p></span>
 
             <header className="header">
-                <div className="hamburger" onClick={toggleMenu}>
-                    <div className={isOpen ? 'bar open' : 'bar'}></div>
-                    <div className={isOpen ? 'bar open' : 'bar'}></div>
-                    <div className={isOpen ? 'bar open' : 'bar'}></div>
+                <div className="hamburgerArea" onClick={toggleMenu}>
+                    <div className="hamburger">
+
+                        <div className={isOpen ? 'bar open' : 'bar'}></div>
+                        <div className={isOpen ? 'bar open' : 'bar'}></div>
+                        <div className={isOpen ? 'bar open' : 'bar'}></div>
+                    </div>
                 </div>
                 <nav className={isOpen ? 'menu open' : 'menu'}>
                     <ul>
@@ -28,6 +31,9 @@ const Header = () => {
                         <li><a href="/member/signup">회원가입</a></li>
                         <li><a href="/board/list">게시판</a></li>
                         <li><a href="#contact">공간예약</a></li>
+                        <li><a href="/space/register">공간등록</a></li>
+                        <li><a href="/space/type">공간유형</a></li>
+                        <li><a href="/space/option">공간옵션</a></li>
                     </ul>
                 </nav>
             </header>
