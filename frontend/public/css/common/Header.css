@@ -4,15 +4,18 @@
     font-weight: 700;
     font-style: normal;
 }
+
 @font-face {
     font-family: 'MangoDdobak-B';
     src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/2405-3@1.1/MangoDdobak-B.woff2') format('woff2');
     font-weight: 700;
     font-style: normal;
 }
+
 * {
     margin: 0;
 }
+
 .header {
     border-bottom: 1px solid #bbbbbb;
     height: 12vh;
@@ -21,28 +24,31 @@
     align-items: center;
     background: #252424;
 }
+
 .headerImg {
-    height: 80%; width: 5%;
+    height: 80%;
+    width: 5%;
     margin-right: 1%;
     cursor: pointer;
 }
-.header  {
+
+.header {
     color: #8fffa2;
     font-size: 2rem;
     font-family: 'TTLaundryGothicB';
 }
-.title1{
+
+.title1 {
     border-radius: 10px;
     color: #ffffff;
     cursor: pointer;
 }
-.title2{
+
+.title2 {
     color: #f8c953;
     border-radius: 10px;
     cursor: pointer;
 }
-
-
 
 
 .hamburger {
@@ -67,7 +73,6 @@
 }
 
 
-
 .hamburger .bar.open:nth-child(1) {
     transform: rotate(45deg) translateY(15px);
 }
@@ -85,7 +90,7 @@
     position: fixed;
     top: 20%;
     left: 0;
-    height: 40%;
+    height: 70%;
     width: 15%;
     background-color: #ffd14f;
     color: white;
@@ -118,6 +123,7 @@
     text-decoration: none;
     font-size: 1.2rem;
 }
+
 .menu ul li a:hover {
     color: #bebebe;
     transition: all 0.2s;
