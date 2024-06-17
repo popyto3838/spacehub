@@ -4,6 +4,8 @@ import com.backend.board.domain.Board;
 import com.backend.board.service.BoardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
@@ -16,9 +18,9 @@ public class BoardController {
     private final BoardService boardService;
 
     @PostMapping("write")
-    public void write(@RequestBody Board board) {
-        System.out.println("board = " + board);
-        boardService.insert(board);
+    @PreAuthorize("isAuthenticated()")
+    public void write(@RequestBody Board board, Authentication authentication) {
+        boardService.insert(board, authentication);
 
     }
 
@@ -33,6 +35,7 @@ public class BoardController {
     @GetMapping("{boardId}")
     public ResponseEntity view(@PathVariable Integer boardId) {
         Board board = boardService.view(boardId);
+
         if (board == null) {
             return ResponseEntity.notFound().build();
         }

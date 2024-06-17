@@ -6,6 +6,7 @@ export const LoginContext = createContext(null);
 export function LoginProvider({ children }) {
   const [id, setId] = useState("");
   const [nickname, setNickname] = useState("");
+  const [memberId, setMemberId] = useState("");
   const [expired, setExpired] = useState(0);
   const [authority, setAuthority] = useState("");
 
