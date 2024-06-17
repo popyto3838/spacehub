@@ -3,6 +3,8 @@ import {useDaumPostcodePopup} from 'react-daum-postcode';
 import {Input, Button, FormControl, FormLabel, Box} from '@chakra-ui/react';
 
 function AddressSearch({onAddressSelect}) {
+  // Daum Postcode Popup 창 호출
+  const open = useDaumPostcodePopup();
 
   const [address, setAddress] = useState({
     zonecode: '',

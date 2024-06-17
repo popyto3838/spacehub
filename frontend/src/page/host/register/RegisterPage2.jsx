@@ -1,8 +1,9 @@
 import React from "react";
-import {Box, FormControl, FormLabel} from "@chakra-ui/react";
+import {Box, FormControl, FormLabel, Heading} from "@chakra-ui/react";
 import AddressSearch from "../../../component/AddressSearch.jsx";
 
 const RegisterPage2 = ({formData, setFormData}) => {
+  const handleLocationChange = (e) => setFormData({...formData, location: e.target.value});
 
   const postCodeStyle = {
     bgColor: "", 			// 바탕 배경색
@@ -21,11 +22,10 @@ const RegisterPage2 = ({formData, setFormData}) => {
   }
 
   return (
-    <Box >
-      <FormControl mb={4}>
-        <FormLabel>주소</FormLabel>
-        <AddressSearch autoClose onAddressSelect={handleAddressSelect} theme={postCodeStyle}/>
-      </FormControl>
+    <Box>
+      <Heading>등록 공간 주소</Heading>
+      <AddressSearch onChange={handleLocationChange} autoClose onAddressSelect={handleAddressSelect}
+                     theme={postCodeStyle}/>
     </Box>
   );
 };

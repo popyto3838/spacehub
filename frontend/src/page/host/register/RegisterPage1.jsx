@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {Box, FormControl, FormLabel, Input, Select} from "@chakra-ui/react";
+import {Box, FormControl, FormLabel, Heading, Input, Select} from "@chakra-ui/react";
 import axios from "axios";
 
 const RegisterPage1 = ({formData, setFormData}) => {
@@ -10,7 +10,6 @@ const RegisterPage1 = ({formData, setFormData}) => {
   const handleTypeChange = (e) => setFormData({...formData, type: e.target.value});
   const handleTitleChange = (e) => setFormData({...formData, title: e.target.value});
   const handleSubTitleChange = (e) => setFormData({...formData, subTitle: e.target.value});
-  const handleLocationChange = (e) => setFormData({...formData, location: e.target.value});
 
   useEffect(() => {
     axios.get(`/api/space/type/list`)
@@ -30,6 +29,7 @@ const RegisterPage1 = ({formData, setFormData}) => {
 
   return (
     <Box>
+      <Heading>공간 정보</Heading>
       <FormControl mb={4}>
         <FormLabel htmlFor="space-type">공간 유형</FormLabel>
         <Select id="space-type" onChange={handleTypeChange} >
