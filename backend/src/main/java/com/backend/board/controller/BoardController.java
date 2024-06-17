@@ -17,7 +17,9 @@ public class BoardController {
 
     @PostMapping("write")
     public void write(@RequestBody Board board) {
+        System.out.println("board = " + board);
         boardService.insert(board);
+
     }
 
     // todo: 게시판 페이징

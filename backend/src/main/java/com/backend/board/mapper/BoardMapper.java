@@ -9,16 +9,40 @@ import java.util.List;
 public interface BoardMapper {
 
     @Insert("""
-            INSERT INTO BOARD (MEMBER_ID, TITLE, CONTENT, CATEGORY)
-            VALUES (1, #{title}, #{content}, #{category})
+            INSERT INTO BOARD (TITLE, CONTENT, MEMBER_ID, CATEGORY_ID)
+            VALUES (#{title}, #{content}, 1 , #{categoryId})
             """)
+//    @Options(useGeneratedKeys = true, keyProperty = "categoryId")
     int insert(Board board);
 
     @Select("""
-            SELECT *
-            FROM BOARD
+            <script>
+            SELECT B.BOARD_ID, B.VIEWS, B.TITLE, C.CATEGORY_NAME, M.NICKNAME
+            FROM BOARD B LEFT JOIN MEMBER M ON B.MEMBER_ID = M.MEMBER_ID
+                         LEFT JOIN CATEGORY C ON B.CATEGORY_ID = C.CATEGORY_ID
+                <trim prefix="WHERE" prefixOverrides="OR">
+                    <if test="searchType != null">
+                        <bind name="pattern" value="'%' + searchKeyword + '%'" />
+                        <if test="searchType == 'titleContent'">
+                            OR TITLE LIKE #{pattern}
+                            OR CONTENT LIKE #{pattern}
+                        </if>
+                        <if test="searchType == 'title'">
+                            OR TITLE LIKE #{pattern}
+                        </if>
+                        <if test="searchType == 'content'">
+                            OR CONTENT LIKE #{pattern}
+                        </if>
+                        <if test="searchType == 'nickname'">
+                            OR NICKNAME LIKE #{pattern}
+                        </if>
+                    </if>
+                </trim>
+            ORDER BY BOARD_ID DESC
+            LIMIT #{offset}, 10
+            </script>
             """)
-    List<Board> selectAll();
+    List<Board> selectAllPaging(Integer offset, String searchType, String searchKeyword);
 
     @Select("""
             SELECT *
@@ -47,35 +71,6 @@ public interface BoardMapper {
             WHERE BOARD_ID = #{boardId}
             """)
     int updateViews(Integer boardId);
-
-
-    @Select("""
-            <script>
-            SELECT *
-            FROM BOARD
-                <trim prefix="WHERE" prefixOverrides="OR">
-                    <if test="searchType != null">
-                        <bind name="pattern" value="'%' + searchKeyword + '%'" />
-                        <if test="searchType == 'titleContent'">
-                            OR TITLE LIKE #{pattern}
-                            OR CONTENT LIKE #{pattern}
-                        </if>
-                        <if test="searchType == 'title'">
-                            OR TITLE LIKE #{pattern}
-                        </if>
-                        <if test="searchType == 'content'">
-                            OR CONTENT LIKE #{pattern}
-                        </if>
-                        <if test="searchType == 'nickname'">
-                            OR NICKNAME LIKE #{pattern}
-                        </if>
-                    </if>
-                </trim>
-            ORDER BY BOARD_ID DESC
-            LIMIT #{offset}, 10
-            </script>
-            """)
-    List<Board> selectAllPaging(Integer offset, String searchType, String searchKeyword);
 
     @Select("""
             SELECT COUNT(*)
@@ -108,4 +103,5 @@ public interface BoardMapper {
             </script>
             """)
     Integer countAllWithSearch(String searchType, String searchKeyword);
+
 }

@@ -18,19 +18,18 @@ import { useNavigate } from "react-router-dom";
 export function BoardWrite() {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
-  const [category, setCategory] = useState("");
+  const [categoryId, setCategoryId] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
   const navigate = useNavigate();
   const toast = useToast();
   const { isOpen, onClose, onOpen } = useDisclosure();
-
   const account = useContext(LoginContext);
 
   function handleClickSave() {
     setIsLoading(true);
     axios
-      .post("/api/board/write", { title, content })
+      .post("/api/board/write", { title, content, categoryId })
       .then((res) => {
         toast({
           status: "success",
@@ -52,7 +51,7 @@ export function BoardWrite() {
   }
 
   let isDisabledButton = false;
-  if (category === "") {
+  if (categoryId === "") {
     isDisabledButton = true;
   }
   if (title.trim().length === 0) {
@@ -70,12 +69,12 @@ export function BoardWrite() {
       <Box>
         <Box>
           <Select
-            value={category}
-            onChange={(e) => setCategory(e.target.value)}
+            value={categoryId}
+            onChange={(e) => setCategoryId(e.target.value)}
             placeholder={"게시판을 선택해 주세요."}
           >
-            <option value={"notice"}>공지사항</option>
-            <option value={"faq"}>FAQ</option>
+            <option value={"1"}>공지사항</option>
+            <option value={"2"}>FAQ</option>
           </Select>
         </Box>
         <Box>
@@ -99,7 +98,7 @@ export function BoardWrite() {
         <Box>
           <FormControl>
             <FormLabel>작성자</FormLabel>
-            {/*<Input value={account.nickName} readOnly />*/}
+            <Input value={account.nickname} readOnly />
           </FormControl>
         </Box>
         <Box>

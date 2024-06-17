@@ -113,6 +113,9 @@ export function BoardList() {
           </Button>
         </Box>
       </Flex>
+      <Box>
+        <Button onClick={() => navigate("/board/write")}>글쓰기</Button>
+      </Box>
       {boardList.length === 0 && <Center>조회 결과가 없습니다.</Center>}
       {boardList.length > 0 && (
         <Box>
@@ -139,6 +142,7 @@ export function BoardList() {
                   <Td>{board.views}</Td>
                   <Td>{board.title}</Td>
                   <Td>{board.nickname}</Td>
+                  <Td>{board.category}</Td>
                 </Tr>
               ))}
             </Tbody>
