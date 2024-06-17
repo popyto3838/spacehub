@@ -49,13 +49,11 @@ function App() {
   ]);
   return (
     <>
-      <ThemeProvider theme={theme}>
-        <LoginProvider>
-          <ChakraProvider>
-            <RouterProvider router={router}/>
-          </ChakraProvider>
-        </LoginProvider>
-      </ThemeProvider>
+      <LoginProvider>
+        <ChakraProvider>
+          <RouterProvider router={router}/>
+        </ChakraProvider>
+      </LoginProvider>
     </>
   );
 }
