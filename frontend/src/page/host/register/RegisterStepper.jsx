@@ -17,6 +17,7 @@ import RegisterPage1 from "./RegisterPage1.jsx";
 import RegisterPage2 from "./RegisterPage2.jsx";
 import RegisterPage3 from "./RegisterPage3.jsx";
 import RegisterPage4 from "./RegisterPage4.jsx";
+import RegisterPage5 from "./RegisterPage5.jsx";
 
 // Stepper steps definition
 const steps = [
@@ -24,6 +25,7 @@ const steps = [
   {title: 'Step 2', description: '상세 정보'},
   {title: 'Step 3', description: '규칙 설정'},
   {title: 'Step 4', description: '숫자 설정'},
+  {title: 'Step 5', description: '사진 등록'},
 ];
 
 const StepContent = ({step, formData, setFormData}) => {
@@ -36,6 +38,8 @@ const StepContent = ({step, formData, setFormData}) => {
       return <RegisterPage3 formData={formData} setFormData={setFormData}/>;
     case 3:
       return <RegisterPage4 formData={formData} setFormData={setFormData}/>;
+    case 4:
+      return <RegisterPage5 formData={formData} setFormData={setFormData}/>;
     default:
       return null;
   }
