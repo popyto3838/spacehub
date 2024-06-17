@@ -5,11 +5,34 @@ import axios from "axios";
 const RegisterPage1 = ({formData, setFormData}) => {
   const [typeLists, setTypeLists] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [popup, setPopup] = useState(false);
 
-  const handleTypeChange = (e) => setFormData({...formData, type: e.target.value});
-  const handleTitleChange = (e) => setFormData({...formData, title: e.target.value});
-  const handleSubTitleChange = (e) => setFormData({...formData, subTitle: e.target.value});
+  const handleTypeChange = (e) => {
+    setFormData({
+      ...formData,
+      page1Data: {
+        ...(formData.page1Data || {}),
+        type: e.target.value,
+      },
+    });
+  };
+  const handleTitleChange = (e) => {
+    setFormData({
+      ...formData,
+      page1Data: {
+        ...(formData.page1Data || {}), // formData.page1Data가 존재하지 않을 경우 빈 객체로 초기화
+        title: e.target.value,
+      },
+    });
+  };
+  const handleSubTitleChange = (e) => {
+    setFormData({
+      ...formData,
+      page1Data: {
+        ...(formData.page1Data || {}), // formData.page1Data가 존재하지 않을 경우 빈 객체로 초기화
+        subTitle: e.target.value,
+      },
+    });
+  };
 
   useEffect(() => {
     axios.get(`/api/space/type/list`)
@@ -32,7 +55,11 @@ const RegisterPage1 = ({formData, setFormData}) => {
       <Heading>공간 정보</Heading>
       <FormControl mb={4}>
         <FormLabel htmlFor="space-type">공간 유형</FormLabel>
-        <Select id="space-type" onChange={handleTypeChange} >
+        <Select
+          id="space-type"
+          value={(formData.page1Data && formData.page1Data.type) || ''} // formData.page1Data가 존재할 때만 type 값을 사용
+          onChange={handleTypeChange}
+        >
           {typeLists.map((typeList) => (
             <option key={typeList.typeListId} value={typeList.name}>
               {typeList.name}
@@ -43,11 +70,19 @@ const RegisterPage1 = ({formData, setFormData}) => {
       {/* ... (나머지 입력 필드: title, subTitle, location) */}
       <FormControl mb={4}>
         <FormLabel htmlFor="space-title">공간 이름</FormLabel>
-        <Input id="space-title" onChange={handleTitleChange} />
+        <Input
+          id="space-title"
+          value={(formData.page1Data && formData.page1Data.title) || ''} // formData.page1Data가 존재할 때만 title 값을 사용
+          onChange={handleTitleChange}
+        />
       </FormControl>
       <FormControl mb={4}>
         <FormLabel htmlFor="space-subtitle">공간 한 줄 소개</FormLabel>
-        <Input id="space-subtitle" onChange={handleSubTitleChange}/>
+        <Input
+          id="space-subtitle"
+          value={(formData.page1Data && formData.page1Data.subTitle) || ''} // formData.page1Data가 존재할 때만 subTitle 값을 사용
+          onChange={handleSubTitleChange}
+        />
       </FormControl>
     </Box>
   );
