@@ -1,8 +1,12 @@
-import DaumPostcode from 'react-daum-postcode';
-import {Box} from "@chakra-ui/react";
+import DaumPostcode, {useDaumPostcodePopup} from 'react-daum-postcode';
+import {Box, Button} from "@chakra-ui/react";
+import {postcodeScriptUrl} from "react-daum-postcode/lib/loadPostcode.js";
 
 const KakaoPostcode = () => {
 
+  const open = useDaumPostcodePopup(postcodeScriptUrl);
+
+  // Postcode css
   const themeObj = {
     bgColor: "", 			// 바탕 배경색
     searchBgColor: "", 		// 검색창 배경색
@@ -15,10 +19,28 @@ const KakaoPostcode = () => {
     outlineColor: "" 		// 테두리
   };
 
+  const handleComplete = (data) => {
+    let fullAddress = data.address;
+    let extraAddress = '';
 
-  return <Box>
-    <DaumPostcode  theme={themeObj}/>
-  </Box>
+    if (data.addressType === 'R') {
+      if (data.bname !== '') {
+        extraAddress += data.bname;
+      }
+      if (data.buildingName !== '') {
+        extraAddress += extraAddress !== '' ? `, ${data.buildingName}` : data.buildingName;
+      }
+      fullAddress += extraAddress !== '' ? ` ${extraAddress}` : '';
+    }
+  };
+
+  const handleClick = () => {
+    open({onComplete: handleComplete})
+  };
+
+  return <Button onClick={handleClick}>
+    주소검색
+  </Button>
 }
 
 export default KakaoPostcode;

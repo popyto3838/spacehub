@@ -17,6 +17,7 @@ const KakaoMap = () => {
       level: 3
     };
     const map = new kakao.maps.Map(container, options); // 지도 생성 및 객체 관리
+
   }, []);
 
   return <div id="map" style={{width: '500px', height: '400px'}}></div>;
