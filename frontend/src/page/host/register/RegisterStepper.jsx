@@ -11,7 +11,7 @@ import {
   StepStatus,
   StepTitle,
   Stepper,
-  useSteps,
+  useSteps, useToast,
 } from '@chakra-ui/react';
 import RegisterPage1 from "./RegisterPage1.jsx";
 import RegisterPage2 from "./RegisterPage2.jsx";
@@ -49,6 +49,8 @@ const StepContent = ({step, formData, setFormData}) => {
 const RegisterStepper = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const toast = useToast();
+
   const [activeStep, setActiveStep] = useState(() => {
     const storedStep = sessionStorage.getItem('activeStep');
     return storedStep ? parseInt(storedStep) : 0;
@@ -56,29 +58,20 @@ const RegisterStepper = () => {
 
   const [formData, setFormData] = useState(() => {
     const storedData = sessionStorage.getItem('formData');
-    return storedData
-      ? JSON.parse(storedData)
-      : {
-        page1Data: {
-          type: '',
-          title: '',
-          subTitle: '',
-        },
-        page2Data: {
-          location: '',
-        },
-        page3Data: {
-          introduce: '',
-          facility: '',
-          notice: '',
-        },
-        page4Data: {
-          price: '',
-          capacity: '',
-          floor: '',
-          parkingSpace: '',
-        },
-      };
+    return storedData ? JSON.parse(storedData) : {
+      page1Data: {
+        type: '', title: '', subTitle: ''
+      },
+      page2Data: {
+        location: ''
+      },
+      page3Data: {
+        introduce: '', facility: '', notice: ''
+      },
+      page4Data: {
+        price: '', capacity: '', floor: '', parkingSpace: ''
+      },
+    };
   });
 
   const {steps: chakraSteps} = useSteps({initialStep: activeStep});
@@ -91,7 +84,13 @@ const RegisterStepper = () => {
       // Form submission 완료 후 sessionStorage 초기화
       sessionStorage.removeItem('formData');
       sessionStorage.removeItem('activeStep');
-      alert('Form submitted');
+      toast({
+        title: "공간 등록을 완료하였습니다.",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      })
+      navigate(`/`)
     }
   };
 
