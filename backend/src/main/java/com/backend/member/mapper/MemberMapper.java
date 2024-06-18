@@ -94,7 +94,7 @@ public interface MemberMapper {
             FROM MEMBER 
             WHERE EMAIL = #{email}
             """)
-    Member selectByEmail3(String email);
+    int selectByEmail2(Member member);
 
 
     @Select("""
@@ -103,5 +103,27 @@ public interface MemberMapper {
             WHERE M.MEMBER_ID = #{memberId}
             """)
     List<String> selectByMemberId(Integer memberId);
+
+
+    @Select("""
+        SELECT * 
+        FROM MEMBER 
+        WHERE email = #{email}
+    """)
+    Member findByEmail(String email);
+
+    @Insert("""
+        INSERT INTO MEMBER (EMAIL, PASSWORD, NICKNAME, NAVER_ID, INPUT_DT, AUTH, MOBILE)
+        VALUES (#{email}, #{password}, #{nickname}, #{naverId}, #{inputDt}, #{auth} ,#{mobile})
+    """)
+    @Options(useGeneratedKeys = true, keyProperty = "memberId")
+    void insertMember(Member member);
+
+    @Insert("""
+           INSERT INTO MEMBER (EMAIL, PASSWORD, NICKNAME , AUTH_NAME)
+            VALUES (#{email}, #{password}, #{nickname} , 'HOST')
+            """)
+    @Options(useGeneratedKeys = true, keyProperty = "memberId")
+    int inserthost(Member member);
 
 }

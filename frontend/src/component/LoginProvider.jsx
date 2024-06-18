@@ -22,30 +22,51 @@ export function LoginProvider({ children }) {
     return Date.now() < expired * 1000;
   }
 
+  function isLoggedOut() {
+    return Date.now() > expired * 1000;
+  }
+
+
   function hasAccess(param) {
     return id == param;
   }
 
-  function isAdmin() {}
+  function isAdmin() {
+    return authority.includes("ADMIN");
+  }
 
-  function isSupplier() {}
+  function isHost() {
+    return authority.includes("HOST");
+  }
 
-  function isBuyer() {}
+  function isUser() {
+    return authority.includes("USER");
+  }
 
   function login(token) {
     localStorage.setItem("token", token);
     const payload = jwtDecode(token);
     setExpired(payload.exp);
     setId(payload.sub);
-    setNickname(payload.nickname);
     setAuthority(payload.scope.split(" "));
   }
   function logout() {
     localStorage.removeItem("token");
+    localStorage.removeItem("com.naver.nid.oauth.state_token");
     setExpired(0);
     setId("");
     setNickname("");
     setAuthority([]);
+
+  }
+
+  function switchHost(){
+    setAuthority(["HOST"])
+  }
+
+  function switchUser(){
+    setAuthority(["USER"])
+
   }
 
   return (
@@ -56,10 +77,11 @@ export function LoginProvider({ children }) {
         login: login,
         logout: logout,
         isLoggedIn: isLoggedIn,
+        isLoggedOut:isLoggedOut,
         hasAccess: hasAccess,
         isAdmin: isAdmin,
-        isSupplier: isSupplier,
-        isBuyer: isBuyer,
+        isHost: isHost,
+        isUser: isUser,
       }}
     >
       {children}

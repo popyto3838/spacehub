@@ -3,8 +3,8 @@ import { useEffect } from "react";
 
 export const NaverLogin = () => {
   const { naver } = window;
-  const NAVER_CLIENT_ID = "GMWYa94LweY90AY3Nm9J"; // 발급 받은 Client ID 입력
-  const NAVER_CALLBACK_URL = "http://localhost:5173/auth/naverlogin"; // 작성했던 Callback URL 입력
+  const NAVER_CLIENT_ID = "Nm_O1bmeAHYWLjjBZm6e"; // 발급 받은 Client ID 입력
+  const NAVER_CALLBACK_URL = "http://localhost:5173/member/naverlogin"; // 작성했던 Callback URL 입력
 
   // 네이버 로그인 기능 및 버튼 구현
   const naverLogin = new naver.LoginWithNaverId({
@@ -13,8 +13,8 @@ export const NaverLogin = () => {
     isPopup: false, // 네이버 로그인 확인 창을 팝업으로 띄울지 여부
     loginButton: {
       color: "white", // green, white
-      type: 1, // 1: 작은버튼, 2: 중간버튼, 3: 큰 버튼
-      height: 5, // 크기는 높이로 결정한다.
+      type: 3, // 1: 작은버튼, 2: 중간버튼, 3: 큰 버튼
+      height: 444, // 크기는 높이로 결정한다.
     },
   });
 

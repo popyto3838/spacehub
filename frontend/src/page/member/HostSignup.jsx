@@ -1,3 +1,4 @@
+import {useState} from "react";
 import {
   Box,
   Button,
@@ -7,16 +8,14 @@ import {
   Input,
   InputGroup,
   InputRightElement,
-  Select,
-  useToast,
+  useToast
 } from "@chakra-ui/react";
-import { useState } from "react";
+import {useNavigate} from "react-router-dom";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
 import TimerComponent from "./TimerComponent.jsx";
 import NaverLogin from "./NaverLogin.jsx";
 
-export function MemberSignup() {
+export function HostSignup() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [nickname, setNickname] = useState("");
@@ -36,7 +35,7 @@ export function MemberSignup() {
   function handleSignup() {
     setIsLoading(true);
     axios
-      .post("/api/member/signup",
+      .post("/api/member/hostsignup",
         {
           email: email,
           password: password,
@@ -212,17 +211,17 @@ export function MemberSignup() {
             </Button>
             {isCodeSent && (
               <Box>
-              <InputGroup>
-                <Input
-                  type={"text"}
-                  onChange={(e) => {
-                    setInputCode(e.target.value);
-                  }}
-                />
-                <InputRightElement w="75px" mr={1}>
-                  <Button onClick={confirmNumber}>이메일 인증</Button>
-                </InputRightElement>
-              </InputGroup>
+                <InputGroup>
+                  <Input
+                    type={"text"}
+                    onChange={(e) => {
+                      setInputCode(e.target.value);
+                    }}
+                  />
+                  <InputRightElement w="75px" mr={1}>
+                    <Button onClick={confirmNumber}>이메일 인증</Button>
+                  </InputRightElement>
+                </InputGroup>
                 {expirationTime && <TimerComponent expirationTime={expirationTime} />}
               </Box>
             )}
@@ -271,7 +270,7 @@ export function MemberSignup() {
           <Button
             mt={13}
             isDisabled={isDisabled}
-            colorScheme="teal"
+            colorScheme="purple"
             width="full"
             onClick={handleSignup}
           >
