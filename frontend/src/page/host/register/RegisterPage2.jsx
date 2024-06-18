@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import { Box, Heading, FormControl, FormLabel, Input, Button } from "@chakra-ui/react";
+import {Box, FormControl, FormLabel, Heading, Input} from "@chakra-ui/react";
 import AddressSearch from "../../../component/AddressSearch.jsx";
 import KakaoMap from "../../../component/KakaoMap.jsx";
 
@@ -18,14 +18,8 @@ const RegisterPage2 = ({ formData, setFormData }) => {
     setFormData({
       ...formData,
       page2Data: {
-        ...(formData.page2Data || {}),
-        location: newAddress.address + newAddress.extraAddress,
-        zonecode: newAddress.zonecode,
-        address: newAddress.address,
-        detailAddress: newAddress.detailAddress,
-        extraAddress: newAddress.extraAddress,
-        latitude: newAddress.latitude,
-        longitude: newAddress.longitude,
+        ...newAddress,
+        location: newAddress.address + (newAddress.extraAddress || ''), // location 필드 업데이트
       },
     });
   };
@@ -46,7 +40,6 @@ const RegisterPage2 = ({ formData, setFormData }) => {
   useEffect(() => {
     if (detailedAddress.address) {
       const fullAddress = detailedAddress.address + (detailedAddress.extraAddress || '');
-      // KakaoMap 컴포넌트로 주소 데이터를 전달하여 지도 업데이트
       window.dispatchEvent(new CustomEvent('updateMap', { detail: fullAddress }));
     }
   }, [detailedAddress]);
@@ -56,7 +49,7 @@ const RegisterPage2 = ({ formData, setFormData }) => {
       <Heading>등록 공간 주소</Heading>
       <FormControl mb={4}>
         <FormLabel htmlFor="postcode">우편번호</FormLabel>
-        <Input id="postcode" name="zonecode" placeholder="우편번호" value={detailedAddress.zonecode} onChange={handleInputChange} />
+        <Input id="postcode" name="postcode" placeholder="우편번호" value={detailedAddress.zonecode} onChange={handleInputChange} />
         <AddressSearch onAddressChange={handleAddressChange} />
       </FormControl>
       <FormControl mb={4}>
@@ -77,7 +70,7 @@ const RegisterPage2 = ({ formData, setFormData }) => {
         <FormLabel htmlFor="extraAddress">참고항목</FormLabel>
         <Input id="extraAddress" name="extraAddress" placeholder="참고항목" value={detailedAddress.extraAddress}  />
       </FormControl>
-      <KakaoMap address={detailedAddress.address + (detailedAddress.extraAddress || '')} />
+      <KakaoMap address={detailedAddress.address + (detailedAddress.extraAddress || '')} latitude={detailedAddress.latitude} longitude={detailedAddress.longitude} />
     </Box>
   );
 };

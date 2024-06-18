@@ -69,7 +69,7 @@ const RegisterStepper = () => {
         type: '', title: '', subTitle: ''
       },
       page2Data: {
-        location: '', zonecode: '', address: '', detailAddress: '', extraAddress: '', latitude: '', longitude: ''
+        location: '', postcode: '', address: '', detailAddress: '', extraAddress: '', latitude: '', longitude: ''
       },
       page3Data: {
         introduce: '', facility: '', notice: ''
