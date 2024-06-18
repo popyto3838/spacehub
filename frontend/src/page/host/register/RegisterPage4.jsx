@@ -1,60 +1,74 @@
 import React, { useState } from "react";
 import {
-  Box, Flex,
+  Box,
+  Flex,
   FormControl,
-  FormLabel, NumberDecrementStepper, NumberIncrementStepper, NumberInput, NumberInputField, NumberInputStepper,
+  FormLabel,
+  NumberDecrementStepper,
+  NumberIncrementStepper,
+  NumberInput,
+  NumberInputField,
+  NumberInputStepper,
   Slider,
   SliderFilledTrack,
   SliderThumb,
-  SliderTrack
+  SliderTrack,
 } from "@chakra-ui/react";
 
 const RegisterPage4 = ({ formData, setFormData }) => {
   const [priceInput, setPriceInput] = useState(formData.page4Data?.price || 0);
-  const [capacityInput, setCapacityInput] = useState(formData.page4Data?.capacity || 0);
+  const [capacityInput, setCapacityInput] = useState(
+    formData.page4Data?.capacity || 0
+  );
   const [floorInput, setFloorInput] = useState(formData.page4Data?.floor || 0);
-  const [parkingSpaceInput, setParkingSpaceInput] = useState(formData.page4Data?.parkingSpace || 0);
+  const [parkingSpaceInput, setParkingSpaceInput] = useState(
+    formData.page4Data?.parkingSpace || 0
+  );
 
-  const handlePriceChange = (value) => setPriceInput(value);
-  const handlePriceBlur = () => {
+  const handlePriceChange = (valueString) => {
+    const value = Number(valueString);
+    setPriceInput(value);
     setFormData({
       ...formData,
       page4Data: {
         ...(formData.page4Data || {}),
-        price: priceInput,
+        price: value,
       },
     });
   };
 
-  const handleCapacityChange = (value) => setCapacityInput(value);
-  const handleCapacityBlur = () => {
+  const handleCapacityChange = (valueString) => {
+    const value = Number(valueString);
+    setCapacityInput(value);
     setFormData({
       ...formData,
       page4Data: {
         ...(formData.page4Data || {}),
-        capacity: capacityInput,
+        capacity: value,
       },
     });
   };
 
-  const handleFloorChange = (value) => setFloorInput(value);
-  const handleFloorBlur = () => {
+  const handleFloorChange = (valueString) => {
+    const value = Number(valueString);
+    setFloorInput(value);
     setFormData({
       ...formData,
       page4Data: {
         ...(formData.page4Data || {}),
-        floor: floorInput,
+        floor: value,
       },
     });
   };
 
-  const handleParkingSpaceChange = (value) => setParkingSpaceInput(value);
-  const handleParkingSpaceBlur = () => {
+  const handleParkingSpaceChange = (valueString) => {
+    const value = Number(valueString);
+    setParkingSpaceInput(value);
     setFormData({
       ...formData,
       page4Data: {
         ...(formData.page4Data || {}),
-        parkingSpace: parkingSpaceInput,
+        parkingSpace: value,
       },
     });
   };
@@ -71,6 +85,8 @@ const RegisterPage4 = ({ formData, setFormData }) => {
             max={1000000}
             step={1000}
             onChange={handlePriceChange}
+            onFocus={(e) => e.target.select()}
+            focusThumbOnChange={false}
           >
             <SliderTrack>
               <SliderFilledTrack />
@@ -83,8 +99,7 @@ const RegisterPage4 = ({ formData, setFormData }) => {
             maxW="120px"
             ml="2rem"
             value={priceInput}
-            onChange={(valueString) => handlePriceChange(Number(valueString))}
-            onBlur={handlePriceBlur}
+            onChange={handlePriceChange}
           >
             <NumberInputField />
             <NumberInputStepper>
@@ -100,10 +115,11 @@ const RegisterPage4 = ({ formData, setFormData }) => {
           <Slider
             flex="1"
             value={capacityInput}
-            min={0}
-            max={100}
+            min={1}
+            max={1000}
             step={1}
             onChange={handleCapacityChange}
+            focusThumbOnChange={false}
           >
             <SliderTrack>
               <SliderFilledTrack />
@@ -116,8 +132,7 @@ const RegisterPage4 = ({ formData, setFormData }) => {
             maxW="120px"
             ml="2rem"
             value={capacityInput}
-            onChange={(valueString) => handleCapacityChange(Number(valueString))}
-            onBlur={handleCapacityBlur}
+            onChange={handleCapacityChange}
           >
             <NumberInputField />
             <NumberInputStepper>
@@ -133,10 +148,11 @@ const RegisterPage4 = ({ formData, setFormData }) => {
           <Slider
             flex="1"
             value={floorInput}
-            min={0}
-            max={50}
+            min={-10}
+            max={123}
             step={1}
             onChange={handleFloorChange}
+            focusThumbOnChange={false}
           >
             <SliderTrack>
               <SliderFilledTrack />
@@ -149,8 +165,7 @@ const RegisterPage4 = ({ formData, setFormData }) => {
             maxW="120px"
             ml="2rem"
             value={floorInput}
-            onChange={(valueString) => handleFloorChange(Number(valueString))}
-            onBlur={handleFloorBlur}
+            onChange={handleFloorChange}
           >
             <NumberInputField />
             <NumberInputStepper>
@@ -170,6 +185,7 @@ const RegisterPage4 = ({ formData, setFormData }) => {
             max={50}
             step={1}
             onChange={handleParkingSpaceChange}
+            focusThumbOnChange={false}
           >
             <SliderTrack>
               <SliderFilledTrack />
@@ -182,8 +198,7 @@ const RegisterPage4 = ({ formData, setFormData }) => {
             maxW="120px"
             ml="2rem"
             value={parkingSpaceInput}
-            onChange={(valueString) => handleParkingSpaceChange(Number(valueString))}
-            onBlur={handleParkingSpaceBlur}
+            onChange={handleParkingSpaceChange}
           >
             <NumberInputField />
             <NumberInputStepper>
