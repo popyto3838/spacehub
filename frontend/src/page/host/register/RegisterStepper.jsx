@@ -7,17 +7,19 @@ import {
   StepIcon,
   StepIndicator,
   StepNumber,
+  Stepper,
   StepSeparator,
   StepStatus,
   StepTitle,
-  Stepper,
-  useSteps, useToast,
+  useSteps,
+  useToast,
 } from '@chakra-ui/react';
 import RegisterPage1 from "./RegisterPage1.jsx";
 import RegisterPage2 from "./RegisterPage2.jsx";
 import RegisterPage3 from "./RegisterPage3.jsx";
 import RegisterPage4 from "./RegisterPage4.jsx";
 import RegisterPage5 from "./RegisterPage5.jsx";
+import RegisterPage6 from "./RegisterPage6.jsx";
 import {useLocation, useNavigate} from "react-router-dom";
 
 // Stepper steps definition
@@ -27,8 +29,10 @@ const steps = [
   {title: 'Step 3', description: '규칙 설정'},
   {title: 'Step 4', description: '숫자 설정'},
   {title: 'Step 5', description: '사진 등록'},
+  {title: 'Step 6', description: '옵션 등록'},
 ];
 
+RegisterPage6.propTypes = {};
 const StepContent = ({step, formData, setFormData}) => {
   switch (step) {
     case 0:
@@ -41,6 +45,8 @@ const StepContent = ({step, formData, setFormData}) => {
       return <RegisterPage4 formData={formData} setFormData={setFormData}/>;
     case 4:
       return <RegisterPage5 formData={formData} setFormData={setFormData}/>;
+    case 5:
+      return <RegisterPage6 formData={formData} setFormData={setFormData}/>;
     default:
       return null;
   }
@@ -63,13 +69,19 @@ const RegisterStepper = () => {
         type: '', title: '', subTitle: ''
       },
       page2Data: {
-        location: ''
+        location: '', zonecode:'', address:'', detailAddress:'', extraAddress:'', latitude:'', longitude:''
       },
       page3Data: {
         introduce: '', facility: '', notice: ''
       },
       page4Data: {
         price: '', capacity: '', floor: '', parkingSpace: ''
+      },
+      page5Data: {
+        files: []
+      },
+      page6Data: {
+        options: []
       },
     };
   });
