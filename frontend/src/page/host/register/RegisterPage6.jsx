@@ -4,7 +4,7 @@ import axios from "axios";
 
 const RegisterPage6 = ({ formData, setFormData }) => {
   const [optionLists, setOptionLists] = useState([]);
-  const [selectedOptions, setSelectedOptions] = useState([]);
+  const [selectedOptionIds, setSelectedOptionIds] = useState([]); // 선택된 옵션 ID 배열
   const toast = useToast();
 
   useEffect(() => {
@@ -23,29 +23,25 @@ const RegisterPage6 = ({ formData, setFormData }) => {
   }, []);
 
   // 옵션 클릭 시 선택/해제 상태 변경
-  const handleOptionClick = (clickedOption) => {
-    setSelectedOptions(prevOptions => {
-      const isSelected = prevOptions.some(option => option.id === clickedOption.optionListId);
-      if (isSelected) {
-        return prevOptions.filter(option => option.id !== clickedOption.optionListId);
+  const handleOptionClick = (optionListId) => {
+    setSelectedOptionIds(prevOptionIds => {
+      if (prevOptionIds.includes(optionListId)) {
+        return prevOptionIds.filter(id => id !== optionListId);
       } else {
-        return [...prevOptions, { id: clickedOption.optionListId, name: clickedOption.name }];
+        return [...prevOptionIds, optionListId];
       }
     });
   };
 
-  // selectedOptions 상태가 변경될 때 formData 업데이트
+  // selectedOptionIds 상태가 변경될 때 formData 업데이트
   useEffect(() => {
     setFormData({
       ...formData,
       page6Data: {
-        selectedOptions: selectedOptions, // 선택된 옵션 저장
+        options: selectedOptionIds, // 선택된 옵션 ID 배열 저장
       },
     });
-
-    // 선택된 옵션들의 ID와 이름을 로그에 출력
-    console.log("Selected Options:", selectedOptions);
-  }, [selectedOptions, setFormData]);
+  }, [selectedOptionIds, setFormData]);
 
   return (
     <Box>
@@ -57,8 +53,8 @@ const RegisterPage6 = ({ formData, setFormData }) => {
         {optionLists.map(option => (
           <Button
             key={option.optionListId}
-            colorScheme={selectedOptions.some(opt => opt.id === option.optionListId) ? 'teal' : 'gray'}
-            onClick={() => handleOptionClick(option)}
+            colorScheme={selectedOptionIds.includes(option.optionListId) ? 'teal' : 'gray'}
+            onClick={() => handleOptionClick(option.optionListId)}
           >
             {option.name}
           </Button>

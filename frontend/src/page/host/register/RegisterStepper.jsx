@@ -88,58 +88,47 @@ const RegisterStepper = () => {
 
   const {steps: chakraSteps} = useSteps({initialStep: activeStep});
 
-  const handleNext = async  () => {
-    if (activeStep < steps.length - 1) {
-      setActiveStep(activeStep + 1);
-      sessionStorage.setItem('activeStep', (activeStep + 1).toString());
-    } else {
-      try {
-        const formDataToSend = new FormData();
+  const handleNext = () => {
+    setActiveStep(activeStep + 1);
+    sessionStorage.setItem('activeStep', (activeStep + 1).toString());
+  };
 
-        // 1. 텍스트 데이터 추가 (formData의 page1Data, page2Data, ... 등)
-        Object.entries(formData).forEach(([pageKey, pageData]) => {
-          if (pageKey !== 'page5Data') { // page5Data는 파일 데이터이므로 제외
-            Object.entries(pageData).forEach(([key, value]) => {
-              formDataToSend.append(key, value);
-            });
-          }
-        });
+  const handleSubmit = async () => {
+    const formDataToSend = new FormData();
 
-        // 2. 파일 데이터 추가
-        for (const file of formData.page5Data.files) {
-          formDataToSend.append('files', file); // files는 서버에서 처리할 때 사용할 필드 이름
-        }
-
-        // 3. API 요청 보내기
-        const response = await axios.post(`/api/space/insert`, formDataToSend, {
-          headers: {
-            'Content-Type': 'multipart/form-data'
-          }
-        });
-        console.log("Data submitted successfully:", response.data);
-
-        // 4. Form submission 완료 후 sessionStorage 초기화
-        sessionStorage.removeItem('formData');
-        sessionStorage.removeItem('activeStep');
-
-        toast({
-          title: "공간 등록을 완료하였습니다.",
-          status: "success",
-          duration: 3000,
-          isClosable: true,
-        });
-        navigate('/');
-
-      } catch (err) {
-        toast({
-          title: "공간 등록에 실패했습니다.",
-          description: err.response?.data?.message || "알 수 없는 오류가 발생했습니다.",
-          status: "error",
-          duration: 3000,
-          isClosable: true,
+    // 1. 텍스트 데이터 추가 (formData의 page1Data, page2Data, ... 등)
+    Object.entries(formData).forEach(([pageKey, pageData]) => {
+      if (pageKey !== 'page5Data' && pageKey !== 'page6Data') { // page5Data는 파일 데이터이므로 제외
+        Object.entries(pageData).forEach(([key, value]) => {
+          formDataToSend.append(key, value);
         });
       }
+    });
+
+    // 2. 파일 데이터 추가
+    for (const file of formData.page5Data.files) {
+      formDataToSend.append('files', file); // files는 서버에서 처리할 때 사용할 필드 이름
     }
+
+    // 3. 옵션 데이터 추가 (배열 형태로)
+    formData.page6Data.options.forEach(optionId => {
+      formDataToSend.append('options[]', optionId); // 대괄호([])를 사용하여 배열 형태로 전송
+    });
+
+    // 4. API 요청 보내기
+    await axios.post(`/api/space/insert`, formDataToSend, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    })
+      .then(() => {
+        // 5. Form submission 완료 후 sessionStorage 초기화
+        sessionStorage.removeItem('formData');
+        sessionStorage.removeItem('activeStep');
+        navigate('/');
+      })
+      .catch()
+      .finally();
   };
 
   const handleBack = () => {
@@ -197,12 +186,15 @@ const RegisterStepper = () => {
         >
           Prev
         </Button>
-        <Button
-          onClick={handleNext}
-          colorScheme="teal"
-        >
-          {activeStep === steps.length - 1 ? 'Submit' : 'Next'}
-        </Button>
+        {activeStep === steps.length - 1 ? ( // 마지막 단계인 경우 Submit 버튼 표시
+          <Button onClick={handleSubmit} colorScheme="teal">
+            Submit
+          </Button>
+        ) : (
+          <Button onClick={handleNext} colorScheme="teal">
+            Next
+          </Button>
+        )}
       </Box>
     </Box>
   );
