@@ -9,6 +9,8 @@ const RegisterPage2 = ({ formData, setFormData }) => {
     address: formData.page2Data?.address || '',
     detailAddress: formData.page2Data?.detailAddress || '',
     extraAddress: formData.page2Data?.extraAddress || '',
+    latitude: formData.page2Data?.latitude || '',
+    longitude: formData.page2Data?.longitude || '',
   });
 
   const handleAddressChange = (newAddress) => {
@@ -22,6 +24,8 @@ const RegisterPage2 = ({ formData, setFormData }) => {
         address: newAddress.address,
         detailAddress: newAddress.detailAddress,
         extraAddress: newAddress.extraAddress,
+        latitude: newAddress.latitude,
+        longitude: newAddress.longitude,
       },
     });
   };
@@ -52,12 +56,12 @@ const RegisterPage2 = ({ formData, setFormData }) => {
       <Heading>등록 공간 주소</Heading>
       <FormControl mb={4}>
         <FormLabel htmlFor="postcode">우편번호</FormLabel>
-        <Input id="postcode" name="zonecode" placeholder="우편번호" value={detailedAddress.zonecode}  />
+        <Input id="postcode" name="zonecode" placeholder="우편번호" value={detailedAddress.zonecode} onChange={handleInputChange} />
         <AddressSearch onAddressChange={handleAddressChange} />
       </FormControl>
       <FormControl mb={4}>
         <FormLabel htmlFor="address">주소</FormLabel>
-        <Input id="address" name="address" placeholder="주소" value={detailedAddress.address}  />
+        <Input id="address" name="address" placeholder="주소" value={detailedAddress.address} onChange={handleInputChange} />
       </FormControl>
       <FormControl mb={4}>
         <FormLabel htmlFor="detailAddress">상세주소</FormLabel>
