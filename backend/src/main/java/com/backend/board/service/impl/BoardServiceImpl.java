@@ -3,7 +3,9 @@ package com.backend.board.service.impl;
 import com.backend.board.domain.Board;
 import com.backend.board.mapper.BoardMapper;
 import com.backend.board.service.BoardService;
+import com.backend.member.mapper.MemberMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,10 +18,14 @@ import java.util.Map;
 public class BoardServiceImpl implements BoardService {
 
     final BoardMapper mapper;
+    private final MemberMapper memberMapper;
 
     @Override
-    public void insert(Board board) {
-
+    public void insert(Board board, Authentication authentication) {
+        // 사용자의 정보를 가져옴
+        // Member member = memberMapper.selectByEmail(authentication.getName());
+        // board.setMemberId(member.getMemberId());
+        board.setMemberId(Integer.valueOf(authentication.getName()));
         mapper.insert(board);
     }
 
@@ -50,13 +56,15 @@ public class BoardServiceImpl implements BoardService {
         pageInfo.put("leftPageNumber", leftPageNumber);
         pageInfo.put("rightPageNumber", rightPageNumber);
 
-        return Map.of("pageInfo", pageInfo, "boardList", mapper.selectAllPaging(offset, searchType, searchKeyword));
+        return Map.of("pageInfo", pageInfo, "boardList", mapper.selectAllPaging(offset, searchType, searchKeyword),
+                "categoryList", mapper.selectAllPagingForCategory(offset, searchType, searchKeyword));
     }
 
     @Override
     public Board view(Integer boardId) {
         return mapper.selectByBoardId(boardId);
     }
+
 
     @Override
     public void update(Board board) {

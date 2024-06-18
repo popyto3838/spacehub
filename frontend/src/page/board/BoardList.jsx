@@ -16,23 +16,27 @@ import {
 import {useContext, useEffect, useState} from "react";
 import axios from "axios";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import {LoginContext} from "../../component/LoginProvider.jsx";
+import { LoginContext } from "../../component/LoginProvider.jsx";
 
 export function BoardList() {
   const [boardList, setBoardList] = useState([]);
-  // const [category, setCategory] = useState("all");
+  const [categoryList, setCategoryList] = useState([]);
+  const [categoryId, setCategoryId] = useState("");
   const [pageInfo, setPageInfo] = useState({});
   const [searchType, setSearchType] = useState("titleContent");
   const [searchKeyword, setSearchKeyword] = useState("");
   const [searchParams] = useSearchParams();
-  const account = useContext(LoginContext);
 
   const navigate = useNavigate();
+
+  // 테스트용 로그인 확인
+  const account = useContext(LoginContext);
 
   useEffect(() => {
     axios.get(`/api/board/list?${searchParams}`).then((res) => {
       setBoardList(res.data.boardList);
       setPageInfo(res.data.pageInfo);
+      setCategoryList(res.data.categoryList);
     });
     setSearchType("titleContent");
     setSearchKeyword("");
@@ -72,9 +76,7 @@ export function BoardList() {
     navigate(`/board/list/?${searchParams}`);
   }
 
-  function handleClickLogout() {
 
-  }
 
   return (
     <Box>
@@ -101,6 +103,34 @@ export function BoardList() {
           <Button onClick={handleClickSearch}>검색</Button>
         </Box>
       </Flex>
+      <Flex>
+        <Box>유저명 : {account.nickname}</Box>
+        {account.isLoggedIn() && (
+          <Button onClick={() => account.logout()}>로그아웃</Button>
+        )}
+      </Flex>
+      <Flex>
+        <Box>
+          <Button
+            value={"category"}
+            onClick={() => {
+              setCategoryId("all");
+              categoryId === "all" && navigate("/board/list/?type='all'");
+            }}
+          >
+            전체글
+          </Button>
+          <Button value={"category"} onClick={() => setCategoryId("notice")}>
+            공지사항
+          </Button>
+          <Button value={"category"} onClick={() => setCategoryId("faq")}>
+            FAQ
+          </Button>
+        </Box>
+      </Flex>
+      <Box>
+        <Button onClick={() => navigate("/board/write")}>글쓰기</Button>
+      </Box>
       {boardList.length === 0 && <Center>조회 결과가 없습니다.</Center>}
       {boardList.length > 0 && (
         <Box>
@@ -110,6 +140,7 @@ export function BoardList() {
                 <Th>#</Th>
                 <Th>조회수</Th>
                 <Th>제목</Th>
+                <Th>카테고리</Th>
                 <Th>작성자</Th>
               </Tr>
             </Thead>
@@ -126,7 +157,16 @@ export function BoardList() {
                   <Td>{board.boardId}</Td>
                   <Td>{board.views}</Td>
                   <Td>{board.title}</Td>
-                  <Td>{board.nickname}</Td>
+                  <Td>{board.categoryId}</Td>
+                  <Td>{account.nickname}</Td>
+                  {categoryList.map(
+                    (category) =>
+                      category.categoryId === board.categoryId && (
+                        <Td key={category.categoryId}>
+                          {category.categoryName}
+                        </Td>
+                      ),
+                  )}
                 </Tr>
               ))}
             </Tbody>

@@ -5,11 +5,10 @@ export const LoginContext = createContext(null);
 
 export function LoginProvider({ children }) {
   const [id, setId] = useState("");
-  const [email, setEmail] = useState("");
   const [nickname, setNickname] = useState("");
+  const [memberId, setMemberId] = useState("");
   const [expired, setExpired] = useState(0);
   const [authority, setAuthority] = useState("");
-
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -49,8 +48,6 @@ export function LoginProvider({ children }) {
     const payload = jwtDecode(token);
     setExpired(payload.exp);
     setId(payload.sub);
-    setEmail(payload.sub);
-    setNickname(payload.sub);
     setAuthority(payload.scope.split(" "));
   }
   function logout() {
@@ -58,6 +55,7 @@ export function LoginProvider({ children }) {
     localStorage.removeItem("com.naver.nid.oauth.state_token");
     setExpired(0);
     setId("");
+    setNickname("");
     setAuthority([]);
 
   }
@@ -74,9 +72,8 @@ export function LoginProvider({ children }) {
   return (
     <LoginContext.Provider
       value={{
-         id:id,
-        switchHost :switchHost,
-        switchUser :switchUser,
+        id: id,
+        nickname: nickname,
         login: login,
         logout: logout,
         isLoggedIn: isLoggedIn,

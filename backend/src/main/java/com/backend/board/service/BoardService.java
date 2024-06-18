@@ -1,11 +1,12 @@
 package com.backend.board.service;
 
 import com.backend.board.domain.Board;
+import org.springframework.security.core.Authentication;
 
 import java.util.Map;
 
 public interface BoardService {
-    void insert(Board board);
+    void insert(Board board, Authentication authentication);
 
     Map<String, Object> list(Integer page, String searchType, String searchKeyword);
 

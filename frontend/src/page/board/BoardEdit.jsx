@@ -15,9 +15,10 @@ import {
   useDisclosure,
   useToast,
 } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
+import { LoginContext } from "../../component/LoginProvider.jsx";
 
 export function BoardEdit() {
   const { boardId } = useParams();
@@ -26,6 +27,7 @@ export function BoardEdit() {
   const navigate = useNavigate();
   const toast = useToast();
   const { isOpen, onClose, onOpen } = useDisclosure();
+  const account = useContext(LoginContext);
 
   useEffect(() => {
     axios.get(`/api/board/${boardId}`).then((res) => {
@@ -72,7 +74,7 @@ export function BoardEdit() {
         <Box>
           <FormControl>
             <FormLabel>작성자</FormLabel>
-            <Input value={board.nickname} readOnly />
+            <Input value={account.nickname} readOnly />
           </FormControl>
         </Box>
         <Box>
@@ -81,6 +83,7 @@ export function BoardEdit() {
             <Input value={board.updateDateAndTime} readOnly />
           </FormControl>
         </Box>
+
         <Box>
           <Button onClick={() => navigate(-1)}>취소</Button>
           <Button onClick={onOpen}>확인</Button>
