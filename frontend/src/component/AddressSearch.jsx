@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Input, Button, FormControl, FormLabel, Box } from '@chakra-ui/react';
-import { useDaumPostcodePopup } from 'react-daum-postcode';
+// import { useDaumPostcodePopup } from 'react-daum-postcode';
 
 function AddressSearch({ onAddressChange, value = {} }) {
   const open = useDaumPostcodePopup();
