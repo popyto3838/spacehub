@@ -2,7 +2,6 @@ package com.backend.member.controller;
 
 
 import com.backend.member.domain.member.Member;
-
 import com.backend.member.service.MailService;
 import com.backend.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
@@ -49,10 +48,10 @@ public class MemberController {
 
     }
 
-    @GetMapping(value = "check", params = "nickName")
-    public ResponseEntity checkNickName(@RequestParam String nickName) {
+    @GetMapping(value = "check", params = "nickname")
+    public ResponseEntity checkNickName(@RequestParam String nickname) {
 
-        Member member = service.checkByNickName(nickName);
+        Member member = service.checkByNickName(nickname);
         System.out.println(member);
         if (member != null) {
             return ResponseEntity.ok().build();
@@ -62,7 +61,7 @@ public class MemberController {
 
 
     @GetMapping(value = "e1")
-    public Map<String,Object> e1(@RequestParam String mail) {
+    public Map<String, Object> e1(@RequestParam String mail) {
 
 
         int number = mailService.sendMail(mail);
@@ -108,7 +107,7 @@ public class MemberController {
         if (map == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        return  ResponseEntity.ok(map);
+        return ResponseEntity.ok(map);
     }
 
 

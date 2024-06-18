@@ -8,13 +8,13 @@ import java.util.Map;
 
 public interface MemberService {
 
-     Member checkByEmail(String email);
+    Member checkByEmail(String email);
 
-     Member checkByNickName(String nickName);
+    Member checkByNickName(String nickname);
 
-     boolean validate(Member member);
+    boolean validate(Member member);
 
-     boolean validateChckEmail(String email);
+    boolean validateChckEmail(String email);
 
     List<Member> list();
 
@@ -22,19 +22,15 @@ public interface MemberService {
 
     boolean hasAccess(Member member, Authentication authentication);
 
-     void remove(Integer memberId);
+    void remove(Integer memberId);
 
     Map<String, Object> getToken(Member member);
 
-     boolean hasAccessModify(Member member, Authentication authentication);
+    boolean hasAccessModify(Member member, Authentication authentication);
 
     Map<String, Object> modify(Member member, Authentication authentication);
 
-     void addMemberByEmail(Member member);
-
-
-
-
+    void addMemberByEmail(Member member);
 
 
 }
