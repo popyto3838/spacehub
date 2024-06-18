@@ -31,6 +31,7 @@ const Header = () => {
                         <li><a href="/space/register">공간등록</a></li>
                         <li><a href="/space/type">공간유형</a></li>
                         <li><a href="/space/option">공간옵션</a></li>
+                        <li><a href="/reservation/paidStatus">결제상태</a></li>
                     </ul>
                 </nav>
             </header>
