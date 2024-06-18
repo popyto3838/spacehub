@@ -111,5 +111,4 @@ public interface BoardMapper {
             </script>
             """)
     Integer countAllWithSearch(String searchType, String searchKeyword);
-
 }

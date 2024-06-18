@@ -201,23 +201,33 @@ public class MemberServiceImpl implements MemberService {
 
     }
 
+    @Override
+    public void addHostMemberByEmail(Member member) {
 
-//    public void addAuthByEmail(Auth auth) {
-//        mapper.insert(auth);
-//    }
+        member.setPassword(passwordEncoder.encode(member.getPassword()));
+        member.setEmail(member.getEmail().trim());
+        member.setNickname(member.getNickname().trim());
+
+        mapper.inserthost(member);
 
 
-//    public void add2(Member member) {
-//        Member OldMember = member.checkByNickName(member.getNickName());
-//
-//        if (OldMember != null) {
-//            String signUpMemberNickname = member.getNickName();
-//
-//            if (signUpMemberNickname.equals(OldMember.getNickName()){
-//                member.setNickName(signUpMemberNickname + "+");
-//            }
-//        }
-//
-//        mapper.add(member);
-//    }
+    }
+
+
+    @Override
+    public Member findByEmail(String email) {
+        return mapper.findByEmail(email);
+    }
+
+    @Override
+    public void insertMember(Member member) {
+        mapper.insertMember(member);
+    }
+
+    @Override
+    public Integer selectbyEmail2(Member member){
+       return mapper.selectByEmail2(member);
+    }
+
+
 }

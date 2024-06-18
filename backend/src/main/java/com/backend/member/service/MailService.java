@@ -1,5 +1,6 @@
 package com.backend.member.service;
 
+import com.backend.member.domain.member.Member;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
@@ -52,4 +53,5 @@ public class MailService {
     public long getExpirationTime() {
         return expirationTime;
     }
+
 }

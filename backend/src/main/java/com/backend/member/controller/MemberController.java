@@ -5,13 +5,24 @@ import com.backend.member.domain.member.Member;
 import com.backend.member.service.MailService;
 import com.backend.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.oauth2.jwt.JwtClaimsSet;
+import org.springframework.security.oauth2.jwt.JwtEncoder;
+import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
@@ -21,13 +32,29 @@ public class MemberController {
     final MailService mailService;
     final MemberService service;
 
+    @Autowired
+    private JwtEncoder jwtEncoder;
+
 
     @PostMapping("signup")
     public ResponseEntity signup(@RequestBody Member member) {
-        System.out.println("member 1= " + member);
+
         if (service.validate(member)) {
-            System.out.println("member2 = " + member);
+
             service.addMemberByEmail(member);
+
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
+    @PostMapping("hostsignup")
+    public ResponseEntity hostsignup(@RequestBody Member member) {
+
+        if (service.validate(member)) {
+
+            service.addHostMemberByEmail(member);
 
             return ResponseEntity.ok().build();
         } else {
@@ -90,8 +117,7 @@ public class MemberController {
 
     @DeleteMapping("{id}")
     public ResponseEntity delete(@RequestBody Member member, Authentication authentication) {
-        System.out.println(authentication);
-        System.out.println(member);
+
         if (service.hasAccess(member, authentication)) {
             service.remove(member.getMemberId());
             return ResponseEntity.ok().build();
@@ -123,6 +149,81 @@ public class MemberController {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
     }
+
+    @PostMapping("naverlogin")
+    public ResponseEntity<Map<String, Object>> processNaverLogin(@RequestBody Map<String, String> params) {
+        String accessToken = params.get("access_token");
+
+        System.out.println("params = " + params);
+
+        // 네이버 API를 사용하여 사용자 정보 가져오기
+        String userInfoUrl = "https://openapi.naver.com/v1/nid/me";
+        RestTemplate restTemplate = new RestTemplate();
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Authorization", "Bearer " + accessToken);
+
+        HttpEntity<String> entity = new HttpEntity<>("", headers);
+        ResponseEntity<Map> response = restTemplate.postForEntity(userInfoUrl, entity, Map.class);
+
+        Map<String, Object> responseBody = response.getBody();
+        System.out.println("responseBody = " + responseBody);
+        Map<String, Object> responseData = (Map<String, Object>) responseBody.get("response");
+
+        System.out.println("responseData = " + responseData);
+
+        String extractedEmail = (String) responseData.get("email");
+        String extractedNickname = (String) responseData.get("nickname");
+        String extractedNaverId = (String) responseData.get("id");
+        String extractedMobile = (String) responseData.get("mobile");
+
+        // 사용자 정보 추출 후 Member 객체 생성
+        Member member = new Member();
+        member.setEmail(extractedEmail);
+        member.setPassword(""); // 비밀번호는 네이버 로그인의 경우 사용하지 않음
+        member.setNickname(extractedNickname);
+        member.setNaverId(extractedNaverId);
+        member.setMobile(extractedMobile);
+        member.setInputDt(LocalDateTime.now());
+        member.setAuth("USER"); // 기본 권한 설정
+
+
+
+        // 데이터베이스에 사용자 정보 저장
+
+        if(service.findByEmail(member.getEmail())==null){
+            System.out.println("member = " + member);
+            service.insertMember(member);
+            member.setMemberId(service.selectbyEmail2(member));
+
+
+        }
+
+
+        // JWT 토큰 생성
+        Instant now = Instant.now();
+
+        JwtClaimsSet claims = JwtClaimsSet.builder()
+                .issuer("self")
+                .issuedAt(now)
+                .expiresAt(now.plusSeconds(60 * 60 * 24 * 7))
+                .subject(member.getMemberId().toString())
+                .claim("scope", member.getAuth())
+                .claim("nickname", member.getNickname())
+                .build();
+
+        String jwtToken = jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
+
+        // 클라이언트에 토큰 반환
+        Map<String, Object> result = new HashMap<>();
+        result.put("status", "success");
+        result.put("token", jwtToken);
+
+        return ResponseEntity.ok(result);
+
+    }
+
+
 
 
 }

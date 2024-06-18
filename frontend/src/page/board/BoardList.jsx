@@ -1,3 +1,4 @@
+
 import {
   Box,
   Button,
@@ -12,7 +13,7 @@ import {
   Thead,
   Tr,
 } from "@chakra-ui/react";
-import { useContext, useEffect, useState } from "react";
+import {useContext, useEffect, useState} from "react";
 import axios from "axios";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { LoginContext } from "../../component/LoginProvider.jsx";
@@ -74,6 +75,8 @@ export function BoardList() {
     searchParams.set("page", pageNumber);
     navigate(`/board/list/?${searchParams}`);
   }
+
+
 
   return (
     <Box>
@@ -208,6 +211,12 @@ export function BoardList() {
           </Box>
         )}
       </Center>
+      <Button
+        onClick={() => {
+          account.logout();
+          navigate("/");
+        }}
+      >로그아웃</Button>
     </Box>
   );
 }

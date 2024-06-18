@@ -19,7 +19,24 @@ import {NaverLoginHandler} from "./page/member/NaverLoginHandler.jsx";
 import {LoginProvider} from "./component/LoginProvider.jsx";
 import {SpaceType} from "./page/admin/space_config/SpaceType.jsx";
 import Payment from "./page/paid/Payment.jsx";
+import {MemberHost} from "./page/host/MemberHost.jsx";
+import {HostSignup} from "./page/member/HostSignup.jsx";
+import {MemberMy} from "./page/member/MemberMy.jsx";
 
+import axios from "axios"; // axios interceptor 설정
+
+// axios interceptor 설정
+axios.interceptors.request.use((config) => {
+  // 토큰을 얻어서
+  const token = localStorage.getItem("token");
+  // 토큰이 있으면
+  if (token) {
+    // header에 authorization을 넣고
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  // config를 리턴
+  return config;
+});
 function App() {
   const router = createBrowserRouter([
     {
@@ -46,6 +63,10 @@ function App() {
         {path: "member/edit/:memberId", element: <MemberEdit/>},
         {path: "auth/naverlogin", element: <NaverLoginHandler/>},
         {path: "paid/payment", element: <Payment/>},
+        {path: "member/naverlogin", element: <NaverLoginHandler/>},
+        {path: "member/host", element: <MemberHost/>},
+        {path: "host/signup", element: <HostSignup/>},
+        {path: "member/info/:accountId", element: <MemberMy/>},
       ],
     },
   ]);
