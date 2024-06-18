@@ -187,14 +187,16 @@ public class MemberController {
         member.setMobile(extractedMobile);
         member.setInputDt(LocalDateTime.now());
         member.setAuth("USER"); // 기본 권한 설정
-        member.setMemberId(service.selectbyEmail2(member));
+
 
 
         // 데이터베이스에 사용자 정보 저장
 
         if(service.findByEmail(member.getEmail())==null){
-
+            System.out.println("member = " + member);
             service.insertMember(member);
+            member.setMemberId(service.selectbyEmail2(member));
+
 
         }
 
