@@ -34,7 +34,7 @@
 
 .header {
     color: #8fffa2;
-    font-size: 2rem;
+    font-size: 1.5rem;
     font-family: 'TTLaundryGothicB';
 }
 
@@ -99,16 +99,16 @@
 /* 메뉴 스타일 */
 .menu {
     position: fixed;
-    top: 20%;
+    top: 10%;
     left: 0;
-    height: 70%;
+    height: 90%;
     width: 15%;
-    background-color: #ffd14f;
+    background-color: #9e52d2;
     color: white;
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding-top: 2rem;
+    padding-top: 1rem;
     transform: translateX(-100%);
     transition: transform 0.3s ease;
     border-radius: 10px;
@@ -125,14 +125,14 @@
 }
 
 .menu ul li {
-    margin: 2rem;
+    margin: 1.5rem;
     text-align: left;
 }
 
 .menu ul li a {
     color: white;
     text-decoration: none;
-    font-size: 1.2rem;
+    font-size: 1rem;
 }
 
 .menu ul li a:hover {

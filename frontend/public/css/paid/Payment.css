@@ -1,0 +1,29 @@
+@font-face {
+    font-family: 'MangoDdobak-B';
+    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/2405-3@1.1/MangoDdobak-B.woff2') format('woff2');
+    font-weight: 700;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'Freesentation-9Black';
+    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/2404@1.0/Freesentation-9Black.woff2') format('woff2');
+    font-weight: 900;
+    font-style: normal;
+}
+.titleArea {
+    font-family: 'Freesentation-9Black';
+    font-size: 3rem;
+    display: flex;
+    justify-content: center;
+    margin-bottom: 10%;
+}
+
+.paidArea {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.paidButton {
+    font-family: 'MangoDdobak-B';
+    height: 6vh; width: 30%;
+}
