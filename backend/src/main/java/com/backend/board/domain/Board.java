@@ -1,5 +1,6 @@
 package com.backend.board.domain;
 
+import com.backend.fileList.domain.FileList;
 import lombok.Data;
 
 import java.sql.Timestamp;
@@ -30,7 +31,8 @@ public class Board {
 
     // 첨부된 이미지 개수 출력
     private Integer numberOfImages;
-    // 이미지 경로
-    private List<String> imageSrcList;
+    // 이미지 경로 + 파일명
+//    private List<String> imageSrcList;
+    private List<FileList> filesList;
 
 }
