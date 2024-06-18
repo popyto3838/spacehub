@@ -25,26 +25,14 @@ const RegisterPage2 = ({ formData, setFormData }) => {
     });
   };
 
-  const postCodeStyle = {
-    bgColor: "",
-    searchBgColor: "",
-    contentBgColor: "",
-    pageBgColor: "",
-    textColor: "",
-    queryTextColor: "",
-    postcodeTextColor: "",
-    emphTextColor: "",
-    outlineColor: ""
-  };
-
   return (
     <Box>
       <Heading>등록 공간 주소</Heading>
       <AddressSearch
         onAddressChange={handleAddressChange}
         value={formData.page2Data?.location || ''} // 현재 주소 데이터를 전달
-        theme={postCodeStyle}
       />
+
     </Box>
   );
 };
