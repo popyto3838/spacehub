@@ -88,34 +88,57 @@ const RegisterStepper = () => {
 
   const {steps: chakraSteps} = useSteps({initialStep: activeStep});
 
-  const handleNext = () => {
+  const handleNext = async  () => {
     if (activeStep < steps.length - 1) {
       setActiveStep(activeStep + 1);
       sessionStorage.setItem('activeStep', (activeStep + 1).toString());
     } else {
-      axios.post(`api/space/insert`, formData)
-        .then(() => {
-          // Form submission 완료 후 sessionStorage 초기화
-          sessionStorage.removeItem('formData');
-          sessionStorage.removeItem('activeStep');
-          toast({
-            title: "공간 등록을 완료하였습니다.",
-            status: "success",
-            duration: 3000,
-            isClosable: true,
-          })
-          navigate(`/`)
-        })
-        .catch((err)=>{
-          toast({
-            title: "공간 등록에 실패했습니다.",
-            description: error.response?.data?.message || "알 수 없는 오류가 발생했습니다.",
-            status: "error",
-            duration: 3000,
-            isClosable: true,
-          });
-        })
-        .finally()
+      try {
+        const formDataToSend = new FormData();
+
+        // 1. 텍스트 데이터 추가 (formData의 page1Data, page2Data, ... 등)
+        Object.entries(formData).forEach(([pageKey, pageData]) => {
+          if (pageKey !== 'page5Data') { // page5Data는 파일 데이터이므로 제외
+            Object.entries(pageData).forEach(([key, value]) => {
+              formDataToSend.append(key, value);
+            });
+          }
+        });
+
+        // 2. 파일 데이터 추가
+        for (const file of formData.page5Data.files) {
+          formDataToSend.append('files', file); // files는 서버에서 처리할 때 사용할 필드 이름
+        }
+
+        // 3. API 요청 보내기
+        const response = await axios.post(`/api/space/insert`, formDataToSend, {
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
+        });
+        console.log("Data submitted successfully:", response.data);
+
+        // 4. Form submission 완료 후 sessionStorage 초기화
+        sessionStorage.removeItem('formData');
+        sessionStorage.removeItem('activeStep');
+
+        toast({
+          title: "공간 등록을 완료하였습니다.",
+          status: "success",
+          duration: 3000,
+          isClosable: true,
+        });
+        navigate('/');
+
+      } catch (err) {
+        toast({
+          title: "공간 등록에 실패했습니다.",
+          description: err.response?.data?.message || "알 수 없는 오류가 발생했습니다.",
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        });
+      }
     }
   };
 
