@@ -36,9 +36,8 @@ public interface MemberService {
 
     void insertMember(Member member);
 
+   void addHostMemberByEmail(Member member);
 
 
-
-
-
+    Integer selectbyEmail2(Member member);
 }

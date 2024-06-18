@@ -5,6 +5,8 @@ export const LoginContext = createContext(null);
 
 export function LoginProvider({ children }) {
   const [id, setId] = useState("");
+  const [email, setEmail] = useState("");
+  const [nickname, setNickname] = useState("");
   const [expired, setExpired] = useState(0);
   const [authority, setAuthority] = useState("");
 
@@ -20,6 +22,11 @@ export function LoginProvider({ children }) {
   function isLoggedIn() {
     return Date.now() < expired * 1000;
   }
+
+  function isLoggedOut() {
+    return Date.now() > expired * 1000;
+  }
+
 
   function hasAccess(param) {
     return id == param;
@@ -42,6 +49,8 @@ export function LoginProvider({ children }) {
     const payload = jwtDecode(token);
     setExpired(payload.exp);
     setId(payload.sub);
+    setEmail(payload.sub);
+    setNickname(payload.sub);
     setAuthority(payload.scope.split(" "));
   }
   function logout() {
@@ -53,13 +62,25 @@ export function LoginProvider({ children }) {
 
   }
 
+  function switchHost(){
+    setAuthority(["HOST"])
+  }
+
+  function switchUser(){
+    setAuthority(["USER"])
+
+  }
+
   return (
     <LoginContext.Provider
       value={{
-        id: id,
+         id:id,
+        switchHost :switchHost,
+        switchUser :switchUser,
         login: login,
         logout: logout,
         isLoggedIn: isLoggedIn,
+        isLoggedOut:isLoggedOut,
         hasAccess: hasAccess,
         isAdmin: isAdmin,
         isHost: isHost,

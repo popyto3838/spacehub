@@ -201,6 +201,18 @@ public class MemberServiceImpl implements MemberService {
 
     }
 
+    @Override
+    public void addHostMemberByEmail(Member member) {
+
+        member.setPassword(passwordEncoder.encode(member.getPassword()));
+        member.setEmail(member.getEmail().trim());
+        member.setNickname(member.getNickname().trim());
+
+        mapper.inserthost(member);
+
+
+    }
+
 
     @Override
     public Member findByEmail(String email) {
@@ -212,6 +224,10 @@ public class MemberServiceImpl implements MemberService {
         mapper.insertMember(member);
     }
 
+    @Override
+    public Integer selectbyEmail2(Member member){
+       return mapper.selectByEmail2(member);
+    }
 
 
 }

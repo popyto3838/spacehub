@@ -1,13 +1,15 @@
 import { useNavigate } from "react-router-dom";
-import { useEffect } from "react";
+import {useContext, useEffect} from "react";
 import axios from "axios";
 import {useToast} from "@chakra-ui/react";
+import {LoginContext} from "../../component/LoginProvider.jsx";
 
 
 export const NaverLoginHandler = () => {
   // useHistory 훅을 사용해 history 객체를 가져옵니다. 이 객체를 사용하여 라우터 내에서 리다이렉션을 수행할 수 있습니다.
   const navigate = useNavigate();
   const toast = useToast();
+  const account = useContext(LoginContext);
 
   useEffect(() => {
     console.log("hello")
@@ -39,8 +41,12 @@ export const NaverLoginHandler = () => {
           if (response.data.errorCode == "502") {
             alert("Spacehub 계정으로 로그인 하세요");
           }
+        }else {
+          // 토큰을 받아서 로그인 상태를 업데이트합니다.
+          const token = response.data.token; // 서버 응답에서 토큰을 받아옵니다.
+          account.login(token); // login 함수를 호출하여 상태를 업데이트합니다.
+          window.location.href = "/";
         }
-        window.location.href = "/";
       } catch (error) {
         console.error("서버에서 naverlogin 에러 옴!");
         console.error(error);

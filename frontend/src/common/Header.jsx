@@ -1,9 +1,14 @@
-import React, {useState} from 'react';
+import React, {useContext, useState} from 'react';
 import spaceImage from '/img/space.png';
 import '/public/css/common/Header.css';
+import {Button} from "@chakra-ui/react";
+import {useNavigate} from "react-router-dom";
+import {LoginContext, LoginProvider} from "../component/LoginProvider.jsx";
 
 const Header = () => {
     const [isOpen, setIsOpen] = useState(false);
+    const navigate= useNavigate();
+    const account = useContext(LoginContext);
 
     const toggleMenu = () => {
         setIsOpen(!isOpen);
@@ -48,7 +53,12 @@ const Header = () => {
                             <a href="/space/option">공간옵션</a>
                         </li>
                         <li>
-                            <a href="/member/host" style={{ color: 'white', backgroundColor: 'mediumblue' }}>호스트센터로 이동하기</a>
+                            <Button onClick={() => navigate(`/member/info/${account.id}`)} style={{color: 'white', backgroundColor: 'mediumblue'}}>마이페이지
+                            </Button>
+                        </li>
+                        <li>
+                            <a href="/member/host" style={{color: 'white', backgroundColor: 'mediumblue'}}>호스트센터로 이동하기
+                            </a>
                         </li>
                     </ul>
                 </nav>

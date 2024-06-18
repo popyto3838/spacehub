@@ -15,7 +15,7 @@ import axios from "axios";
 import TimerComponent from "./TimerComponent.jsx";
 import NaverLogin from "./NaverLogin.jsx";
 
-export function MemberHostSignup() {
+export function HostSignup() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [nickname, setNickname] = useState("");
@@ -35,7 +35,7 @@ export function MemberHostSignup() {
   function handleSignup() {
     setIsLoading(true);
     axios
-      .post("/api/member/signup",
+      .post("/api/member/hostsignup",
         {
           email: email,
           password: password,
@@ -270,7 +270,7 @@ export function MemberHostSignup() {
           <Button
             mt={13}
             isDisabled={isDisabled}
-            colorScheme="teal"
+            colorScheme="purple"
             width="full"
             onClick={handleSignup}
           >
@@ -283,5 +283,4 @@ export function MemberHostSignup() {
       </Box>
     </Box>
   );
-
 }

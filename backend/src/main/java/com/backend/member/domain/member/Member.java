@@ -17,6 +17,7 @@ public class Member {
     private AuthName authName;
     private Withdrawn withdrawn;
     private String naverId;
+    private String mobile;
 
     public String getSignupDateAndTime() {
         DateTimeFormatter formatter

@@ -1,16 +1,25 @@
 import {Box, Button, Center} from "@chakra-ui/react";
 import {useNavigate} from "react-router-dom";
+import {useContext} from "react";
+import {LoginContext} from "../../component/LoginProvider.jsx";
 
 export function MemberHost() {
   const navigate = useNavigate();
+  const account = useContext(LoginContext);
+
   return (
 
     <Box>
-      <Center>
+      {account.isLoggedOut() &&<Center>
         <Button
-          onClick={() => navigate(`/member/host/signup`)}
+          onClick={() => navigate(`/host/signup`)}
           colorScheme={"purple"} >호스트 회원가입 하러 가기</Button>
-      </Center>
+      </Center>}
+      {account.isLoggedIn() &&<Center>
+        <Button
+          onClick={() => navigate(`/host/signup`)}
+          colorScheme={"purple"} >호스트로 전환하기</Button>
+      </Center>}
       <Box>
       <Center>여러분의 공간을 등록해보세요</Center>
       </Box>
