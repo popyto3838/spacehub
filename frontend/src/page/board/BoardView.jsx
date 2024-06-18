@@ -4,6 +4,7 @@ import {
   FormControl,
   FormLabel,
   Heading,
+  Image,
   Input,
   Modal,
   ModalBody,
@@ -98,6 +99,24 @@ export function BoardView() {
             )}
           </FormControl>
         </Box>
+
+        <Box>
+          <Box>첨부 파일</Box>
+          {board.files &&
+            board.files.map((file) => (
+              <Box border={"1px solid black"} key={file.name}>
+                <Image src={file.src} />
+              </Box>
+            ))}
+          <Box>adasdassd</Box>
+          {board.imageSrcList &&
+            board.imageSrcList.map((src) => (
+              <Box border={"2px solid black"} m={3} key={src}>
+                <Image src={src} />
+              </Box>
+            ))}
+        </Box>
+
         {account.hasAccess(board.memberId) && (
           <Box>
             <Button onClick={onOpen}>삭제</Button>

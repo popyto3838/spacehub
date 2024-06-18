@@ -7,7 +7,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.Map;
 
 @RestController
@@ -19,8 +21,9 @@ public class BoardController {
 
     @PostMapping("write")
     @PreAuthorize("isAuthenticated()")
-    public void write(@RequestBody Board board, Authentication authentication) {
-        boardService.insert(board, authentication);
+    public void write(Board board, Authentication authentication
+            , @RequestParam(value = "files[]", required = false) MultipartFile[] files) throws IOException {
+        boardService.insert(board, authentication, files);
 
     }
 

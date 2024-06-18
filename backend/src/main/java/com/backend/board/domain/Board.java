@@ -4,6 +4,7 @@ import lombok.Data;
 
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+import java.util.List;
 
 @Data
 public class Board {
@@ -26,5 +27,10 @@ public class Board {
     public String getUpdateDateAndTime() {
         return formatter.format(updateDt);
     }
+
+    // 첨부된 이미지 개수 출력
+    private Integer numberOfImages;
+    // 이미지 경로
+    private List<String> imageSrcList;
 
 }
