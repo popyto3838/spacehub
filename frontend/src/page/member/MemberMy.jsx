@@ -1,5 +1,16 @@
-import {Box, Text, Button, FormControl, FormLabel, HStack, Input, Switch, VStack, useToast} from "@chakra-ui/react";
-import {Avatar} from "@mui/material";
+import {
+  Box,
+  Text,
+  Button,
+  FormControl,
+  FormLabel,
+  HStack,
+  Input,
+  Switch,
+  VStack,
+  useToast,
+  Avatar
+} from "@chakra-ui/react";
 import {useContext, useEffect, useState} from "react";
 import axios from "axios";
 import {LoginContext} from "../../component/LoginProvider.jsx";
@@ -12,9 +23,6 @@ export function MemberMy() {
   const account = useContext(LoginContext);
   const toast = useToast();
   const navigate = useNavigate();
-
-
-
 
   useEffect(() => {
     axios
@@ -35,9 +43,6 @@ export function MemberMy() {
         navigate("/");
       });
   }, []);
-
-
-
 
   return (
     <Box maxWidth="800px" margin="auto" padding={5}>
