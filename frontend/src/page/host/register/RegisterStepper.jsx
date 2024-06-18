@@ -18,6 +18,7 @@ import RegisterPage2 from "./RegisterPage2.jsx";
 import RegisterPage3 from "./RegisterPage3.jsx";
 import RegisterPage4 from "./RegisterPage4.jsx";
 import RegisterPage5 from "./RegisterPage5.jsx";
+import {useLocation, useNavigate} from "react-router-dom";
 
 // Stepper steps definition
 const steps = [
@@ -46,6 +47,8 @@ const StepContent = ({step, formData, setFormData}) => {
 };
 
 const RegisterStepper = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
   const [activeStep, setActiveStep] = useState(() => {
     const storedStep = sessionStorage.getItem('activeStep');
     return storedStep ? parseInt(storedStep) : 0;
@@ -101,6 +104,19 @@ const RegisterStepper = () => {
     sessionStorage.setItem('formData', JSON.stringify(formData));
     sessionStorage.setItem('activeStep', activeStep.toString());
   }, [formData, activeStep]);
+
+  useEffect(() => {
+    // 페이지 이동 시 세션 스토리지 초기화
+    const handleUnload = () => {
+      sessionStorage.removeItem('formData');
+      sessionStorage.removeItem('activeStep');
+    };
+
+    // 페이지가 변경될 때마다 세션 스토리지 초기화
+    return () => {
+      handleUnload();
+    };
+  }, [location]);
 
   return (
     <Box mt={4}>
