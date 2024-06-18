@@ -21,6 +21,7 @@ import RegisterPage4 from "./RegisterPage4.jsx";
 import RegisterPage5 from "./RegisterPage5.jsx";
 import RegisterPage6 from "./RegisterPage6.jsx";
 import {useLocation, useNavigate} from "react-router-dom";
+import axios from "axios";
 
 // Stepper steps definition
 const steps = [
@@ -32,7 +33,6 @@ const steps = [
   {title: 'Step 6', description: '옵션 등록'},
 ];
 
-RegisterPage6.propTypes = {};
 const StepContent = ({step, formData, setFormData}) => {
   switch (step) {
     case 0:
@@ -69,7 +69,7 @@ const RegisterStepper = () => {
         type: '', title: '', subTitle: ''
       },
       page2Data: {
-        location: '', zonecode:'', address:'', detailAddress:'', extraAddress:'', latitude:'', longitude:''
+        location: '', zonecode: '', address: '', detailAddress: '', extraAddress: '', latitude: '', longitude: ''
       },
       page3Data: {
         introduce: '', facility: '', notice: ''
@@ -93,16 +93,29 @@ const RegisterStepper = () => {
       setActiveStep(activeStep + 1);
       sessionStorage.setItem('activeStep', (activeStep + 1).toString());
     } else {
-      // Form submission 완료 후 sessionStorage 초기화
-      sessionStorage.removeItem('formData');
-      sessionStorage.removeItem('activeStep');
-      toast({
-        title: "공간 등록을 완료하였습니다.",
-        status: "success",
-        duration: 3000,
-        isClosable: true,
-      })
-      navigate(`/`)
+      axios.post(`api/space/insert`, formData)
+        .then(() => {
+          // Form submission 완료 후 sessionStorage 초기화
+          sessionStorage.removeItem('formData');
+          sessionStorage.removeItem('activeStep');
+          toast({
+            title: "공간 등록을 완료하였습니다.",
+            status: "success",
+            duration: 3000,
+            isClosable: true,
+          })
+          navigate(`/`)
+        })
+        .catch((err)=>{
+          toast({
+            title: "공간 등록에 실패했습니다.",
+            description: error.response?.data?.message || "알 수 없는 오류가 발생했습니다.",
+            status: "error",
+            duration: 3000,
+            isClosable: true,
+          });
+        })
+        .finally()
     }
   };
 
