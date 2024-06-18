@@ -1,5 +1,17 @@
-import {Box, Text, Button, FormControl, FormLabel, HStack, Input, Switch, VStack, useToast} from "@chakra-ui/react";
-import {Avatar} from "@mui/material";
+import {
+  Box,
+  Text,
+  Button,
+  FormControl,
+  FormLabel,
+  HStack,
+  Input,
+  Switch,
+  VStack,
+  useToast,
+  Avatar
+} from "@chakra-ui/react";
+
 import {useContext, useEffect, useState} from "react";
 import axios from "axios";
 import {LoginContext} from "../../component/LoginProvider.jsx";
