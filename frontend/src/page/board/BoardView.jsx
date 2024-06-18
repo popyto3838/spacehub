@@ -83,7 +83,7 @@ export function BoardView() {
         <Box>
           <FormControl>
             <FormLabel>작성자</FormLabel>
-            <Input value={board.nickName} readOnly />
+            <Input value={account.nickname} readOnly />
           </FormControl>
         </Box>
         <Box>
@@ -98,12 +98,14 @@ export function BoardView() {
             )}
           </FormControl>
         </Box>
-        <Box>
-          <Button onClick={onOpen}>삭제</Button>
-          <Button onClick={() => navigate(`/board/${boardId}/edit`)}>
-            수정
-          </Button>
-        </Box>
+        {account.hasAccess(board.memberId) && (
+          <Box>
+            <Button onClick={onOpen}>삭제</Button>
+            <Button onClick={() => navigate(`/board/${boardId}/edit`)}>
+              수정
+            </Button>
+          </Box>
+        )}
       </Box>
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />

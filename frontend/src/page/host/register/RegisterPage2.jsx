@@ -1,17 +1,50 @@
-import React from "react";
-import { Box, FormControl, FormLabel, Input } from "@chakra-ui/react";
+import React, {useState} from "react";
+import { Box, Heading } from "@chakra-ui/react";
+import AddressSearch from "../../../component/AddressSearch.jsx";
 
 const RegisterPage2 = ({ formData, setFormData }) => {
-  const handleCapacityChange = (e) => setFormData({ ...formData, capacity: e.target.value });
-  // ... (다른 필드에 대한 onChange 핸들러 추가)
+  const [detailedAddress, setDetailedAddress] = useState({
+    zonecode: '',
+    address: '',
+    detailAddress: '',
+    extraAddress: '',
+  });
+
+  const handleAddressChange = (newAddress) => {
+    setDetailedAddress(newAddress);
+    setFormData({
+      ...formData,
+      page2Data: {
+        ...(formData.page2Data || {}),
+        location: newAddress.address + newAddress.extraAddress,
+        zonecode: newAddress.zonecode, // 우편번호 추가
+        address: newAddress.address,   // 기본 주소 추가
+        detailAddress: newAddress.detailAddress, // 상세 주소 추가
+        extraAddress: newAddress.extraAddress,   // 참고 항목 추가
+      },
+    });
+  };
+
+  const postCodeStyle = {
+    bgColor: "",
+    searchBgColor: "",
+    contentBgColor: "",
+    pageBgColor: "",
+    textColor: "",
+    queryTextColor: "",
+    postcodeTextColor: "",
+    emphTextColor: "",
+    outlineColor: ""
+  };
 
   return (
     <Box>
-      <FormControl mb={4}>
-        <FormLabel htmlFor="space-capacity">수용 인원</FormLabel>
-        <Input id="space-capacity" type="number" onChange={handleCapacityChange} />
-      </FormControl>
-      {/* ... (나머지 입력 필드: floor, parkingSpaces, price 등) */}
+      <Heading>등록 공간 주소</Heading>
+      <AddressSearch
+        onAddressChange={handleAddressChange}
+        value={formData.page2Data?.location || ''} // 현재 주소 데이터를 전달
+        theme={postCodeStyle}
+      />
     </Box>
   );
 };
