@@ -17,13 +17,9 @@ import {
 
 const RegisterPage4 = ({ formData, setFormData }) => {
   const [priceInput, setPriceInput] = useState(formData.page4Data?.price || 0);
-  const [capacityInput, setCapacityInput] = useState(
-    formData.page4Data?.capacity || 0
-  );
+  const [capacityInput, setCapacityInput] = useState(formData.page4Data?.capacity || 0);
   const [floorInput, setFloorInput] = useState(formData.page4Data?.floor || 0);
-  const [parkingSpaceInput, setParkingSpaceInput] = useState(
-    formData.page4Data?.parkingSpace || 0
-  );
+  const [parkingSpaceInput, setParkingSpaceInput] = useState(formData.page4Data?.parkingSpace || 0);
 
   const handlePriceChange = (valueString) => {
     const value = Number(valueString);

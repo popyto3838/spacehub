@@ -18,6 +18,7 @@ import {MemberEdit} from "./page/member/MemberEdit.jsx";
 import {NaverLoginHandler} from "./page/member/NaverLoginHandler.jsx";
 import {LoginProvider} from "./component/LoginProvider.jsx";
 import {SpaceType} from "./page/admin/space_config/SpaceType.jsx";
+import Payment from "./page/paid/Payment.jsx";
 import {MemberHost} from "./page/host/MemberHost.jsx";
 import {HostSignup} from "./page/member/HostSignup.jsx";
 import {MemberMy} from "./page/member/MemberMy.jsx";
@@ -37,7 +38,6 @@ axios.interceptors.request.use((config) => {
   // config를 리턴
   return config;
 });
-
 function App() {
   const router = createBrowserRouter([
     {
@@ -62,11 +62,12 @@ function App() {
         {path: "member/:memberId", element: <MemberInfo/>},
         {path: "member/login", element: <MemberLogin/>},
         {path: "member/edit/:memberId", element: <MemberEdit/>},
+        {path: "auth/naverlogin", element: <NaverLoginHandler/>},
+        {path: "paid/payment", element: <Payment/>},
         {path: "member/naverlogin", element: <NaverLoginHandler/>},
         {path: "member/host", element: <MemberHost/>},
         {path: "host/signup", element: <HostSignup/>},
         {path: "member/info/:accountId", element: <MemberMy/>},
-
       ],
     },
   ]);

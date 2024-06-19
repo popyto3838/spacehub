@@ -6,18 +6,31 @@ const RegisterPage5 = ({ formData, setFormData }) => {
   const [previewUrls, setPreviewUrls] = useState([]);
 
   const handleFileChange = (e) => {
-    const files = Array.from(e.target.files);
+    const files = Array.from(e.target.files); // 파일들을 배열로 변환
     setSelectedFiles(files);
 
     const urls = files.map((file) => URL.createObjectURL(file));
     setPreviewUrls(urls);
 
-    setFormData({ ...formData, images: files }); // FormData에 images 추가
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      page5Data: {
+        files: files, // FormData 에 files 배열 추가
+      },
+    }));
   };
 
   const handleDeleteImage = (index) => {
     setSelectedFiles(selectedFiles.filter((_, i) => i !== index));
     setPreviewUrls(previewUrls.filter((_, i) => i !== index));
+
+    // 삭제된 파일을 formData 에서도 제거
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      page5Data: {
+        files: prevFormData.page5Data.files.filter((_, i) => i !== index),
+      },
+    }));
   };
 
   return (

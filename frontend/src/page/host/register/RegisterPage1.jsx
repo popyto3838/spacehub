@@ -1,10 +1,11 @@
 import React, {useEffect, useState} from "react";
-import {Box, FormControl, FormLabel, Heading, Input, Select} from "@chakra-ui/react";
+import {Box, FormControl, FormLabel, Heading, Input, Select, useToast} from "@chakra-ui/react";
 import axios from "axios";
 
 const RegisterPage1 = ({formData, setFormData}) => {
   const [typeLists, setTypeLists] = useState([]);
   const [loading, setLoading] = useState(true);
+  const toast = useToast();
 
   const handleTypeChange = (e) => {
     setFormData({
