@@ -2,13 +2,31 @@ import {Box, Button, Center} from "@chakra-ui/react";
 import {useNavigate} from "react-router-dom";
 import {useContext} from "react";
 import {LoginContext} from "../../component/LoginProvider.jsx";
+import axios from "axios";
 
 export function MemberHost() {
   const navigate = useNavigate();
   const account = useContext(LoginContext);
 
-  return (
+  function SwitchHost() {
+    axios
+      .put("/api/member/host", { memberId: account.id })
+      .then((res) => {
+        toast({
+          status: "success",
+          description:"호스트로 전환되었습니다.",
+          position :"top"
+        })
+      })
 
+  }
+
+  return (
+<>
+    <Center border={"1px dashed black"} borderRadius={"50px"}>
+      <Box>zz</Box>
+      <Box>zz</Box>
+    </Center>
     <Box>
       {account.isLoggedOut() &&<Center>
         <Button
@@ -17,7 +35,7 @@ export function MemberHost() {
       </Center>}
       {account.isLoggedIn() &&<Center>
         <Button
-          onClick={() => navigate(`/host/signup`)}
+          onClick={SwitchHost}
           colorScheme={"purple"} >호스트로 전환하기</Button>
       </Center>}
       <Box>
@@ -27,5 +45,6 @@ export function MemberHost() {
         <Center>호스트센터를 이용하시려면 별도의 호스트 회원가입이 필요합니다</Center>
       </Box>
     </Box>
+</>
   );
 }

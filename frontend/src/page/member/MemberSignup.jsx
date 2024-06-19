@@ -157,6 +157,7 @@ export function MemberSignup() {
   const confirmNumber = () => {
     if (inputCode == verificationCode) {
       alert("인증되었습니다.");
+      setIsCodeSent(false);
     } else {
       alert("인증에 실패했습니다");
     }
