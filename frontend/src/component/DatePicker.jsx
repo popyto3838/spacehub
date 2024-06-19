@@ -1,9 +1,17 @@
-import React, {useState} from 'react';
+// eslint-disable-next-line no-unused-vars
+import React, {useContext, useState} from 'react';
 import '/public/css/component/DatePicker.css';
+import axios from "axios";
+import {LoginContext} from "./LoginProvider.jsx";
+import {useToast} from "@chakra-ui/react";
+import {useNavigate} from "react-router-dom";
 
 
 const Calendar = () => {
+    const account = useContext(LoginContext);
+    const toast = useToast();
     const today = new Date();
+    const navigate = useNavigate();
     const [selectedDate, setSelectedDate] = useState(today);
     const [currentDate, setCurrentDate] = useState(today);
     const months = [
@@ -131,31 +139,76 @@ const Calendar = () => {
         ));
     };
 
+    const handleReservation = () => {
+        if (selectedDate && selectedHours.length > 0) {
+            const year = selectedDate.getFullYear();
+            const month = String(selectedDate.getMonth() + 1).padStart(2, '0');
+            const day = String(selectedDate.getDate()).padStart(2, '0');
+            const formattedDate = `${year}-${month}-${day}`;
+
+            const startHour = String(selectedHours[0]).padStart(2, '0');
+            const endHour = String(selectedHours[selectedHours.length - 1]).padStart(2, '0');
+            const startTime = `${startHour}:00`;
+            const endTime = `${endHour}:00`;
+
+            axios
+                .post("/api/reservation/write", {
+                    "spaceId": 2,
+                    "memberId": account.id,
+                    "startDate": formattedDate,
+                    "endDate": formattedDate,
+                    "startTime": startTime,
+                    "endTime": endTime
+                })
+                .then((res) => {
+                    toast({
+                        status: "success",
+                        description: "예약을 신청하였습니다.",
+                        position: "top",
+                        duration: 1000,
+                    });
+                    navigate("/paid/payment");
+                })
+                .catch((res) => {
+                    toast({
+                        status: "error",
+                        description: "예약을 실패하였습니다.",
+                        position: "top",
+                        duration: 1000,
+                    });
+                });
+        }
+    };
+
 
     return (
-        <div className="calendar-container">
-            <div className="calendar-header">
-                <button className="prev-month" onClick={handlePrevMonth}>
-                    &lt;
-                </button>
-                <div className="current-date">
-                    {currentDate.getFullYear()}년 {months[currentDate.getMonth()]}
+        <div>
+            <div className="calendar-container">
+                <div className="calendar-header">
+                    <button className="prev-month" onClick={handlePrevMonth}>
+                        &lt;
+                    </button>
+                    <div className="current-date">
+                        {currentDate.getFullYear()}년 {months[currentDate.getMonth()]}
+                    </div>
+                    <button className="next-month" onClick={handleNextMonth}>
+                        &gt;
+                    </button>
                 </div>
-                <button className="next-month" onClick={handleNextMonth}>
-                    &gt;
-                </button>
-            </div>
-            <div className="calendar-body">
-                <div className="weekdays">
-                    {weekdays.map(day => (
-                        <div key={day} className="weekday">
-                            {day}
-                        </div>
-                    ))}
+                <div className="calendar-body">
+                    <div className="weekdays">
+                        {weekdays.map(day => (
+                            <div key={day} className="weekday">
+                                {day}
+                            </div>
+                        ))}
+                    </div>
+                    <div className="calendar-days">{renderCalendar()}</div>
                 </div>
-                <div className="calendar-days">{renderCalendar()}</div>
+                <div className="hour-button-container">{renderHourCheckboxes()}</div>
+
             </div>
-            <div className="hour-button-container">{renderHourCheckboxes()}</div>
+            <button onClick={handleReservation}>예약하기</button>
         </div>
     );
 };

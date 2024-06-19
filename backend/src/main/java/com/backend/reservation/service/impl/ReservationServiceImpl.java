@@ -33,7 +33,7 @@ public class ReservationServiceImpl implements ReservationService {
 
     @Override
     public void insert(Reservation reservation) {
-        reservation.setStatus(ReservationStatus.ACCEPT);
+        reservation.setStatus(ReservationStatus.APPLY);
         reservationMapper.insert(reservation);
     }
 

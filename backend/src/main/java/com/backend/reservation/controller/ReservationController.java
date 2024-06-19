@@ -33,7 +33,7 @@ public class ReservationController {
     }
 
     @PostMapping("/write")
-    public void write(Reservation reservation) {
+    public void write(@RequestBody Reservation reservation) {
         reservationService.insert(reservation);
     }
 

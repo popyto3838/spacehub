@@ -12,14 +12,16 @@ public interface ReservationMapper {
                     INSERT INTO RESERVATION 
                     (       SPACE_ID
                     ,       MEMBER_ID
-                    ,       DATE
+                    ,       START_DATE
+                    ,       END_DATE
                     ,       START_TIME
                     ,       END_TIME
                     ,       STATUS
                     ) VALUES 
                     (       #{spaceId}
                     ,       #{memberId}
-                    ,       CURRENT_TIMESTAMP
+                    ,       #{startDate}
+                    ,       #{endDate}
                     ,       #{startTime}
                     ,       #{endTime}
                     ,       #{status}
@@ -44,7 +46,8 @@ public interface ReservationMapper {
 
     @Update("""
             UPDATE RESERVATION 
-            SET     DATE            = CURRENT_TIMESTAMP
+            SET     START_DATE      = #{startDate}
+            ,       END_DATE        = #{endDate}
             ,       START_TIME      = #{startTime}
             ,       END_TIME        = #{endTime}
             ,       UPDATE_DT       = CURRENT_TIMESTAMP
