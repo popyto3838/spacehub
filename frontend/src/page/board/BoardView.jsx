@@ -102,10 +102,10 @@ export function BoardView() {
 
         <Box>
           <Box>첨부 파일</Box>
-          {board.filesList &&
-            board.filesList.map((file) => (
-              <Box border={"1px solid black"} key={file.name}>
-                <Image src={file.src} />
+          {board.filesLists &&
+            board.filesLists.map((file) => (
+              <Box border={"1px solid black"} key={file.fileName}>
+                <Image src={file.src} alt={file.fileName} />
               </Box>
             ))}
         </Box>

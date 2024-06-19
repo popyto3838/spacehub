@@ -30,7 +30,7 @@ public interface BoardMapper {
             <script>
             SELECT B.BOARD_ID, B.VIEWS, B.TITLE, B.INPUT_DT, B.UPDATE_DT,
                    C.CATEGORY_NAME, C.CATEGORY_ID,
-                   M.NICKNAME,
+                   M.NICKNAME WRITER,
                    COUNT(SUBQUERY_TABLE.FILE_NAME) number_of_images
             FROM BOARD B LEFT JOIN MEMBER M ON B.MEMBER_ID = M.MEMBER_ID
                          LEFT JOIN CATEGORY C ON B.CATEGORY_ID = C.CATEGORY_ID
@@ -77,8 +77,10 @@ public interface BoardMapper {
 
     // 게시물의 파일 이름 조회
     @Select("""
-            SELECT FILE_NAME
-            FROM FILE_LIST
+            SELECT F.FILE_NAME, F.PARENT_ID, F.FILE_LIST_ID, B.BOARD_ID
+            FROM FILE_LIST F
+            JOIN BOARD B ON F.PARENT_ID = B.BOARD_ID
+            /*JOIN (SELECT BOARD_ID FROM BOARD) AS SUBQUERY_TABLE ON F.PARENT_ID = SUBQUERY_TABLE.BOARD_ID*/
             WHERE PARENT_ID = #{parentId}
             """)
     List<String> selectByFileNameByBoardId(Integer parentId);

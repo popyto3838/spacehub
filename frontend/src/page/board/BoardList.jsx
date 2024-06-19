@@ -162,7 +162,7 @@ export function BoardList() {
                     )}
                   </Td>
                   <Td>{board.categoryId}</Td>
-                  <Td>{account.nickname}</Td>
+                  <Td>{board.writer}</Td>
                   {categoryList.map(
                     (category) =>
                       category.categoryId === board.categoryId && (

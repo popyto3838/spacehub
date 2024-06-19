@@ -92,11 +92,18 @@ public class BoardServiceImpl implements BoardService {
         List<String> fileNames = boardMapper.selectByFileNameByBoardId(boardId);
         // 파일 경로 저장
         List<FileList> files = fileNames.stream()
-                .map(fileName -> new com.backend.fileList.domain.FileList(fileName, STR."http://172.30.1.67:8888/\{boardId}/\{fileName}"))
+                .map(fileName -> {
+                    var fl = new FileList();
+                    fl.setFileName(fileName);
+                    fl.setSrc(STR."http://172.30.1.12:8888/\{boardId}/\{fileName}");
+                    return fl;
+                })
                 .toList();
         // board에 이미지 경로 넣어줌
         System.out.println("files = " + files);
-        board.setFilesList(files);
+        System.out.println("fileNames = " + fileNames);
+        System.out.println("board = " + board);
+        board.setFilesLists(files);
 
         return board;
     }
