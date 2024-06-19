@@ -273,7 +273,7 @@ public class MemberController {
     }
 
 
-    @PostMapping("account")
+    @PostMapping("phone")
     public ResponseEntity phone(@RequestBody Member member) {
 
         service.addPhone(member);
