@@ -30,7 +30,7 @@ public interface BoardMapper {
             <script>
             SELECT B.BOARD_ID, B.VIEWS, B.TITLE, B.INPUT_DT, B.UPDATE_DT,
                    C.CATEGORY_NAME, C.CATEGORY_ID,
-                   M.NICKNAME WRITER,
+                   CASE WHEN M.WITHDRAWN = 'Y' THEN '탈퇴한 회원입니다.' ELSE M.NICKNAME END AS WRITER,
                    COUNT(SUBQUERY_TABLE.FILE_NAME) number_of_images
             FROM BOARD B LEFT JOIN MEMBER M ON B.MEMBER_ID = M.MEMBER_ID
                          LEFT JOIN CATEGORY C ON B.CATEGORY_ID = C.CATEGORY_ID
@@ -69,7 +69,9 @@ public interface BoardMapper {
 
     // 하나의 게시물 조회
     @Select("""
-            SELECT B.BOARD_ID, B.TITLE, B.CONTENT, B.INPUT_DT, B.UPDATE_DT, M.NICKNAME, M.MEMBER_ID
+            SELECT B.BOARD_ID, B.TITLE, B.CONTENT, B.INPUT_DT, B.UPDATE_DT,
+                   CASE WHEN M.WITHDRAWN = 'Y' THEN '탈퇴한 회원입니다.' ELSE M.NICKNAME END AS WRITER,
+                   M.MEMBER_ID
             FROM BOARD B JOIN MEMBER M ON B.MEMBER_ID = M.MEMBER_ID
             WHERE BOARD_ID = #{boardId}
             """)
@@ -107,6 +109,16 @@ public interface BoardMapper {
             WHERE PARENT_ID = #{parentId}
             """)
     int deleteFileByBoardId(Integer parentId);
+
+    // 멤버 탈퇴시 게시물 작성자 탈퇴한 회원입니다로 변경
+//    @Update("""
+//            UPDATE BOARD B
+//            JOIN MEMBER M ON B.MEMBER_ID = M.MEMBER_ID
+//            SET B.WRITER = '탈퇴한 회원입니다.'
+//            WHERE M.WITHDRAWN = 'Y'
+//            """)
+//    int deletedMemberBoardInfo();
+
 
     // 게시물 클릭시 조회수 업데이트
     @Update("""

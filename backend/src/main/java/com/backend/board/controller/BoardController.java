@@ -23,6 +23,7 @@ public class BoardController {
     @PreAuthorize("isAuthenticated()")
     public void write(Board board, Authentication authentication
             , @RequestParam(value = "files[]", required = false) MultipartFile[] files) throws IOException {
+        // 글 작성시 로그인 사용자 정보 추가
         boardService.insert(board, authentication, files);
 
     }

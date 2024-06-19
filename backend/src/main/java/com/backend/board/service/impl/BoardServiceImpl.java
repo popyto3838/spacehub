@@ -27,7 +27,7 @@ public class BoardServiceImpl implements BoardService {
 
     @Override
     public void insert(Board board, Authentication authentication, MultipartFile[] files) throws IOException {
-        // 사용자의 정보를 가져옴
+        // authentication에 들어가있는 email을 통해 사용자의 정보를 가져옴
         board.setMemberId(Integer.valueOf(authentication.getName()));
 
         boardMapper.insert(board);
@@ -95,7 +95,7 @@ public class BoardServiceImpl implements BoardService {
                 .map(fileName -> {
                     var fl = new FileList();
                     fl.setFileName(fileName);
-                    fl.setSrc(STR."http://172.30.1.12:8888/\{boardId}/\{fileName}");
+                    fl.setSrc(STR."http://172.27.128.1:8888/\{boardId}/\{fileName}");
                     return fl;
                 })
                 .toList();
