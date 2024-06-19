@@ -18,6 +18,7 @@ public class Member {
     private Withdrawn withdrawn;
     private String naverId;
     private String mobile;
+    private String profileImage;
 
     public String getSignupDateAndTime() {
         DateTimeFormatter formatter
@@ -27,6 +28,5 @@ public class Member {
     }
 
     private String link;
-
 
 }

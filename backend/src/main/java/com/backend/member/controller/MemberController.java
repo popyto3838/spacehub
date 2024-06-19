@@ -1,6 +1,7 @@
 package com.backend.member.controller;
 
 
+import com.backend.member.domain.member.Host;
 import com.backend.member.domain.member.Member;
 import com.backend.member.service.MailService;
 import com.backend.member.service.MemberService;
@@ -22,6 +23,7 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 @RestController
@@ -31,6 +33,7 @@ import java.util.stream.Collectors;
 public class MemberController {
     final MailService mailService;
     final MemberService service;
+
 
     @Autowired
     private JwtEncoder jwtEncoder;
@@ -105,6 +108,7 @@ public class MemberController {
     }
 
     @GetMapping("{memberId}")
+
     public ResponseEntity get(@PathVariable Integer memberId) {
         Member member = service.getById(memberId);
         if (member == null) {
@@ -176,6 +180,7 @@ public class MemberController {
         String extractedNickname = (String) responseData.get("nickname");
         String extractedNaverId = (String) responseData.get("id");
         String extractedMobile = (String) responseData.get("mobile");
+        String extractedProfileImage = (String) responseData.get("profile_image");
 
         // 사용자 정보 추출 후 Member 객체 생성
         Member member = new Member();
@@ -184,13 +189,13 @@ public class MemberController {
         member.setNickname(extractedNickname);
         member.setNaverId(extractedNaverId);
         member.setMobile(extractedMobile);
+        member.setProfileImage(extractedProfileImage);
         member.setInputDt(LocalDateTime.now());
         member.setAuth("USER"); // 기본 권한 설정
 
 
 
         // 데이터베이스에 사용자 정보 저장
-
         if(service.findByEmail(member.getEmail())==null){
             System.out.println("member = " + member);
             service.insertMember(member);
@@ -198,8 +203,7 @@ public class MemberController {
 
 
         }
-
-
+        member.setMemberId(service.selectbyEmail2(member));
         // JWT 토큰 생성
         Instant now = Instant.now();
 
@@ -224,6 +228,57 @@ public class MemberController {
     }
 
 
+    @PutMapping("host")
+    public ResponseEntity host(@RequestBody Member member, Authentication authentication) {
+        System.out.println("member = " + member);
+          service.switchHost(member);
+        return ResponseEntity.ok().build();
+    }
 
 
+    @PostMapping("account")
+    public ResponseEntity account(@RequestBody Host host) {
+
+        if (service.validateAccount(host)) {
+
+            service.addAccountinfo(host);
+
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
+
+    @GetMapping(value = "p1")
+    public Map<String, Object> p1(@RequestParam String mobile) {
+        long expirationTime;
+        Random rnd  = new Random();
+        StringBuilder buffer = new StringBuilder();
+        for (int i = 0; i < 4; i++) {
+            buffer.append(rnd.nextInt(10));
+        }
+        expirationTime = System.currentTimeMillis() + 5 * 60 * 1000;
+
+        String verificationCode = buffer.toString();
+
+        service.certifiedPhoneNumber(mobile,verificationCode);
+
+        // 반환할 데이터를 Map에 추가합니다.
+        Map<String, Object> response = new HashMap<>();
+        response.put("verificationCode", verificationCode);
+        response.put("expirationTime", expirationTime);
+
+        return response;
+    }
+
+
+    @PostMapping("phone")
+    public ResponseEntity phone(@RequestBody Member member) {
+
+        service.addPhone(member);
+
+            return ResponseEntity.ok().build();
+
+    }
 }

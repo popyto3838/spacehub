@@ -23,7 +23,8 @@ import {MemberHost} from "./page/host/MemberHost.jsx";
 import {HostSignup} from "./page/member/HostSignup.jsx";
 import {MemberMy} from "./page/member/MemberMy.jsx";
 
-import axios from "axios"; // axios interceptor 설정
+import axios from "axios";
+
 
 // axios interceptor 설정
 axios.interceptors.request.use((config) => {
