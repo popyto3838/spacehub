@@ -27,3 +27,6 @@
     font-family: 'MangoDdobak-B';
     height: 6vh; width: 30%;
 }
+.statusText {
+    color: crimson;
+}

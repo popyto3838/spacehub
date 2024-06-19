@@ -59,4 +59,11 @@ public interface ReservationMapper {
             """)
     int deleteByReservationId(Integer reservationId);
 
+    @Update("""
+            UPDATE RESERVATION 
+            SET     STATUS          = 'COMPLETE_PAYMENT'
+            ,       UPDATE_DT       = CURRENT_TIMESTAMP
+            WHERE   RESERVATION_ID  = #{reservationId}
+            """)
+    int completePament(Integer reservationId);
 }
