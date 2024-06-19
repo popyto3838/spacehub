@@ -211,12 +211,6 @@ export function BoardList() {
           </Box>
         )}
       </Center>
-      <Button
-        onClick={() => {
-          account.logout();
-          navigate("/");
-        }}
-      >로그아웃</Button>
     </Box>
   );
 }

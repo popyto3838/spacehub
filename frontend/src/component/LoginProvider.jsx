@@ -1,6 +1,7 @@
 import { createContext, useEffect, useState } from "react";
 import { jwtDecode } from "jwt-decode";
 
+
 export const LoginContext = createContext(null);
 
 export function LoginProvider({ children }) {
@@ -9,6 +10,7 @@ export function LoginProvider({ children }) {
   const [memberId, setMemberId] = useState("");
   const [expired, setExpired] = useState(0);
   const [authority, setAuthority] = useState("");
+
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -58,22 +60,34 @@ export function LoginProvider({ children }) {
     setNickname("");
     setAuthority([]);
 
+    // 모든 쿠키 삭제 함수 정의
+    const deleteAllCookies = () => {
+      const cookies = document.cookie.split(";");
+      cookies.forEach((cookie) => {
+        const cookieName = cookie.split("=")[0].trim();
+        document.cookie = `${cookieName}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/;`;
+      });
+    };
+
+    // 모든 쿠키 삭제
+    deleteAllCookies();
+
+    sessionStorage.clear();
+
+
   }
 
-  function switchHost(){
-    setAuthority(["HOST"])
-  }
 
-  function switchUser(){
-    setAuthority(["USER"])
 
-  }
+
+
 
   return (
     <LoginContext.Provider
       value={{
         id: id,
         nickname: nickname,
+        authority: authority,
         login: login,
         logout: logout,
         isLoggedIn: isLoggedIn,

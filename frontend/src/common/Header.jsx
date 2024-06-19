@@ -34,12 +34,12 @@ const Header = () => {
                         <li>
                             <a href="#home">Home</a>
                         </li>
-                        <li>
+                        {account.isLoggedOut() &&<li>
                             <a href="/member/login">로그인</a>
-                        </li>
-                        <li>
+                        </li>}
+                        {account.isLoggedOut() &&<li>
                             <a href="/member/signup">회원가입</a>
-                        </li>
+                        </li>}
                         <li>
                             <a href="/board/list">게시판</a>
                         </li>
@@ -56,13 +56,24 @@ const Header = () => {
                             <a href="/space/option">공간옵션</a>
                         </li>
                         <li>
-                            <Button onClick={() => navigate(`/member/info/${account.id}`)} style={{color: 'white', backgroundColor: 'mediumblue'}}>마이페이지
+                            <Button onClick={() => navigate(`/member/info/${account.id}`)}
+                                    style={{color: 'white', backgroundColor: 'mediumblue'}}>마이페이지
                             </Button>
                         </li>
                         <li>
                             <a href="/member/host" style={{color: 'white', backgroundColor: 'mediumblue'}}>호스트센터로 이동하기
                             </a>
                         </li>
+
+                        {account.isLoggedIn()&& <li>
+                            <Button
+
+                              onClick={() => {
+                                  account.logout();
+                                  navigate("/");
+                              }}
+                            >로그아웃</Button>
+                        </li>}
                     </ul>
                 </nav>
             </header>

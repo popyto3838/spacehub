@@ -2,6 +2,7 @@ package com.backend.member.mapper;
 
 
 
+import com.backend.member.domain.member.Host;
 import com.backend.member.domain.member.Member;
 import org.apache.ibatis.annotations.*;
 
@@ -113,8 +114,8 @@ public interface MemberMapper {
     Member findByEmail(String email);
 
     @Insert("""
-        INSERT INTO MEMBER (EMAIL, PASSWORD, NICKNAME, NAVER_ID, INPUT_DT, AUTH, MOBILE)
-        VALUES (#{email}, #{password}, #{nickname}, #{naverId}, #{inputDt}, #{auth} ,#{mobile})
+        INSERT INTO MEMBER (EMAIL, PASSWORD, NICKNAME, NAVER_ID, INPUT_DT, AUTH, MOBILE , PROFILE_IMAGE)
+        VALUES (#{email}, #{password}, #{nickname}, #{naverId}, #{inputDt}, #{auth} ,#{mobile} ,#{profileImage})
     """)
     @Options(useGeneratedKeys = true, keyProperty = "memberId")
     void insertMember(Member member);
@@ -126,4 +127,25 @@ public interface MemberMapper {
     @Options(useGeneratedKeys = true, keyProperty = "memberId")
     int inserthost(Member member);
 
+    @Update("""
+            UPDATE MEMBER
+            SET AUTH ='HOST',
+                AUTH_NAME ='HOST'
+            WHERE MEMBER_ID = #{memberId}
+            """)
+    void switchHost(Member member);
+
+    @Insert("""
+            INSERT INTO HOST (BANK_NAME, ACCOUNT_NUMBER , MEMBER_ID)
+            VALUES (#{bankName}, #{accountNumber}, #{memberId})
+            """)
+    void insertAccount(Host host);
+
+
+    @Update("""
+            UPDATE MEMBER
+            SET MOBILE = #{mobile}
+            WHERE MEMBER_ID = #{memberId}
+            """)
+    void addPhone(Member member);
 }
