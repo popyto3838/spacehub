@@ -9,39 +9,31 @@ const RegisterPage1 = ({formData, setFormData}) => {
 
   const handleTypeChange = (e) => {
     const selectedType = typeLists.find(type => type.name === e.target.value);
-    setFormData({
-      ...formData,
-      page1Data: {
-        ...formData.page1Data,
-        type: e.target.value, // 선택된 type 값 업데이트
-        typeId: selectedType ? selectedType.typeListId : null, // typeId 값 저장
-      },
-    });
+    if (selectedType) { // selectedType가 존재할 때만 업데이트
+      setFormData({
+        ...formData,
+        type: selectedType.name, // type 값 업데이트
+        typeId: selectedType.typeListId, // typeId 값 업데이트
+      });
+    }
   };
-  const handleTitleChange = (e) => {
-    setFormData({
-      ...formData,
-      page1Data: {
-        ...(formData.page1Data || {}), // formData.page1Data가 존재하지 않을 경우 빈 객체로 초기화
-        title: e.target.value,
-      },
-    });
-  };
-  const handleSubTitleChange = (e) => {
-    setFormData({
-      ...formData,
-      page1Data: {
-        ...(formData.page1Data || {}), // formData.page1Data가 존재하지 않을 경우 빈 객체로 초기화
-        subTitle: e.target.value,
-      },
-    });
-  };
+  const handleTitleChange = (e) => setFormData({ ...formData, title: e.target.value });
+  const handleSubTitleChange = (e) => setFormData({ ...formData, subTitle: e.target.value });
 
   useEffect(() => {
     axios.get(`/api/space/type/list`)
       .then((res) => {
         setTypeLists(res.data);
         setLoading(false); // 데이터 로딩 완료
+
+        // typeLists 데이터가 로드된 후 formData 업데이트
+        if (res.data.length > 0) {
+          setFormData({
+            ...formData,
+            type: res.data[0].name, // 첫 번째 타입을 기본값으로 설정
+            typeId: res.data[0].typeListId,
+          });
+        }
       })
       .catch((error) => {
         console.error("Error fetching type lists:", error);
@@ -60,7 +52,7 @@ const RegisterPage1 = ({formData, setFormData}) => {
         <FormLabel htmlFor="space-type">공간 유형</FormLabel>
         <Select
           id="space-type"
-          value={(formData.page1Data && formData.page1Data.type) || ''} // formData.page1Data가 존재할 때만 type 값을 사용
+          value={formData.type || ''}
           onChange={handleTypeChange}
         >
           {typeLists.map((typeList) => (
@@ -70,12 +62,11 @@ const RegisterPage1 = ({formData, setFormData}) => {
           ))}
         </Select>
       </FormControl>
-      {/* ... (나머지 입력 필드: title, subTitle, location) */}
       <FormControl mb={4}>
         <FormLabel htmlFor="space-title">공간 이름</FormLabel>
         <Input
           id="space-title"
-          value={(formData.page1Data && formData.page1Data.title) || ''} // formData.page1Data가 존재할 때만 title 값을 사용
+          value={(formData && formData.title) || ''} // formData.page1Data가 존재할 때만 title 값을 사용
           onChange={handleTitleChange}
         />
       </FormControl>
@@ -83,7 +74,7 @@ const RegisterPage1 = ({formData, setFormData}) => {
         <FormLabel htmlFor="space-subtitle">공간 한 줄 소개</FormLabel>
         <Input
           id="space-subtitle"
-          value={(formData.page1Data && formData.page1Data.subTitle) || ''} // formData.page1Data가 존재할 때만 subTitle 값을 사용
+          value={(formData && formData.subTitle) || ''} // formData.page1Data가 존재할 때만 subTitle 값을 사용
           onChange={handleSubTitleChange}
         />
       </FormControl>
