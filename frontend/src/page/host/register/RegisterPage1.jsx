@@ -8,11 +8,12 @@ const RegisterPage1 = ({formData, setFormData}) => {
   const toast = useToast();
 
   const handleTypeChange = (e) => {
+    const selectedType = typeLists.find(type => type.name === e.target.value);
     setFormData({
       ...formData,
       page1Data: {
-        ...(formData.page1Data || {}),
-        type: e.target.value,
+        ...formData.page1Data,
+        typeId: selectedType ? selectedType.typeListId : null, // typeId 값 저장
       },
     });
   };
