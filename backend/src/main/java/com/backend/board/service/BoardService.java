@@ -20,4 +20,5 @@ public interface BoardService {
 
     void updateViews(Integer boardId);
 
+    boolean hasAccess(Integer boardId, Authentication authentication);
 }

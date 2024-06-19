@@ -140,4 +140,12 @@ public class BoardServiceImpl implements BoardService {
         boardMapper.updateViews(boardId);
     }
 
+    @Override
+    public boolean hasAccess(Integer boardId, Authentication authentication) {
+        // 게시물 번호로 게시물을 얻어옴
+        Board board = boardMapper.selectByBoardId(boardId);
+
+        // 게시물의 멤버 id와 authentication의 name과 같은지 리턴
+        return board.getMemberId().equals(Integer.valueOf(authentication.getName()));
+    }
 }

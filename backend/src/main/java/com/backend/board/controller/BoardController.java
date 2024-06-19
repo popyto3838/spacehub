@@ -23,7 +23,7 @@ public class BoardController {
     @PreAuthorize("isAuthenticated()")
     public void write(Board board, Authentication authentication
             , @RequestParam(value = "files[]", required = false) MultipartFile[] files) throws IOException {
-        // 글 작성시 로그인 사용자 정보 추가
+        // 글 작성시 로그인 사용자 정보, 파일 추가
         boardService.insert(board, authentication, files);
 
     }
@@ -47,13 +47,22 @@ public class BoardController {
     }
 
     @PutMapping("{boardId}/edit")
-    public void edit(@RequestBody Board board) {
-        boardService.update(board);
+    @PreAuthorize("isAuthenticated()")
+    public void edit(@RequestBody Board board,
+                     Authentication authentication) {
+        // 권한이 있어야 수정 가능
+        if (boardService.hasAccess(board.getBoardId(), authentication)) {
+            boardService.update(board);
+        }
     }
 
     @DeleteMapping("{boardId}/delete")
-    public void remove(@PathVariable Integer boardId) {
-        boardService.delete(boardId);
+    @PreAuthorize("isAuthenticated()")
+    public void remove(@PathVariable Integer boardId,
+                       Authentication authentication) {
+        if (boardService.hasAccess(boardId, authentication)) {
+            boardService.delete(boardId);
+        }
     }
 
     @PutMapping("{boardId}/views")
