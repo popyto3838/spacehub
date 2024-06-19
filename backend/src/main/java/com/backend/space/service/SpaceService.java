@@ -5,5 +5,5 @@ import com.backend.space.domain.Space;
 public interface SpaceService {
 
 
-    void insertSpace(Space space);
+    int insertSpace(Space space);
 }

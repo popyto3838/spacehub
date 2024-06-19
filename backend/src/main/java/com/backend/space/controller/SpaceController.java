@@ -1,5 +1,6 @@
 package com.backend.space.controller;
 
+import com.backend.file.service.FileService;
 import com.backend.space.domain.Space;
 import com.backend.space.service.SpaceService;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -30,17 +31,12 @@ public class SpaceController {
         Space space = objectMapper.readValue(spaceJson, Space.class);
         List<Integer> optionList = objectMapper.readValue(optionListJson, List.class);
 
-//        // 파일 데이터 처리
-//            if (files != null) {
-//                for (MultipartFile file : files) {
-//                    if (!file.isEmpty()) {
-//                        String fileName = spaceService.storeFile(file);
-//                        space.addFile(new SpaceFile(fileName, file.getContentType(), file.getSize()));
-//                    }
-//                }
-//            }
-        System.out.println("space = " + space);
-        System.out.println("optionList = " + optionList);
-//        spaceService.insertSpace(space);
+        // 파일 전송 확인 : 추후 파일 서비스 구현
+        files.forEach(file-> {
+            System.out.println("file.getOriginalFilename() = " + file.getOriginalFilename());
+            System.out.println("file.getSize() = " + file.getSize());
+        });
+
+        spaceService.insertSpace(space);
     }
 }

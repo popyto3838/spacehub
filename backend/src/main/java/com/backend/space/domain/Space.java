@@ -10,21 +10,21 @@ public class Space {
 
     private int spaceId; // SPACE(PK)
     private int hostId; // HOST(FK)
-    private int spaceConfigurationId; // SPACE_CONFIGURATION(FK)
     private int typeId; // TYPE_LIST(FK)
 
     private String title;
     private String subTitle;
 
-    private String introduce;
-    private String facilityInfo;
-    private String notice;
-
     private String zonecode;
+    private String address;
     private String detailAddress;
     private String extraAddress;
     private BigDecimal latitude;
     private BigDecimal longitude;
+
+    private String introduce;
+    private String facility;
+    private String notice;
 
     private int price;
     private int capacity;

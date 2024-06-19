@@ -10,9 +10,9 @@ public interface SpaceMapper {
 
     @Insert("""
             INSERT INTO SPACE
-            (HOST_ID, TYPE_LIST_ID, TITLE, SUB_TITLE, ZONECODE, ADDRESS, DETAIL_ADDRESS, EXTRA_ADDRESS, FULL_ADDRESS, LATITUDE, LONGITUDE, INTRODUCE, FACILITY, NOTICE, PRICE, CAPACITY, FLOOR, PARKING_SPACE)
+            (HOST_ID, TYPE_LIST_ID, TITLE, SUB_TITLE, ZONECODE, ADDRESS, DETAIL_ADDRESS, EXTRA_ADDRESS, LATITUDE, LONGITUDE, INTRODUCE, FACILITY, NOTICE, PRICE, CAPACITY, FLOOR, PARKING_SPACE)
             VALUES 
-                VALUES (#{hostId}, #{typeId}, #{title}, #{subTitle}, #{zonecode}, #{address}, #{detailAddress}, #{extraAddress}, #{fullAddress}, #{latitude}, #{longitude}, #{introduce}, #{facility}, #{notice}, #{price}, #{capacity}, #{floor}, #{parkingSpace})
+                (1, #{typeId}, #{title}, #{subTitle}, #{zonecode}, #{address}, #{detailAddress}, #{extraAddress}, #{latitude}, #{longitude}, #{introduce}, #{facility}, #{notice}, #{price}, #{capacity}, #{floor}, #{parkingSpace})
             """)
     @Options(useGeneratedKeys = true, keyProperty = "spaceId")
     int insert(Space space);
