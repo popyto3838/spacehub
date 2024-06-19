@@ -7,16 +7,15 @@ import lombok.Data;
 import java.sql.Timestamp;
 
 @Data
-@Builder
 public class Reservation {
     private Integer reservationId;
     private Integer spaceId;
     private Integer memberId;
     private String  startDate;
-    private String  endDate;
     private String  startTime;
     private String  endTime;
     private ReservationStatus status;
     private Timestamp inputDt;
     private Timestamp updateDt;
+    private String  endDate;
 }

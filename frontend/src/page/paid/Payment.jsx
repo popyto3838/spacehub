@@ -15,7 +15,7 @@ const Payment = () => {
 
 
     useEffect(() => {
-        axios.get("/api/reservation/" + 2)
+        axios.get("/api/reservation/" + 25)
             .then((res) => {
                 setReservationStatus(res.data.status);
             })
