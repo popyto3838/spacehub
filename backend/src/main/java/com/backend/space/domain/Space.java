@@ -11,7 +11,7 @@ public class Space {
     private int spaceId; // SPACE(PK)
     private int hostId; // HOST(FK)
     private int spaceConfigurationId; // SPACE_CONFIGURATION(FK)
-    private int typeListId; // TYPE_LIST(FK)
+    private int typeId; // TYPE_LIST(FK)
 
     private String title;
     private String subTitle;
