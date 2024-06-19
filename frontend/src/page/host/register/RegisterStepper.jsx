@@ -102,22 +102,36 @@ const RegisterStepper = () => {
   const handleSubmit = async () => {
     const formDataToSend = new FormData();
 
-    // 1. 텍스트 데이터 추가
-    Object.entries(formData).forEach(([key, value]) => {
-      if (key !== 'files' && key !== 'options') { // files와 options는 따로 처리
-        formDataToSend.append(key, value);
+    // 1. space 데이터 추가
+    formDataToSend.append('space', JSON.stringify({
+      typeId: formData.typeId,
+      type: formData.type,
+      title: formData.title,
+      subTitle: formData.subTitle,
+      zonecode: formData.zonecode,
+      address: formData.address,
+      detailAddress: formData.detailAddress,
+      extraAddress: formData.extraAddress,
+      latitude: formData.latitude,
+      longitude: formData.longitude,
+      introduce:formData.introduce,
+      facility: formData.facility,
+      notice: formData.notice,
+      price: formData.price,
+      capacity: formData.capacity,
+      floor: formData.floor,
+      parkingSpace: formData.parkingSpace,
+    }));
+
+    // 2. optionList 데이터 추가 (배열 형태로)
+    formDataToSend.append('optionList', JSON.stringify(formData.options)); // 배열을 JSON 문자열로 변환하여 추가
+
+    // 3. 파일 데이터 추가
+    if (formData.files && formData.files.length > 0) { // 파일이 존재하는 경우에만 추가
+      for (const file of formData.files) {
+        formDataToSend.append('files', file); // files[] 대신 files를 사용
       }
-    });
-
-    // 2. 파일 데이터 추가
-    for (const file of formData.files) { // formData.files에서 직접 가져옴
-      formDataToSend.append('files[]', file);
     }
-
-    // 3. 옵션 데이터 추가 (배열 형태로)
-    formData.options.forEach(optionId => { // formData.options에서 직접 가져옴
-      formDataToSend.append('options[]', optionId);
-    });
 
     // 4. API 요청 보내기
     try {
