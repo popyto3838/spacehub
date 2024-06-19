@@ -13,6 +13,7 @@ const RegisterPage1 = ({formData, setFormData}) => {
       ...formData,
       page1Data: {
         ...formData.page1Data,
+        type: e.target.value, // 선택된 type 값 업데이트
         typeId: selectedType ? selectedType.typeListId : null, // typeId 값 저장
       },
     });
