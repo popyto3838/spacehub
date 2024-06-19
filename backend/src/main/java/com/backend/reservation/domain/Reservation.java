@@ -12,7 +12,8 @@ public class Reservation {
     private Integer reservationId;
     private Integer spaceId;
     private Integer memberId;
-    private Timestamp date;
+    private String  startDate;
+    private String  endDate;
     private String  startTime;
     private String  endTime;
     private ReservationStatus status;

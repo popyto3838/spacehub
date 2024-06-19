@@ -33,7 +33,8 @@ public class ReservationController {
     }
 
     @PostMapping("/write")
-    public void write(Reservation reservation) {
+    public void write(@RequestBody Reservation reservation) {
+        log.info("========reservation========{}",reservation);
         reservationService.insert(reservation);
     }
 
