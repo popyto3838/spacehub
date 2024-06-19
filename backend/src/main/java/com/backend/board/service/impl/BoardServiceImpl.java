@@ -36,7 +36,7 @@ public class BoardServiceImpl implements BoardService {
         if (files != null) {
             for (MultipartFile file : files) {
                 // db에 파일 저장
-                boardMapper.insertFileList(board.getBoardId(), file.getOriginalFilename());
+                boardMapper.insertFileList(board.getBoardId(), file.getOriginalFilename(), board.getCategoryId());
                 // 실제 파일 저장
                 String dir = STR."C:/Temp/prj3p/\{board.getBoardId()}"; // 부모 디렉토리(폴더)
                 File dirFile = new File(dir);

@@ -18,12 +18,19 @@ public interface BoardMapper {
     @Options(useGeneratedKeys = true, keyProperty = "boardId")
     int insert(Board board);
 
-    // 게시물 파일 첨부
+    // 게시물 파일 첨부(게시물의 categoryId를 참고해서 division 삽입)
     @Insert("""
+            <script>
             INSERT INTO FILE_LIST(PARENT_ID, DIVISION, FILE_NAME)
-            VALUES (#{parentId}, 'BOARD', #{fileName})
+            VALUES (#{parentId},
+                    <choose>
+                        <when test="categoryId == 1"> 'NOTICE' </when>
+                        <when test="categoryId == 2"> 'FAQ' </when>
+                    </choose>,
+                    #{fileName})
+            </script>
             """)
-    int insertFileList(Integer parentId, String fileName);
+    int insertFileList(Integer parentId, String fileName, Integer categoryId);
 
     // 게시물 목록 조회
     @Select("""
@@ -155,4 +162,10 @@ public interface BoardMapper {
             """)
     Integer countAllWithSearch(String searchType, String searchKeyword);
 
+    @Select("""
+            SELECT CATEGORY_ID
+            FROM CATEGORY
+            WHERE BOARD_ID = #{boardId}
+            """)
+    Integer getCategoryId(Integer boardId);
 }
