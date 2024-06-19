@@ -1,10 +1,12 @@
 package com.backend.file.domain;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.time.LocalDateTime;
 
 @Data
+@AllArgsConstructor
 public class File {
 
     private int fileId;
@@ -14,4 +16,8 @@ public class File {
     private int fileSize;
     private String filePath; // 파일 경로 (aws s3에 사용)
     private LocalDateTime uploadTime;
+
+    public File(int spaceId, String space, String originalFilename, long size, String storedFilePath) {
+
+    }
 }
