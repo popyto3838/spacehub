@@ -3,6 +3,7 @@ package com.backend.paid.service.impl;
 import com.backend.paid.domain.Paid;
 import com.backend.paid.mapper.PaidMapper;
 import com.backend.paid.service.PaidService;
+import com.backend.reservation.mapper.ReservationMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
@@ -16,6 +17,7 @@ import java.util.List;
 @Log4j2
 public class PaidServiceImpl implements PaidService {
     private final PaidMapper paidMapper;
+    private final ReservationMapper reservationMapper;
 
     @Override
     public List<Paid> list() {
@@ -30,6 +32,7 @@ public class PaidServiceImpl implements PaidService {
     @Override
     public void insert(Paid paid) {
         paidMapper.insert(paid);
+        reservationMapper.completePament(paid.getReservationId());
     }
 
     @Override

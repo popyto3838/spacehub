@@ -4,6 +4,7 @@ import '/public/css/paid/Payment.css';
 import React, {useContext, useEffect, useState} from 'react';
 import {LoginContext} from "../../component/LoginProvider.jsx";
 import {useNavigate} from "react-router-dom";
+ import DatePicker from "../../component/DatePicker.jsx";
 
 
 const Payment = () => {
@@ -122,13 +123,13 @@ const Payment = () => {
             </div>
 
             <div className="paidArea">
-                {reservationStatus !== 'ACCEPT' && (
-                    <p className="statusText">
-                        호스트가 결제를 수락하지 않았습니다.
-                    </p>
-                )}
+                {reservationStatus === 'COMPLETE_PAYMENT' ? (
+                    <p className="statusComplete">결제가 완료되었습니다.</p>
+                ) : reservationStatus !== 'ACCEPT' ? (
+                    <p className="statusAccept">호스트가 결제를 수락하지 않았습니다.</p>
+                ) : null}
             </div>
-
+            <DatePicker></DatePicker>
         </div>
     );
 };
