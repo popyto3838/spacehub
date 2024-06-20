@@ -20,7 +20,7 @@ public class FileListServiceImpl implements FileListService {
 
     private final FileListMapper fileListMapper;
 
-    private final String uploadDir = "uploads/";
+    private final String baseDir = "/Users/santa/Desktop/temp/";
 
     @Override
     public void addFile(int parentId, String division, MultipartFile file) throws IOException {
@@ -29,8 +29,10 @@ public class FileListServiceImpl implements FileListService {
         }
 
         String fileName = file.getOriginalFilename();
-        Path filePath = Paths.get(uploadDir + fileName);
-        Files.createDirectories(filePath.getParent());
+        Path dirPath = Paths.get(baseDir + division + "/" + parentId + "/");
+        Files.createDirectories(dirPath);  // 디렉토리가 없으면 생성
+        Path filePath = dirPath.resolve(fileName);  // 전체 파일 경로 생성
+
         Files.write(filePath, file.getBytes());
 
         FileList fileList = new FileList();

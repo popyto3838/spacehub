@@ -41,6 +41,7 @@ public class SpaceController {
         if (files != null && !files.isEmpty()) {
             for (MultipartFile file : files) {
                 fileListService.addFile(space.getSpaceId(), "SPACE", file);
+
             }
         }
     }
