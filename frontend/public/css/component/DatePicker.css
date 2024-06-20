@@ -113,3 +113,7 @@
 .hour-button.selected:hover {
     background-color: #0056b3;
 }
+.hour-button.reserved {
+    background-color: #ccc;
+    cursor: not-allowed;
+}

@@ -1,5 +1,5 @@
 // eslint-disable-next-line no-unused-vars
-import React, {useContext, useState} from 'react';
+import React, {useContext, useState, useEffect} from 'react';
 import '/public/css/component/DatePicker.css';
 import axios from "axios";
 import {LoginContext} from "./LoginProvider.jsx";
@@ -11,9 +11,25 @@ const Calendar = () => {
     const account = useContext(LoginContext);
     const toast = useToast();
     const today = new Date();
+    today.setHours(0, 0, 0, 0);
     const navigate = useNavigate();
     const [selectedDate, setSelectedDate] = useState(today);
     const [currentDate, setCurrentDate] = useState(today);
+    const [reservations, setReservations] = useState([]);
+    useEffect(() => {
+        fetchReservations();
+        console.log("gdgd")
+        console.log(reservations)
+    }, []);
+
+    const fetchReservations = async () => {
+        try {
+            const response = await axios.get("/api/reservation/list");
+            setReservations(response.data);
+        } catch (error) {
+            console.error("Failed to fetch reservations:", error);
+        }
+    };
     const months = [
         '1월', '2월', '3월', '4월', '5월', '6월',
         '7월', '8월', '9월', '10월', '11월', '12월'
@@ -125,19 +141,40 @@ const Calendar = () => {
         }
     };
 
-    const renderHourCheckboxes = () => {
-        const hours = Array.from({length: 24}, (_, i) => i);
+    const isTimeSlotReserved = (date, hour) => {
+        return reservations.some((reservation) => {
+            const reservationDate = new Date(reservation.startDate);
+            const selectedDate = new Date(date);
 
-        return hours.map((hour) => (
-            <button
-                key={hour}
-                className={`hour-button ${selectedHours.includes(hour) ? 'selected' : ''}`}
-                onClick={() => handleHourChange(hour)}
-            >
-                {hour < 10 ? `0${hour}:00` : `${hour}:00`}
-            </button>
-        ));
+            return (
+                reservationDate.toDateString() === selectedDate.toDateString() &&
+                reservation.startTime.split(":")[0] <= hour &&
+                reservation.endTime.split(":")[0] > hour
+            );
+        });
     };
+
+    const renderHourCheckboxes = () => {
+        const hours = Array.from({ length: 24 }, (_, i) => i);
+
+        return hours.map((hour) => {
+            const isReserved = isTimeSlotReserved(selectedDate, hour);
+
+            return (
+                <button
+                    key={hour}
+                    className={`hour-button ${selectedHours.includes(hour) ? 'selected' : ''} ${
+                        isReserved ? 'reserved' : ''
+                    }`}
+                    onClick={() => handleHourChange(hour)}
+                    disabled={isReserved}
+                >
+                    {hour < 10 ? `0${hour}:00` : `${hour}:00`}
+                </button>
+            );
+        });
+    };
+
 
     const handleReservation = () => {
         if (selectedDate && selectedHours.length > 0) {
