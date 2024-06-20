@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {
   Box,
   Button,
@@ -22,6 +22,8 @@ import RegisterPage5 from "./RegisterPage5.jsx";
 import RegisterPage6 from "./RegisterPage6.jsx";
 import {useLocation, useNavigate} from "react-router-dom";
 import axios from "axios";
+import {jwtDecode} from "jwt-decode";
+import {LoginContext} from "../../../component/LoginProvider.jsx";
 
 // Stepper steps definition
 const steps = [
@@ -102,8 +104,14 @@ const RegisterStepper = () => {
   const handleSubmit = async () => {
     const formDataToSend = new FormData();
 
+    // JWT 토큰에서 memberId 추출
+    const token = localStorage.getItem('token');
+    const decodedToken = jwtDecode(token);
+    const memberId = Number(decodedToken.sub); // 숫자로 변환
+
     // 1. space 데이터 추가
     formDataToSend.append('space', JSON.stringify({
+      memberId: memberId,
       typeId: formData.typeId,
       type: formData.type,
       title: formData.title,
@@ -137,7 +145,8 @@ const RegisterStepper = () => {
     try {
       const response = await axios.post('/api/space/insert', formDataToSend, {
         headers: {
-          'Content-Type': 'multipart/form-data'
+          'Content-Type': 'multipart/form-data',
+          'Authorization': `Bearer ${token}` // 헤더에 토큰 추가
         }
       });
 
