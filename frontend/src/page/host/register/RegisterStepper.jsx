@@ -112,9 +112,11 @@ const RegisterStepper = () => {
     const decodedToken = jwtDecode(token);
     const memberId = Number(decodedToken.sub); // 숫자로 변환
 
-    // 1. space 데이터 추가
+    // 1. memberId 추가
+    formDataToSend.append('memberId', memberId);
+
+    // 2. space 데이터 추가
     formDataToSend.append('space', JSON.stringify({
-      memberId: memberId,
       typeId: formData.typeId,
       type: formData.type,
       title: formData.title,
@@ -134,17 +136,17 @@ const RegisterStepper = () => {
       parkingSpace: formData.parkingSpace,
     }));
 
-    // 2. optionList 데이터 추가 (배열 형태로)
+    // 3. optionList 데이터 추가 (배열 형태로)
     formDataToSend.append('optionList', JSON.stringify(formData.options)); // 배열을 JSON 문자열로 변환하여 추가
 
-    // 3. 파일 데이터 추가
+    // 4. 파일 데이터 추가
     if (formData.files && formData.files.length > 0) { // 파일이 존재하는 경우에만 추가
       for (const file of formData.files) {
         formDataToSend.append('files', file); // files[] 대신 files를 사용
       }
     }
 
-    // 4. API 요청 보내기
+    // 5. API 요청 보내기
     try {
       const response = await axios.post('/api/space/insert', formDataToSend, {
         headers: {
@@ -153,7 +155,7 @@ const RegisterStepper = () => {
         }
       });
 
-      // 5. 성공적으로 제출되었을 때 처리
+      // 6. 성공적으로 제출되었을 때 처리
       toast({
         title: '공간 등록이 완료되었습니다.',
         status: 'success',
@@ -165,7 +167,7 @@ const RegisterStepper = () => {
       navigate('/');
 
     } catch (error) {
-      // 6. 제출 실패 시 에러 처리
+      // 7. 제출 실패 시 에러 처리
       console.error("Error submitting space data:", error);
       toast({
         title: '공간 등록에 실패했습니다.',
