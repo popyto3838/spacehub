@@ -1,18 +1,18 @@
-package com.backend.fileList.mapper;
+package com.backend.file.mapper;
 
-import com.backend.fileList.domain.FileList;
+import com.backend.file.domain.File;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 
 @Mapper
-public interface FileListMapper {
+public interface FileMapper {
 
     @Insert("""
-            INSERT INTO FILE_LIST 
+            INSERT INTO FILE 
                 (PARENT_ID, DIVISION, FILE_NAME) 
             VALUES 
                 (#{parentId}, #{division}, #{fileName})
             """)
-    void insertFile(FileList fileList);
+    void insertFile(File file);
 
 }

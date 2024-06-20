@@ -1,9 +1,8 @@
 package com.backend.space.controller;
 
-import com.backend.fileList.service.FileListService;
+import com.backend.file.service.FileService;
 import com.backend.space.domain.Space;
 import com.backend.space.service.SpaceService;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,7 +21,7 @@ public class SpaceController {
 
     private final SpaceService spaceService;
     private final ObjectMapper objectMapper;
-    private final FileListService fileListService;
+    private final FileService fileService;
 
     @PostMapping("insert")
     public void add(@RequestPart("space") String spaceJson,
@@ -40,7 +39,7 @@ public class SpaceController {
         // 이미지 파일 업로드
         if (files != null && !files.isEmpty()) {
             for (MultipartFile file : files) {
-                fileListService.addFile(space.getSpaceId(), "SPACE", file);
+                fileService.addFile(space.getSpaceId(), "SPACE", file);
 
             }
         }

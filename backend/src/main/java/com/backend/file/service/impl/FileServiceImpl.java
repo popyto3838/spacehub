@@ -1,8 +1,8 @@
-package com.backend.fileList.service.impl;
+package com.backend.file.service.impl;
 
-import com.backend.fileList.domain.FileList;
-import com.backend.fileList.mapper.FileListMapper;
-import com.backend.fileList.service.FileListService;
+import com.backend.file.domain.File;
+import com.backend.file.mapper.FileMapper;
+import com.backend.file.service.FileService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,11 +16,11 @@ import java.nio.file.Paths;
 @Service
 @RequiredArgsConstructor
 @Transactional(rollbackFor = Exception.class)
-public class FileListServiceImpl implements FileListService {
+public class FileServiceImpl implements FileService {
 
-    private final FileListMapper fileListMapper;
+    private final FileMapper fileMapper;
 
-    private final String baseDir = "/Users/santa/Desktop/temp/";
+    private final String baseDir = "/Users/santa/Desktop/study/BackEnd/project/prj3/backend/src/main/resources/images/";
 
     @Override
     public void addFile(int parentId, String division, MultipartFile file) throws IOException {
@@ -35,11 +35,11 @@ public class FileListServiceImpl implements FileListService {
 
         Files.write(filePath, file.getBytes());
 
-        FileList fileList = new FileList();
+        File fileList = new File();
         fileList.setParentId(parentId);
         fileList.setDivision(division);
         fileList.setFileName(fileName);
 
-        fileListMapper.insertFile(fileList);
+        fileMapper.insertFile(fileList);
     }
 }

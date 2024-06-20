@@ -1,9 +1,9 @@
-package com.backend.fileList.domain;
+package com.backend.file.domain;
 
 import lombok.Data;
 
 @Data
-public class FileList {
+public class File {
     private int fileListId;
     private int parentId;
     private String division;
