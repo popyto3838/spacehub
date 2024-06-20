@@ -24,6 +24,7 @@ import {HostSignup} from "./page/member/HostSignup.jsx";
 import {MemberMy} from "./page/member/MemberMy.jsx";
 
 import axios from "axios";
+import SpaceView from "./page/admin/space_config/SpaceView.jsx";
 
 
 // axios interceptor 설정
@@ -55,6 +56,7 @@ function App() {
         {path: "board/:boardId/edit", element: <BoardEdit/>},
         {path: "space/register", element: <RegisterStepper/>},
         {path: "space/option", element: <SpaceOption/>},
+        {path: "space/view", element: <SpaceView/>},
         {path: "space/type", element: <SpaceType/>},
         {path: "member/signup", element: <MemberSignup/>},
         {path: "member/naver", element: <NaverLogin/>},
