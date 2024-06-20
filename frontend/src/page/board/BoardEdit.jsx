@@ -1,8 +1,10 @@
 import {
+  Badge,
   Box,
   Button,
   Flex,
   FormControl,
+  FormHelperText,
   FormLabel,
   Heading,
   Image,
@@ -28,8 +30,9 @@ export function BoardEdit() {
   const { boardId } = useParams();
   const [board, setBoard] = useState({});
 
-  // 파일 삭제를 위한 상태
+  // 파일 삭제,추가를 위한 상태
   const [removeFileList, setRemoveFileList] = useState([]);
+  const [addFileList, setAddFileList] = useState([]);
 
   const navigate = useNavigate();
   const toast = useToast();
@@ -49,6 +52,7 @@ export function BoardEdit() {
         title: board.title,
         content: board.content,
         removeFileList,
+        addFileList,
       })
       .then((res) => {
         setBoard(res.data);
@@ -59,6 +63,24 @@ export function BoardEdit() {
         });
         navigate(`/board/${boardId}`);
       });
+  }
+
+  // 추가하려는 파일이 존재하면 덮어쓰기
+  const fileNameList = [];
+  for (let addFile of addFileList) {
+    let duplicate = false;
+    for (let file of board.filesLists) {
+      if (file.fileName === addFile.name) {
+        duplicate = true;
+        break;
+      }
+    }
+    fileNameList.push(
+      <li>
+        {addFile.name}
+        {duplicate && <Badge colorScheme={"red"}>중복</Badge>}
+      </li>,
+    );
   }
 
   function handleSwitchChangeRemove(fileName, checked) {
@@ -106,8 +128,9 @@ export function BoardEdit() {
           </FormControl>
         </Box>
 
+        {/* 게시물에 첨부된 파일 */}
         <Box>
-          <Box>첨부 파일</Box>
+          <Box>첨부 파일 목록</Box>
           {board.filesLists &&
             board.filesLists.map((file) => (
               <Box border={"1px solid black"} key={file.fileName}>
@@ -133,6 +156,25 @@ export function BoardEdit() {
                 </Box>
               </Box>
             ))}
+        </Box>
+
+        {/* 게시물에 파일 첨부 */}
+        <Box>
+          <FormControl>
+            <FormLabel>파일 첨부</FormLabel>
+            <Input
+              multiple={true}
+              type={"file"}
+              accept={"image/*, .pdf, .doc, .docx, .xls, .txt, .ppt"}
+              onChange={(e) => setAddFileList(e.target.files)}
+            />
+            <FormHelperText>
+              첨부 파일의 총 용량은 10MB, 한 파일은 1MB를 초과할 수 없습니다.
+            </FormHelperText>
+          </FormControl>
+          <Box>
+            <ul>{fileNameList}</ul>
+          </Box>
         </Box>
 
         <Box>

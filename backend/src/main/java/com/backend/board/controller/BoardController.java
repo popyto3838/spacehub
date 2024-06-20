@@ -52,10 +52,12 @@ public class BoardController {
     public void edit(Board board,
                      @RequestParam(value = "removeFileList[]", required = false)
                      List<String> removeFileList,
-                     Authentication authentication) {
+                     @RequestParam(value = "addFileList[]", required = false)
+                     MultipartFile[] addFileList,
+                     Authentication authentication) throws IOException {
         // 권한이 있어야 수정 가능
         if (boardService.hasAccess(board.getBoardId(), authentication)) {
-            boardService.update(board, removeFileList);
+            boardService.update(board, removeFileList, addFileList);
         }
     }
 

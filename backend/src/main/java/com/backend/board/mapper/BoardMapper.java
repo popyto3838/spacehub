@@ -104,6 +104,14 @@ public interface BoardMapper {
             """)
     int update(Board board);
 
+    // 게시물 수정시 첨부된 파일 삭제(#{}에 parentId, boardId)
+    @Delete("""
+            DELETE FROM FILE_LIST
+            WHERE PARENT_ID = #{parentId}
+              AND FILE_NAME = #{fileName}
+            """)
+    int deleteByBoardIdAndName(Integer parentId, String fileName);
+
     // 게시물 삭제
     @Delete("""
             DELETE FROM BOARD
@@ -116,16 +124,6 @@ public interface BoardMapper {
             WHERE PARENT_ID = #{parentId}
             """)
     int deleteFileByBoardId(Integer parentId);
-
-    // 멤버 탈퇴시 게시물 작성자 탈퇴한 회원입니다로 변경
-//    @Update("""
-//            UPDATE BOARD B
-//            JOIN MEMBER M ON B.MEMBER_ID = M.MEMBER_ID
-//            SET B.WRITER = '탈퇴한 회원입니다.'
-//            WHERE M.WITHDRAWN = 'Y'
-//            """)
-//    int deletedMemberBoardInfo();
-
 
     // 게시물 클릭시 조회수 업데이트
     @Update("""
@@ -162,18 +160,5 @@ public interface BoardMapper {
             """)
     Integer countAllWithSearch(String searchType, String searchKeyword);
 
-    @Select("""
-            SELECT CATEGORY_ID
-            FROM CATEGORY
-            WHERE BOARD_ID = #{boardId}
-            """)
-    Integer getCategoryId(Integer boardId);
 
-    // 게시물 수정시 첨부된 파일 삭제(#{}에 parentId, boardId)
-    @Delete("""
-            DELETE FROM FILE_LIST
-            WHERE PARENT_ID = #{parentId}
-              AND FILE_NAME = #{fileName}
-            """)
-    int deleteByBoardIdAndName(Integer parentId, String fileName);
 }

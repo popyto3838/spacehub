@@ -15,7 +15,7 @@ public interface BoardService {
 
     Board view(Integer boardId);
 
-    void update(Board board, List<String> removeFileList);
+    void update(Board board, List<String> removeFileList, MultipartFile[] addFileList) throws IOException;
 
     void delete(Integer boardId);
 
