@@ -38,17 +38,5 @@ public class SpaceController {
 
         // JSON 배열 형태 -> List 형태 
         List<Integer> optionList = objectMapper.readValue(optionListJson, List.class);
-
-        // 파일 업로드: 기능 구현 중
-//        List<File> fileList = files.stream()
-//                .map(file -> {
-//                    String storedFilePath = fileService.addFile(file); // 파일 저장 로직 호출 (구현 필요)
-//                    return new File(space.getSpaceId(), "SPACE", file.getOriginalFilename(), file.getSize(), storedFilePath);
-//                })
-//                .collect(Collectors.toList());
-//        // FileList 저장
-//        fileService.insertFileLists(fileDtos); // FileService의 insertFileLists 메서드 호출
-
-
     }
 }
