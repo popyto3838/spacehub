@@ -55,6 +55,8 @@ const StepContent = ({step, formData, setFormData}) => {
 };
 
 const RegisterStepper = () => {
+  const { memberId } = useContext(LoginContext); // LoginContext에서 memberId를 가져옵니다.
+
   const navigate = useNavigate();
   const location = useLocation();
   const toast = useToast();
@@ -68,6 +70,7 @@ const RegisterStepper = () => {
     const storedData = sessionStorage.getItem('formData');
     return storedData ? JSON.parse(storedData) : {
       // page별 데이터 구분 없이 저장
+      memberId: memberId,
       type: null,
       title: '',
       subTitle: '',
@@ -146,7 +149,7 @@ const RegisterStepper = () => {
       const response = await axios.post('/api/space/insert', formDataToSend, {
         headers: {
           'Content-Type': 'multipart/form-data',
-          'Authorization': `Bearer ${token}` // 헤더에 토큰 추가
+          'Authorization': `Bearer ${localStorage.getItem('token')}` // 헤더에 토큰 추가
         }
       });
 
