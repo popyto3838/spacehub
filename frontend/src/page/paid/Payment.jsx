@@ -15,7 +15,7 @@ const Payment = () => {
 
 
     useEffect(() => {
-        axios.get("/api/reservation/" + 25)
+        axios.get("/api/reservation/" + 1)
             .then((res) => {
                 setReservationStatus(res.data.status);
             })
@@ -70,8 +70,8 @@ const Payment = () => {
                 alert("결제성공")
                 axios
                     .post("/api/paid/write", {
-                        "spaceId": 2,
-                        "reservationId": 2,
+                        "spaceId": 3,
+                        "reservationId": 1,
                         "memberId": account.id,
                         "totalPrice": 1000
                     })

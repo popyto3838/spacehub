@@ -115,28 +115,10 @@ const Calendar = () => {
         const isSelected = selectedHours.includes(hour);
 
         if (isSelected) {
-            if (hour === selectedHours[0]) {
-                setSelectedHours([]);
-            } else {
-                const startHour = selectedHours[0];
-                const endHour = hour;
-                const newSelectedHours = [];
-
-                for (let i = startHour; i <= endHour; i++) {
-                    newSelectedHours.push(i);
-                }
-
-                setSelectedHours(newSelectedHours);
-            }
+            const newSelectedHours = selectedHours.filter((selectedHour) => selectedHour !== hour);
+            setSelectedHours(newSelectedHours);
         } else {
-            const startHour = selectedHours.length > 0 ? selectedHours[0] : hour;
-            const endHour = hour;
-            const newSelectedHours = [];
-
-            for (let i = startHour; i <= endHour; i++) {
-                newSelectedHours.push(i);
-            }
-
+            const newSelectedHours = [...selectedHours, hour].sort((a, b) => a - b);
             setSelectedHours(newSelectedHours);
         }
     };
@@ -190,7 +172,7 @@ const Calendar = () => {
 
             axios
                 .post("/api/reservation/write", {
-                    "spaceId": 2,
+                    "spaceId": 3,
                     "memberId": account.id,
                     "startDate": formattedDate,
                     "endDate": formattedDate,
