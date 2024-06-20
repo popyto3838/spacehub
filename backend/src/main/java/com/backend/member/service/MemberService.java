@@ -1,5 +1,6 @@
 package com.backend.member.service;
 
+import com.backend.member.domain.member.Host;
 import com.backend.member.domain.member.Member;
 import org.springframework.security.core.Authentication;
 
@@ -32,5 +33,24 @@ public interface MemberService {
 
     void addMemberByEmail(Member member);
 
+     Member
 
+     findByEmail(String email);
+
+    void insertMember(Member member);
+
+   void addHostMemberByEmail(Member member);
+
+
+    Integer selectbyEmail2(Member member);
+
+    void switchHost(Member member);
+
+    boolean validateAccount(Host host);
+
+    void addAccountinfo(Host host);
+
+    void certifiedPhoneNumber(String mobile, String verificationCode);
+
+    void addPhone(Member member);
 }

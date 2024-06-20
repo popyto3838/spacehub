@@ -16,6 +16,10 @@ public class Member {
     private String auth;
     private AuthName authName;
     private Withdrawn withdrawn;
+    private String naverId;
+    private String mobile;
+    private String profileImage;
+
     public String getSignupDateAndTime() {
         DateTimeFormatter formatter
                 = DateTimeFormatter.ofPattern("yyyy년 MM월 dd일 HH시 mm분 ss초");
@@ -24,6 +28,5 @@ public class Member {
     }
 
     private String link;
-
 
 }

@@ -1,17 +1,92 @@
-import React from "react";
-import { Box, FormControl, FormLabel, Input } from "@chakra-ui/react";
+import React, {useEffect, useState} from "react";
+import {Box, FormControl, FormLabel, Heading, Input} from "@chakra-ui/react";
+import AddressSearch from "../../../component/AddressSearch.jsx";
+import KakaoMap from "../../../component/KakaoMap.jsx";
 
-const RegisterPage2 = ({ formData, setFormData }) => {
-  const handleCapacityChange = (e) => setFormData({ ...formData, capacity: e.target.value });
-  // ... (다른 필드에 대한 onChange 핸들러 추가)
+const RegisterPage2 = ({formData, setFormData}) => {
+  const [addressInfo, setAddressInfo] = useState({
+    zonecode: formData?.zonecode || '',
+    address: formData?.address || '',
+    detailAddress: formData?.detailAddress || '',
+    extraAddress: formData?.extraAddress || '',
+    latitude: formData?.latitude || '',
+    longitude: formData?.longitude || '',
+  });
+
+  const handleAddressChange = (newAddress) => {
+    setAddressInfo(newAddress);
+    setFormData({
+      ...formData,
+      ...newAddress,
+      location: newAddress.address + (newAddress.extraAddress || ''), // location 필드 업데이트
+    });
+  };
+
+  const handleInputChange = (event) => {
+    const {name, value} = event.target;
+    const updatedAddress = {
+      ...addressInfo,
+      [name]: value,
+    };
+
+    setAddressInfo(updatedAddress);
+    setFormData({...formData, ...updatedAddress});
+  };
+
+  useEffect(() => {
+    if (addressInfo.address) {
+      const fullAddress = addressInfo.address + (addressInfo.extraAddress || '');
+      window.dispatchEvent(new CustomEvent('updateMap', {detail: fullAddress}));
+    }
+  }, [addressInfo]);
 
   return (
     <Box>
+      <Heading>등록 공간 주소</Heading>
       <FormControl mb={4}>
-        <FormLabel htmlFor="space-capacity">수용 인원</FormLabel>
-        <Input id="space-capacity" type="number" onChange={handleCapacityChange} />
+        <FormLabel htmlFor="postcode">우편번호</FormLabel>
+        <Input
+          id="postcode"
+          name="postcode"
+          placeholder="우편번호"
+          value={addressInfo.zonecode}
+          onChange={handleInputChange}
+        />
+        <AddressSearch onAddressChange={handleAddressChange}/>
       </FormControl>
-      {/* ... (나머지 입력 필드: floor, parkingSpaces, price 등) */}
+      <FormControl mb={4}>
+        <FormLabel htmlFor="address">주소</FormLabel>
+        <Input
+          id="address"
+          name="address"
+          placeholder="주소"
+          value={addressInfo.address}
+          onChange={handleInputChange}/>
+      </FormControl>
+      <FormControl mb={4}>
+        <FormLabel htmlFor="detailAddress">상세주소</FormLabel>
+        <Input
+          id="detailAddress"
+          name="detailAddress"
+          placeholder="상세주소"
+          value={addressInfo.detailAddress}
+          onChange={handleInputChange}
+        />
+      </FormControl>
+      <FormControl mb={4}>
+        <FormLabel htmlFor="extraAddress">참고항목</FormLabel>
+        <Input
+          id="extraAddress"
+          name="extraAddress"
+          placeholder="참고항목"
+          value={addressInfo.extraAddress}
+        />
+      </FormControl>
+      <KakaoMap
+        address={addressInfo.address + (addressInfo.extraAddress || '')}
+        latitude={addressInfo.latitude}
+        longitude={addressInfo.longitude}
+      />
     </Box>
   );
 };

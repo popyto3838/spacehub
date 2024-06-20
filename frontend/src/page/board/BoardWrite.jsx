@@ -108,6 +108,7 @@ export function BoardWrite() {
         <Box>
           <FormControl>
             <FormLabel>작성자</FormLabel>
+
             <Input value={account.nickname} readOnly />
           </FormControl>
         </Box>
