@@ -5,6 +5,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 public interface BoardService {
@@ -14,7 +15,7 @@ public interface BoardService {
 
     Board view(Integer boardId);
 
-    void update(Board board);
+    void update(Board board, List<String> removeFileList);
 
     void delete(Integer boardId);
 

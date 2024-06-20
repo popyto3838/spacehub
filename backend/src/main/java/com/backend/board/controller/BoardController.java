@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -48,11 +49,13 @@ public class BoardController {
 
     @PutMapping("{boardId}/edit")
     @PreAuthorize("isAuthenticated()")
-    public void edit(@RequestBody Board board,
+    public void edit(Board board,
+                     @RequestParam(value = "removeFileList[]", required = false)
+                     List<String> removeFileList,
                      Authentication authentication) {
         // 권한이 있어야 수정 가능
         if (boardService.hasAccess(board.getBoardId(), authentication)) {
-            boardService.update(board);
+            boardService.update(board, removeFileList);
         }
     }
 

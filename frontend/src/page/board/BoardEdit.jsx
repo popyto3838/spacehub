@@ -1,9 +1,11 @@
 import {
   Box,
   Button,
+  Flex,
   FormControl,
   FormLabel,
   Heading,
+  Image,
   Input,
   Modal,
   ModalBody,
@@ -11,6 +13,8 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
+  Switch,
+  Text,
   Textarea,
   useDisclosure,
   useToast,
@@ -24,6 +28,9 @@ export function BoardEdit() {
   const { boardId } = useParams();
   const [board, setBoard] = useState({});
 
+  // 파일 삭제를 위한 상태
+  const [removeFileList, setRemoveFileList] = useState([]);
+
   const navigate = useNavigate();
   const toast = useToast();
   const { isOpen, onClose, onOpen } = useDisclosure();
@@ -36,15 +43,30 @@ export function BoardEdit() {
   }, []);
 
   function handleClickSave() {
-    axios.put(`/api/board/${boardId}/edit`, board).then((res) => {
-      setBoard(res.data);
-      toast({
-        status: "success",
-        description: "게시물이 수정되었습니다.",
-        position: "top",
+    axios
+      .putForm(`/api/board/${boardId}/edit`, {
+        id: board.boardId,
+        title: board.title,
+        content: board.content,
+        removeFileList,
+      })
+      .then((res) => {
+        setBoard(res.data);
+        toast({
+          status: "success",
+          description: "게시물이 수정되었습니다.",
+          position: "top",
+        });
+        navigate(`/board/${boardId}`);
       });
-      navigate(`/board/${boardId}`);
-    });
+  }
+
+  function handleSwitchChangeRemove(fileName, checked) {
+    if (checked) {
+      setRemoveFileList([...removeFileList, fileName]);
+    } else {
+      setRemoveFileList(removeFileList.filter((item) => item !== fileName));
+    }
   }
 
   return (
@@ -82,6 +104,35 @@ export function BoardEdit() {
             <FormLabel>작성일시</FormLabel>
             <Input value={board.updateDateAndTime} readOnly />
           </FormControl>
+        </Box>
+
+        <Box>
+          <Box>첨부 파일</Box>
+          {board.filesLists &&
+            board.filesLists.map((file) => (
+              <Box border={"1px solid black"} key={file.fileName}>
+                <Flex>
+                  지우기 :
+                  <Switch
+                    onChange={(e) =>
+                      handleSwitchChangeRemove(file.fileName, e.target.checked)
+                    }
+                  />
+                  <Text>{file.fileName}</Text>
+                </Flex>
+                <Box>
+                  <Image
+                    sx={
+                      removeFileList.includes(file.fileName)
+                        ? { filter: "blur(8px)" }
+                        : {}
+                    }
+                    src={file.src}
+                    alt={file.fileName}
+                  />
+                </Box>
+              </Box>
+            ))}
         </Box>
 
         <Box>

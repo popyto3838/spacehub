@@ -110,7 +110,18 @@ public class BoardServiceImpl implements BoardService {
 
 
     @Override
-    public void update(Board board) {
+    public void update(Board board, List<String> removeFileList) {
+        // 첨부된 파일 삭제
+        if (removeFileList != null && removeFileList.size() > 0) {
+            for (String fileName : removeFileList) {
+                String path = STR."C:/Temp/prj3p/\{board}/\{fileName}"; // 경로
+                File file = new File(path);
+                file.delete();
+                boardMapper.deleteByBoardIdAndName(board.getBoardId(), fileName);
+            }
+        }
+
+        // 업데이트
         boardMapper.update(board);
     }
 

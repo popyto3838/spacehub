@@ -168,4 +168,12 @@ public interface BoardMapper {
             WHERE BOARD_ID = #{boardId}
             """)
     Integer getCategoryId(Integer boardId);
+
+    // 게시물 수정시 첨부된 파일 삭제(#{}에 parentId, boardId)
+    @Delete("""
+            DELETE FROM FILE_LIST
+            WHERE PARENT_ID = #{parentId}
+              AND FILE_NAME = #{fileName}
+            """)
+    int deleteByBoardIdAndName(Integer parentId, String fileName);
 }
