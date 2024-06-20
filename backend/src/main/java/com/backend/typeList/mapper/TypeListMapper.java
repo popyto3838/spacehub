@@ -17,6 +17,7 @@ public interface TypeListMapper {
     @Select("""
             SELECT *
             FROM TYPE_LIST
+            WHERE IS_ACTIVE = true
             ORDER BY TYPE_LIST_ID DESC 
             """)
     List<TypeList> selectAll();

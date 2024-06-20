@@ -9,7 +9,7 @@ public interface TypeListService {
     void insertTypeList(List<TypeList> typeLists);
 
 
-    List<TypeList> list();
+    List<TypeList> selectAll();
 
     void deleteSpaceType(int typeListId);
 

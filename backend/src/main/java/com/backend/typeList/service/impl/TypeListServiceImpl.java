@@ -24,7 +24,7 @@ public class TypeListServiceImpl implements TypeListService {
     }
 
     @Override
-    public List<TypeList> list() {
+    public List<TypeList> selectAll() {
         return mapper.selectAll();
     }
 

@@ -1,7 +1,5 @@
 package com.backend.space.controller;
 
-import com.backend.file.domain.File;
-import com.backend.file.service.FileService;
 import com.backend.file.service.impl.FileServiceImpl;
 import com.backend.space.domain.Space;
 import com.backend.space.service.SpaceService;
@@ -15,7 +13,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
@@ -39,4 +36,6 @@ public class SpaceController {
         // JSON 배열 형태 -> List 형태 
         List<Integer> optionList = objectMapper.readValue(optionListJson, List.class);
     }
+
+
 }

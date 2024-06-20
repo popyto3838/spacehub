@@ -1,114 +1,73 @@
-import React from 'react';
-import {
-  Box,
-  Grid,
-  GridItem,
-  Heading,
-  VStack,
-  Text,
-  Image,
-  Flex,
-  Button,
-  IconButton,
-} from '@chakra-ui/react';
-import { ArrowForwardIcon, ArrowBackIcon } from '@chakra-ui/icons';
+import React, {useEffect, useState} from 'react';
+import {Box, Flex, Grid, GridItem, Heading, Icon, Image, Text} from "@chakra-ui/react";
+import '../../../frontend/public/css/MainPage.css';
+import axios from "axios";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faHeart, faStar} from "@fortawesome/free-solid-svg-icons";
 
-const categories = [
-  { name: '모임', icon: 'https://via.placeholder.com/50' },
-  { name: '연습실', icon: 'https://via.placeholder.com/50' },
-  { name: '촬영', icon: 'https://via.placeholder.com/50' },
-  { name: '행사', icon: 'https://via.placeholder.com/50' },
-  { name: '워크샵', icon: 'https://via.placeholder.com/50' },
-  // 추가 카테고리
-];
-
-const spaces = [
-  {
-    title: '힙한 카페',
-    location: '서울특별시 강남구',
-    price: '₩50,000/시간',
-    image: 'https://via.placeholder.com/400',
-    rating: 4.5,
-    reviews: 20,
-  },
-  {
-    title: '스튜디오 렌탈',
-    location: '서울특별시 마포구',
-    price: '₩30,000/시간',
-    image: 'https://via.placeholder.com/400',
-    rating: 4.8,
-    reviews: 15,
-  },
-  // 추가 공간
-];
 export function MainPage() {
+  const [spaces, setSpaces] = useState([]);
+
+  useEffect(() => {
+    async function fetchSpaces() {
+      try {
+        const response = await axios.get('/api/spaces');
+        const spacesData = response.data;
+
+        // Fetching file list for each space
+        const spacesWithImages = await Promise.all(
+          spacesData.map(async (space) => {
+            const fileResponse = await axios.get(`/api/fileList/${space.spaceId}`);
+            const files = fileResponse.data;
+            return { ...space, files };
+          })
+        );
+
+        setSpaces(spacesWithImages);
+      } catch (error) {
+        console.error('Error fetching spaces:', error);
+      }
+    }
+
+    fetchSpaces();
+  }, []);
+
   return (
     <>
-      <Box p={4}>
-        {/* Header */}
-        <Flex as="header" justifyContent="space-between" alignItems="center" p={4} borderBottom="1px" borderColor="gray.200">
-          <Heading size="lg" color="orange.500">Spacehub</Heading>
-          <Button variant="link">뒤로가기</Button>
-        </Flex>
-
+      <Box className="mainPageArea">
         {/* Categories */}
-        <VStack spacing={4} align="stretch" mt={4}>
-          <Heading size="md">찾는 공간이 있나요?</Heading>
-          <Grid templateColumns="repeat(auto-fill, minmax(100px, 1fr))" gap={4}>
-            {categories.map((category, index) => (
-              <GridItem key={index} textAlign="center">
-                <Image src={category.icon} alt={category.name} mx="auto" mb={2} />
-                <Text>{category.name}</Text>
-              </GridItem>
-            ))}
-          </Grid>
-        </VStack>
+        <Box className="typeListArea">
+          <Box>카테고리 리스트</Box>
+          <Box></Box>
+        </Box>
 
         {/* Spaces */}
-        <VStack spacing={4} align="stretch" mt={8}>
-          <Heading size="md">새로 등록되었어요</Heading>
-          <Grid templateColumns="repeat(auto-fill, minmax(250px, 1fr))" gap={4}>
-            {spaces.map((space, index) => (
-              <GridItem key={index} border="1px" borderColor="gray.200" borderRadius="md" overflow="hidden">
-                <Image src={space.image} alt={space.title} />
-                <Box p={4}>
-                  <Heading size="sm">{space.title}</Heading>
-                  <Text>{space.location}</Text>
-                  <Text fontWeight="bold">{space.price}</Text>
-                  <Flex align="center" mt={2}>
-                    <Text>Rating: {space.rating}</Text>
-                    <Text ml={2}>({space.reviews} reviews)</Text>
-                  </Flex>
-                </Box>
-              </GridItem>
-            ))}
-          </Grid>
-        </VStack>
-
-        {/* More Spaces */}
-        <VStack spacing={4} align="stretch" mt={8}>
-          <Heading size="md">방금 올라온 이용후기</Heading>
-          <Grid templateColumns="repeat(auto-fill, minmax(250px, 1fr))" gap={4}>
-            {spaces.map((space, index) => (
-              <GridItem key={index} border="1px" borderColor="gray.200" borderRadius="md" overflow="hidden">
-                <Image src={space.image} alt={space.title} />
-                <Box p={4}>
-                  <Heading size="sm">{space.title}</Heading>
-                  <Text>{space.location}</Text>
-                  <Text fontWeight="bold">{space.price}</Text>
-                  <Flex align="center" mt={2}>
-                    <Text>Rating: {space.rating}</Text>
-                    <Text ml={2}>({space.reviews} reviews)</Text>
-                  </Flex>
-                </Box>
-              </GridItem>
-            ))}
-          </Grid>
-        </VStack>
-
-        {/* Footer */}
-        <Box as="footer" mt={8} p={4} borderTop="1px" borderColor="gray.200">
-          <Text textAlign="center">© 2024 Spacehub. All rights reserved.</Text>
+        <Box className="spaceListArea">
+          <Box>공간 카드 리스트</Box>
+          <Box className="spaceListArea" py={5} px={2}>
+            <Heading size="md" mb={4}>새로 등록되었어요</Heading>
+            <Grid templateColumns="repeat(auto-fill, minmax(250px, 1fr))" gap={6}>
+              {spaces.map((space) => (
+                <GridItem key={space.spaceId} border="1px" borderColor="gray.200" borderRadius="md" overflow="hidden">
+                  <Box position="relative">
+                    <Image src={`/uploads/${space.files[0]?.fileName}`} alt={space.title} />
+                    <FontAwesomeIcon icon={faHeart} position="absolute" top={2} right={2} color="white" bg="rgba(0, 0, 0, 0.5)" borderRadius="full" p={1} />
+                  </Box>
+                  <Box p={4}>
+                    <Heading size="sm" noOfLines={1}>{space.title}</Heading>
+                    <Text noOfLines={1}>{space.address}</Text>
+                    <Text fontSize="sm" color="gray.500">6월 30일 ~ 7월 5일</Text>
+                    <Text fontWeight="bold">{space.price}원/시간</Text>
+                    <Flex align="center" mt={2}>
+                      <FontAwesomeIcon icon={faStar} color="yellow.500" mr={1} />
+                      <Text>{space.rating}</Text>
+                      <Text ml={2} fontSize="sm" color="gray.500">({space.reviews} reviews)</Text>
+                    </Flex>
+                  </Box>
+                </GridItem>
+              ))}
+            </Grid>
+          </Box>
         </Box>
       </Box>
     </>

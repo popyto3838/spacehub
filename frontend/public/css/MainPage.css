@@ -1,0 +1,14 @@
+.mainPageArea {
+    margin-top: 10%; margin-bottom: 10%;
+    width: 100%; height: 200vh;
+    border: 1px solid black;
+    background: #d3d3d3;
+}
+.typeListArea {
+    border: 1px solid red;
+    width: 100%; height: 20%;
+}
+.spaceListArea {
+    border: 1px solid red;
+    width: 100%; height: 80%;
+}
