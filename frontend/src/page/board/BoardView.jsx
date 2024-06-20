@@ -116,6 +116,7 @@ export function BoardView() {
             <Button onClick={() => navigate(`/board/${boardId}/edit`)}>
               수정
             </Button>
+            <Button onClick={() => navigate("/board/list")}>목록</Button>
           </Box>
         )}
       </Box>

@@ -2,6 +2,7 @@ package com.backend.board.mapper;
 
 import com.backend.board.domain.Board;
 import com.backend.board.domain.Category;
+import com.backend.fileList.domain.FileList;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;
@@ -18,7 +19,7 @@ public interface BoardMapper {
     @Options(useGeneratedKeys = true, keyProperty = "boardId")
     int insert(Board board);
 
-    // 게시물 파일 첨부(게시물의 categoryId를 참고해서 division 삽입)
+    // 게시물 파일 첨부(게시물의 categoryId를 참고해서 division 삽입, parentId? boardId?)
     @Insert("""
             <script>
             INSERT INTO FILE_LIST(PARENT_ID, DIVISION, FILE_NAME)
@@ -84,15 +85,31 @@ public interface BoardMapper {
             """)
     Board selectByBoardId(Integer boardId);
 
-    // 게시물의 파일 이름 조회
+    // 하나의 게시물에서 파일 이름 조회(2개 테스트)
     @Select("""
             SELECT F.FILE_NAME, F.PARENT_ID, F.FILE_LIST_ID, B.BOARD_ID
             FROM FILE_LIST F
             JOIN BOARD B ON F.PARENT_ID = B.BOARD_ID
-            /*JOIN (SELECT BOARD_ID FROM BOARD) AS SUBQUERY_TABLE ON F.PARENT_ID = SUBQUERY_TABLE.BOARD_ID*/
             WHERE PARENT_ID = #{parentId}
             """)
     List<String> selectByFileNameByBoardId(Integer parentId);
+
+    /*@Select("""
+            SELECT F.FILE_NAME, F.PARENT_ID, F.FILE_LIST_ID, F.DIVISION, B.BOARD_ID, B.CATEGORY_ID
+            FROM FILE_LIST F
+            JOIN (SELECT BOARD_ID, CATEGORY_ID FROM BOARD) AS B ON F.PARENT_ID = B.BOARD_ID
+            WHERE PARENT_ID = #{parentId}
+            """)
+    List<String> selectByFileNameByBoardId(Integer parentId);*/
+
+    // 게시물 파일 이름 조회2
+    @Select("""
+            SELECT F.FILE_NAME, F.PARENT_ID, F.FILE_LIST_ID, F.DIVISION, B.BOARD_ID
+            FROM FILE_LIST F
+            JOIN BOARD B ON F.PARENT_ID = B.BOARD_ID
+            WHERE B.BOARD_ID = #{boardId}
+                        """)
+    List<FileList> selectByFileNameByBoardIdForUpdate(Integer boardId);
 
 
     // 게시물 수정

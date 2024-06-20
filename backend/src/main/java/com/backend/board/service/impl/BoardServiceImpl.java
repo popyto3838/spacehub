@@ -100,9 +100,9 @@ public class BoardServiceImpl implements BoardService {
                 })
                 .toList();
         // board에 이미지 경로 넣어줌
-        System.out.println("files = " + files);
-        System.out.println("fileNames = " + fileNames);
-        System.out.println("board = " + board);
+        System.out.println("view의 files = " + files);
+        System.out.println("view의 fileNames = " + fileNames);
+        System.out.println("view의 board = " + board);
         board.setFilesLists(files);
 
         return board;
