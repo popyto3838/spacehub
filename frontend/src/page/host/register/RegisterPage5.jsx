@@ -1,36 +1,29 @@
-import React, { useState } from 'react';
-import { Box, FormControl, FormLabel, Text, Button, Image } from '@chakra-ui/react';
+import React, {useState} from 'react';
+import {Box, FormControl, FormLabel, Text, Button, Image} from '@chakra-ui/react';
 
-const RegisterPage5 = ({ formData, setFormData }) => {
-  const [selectedFiles, setSelectedFiles] = useState([]);
+const RegisterPage5 = ({formData, setFormData}) => {
+  // selectedFiles 상태를 formData.files와 동기화
+  const [selectedFiles, setSelectedFiles] = useState(formData.files || []);
   const [previewUrls, setPreviewUrls] = useState([]);
 
   const handleFileChange = (e) => {
-    const files = Array.from(e.target.files); // 파일들을 배열로 변환
+    const files = Array.from(e.target.files);
     setSelectedFiles(files);
 
     const urls = files.map((file) => URL.createObjectURL(file));
     setPreviewUrls(urls);
 
-    setFormData((prevFormData) => ({
-      ...prevFormData,
-      page5Data: {
-        files: files, // FormData 에 files 배열 추가
-      },
-    }));
+    // files를 formData에 직접 저장
+    setFormData({...formData, files: files});
   };
 
   const handleDeleteImage = (index) => {
-    setSelectedFiles(selectedFiles.filter((_, i) => i !== index));
+    const updatedFiles = selectedFiles.filter((_, i) => i !== index);
+    setSelectedFiles(updatedFiles);
     setPreviewUrls(previewUrls.filter((_, i) => i !== index));
 
-    // 삭제된 파일을 formData 에서도 제거
-    setFormData((prevFormData) => ({
-      ...prevFormData,
-      page5Data: {
-        files: prevFormData.page5Data.files.filter((_, i) => i !== index),
-      },
-    }));
+    // 삭제된 파일을 formData에서도 제거
+    setFormData({...formData, files: updatedFiles});
   };
 
   return (
@@ -48,7 +41,7 @@ const RegisterPage5 = ({ formData, setFormData }) => {
       <Box mt={4}>
         {previewUrls.map((url, index) => (
           <Box key={index} display="inline-block" mr={2} position="relative">
-            <Image src={url} alt={`Image ${index + 1}`} maxW="150px" />
+            <Image src={url} alt={`Image ${index + 1}`} maxW="150px"/>
             <Button
               size="xs"
               position="absolute"

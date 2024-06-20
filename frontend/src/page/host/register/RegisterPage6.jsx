@@ -4,7 +4,6 @@ import axios from "axios";
 
 const RegisterPage6 = ({ formData, setFormData }) => {
   const [optionLists, setOptionLists] = useState([]);
-  const [selectedOptionIds, setSelectedOptionIds] = useState([]); // 선택된 옵션 ID 배열
   const toast = useToast();
 
   useEffect(() => {
@@ -24,24 +23,16 @@ const RegisterPage6 = ({ formData, setFormData }) => {
 
   // 옵션 클릭 시 선택/해제 상태 변경
   const handleOptionClick = (optionListId) => {
-    setSelectedOptionIds(prevOptionIds => {
-      if (prevOptionIds.includes(optionListId)) {
-        return prevOptionIds.filter(id => id !== optionListId);
-      } else {
-        return [...prevOptionIds, optionListId];
-      }
+    setFormData(prevFormData => {
+      const updatedOptions = prevFormData.options.includes(optionListId)
+        ? prevFormData.options.filter(id => id !== optionListId)
+        : [...prevFormData.options, optionListId];
+      return {
+        ...prevFormData,
+        options: updatedOptions,
+      };
     });
   };
-
-  // selectedOptionIds 상태가 변경될 때 formData 업데이트
-  useEffect(() => {
-    setFormData({
-      ...formData,
-      page6Data: {
-        options: selectedOptionIds, // 선택된 옵션 ID 배열 저장
-      },
-    });
-  }, [selectedOptionIds, setFormData]);
 
   return (
     <Box>
@@ -53,7 +44,7 @@ const RegisterPage6 = ({ formData, setFormData }) => {
         {optionLists.map(option => (
           <Button
             key={option.optionListId}
-            colorScheme={selectedOptionIds.includes(option.optionListId) ? 'teal' : 'gray'}
+            colorScheme={formData.options.includes(option.optionListId) ? 'teal' : 'gray'}
             onClick={() => handleOptionClick(option.optionListId)}
           >
             {option.name}

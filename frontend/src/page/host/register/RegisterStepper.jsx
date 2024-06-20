@@ -65,28 +65,34 @@ const RegisterStepper = () => {
   const [formData, setFormData] = useState(() => {
     const storedData = sessionStorage.getItem('formData');
     return storedData ? JSON.parse(storedData) : {
-      page1Data: {
-        type: '', title: '', subTitle: ''
-      },
-      page2Data: {
-        location: '', postcode: '', address: '', detailAddress: '', extraAddress: '', latitude: '', longitude: ''
-      },
-      page3Data: {
-        introduce: '', facility: '', notice: ''
-      },
-      page4Data: {
-        price: '', capacity: '', floor: '', parkingSpace: ''
-      },
-      page5Data: {
-        files: []
-      },
-      page6Data: {
-        options: []
-      },
+      // page별 데이터 구분 없이 저장
+      type: null,
+      title: '',
+      subTitle: '',
+      zonecode: '',
+      address: '',
+      detailAddress: '',
+      extraAddress: '',
+      latitude: '',
+      longitude: '',
+      introduce: '',
+      facility: '',
+      notice: '',
+      price: 0,
+      capacity: 0,
+      floor: 0,
+      parkingSpace: 0,
+      files: [],
+      options: [],
     };
   });
 
   const {steps: chakraSteps} = useSteps({initialStep: activeStep});
+
+  const handleBack = () => {
+    setActiveStep(activeStep - 1);
+    sessionStorage.setItem('activeStep', (activeStep - 1).toString());
+  };
 
   const handleNext = () => {
     setActiveStep(activeStep + 1);
@@ -96,44 +102,67 @@ const RegisterStepper = () => {
   const handleSubmit = async () => {
     const formDataToSend = new FormData();
 
-    // 1. 텍스트 데이터 추가 (formData의 page1Data, page2Data, ... 등)
-    Object.entries(formData).forEach(([pageKey, pageData]) => {
-      if (pageKey !== 'page5Data' && pageKey !== 'page6Data') { // page5Data는 파일 데이터이므로 제외
-        Object.entries(pageData).forEach(([key, value]) => {
-          formDataToSend.append(key, value);
-        });
-      }
-    });
+    // 1. space 데이터 추가
+    formDataToSend.append('space', JSON.stringify({
+      typeId: formData.typeId,
+      type: formData.type,
+      title: formData.title,
+      subTitle: formData.subTitle,
+      zonecode: formData.zonecode,
+      address: formData.address,
+      detailAddress: formData.detailAddress,
+      extraAddress: formData.extraAddress,
+      latitude: formData.latitude,
+      longitude: formData.longitude,
+      introduce:formData.introduce,
+      facility: formData.facility,
+      notice: formData.notice,
+      price: formData.price,
+      capacity: formData.capacity,
+      floor: formData.floor,
+      parkingSpace: formData.parkingSpace,
+    }));
 
-    // 2. 파일 데이터 추가
-    for (const file of formData.page5Data.files) {
-      formDataToSend.append('files', file); // files는 서버에서 처리할 때 사용할 필드 이름
+    // 2. optionList 데이터 추가 (배열 형태로)
+    formDataToSend.append('optionList', JSON.stringify(formData.options)); // 배열을 JSON 문자열로 변환하여 추가
+
+    // 3. 파일 데이터 추가
+    if (formData.files && formData.files.length > 0) { // 파일이 존재하는 경우에만 추가
+      for (const file of formData.files) {
+        formDataToSend.append('files', file); // files[] 대신 files를 사용
+      }
     }
 
-    // 3. 옵션 데이터 추가 (배열 형태로)
-    formData.page6Data.options.forEach(optionId => {
-      formDataToSend.append('options[]', optionId); // 대괄호([])를 사용하여 배열 형태로 전송
-    });
-
     // 4. API 요청 보내기
-    await axios.post(`/api/space/insert`, formDataToSend, {
-      headers: {
-        'Content-Type': 'multipart/form-data'
-      }
-    })
-      .then(() => {
-        // 5. Form submission 완료 후 sessionStorage 초기화
-        sessionStorage.removeItem('formData');
-        sessionStorage.removeItem('activeStep');
-        navigate('/');
-      })
-      .catch()
-      .finally();
-  };
+    try {
+      const response = await axios.post('/api/space/insert', formDataToSend, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      });
 
-  const handleBack = () => {
-    setActiveStep(activeStep - 1);
-    sessionStorage.setItem('activeStep', (activeStep - 1).toString());
+      // 5. 성공적으로 제출되었을 때 처리
+      toast({
+        title: '공간 등록이 완료되었습니다.',
+        status: 'success',
+        duration: 3000,
+        isClosable: true,
+      });
+      sessionStorage.removeItem('formData');
+      sessionStorage.removeItem('activeStep');
+      navigate('/');
+
+    } catch (error) {
+      // 6. 제출 실패 시 에러 처리
+      console.error("Error submitting space data:", error);
+      toast({
+        title: '공간 등록에 실패했습니다.',
+        description: error.response?.data?.message || '잠시 후 다시 시도해주세요.',
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+      });
+    }
   };
 
   useEffect(() => {
