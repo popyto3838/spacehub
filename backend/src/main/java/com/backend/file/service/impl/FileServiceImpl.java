@@ -46,6 +46,11 @@ public class FileServiceImpl implements FileService {
 
     @Override
     public List<File> selectAllOfSpaces() {
-        return fileMapper.selectAllOfSpaces();
+        List<File> files = fileMapper.selectAllOfSpaces();
+        for (File file : files) {
+            String filePath = baseDir + file.getDivision() + "/" + file.getParentId() + "/" + file.getFileName();
+            file.setFileName(filePath);
+        }
+        return files;
     }
 }

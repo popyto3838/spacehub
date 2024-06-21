@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
@@ -52,6 +53,15 @@ public class SpaceController {
     @GetMapping("list")
     public ResponseEntity<List<Space>> selectAll() {
         List<Space> spaces = spaceService.selectAll();
+//        List<File> files = fileService.selectAllOfSpaces();
+//        for (Space space : spaces) {
+//            for (File file : files) {
+//                if (space.getSpaceId() == file.getParentId()) {
+//                    space.setThumbnailPath(file.getFilePath());
+//                    break;
+//                }
+//            }
+//        }
         return ResponseEntity.ok(spaces);
     }
 

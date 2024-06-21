@@ -8,4 +8,7 @@ public class File {
     private int parentId;
     private String division;
     private String fileName;
+
+    private String filePath; // 파일 경로 추가
+
 }

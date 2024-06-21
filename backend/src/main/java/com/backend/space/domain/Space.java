@@ -34,4 +34,6 @@ public class Space {
     private LocalDateTime inputDt;
     private LocalDateTime updateDt;
 
+    private String thumbnailPath; // frontend 썸네일 출력용 경로
+
 }
