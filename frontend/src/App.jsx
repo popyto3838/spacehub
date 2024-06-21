@@ -60,7 +60,7 @@ function App() {
         {path: "member/login", element: <MemberLogin/>},
         {path: "member/edit/:memberId", element: <MemberEdit/>},
         {path: "auth/naverlogin", element: <NaverLoginHandler/>},
-        {path: "paid/payment", element: <Payment/>},
+        {path: "paid/payment/:reservationId", element: <Payment/>},
         {path: "member/naverlogin", element: <NaverLoginHandler/>},
         {path: "member/host", element: <MemberHost/>},
         {path: "host/signup", element: <HostSignup/>},
