@@ -1,21 +1,21 @@
 package com.backend.space.controller;
 
-import com.backend.file.domain.File;
 import com.backend.file.service.FileService;
+import com.backend.member.service.MemberService;
 import com.backend.file.service.impl.FileServiceImpl;
 import com.backend.reservation.domain.Reservation;
 import com.backend.space.domain.FindResponseSpaceJoinDTO;
 import com.backend.space.domain.Space;
+import com.backend.space.domain.SpaceDTO;
 import com.backend.space.service.SpaceService;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
@@ -24,20 +24,34 @@ public class SpaceController {
 
     private final SpaceService spaceService;
     private final ObjectMapper objectMapper;
-    private final FileServiceImpl fileService;
+    private final FileService fileService;
+    private final MemberService memberService;
 
     @PostMapping("insert")
-    public void add(@RequestPart("space") String spaceJson,
-                    @RequestPart("optionList") String optionListJson,
-                    @RequestPart(value = "files", required = false) List<MultipartFile> files) throws JsonProcessingException {
+    public void add(@RequestPart("spaceDto") SpaceDTO spaceDto) throws IOException {
 
-        // JSON 문자열을 객체로 변환
-        Space space = objectMapper.readValue(spaceJson, Space.class);
+        Space space = spaceDto.getSpace();
+        int memberId = spaceDto.getMemberId();
+        List<Integer> optionList = spaceDto.getOptionList();
+        List<MultipartFile> files = spaceDto.getFiles();
+
+        // memberId로 hostId 조회
+        Integer hostId = memberService.findHostIdByMemberId(memberId);
+        space.setHostId(hostId); // hostId 설정
         // SPACE CREATE
         spaceService.insertSpace(space);
 
-        // JSON 배열 형태 -> List 형태 
-        List<Integer> optionList = objectMapper.readValue(optionListJson, List.class);
+        // 이미지 파일 업로드
+        if (files != null && !files.isEmpty()) {
+            for (MultipartFile file : files) {
+                fileService.addFile(space.getSpaceId(), "SPACE", file);
+            }
+        }
+    }
+
+    @GetMapping("list")
+    public List<Space> selectAll() {
+        return spaceService.selectAll();
     }
 
     @GetMapping("/{spaceId}")

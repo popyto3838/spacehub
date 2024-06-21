@@ -6,6 +6,7 @@ import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Options;
 import org.apache.ibatis.annotations.Select;
+import java.util.List;
 
 @Mapper
 public interface SpaceMapper {
@@ -53,6 +54,12 @@ public interface SpaceMapper {
     int insert(Space space);
 
     @Select("""
+            SELECT *
+            FROM SPACE
+            """)
+    List<Space> selectAll();
+            
+     @Select("""
         SELECT  S.*
         ,       H.*
         ,       T.*

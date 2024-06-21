@@ -7,7 +7,6 @@ import {BoardList} from "./page/board/BoardList.jsx";
 import {BoardView} from "./page/board/BoardView.jsx";
 import {BoardEdit} from "./page/board/BoardEdit.jsx";
 import RegisterStepper from "./page/host/register/RegisterStepper.jsx";
-import {Reserve} from "./page/Reserve.jsx";
 import {SpaceOption} from "./page/admin/space_config/SpaceOption.jsx";
 import {MemberSignup} from "./page/member/MemberSignup.jsx";
 import NaverLogin from "./page/member/NaverLogin.jsx";
@@ -45,10 +44,6 @@ function App() {
       path: "/",
       element: <Home/>,
       children: [
-        {
-          path: "reserve",
-          element: <Reserve/>
-        },
         {index: true, element: <MainPage/>},
         {path: "board/write", element: <BoardWrite/>},
         {path: "board/list", element: <BoardList/>},
