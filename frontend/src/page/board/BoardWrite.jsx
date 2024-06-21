@@ -2,6 +2,7 @@ import {
   Box,
   Button,
   FormControl,
+  FormHelperText,
   FormLabel,
   Heading,
   Input,
@@ -21,6 +22,9 @@ export function BoardWrite() {
   const [categoryId, setCategoryId] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
+  // 파일 첨부
+  const [files, setFiles] = useState([]);
+
   const navigate = useNavigate();
   const toast = useToast();
   const { isOpen, onClose, onOpen } = useDisclosure();
@@ -29,7 +33,7 @@ export function BoardWrite() {
   function handleClickSave() {
     setIsLoading(true);
     axios
-      .post("/api/board/write", { title, content, categoryId })
+      .postForm("/api/board/write", { title, content, categoryId, files })
       .then((res) => {
         toast({
           status: "success",
@@ -59,6 +63,12 @@ export function BoardWrite() {
   }
   if (content.trim().length === 0) {
     isDisabledButton = true;
+  }
+
+  // files 목록 작성
+  const fileNameList = [];
+  for (let i = 0; i < files.length; i++) {
+    fileNameList.push(<li>{files[i].name}</li>);
   }
 
   return (
@@ -102,6 +112,26 @@ export function BoardWrite() {
             <Input value={account.nickname} readOnly />
           </FormControl>
         </Box>
+
+        {/* 파일 첨부 */}
+        <Box>
+          <FormControl>
+            <FormLabel>파일 첨부</FormLabel>
+            <Input
+              multiple={true}
+              type={"file"}
+              accept={"image/*, .pdf, .doc, .docx, .xls, .txt, .ppt"}
+              onChange={(e) => setFiles(e.target.files)}
+            />
+            <FormHelperText>
+              첨부 파일의 총 용량은 10MB, 한 파일은 1MB를 초과할 수 없습니다.
+            </FormHelperText>
+          </FormControl>
+          <Box>
+            <ul>{fileNameList}</ul>
+          </Box>
+        </Box>
+
         <Box>
           <Button onClick={() => navigate(-1)}>취소</Button>
           <Button
