@@ -4,6 +4,7 @@ import {
   FormControl,
   FormLabel,
   Heading,
+  Image,
   Input,
   Modal,
   ModalBody,
@@ -83,7 +84,7 @@ export function BoardView() {
         <Box>
           <FormControl>
             <FormLabel>작성자</FormLabel>
-            <Input value={account.nickname} readOnly />
+            <Input value={board.writer} readOnly />
           </FormControl>
         </Box>
         <Box>
@@ -98,12 +99,24 @@ export function BoardView() {
             )}
           </FormControl>
         </Box>
+
+        <Box>
+          <Box>첨부 파일</Box>
+          {board.filesLists &&
+            board.filesLists.map((file) => (
+              <Box border={"1px solid black"} key={file.fileName}>
+                <Image src={file.src} alt={file.fileName} />
+              </Box>
+            ))}
+        </Box>
+
         {account.hasAccess(board.memberId) && (
           <Box>
             <Button onClick={onOpen}>삭제</Button>
             <Button onClick={() => navigate(`/board/${boardId}/edit`)}>
               수정
             </Button>
+            <Button onClick={() => navigate("/board/list")}>목록</Button>
           </Box>
         )}
       </Box>

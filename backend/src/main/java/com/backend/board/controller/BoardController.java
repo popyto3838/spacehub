@@ -7,7 +7,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -19,8 +22,10 @@ public class BoardController {
 
     @PostMapping("write")
     @PreAuthorize("isAuthenticated()")
-    public void write(@RequestBody Board board, Authentication authentication) {
-        boardService.insert(board, authentication);
+    public void write(Board board, Authentication authentication
+            , @RequestParam(value = "files[]", required = false) MultipartFile[] files) throws IOException {
+        // 글 작성시 로그인 사용자 정보, 파일 추가
+        boardService.insert(board, authentication, files);
 
     }
 
@@ -43,13 +48,26 @@ public class BoardController {
     }
 
     @PutMapping("{boardId}/edit")
-    public void edit(@RequestBody Board board) {
-        boardService.update(board);
+    @PreAuthorize("isAuthenticated()")
+    public void edit(Board board,
+                     @RequestParam(value = "removeFileList[]", required = false)
+                     List<String> removeFileList,
+                     @RequestParam(value = "addFileList[]", required = false)
+                     MultipartFile[] addFileList,
+                     Authentication authentication) throws IOException {
+        // 권한이 있어야 수정 가능
+        if (boardService.hasAccess(board.getBoardId(), authentication)) {
+            boardService.update(board, removeFileList, addFileList);
+        }
     }
 
     @DeleteMapping("{boardId}/delete")
-    public void remove(@PathVariable Integer boardId) {
-        boardService.delete(boardId);
+    @PreAuthorize("isAuthenticated()")
+    public void remove(@PathVariable Integer boardId,
+                       Authentication authentication) {
+        if (boardService.hasAccess(boardId, authentication)) {
+            boardService.delete(boardId);
+        }
     }
 
     @PutMapping("{boardId}/views")

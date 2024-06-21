@@ -13,12 +13,16 @@ const Header = () => {
     const toggleMenu = () => {
         setIsOpen(!isOpen);
     };
+    const homeLink = () => {
+        navigate("/");
+
+    }
 
     return (
         <div className="header">
-            <img src={spaceImage} alt="Space Image" className="headerImg"/>
-            <span> <p className="headerTitle title1">Space</p></span>
-            <span> <p className="headerTitle title2">hub</p></span>
+            <img src={spaceImage} alt="Space Image" className="headerImg" onClick={homeLink}/>
+            <span onClick={homeLink}> <p className="headerTitle title1">Space</p></span>
+            <span onClick={homeLink}> <p className="headerTitle title2">hub</p></span>
 
             <header className="header">
                 <div className="hamburgerArea" onClick={toggleMenu}>
