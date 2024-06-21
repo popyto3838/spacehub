@@ -8,11 +8,11 @@ import {useNavigate} from "react-router-dom";
 export function MainPage() {
   const [spaceTypes, setSpaceTypes] = useState([]);
   const [spaces, setSpaces] = useState([]);
+  const [files, setFiles] = useState([])
 
   const navigate = useNavigate();
 
   useEffect(() => {
-    // type_list 정보를 가져오는 API 호출
     axios.get('/api/space/type/list')
       .then(response => {
         setSpaceTypes(response.data);
@@ -21,13 +21,20 @@ export function MainPage() {
         console.error('Error fetching space types:', error);
       });
 
-    // space 정보를 가져오는 API 호출
     axios.get('/api/space/list')
       .then(response => {
         setSpaces(response.data);
       })
       .catch(error => {
         console.error('Error fetching spaces:', error);
+      });
+
+    axios.get('/api/file/space/list')
+      .then(response => {
+        setFiles(response.data);
+      })
+      .catch(error => {
+        console.error('Error fetching files:', error);
       });
   }, []);
 

@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -41,5 +42,10 @@ public class FileServiceImpl implements FileService {
         fileList.setFileName(fileName);
 
         fileMapper.insertFile(fileList);
+    }
+
+    @Override
+    public List<File> selectAllOfSpaces() {
+        return fileMapper.selectAllOfSpaces();
     }
 }
