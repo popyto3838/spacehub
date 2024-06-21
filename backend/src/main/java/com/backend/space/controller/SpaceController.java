@@ -2,11 +2,15 @@ package com.backend.space.controller;
 
 import com.backend.file.service.FileService;
 import com.backend.member.service.MemberService;
+import com.backend.file.service.impl.FileServiceImpl;
+import com.backend.reservation.domain.Reservation;
+import com.backend.space.domain.FindResponseSpaceJoinDTO;
 import com.backend.space.domain.Space;
 import com.backend.space.domain.SpaceDTO;
 import com.backend.space.service.SpaceService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -49,4 +53,14 @@ public class SpaceController {
     public List<Space> selectAll() {
         return spaceService.selectAll();
     }
+
+    @GetMapping("/{spaceId}")
+    public ResponseEntity view(@PathVariable Integer spaceId) {
+        FindResponseSpaceJoinDTO space = spaceService.view(spaceId);
+        if (space == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok().body(space);
+    }
+
 }
