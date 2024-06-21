@@ -9,7 +9,7 @@ public interface ReservationService {
 
     List<Reservation> list();
 
-    void insert(Reservation reservation);
+    int insert(Reservation reservation);
 
     void update(Reservation reservation);
 

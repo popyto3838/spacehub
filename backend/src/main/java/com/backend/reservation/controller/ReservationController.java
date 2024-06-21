@@ -9,7 +9,9 @@ import org.apache.ibatis.annotations.Update;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/reservation")
@@ -33,8 +35,12 @@ public class ReservationController {
     }
 
     @PostMapping("/write")
-    public void write(@RequestBody Reservation reservation) {
+    public ResponseEntity<Map<String, Object>> write(@RequestBody Reservation reservation) {
         reservationService.insert(reservation);
+        Map<String, Object> response = new HashMap<>();
+        log.info("reservation.getReservationId={}", reservation.getReservationId());
+        response.put("reservationId", reservation.getReservationId());
+        return ResponseEntity.ok(response);
     }
 
     @PutMapping("/update")

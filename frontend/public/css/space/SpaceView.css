@@ -83,7 +83,7 @@
 }
 
 .priceArea {
-    margin-top: 10%;
+    margin-top: 5%;
     width: 100%;
     height: 10vh;
     display: flex;
@@ -92,8 +92,8 @@
 }
 
 .totalPrice {
-    font-family: TTLaundryGothicB;
-    font-size: 3rem;
+    font-family: CookieRun-Regular;
+    font-size: 2rem;
     color: #6c5ce7;
 }
 
