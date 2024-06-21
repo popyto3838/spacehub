@@ -1,10 +1,11 @@
 import {
   Box,
-  Button, Flex, flexbox,
+  Button, Divider, Flex, flexbox,
   FormControl,
-  FormLabel,
-  Input,
-  useToast,
+  FormLabel, HStack,
+  Input, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay,
+  Text, useDisclosure,
+  useToast, VStack,
 } from "@chakra-ui/react";
 import {useContext, useEffect, useState} from "react";
 import { useNavigate } from "react-router-dom";
@@ -24,6 +25,9 @@ export function MemberLogin() {
   const toast = useToast();
   const navigate = useNavigate();
   const account = useContext(LoginContext);
+
+  const { isOpen: isFirstModalOpen, onOpen: onFirstModalOpen, onClose: onFirstModalClose } = useDisclosure();
+  const { isOpen: isSecondModalOpen, onOpen: onSecondModalOpen, onClose: onSecondModalClose } = useDisclosure();
 
   function handleLogin() {
     axios
@@ -103,7 +107,7 @@ export function MemberLogin() {
       borderRadius="lg"
       boxShadow="lg"
     >
-      <Flex>
+      <Flex justify="center" align="center" flexDirection="column">
 
       <Box>
       <Box textAlign="center" fontSize="xl" fontWeight="bold">
@@ -124,17 +128,76 @@ export function MemberLogin() {
               onChange={(e) => setPassword(e.target.value)}/>
           </FormControl>
         </Box>
-        <Box mt={6} w={255}>
-          <Button w="255px" onClick={handleLogin} colorScheme={"blue"}>
+        <Box mt={6} w={370}>
+          <Button w="370px" onClick={handleLogin} colorScheme={"blue"}>
             로그인
           </Button>
         </Box>
         <Box w="255px" h="80px" mt={22}>
           <NaverLogin/>
         </Box>
+        <VStack spacing={4} align="stretch">
+
+          <HStack spacing={4} align="center">
+            <HStack as="button" spacing={2} p={2} borderWidth={1} borderRadius="md" _hover={{ bg: "skyblue" }}>
+              <Text
+                onClick={onFirstModalOpen}
+              >아이디 찾기</Text>
+            </HStack>
+
+            <HStack as="button" spacing={2} p={2} borderWidth={1} borderRadius="md" _hover={{ bg: "skyblue" }}>
+              <Text>비밀번호 찾기</Text>
+            </HStack>
+
+            <HStack as="button" spacing={2} p={2} borderWidth={1} borderRadius="md" _hover={{ bg: "skyblue" }}>
+              <Text
+                onClick={()=>navigate("/member/signup")}
+              >회원가입</Text>
+            </HStack>
+          </HStack>
+
+        <Modal isOpen={isFirstModalOpen} onClose={onFirstModalClose}>
+          <ModalOverlay />
+          <ModalContent>
+            <ModalHeader>아이디 찾기</ModalHeader>
+            <ModalCloseButton />
+            <ModalBody>
+              <FormControl>
+                <FormLabel>핸드폰번호를 입력해주세요</FormLabel>
+                <Input   placeholder="01012345678" />
+              </FormControl>
+
+              <FormControl mt={4}>
+                <FormLabel>인증하기</FormLabel>
+                <Input placeholder='Last name' />
+              </FormControl>
+            </ModalBody>
+            <ModalFooter>
+              <Button colorScheme="blue" mr={3} onClick={onFirstModalClose}>
+                닫기
+              </Button>
+            </ModalFooter>
+          </ModalContent>
+        </Modal>
+         <Modal isOpen={isSecondModalOpen} onClose={onSecondModalClose}>
+          <ModalOverlay />
+          <ModalContent>
+            <ModalHeader>두 번째 모달</ModalHeader>
+            <ModalCloseButton />
+            <ModalBody>
+              두 번째 모달의 내용입니다.
+            </ModalBody>
+            <ModalFooter>
+              <Button colorScheme="blue" mr={3} onClick={onSecondModalClose}>
+                닫기
+              </Button>
+            </ModalFooter>
+          </ModalContent>
+         </Modal>
+        </VStack>
       </Box>
       </Box>
-     {/* <Box>*/}
+      <Box>
 
      {/* <div className="qr-box">*/}
 
@@ -153,7 +216,7 @@ export function MemberLogin() {
      {/*   </div>*/}
 
      {/*</div>*/}
-     {/* </Box>*/}
+      </Box>
       </Flex>
 </Box>
 

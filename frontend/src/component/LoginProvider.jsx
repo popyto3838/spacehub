@@ -48,11 +48,14 @@ export function LoginProvider({ children }) {
 
 
 
+
+
   function login(token) {
     localStorage.setItem("token", token);
     const payload = jwtDecode(token);
     setExpired(payload.exp);
     setId(payload.sub);
+    setNickname(payload.nickname);
     console.log(id);
     setAuthority(payload.scope.split(" "));
   }
