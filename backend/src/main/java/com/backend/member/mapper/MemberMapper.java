@@ -192,4 +192,11 @@ public interface MemberMapper {
            WHERE MEMBER_ID = #{memberId}
            """)
     Object checkHostBusinessName(Host host);
+
+    @Select("""
+           SELECT EMAIL
+           FROM MEMBER
+           WHERE MOBILE=#{mobile}
+           """)
+    Member emailByMobile(String mobile);
 }

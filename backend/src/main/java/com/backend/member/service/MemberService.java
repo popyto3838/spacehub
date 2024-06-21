@@ -59,4 +59,6 @@ public interface MemberService {
     void addhostInfo(Host host);
 
     Map<String, Object> checkHostInfo(Host host);
+
+    Member emailByMobile(String mobile);
 }

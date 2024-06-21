@@ -34,6 +34,8 @@ export function MemberSignup() {
   const [isCodeSent, setIsCodeSent] = useState(false);
   const [expirationTime, setExpirationTime] = useState(null);
   const [capsLockWarning, setCapsLockWarning] = useState(false);
+
+
   const toast = useToast();
   const navigate = useNavigate();
 

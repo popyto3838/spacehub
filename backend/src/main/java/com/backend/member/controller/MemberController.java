@@ -297,5 +297,14 @@ public class MemberController {
       return ResponseEntity.ok(map);
     }
 
+    @GetMapping("findemail")
+    public ResponseEntity<String> findemail(@RequestParam("mobile") String mobile) {
+        Member member = service.emailByMobile(mobile);
+
+        String email= member.getEmail();
+
+        return ResponseEntity.ok(email);
+    }
+
 
 }

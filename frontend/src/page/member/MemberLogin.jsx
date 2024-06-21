@@ -1,18 +1,34 @@
 import {
   Box,
-  Button, Divider, Flex, flexbox,
+  Button,
+  Divider,
+  Flex,
+  flexbox,
   FormControl,
-  FormLabel, HStack,
-  Input, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay,
-  Text, useDisclosure,
-  useToast, VStack,
+  FormLabel,
+  HStack,
+  Input,
+  InputGroup,
+  InputRightElement,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
+  Text,
+  useDisclosure,
+  useToast,
+  VStack,
 } from "@chakra-ui/react";
-import {useContext, useEffect, useState} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { LoginContext } from "../../component/LoginProvider.jsx";
 import NaverLogin from "./NaverLogin.jsx";
 import QRCode from "qrcode.react";
+import TimerComponent from "./TimerComponent.jsx";
 
 export function MemberLogin() {
   const [email, setEmail] = useState();
@@ -21,6 +37,12 @@ export function MemberLogin() {
   const [time, setTime] = useState(300);
   const [minutes, setMinutes] = useState('');
   const [seconds, setSeconds] = useState('');
+  const [mobile, setMobile] = useState()
+  const [isCodeSent, setIsCodeSent] = useState(false);
+  const [verificationCode, setVerificationCode] = useState("");
+  const [expirationTime, setExpirationTime] = useState(null);
+  const [inputCode, setInputCode] = useState("");
+  const [foundEmail, setFoundEmail] = useState()
 
   const toast = useToast();
   const navigate = useNavigate();
@@ -96,6 +118,40 @@ export function MemberLogin() {
     window.location.href = '/SYJ_Mall/login.action';
   };
 
+  const sendNumberMobile = () => {
+    axios
+      .get(`/api/member/p1?mobile=${mobile}`)
+      .then((response) => {
+        alert("인증번호 발송");
+        setVerificationCode(response.data.verificationCode);
+        setExpirationTime(response.data.expirationTime);
+        setIsCodeSent(true);
+      })
+      .catch((error) => {
+        console.error("Error sending verification code:", error);
+      });
+  };
+
+  const confirmNumberMobile = () => {
+    if (inputCode == verificationCode) {
+      alert("인증되었습니다.");
+      setIsCodeSent(false);
+      axios
+        .get("/api/member/findemail",{
+          params: {
+            mobile: mobile,
+          }
+        })
+        .then((res) => {
+          setFoundEmail(res.data);
+        })
+
+
+    } else {
+      alert("인증에 실패했습니다");
+    }
+  };
+
 
   return (
     <Box
@@ -139,17 +195,17 @@ export function MemberLogin() {
         <VStack spacing={4} align="stretch">
 
           <HStack spacing={4} align="center">
-            <HStack as="button" spacing={2} p={2} borderWidth={1} borderRadius="md" _hover={{ bg: "skyblue" }}>
+            <HStack as="button" spacing={2} p={2} borderWidth={1} borderRadius="md" _hover={{ bg: "orange" }}>
               <Text
                 onClick={onFirstModalOpen}
               >아이디 찾기</Text>
             </HStack>
 
-            <HStack as="button" spacing={2} p={2} borderWidth={1} borderRadius="md" _hover={{ bg: "skyblue" }}>
+            <HStack as="button" spacing={2} p={2} borderWidth={1} borderRadius="md" _hover={{ bg: "orange" }}>
               <Text>비밀번호 찾기</Text>
             </HStack>
 
-            <HStack as="button" spacing={2} p={2} borderWidth={1} borderRadius="md" _hover={{ bg: "skyblue" }}>
+            <HStack as="button" spacing={2} p={2} borderWidth={1} borderRadius="md" _hover={{ bg: "orange" }}>
               <Text
                 onClick={()=>navigate("/member/signup")}
               >회원가입</Text>
@@ -164,12 +220,35 @@ export function MemberLogin() {
             <ModalBody>
               <FormControl>
                 <FormLabel>핸드폰번호를 입력해주세요</FormLabel>
-                <Input   placeholder="01012345678" />
+                <Input
+                  onChange={(e) => {
+                    setMobile(e.target.value);
+                  }}
+                  placeholder="01012345678" />
+                <Button colorScheme={"purple"} type="button" onClick={sendNumberMobile}>
+                  인증번호받기
+                </Button>
+                {isCodeSent && (
+                  <Box>
+                    <InputGroup>
+                      <Input
+                        type={"text"}
+                        onChange={(e) => {
+                          setInputCode(e.target.value);
+                        }}
+                      />
+                      <InputRightElement w="75px" mr={1}>
+                        <Button onClick={confirmNumberMobile}>핸드폰 인증</Button>
+                      </InputRightElement>
+                    </InputGroup>
+                    {expirationTime && <TimerComponent expirationTime={expirationTime} />}
+                  </Box>
+                )}
               </FormControl>
 
               <FormControl mt={4}>
-                <FormLabel>인증하기</FormLabel>
-                <Input placeholder='Last name' />
+                <FormLabel>가입하신 아이디는</FormLabel>
+                <Input placeholder={foundEmail ? `${foundEmail} 입니다` : ''} readOnly />
               </FormControl>
             </ModalBody>
             <ModalFooter>
