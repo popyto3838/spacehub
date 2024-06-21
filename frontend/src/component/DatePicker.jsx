@@ -199,15 +199,16 @@ const Calendar = (props) => {
                     "endTime": endTime
                 })
                 .then((res) => {
+                    console.log(res.data.reservationId);
                     toast({
                         status: "success",
                         description: "예약을 신청하였습니다.",
                         position: "top",
                         duration: 1000,
                     });
-                    navigate("/space/view");
+                    navigate("/paid/payment/" + res.data.reservationId);
                 })
-                .catch((res) => {
+                .catch((error) => {
                     toast({
                         status: "error",
                         description: "예약을 실패하였습니다.",

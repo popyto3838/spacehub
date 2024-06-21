@@ -27,6 +27,7 @@ public interface ReservationMapper {
                     ,       #{status}
                     )
             """)
+    @Options(useGeneratedKeys = true, keyProperty = "reservationId")
     int insert(Reservation reservation);
 
 
