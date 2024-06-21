@@ -44,17 +44,16 @@ const Header = () => {
                         <li><a href="/space/type">공간유형</a></li>
                         <li><a href="/space/option">공간옵션</a></li>
                         <li><a href="/paid/payment">결제상태</a></li>
-                        <li>
+                        {account.isLoggedIn()&& <li>
                             <Button onClick={() => navigate(`/member/info/${account.id}`)}
                                     style={{color: 'white', backgroundColor: 'mediumblue'}}>마이페이지
                             </Button>
-                        </li>
+                        </li>}
                         <li><a href="/member/host" style={{color: 'white', backgroundColor: 'mediumblue'}}>호스트센터로 이동하기</a>
                         </li>
 
                         {account.isLoggedIn()&& <li>
                             <Button
-
                               onClick={() => {
                                   account.logout();
                                   navigate("/");

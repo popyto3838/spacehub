@@ -1,20 +1,26 @@
 import {
   Box,
-  Button,
+  Button, Flex, flexbox,
   FormControl,
   FormLabel,
   Input,
   useToast,
 } from "@chakra-ui/react";
-import { useContext, useState } from "react";
+import {useContext, useEffect, useState} from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { LoginContext } from "../../component/LoginProvider.jsx";
 import NaverLogin from "./NaverLogin.jsx";
+import QRCode from "qrcode.react";
 
 export function MemberLogin() {
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
+  const [qrUuid, setQrUuid] = useState('');
+  const [time, setTime] = useState(300);
+  const [minutes, setMinutes] = useState('');
+  const [seconds, setSeconds] = useState('');
+
   const toast = useToast();
   const navigate = useNavigate();
   const account = useContext(LoginContext);
@@ -44,6 +50,49 @@ export function MemberLogin() {
       });
   }
 
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setMinutes(String(Math.floor(time / 60)).padStart(2, '0'));
+      setSeconds(String(time % 60).padStart(2, '0'));
+      setTime(time - 1);
+
+      if (time < 1) {
+        refreshQr();
+      }
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [time]);
+
+  useEffect(() => {
+    const requestIpAddress = '${requestIpAddress}';
+    const serverPort = '${serverPort}';
+
+
+    setTime(300);
+
+    return () => {
+
+    };
+  }, []);
+
+  const refreshQr = () => {
+    // QR 코드 및 타이머 새로고침 로직 구현
+    setTime(300);
+  };
+
+  const handleResetClick = () => {
+    refreshQr();
+  };
+
+  const handleInfoAnotherClick = () => {
+    closeSocket();
+    // 일반 로그인 페이지로 이동
+    window.location.href = '/SYJ_Mall/login.action';
+  };
+
+
   return (
     <Box
       maxW="md"
@@ -54,6 +103,9 @@ export function MemberLogin() {
       borderRadius="lg"
       boxShadow="lg"
     >
+      <Flex>
+
+      <Box>
       <Box textAlign="center" fontSize="xl" fontWeight="bold">
         로그인
       </Box>
@@ -61,7 +113,7 @@ export function MemberLogin() {
         <Box mt={4}>
           <FormControl>
             <FormLabel>이메일</FormLabel>
-            <Input onChange={(e) => setEmail(e.target.value)} />
+            <Input onChange={(e) => setEmail(e.target.value)}/>
           </FormControl>
         </Box>
         <Box mt={4}>
@@ -69,7 +121,7 @@ export function MemberLogin() {
             <FormLabel>패스워드</FormLabel>
             <Input
               type="password"
-              onChange={(e) => setPassword(e.target.value)} />
+              onChange={(e) => setPassword(e.target.value)}/>
           </FormControl>
         </Box>
         <Box mt={6} w={255}>
@@ -78,9 +130,34 @@ export function MemberLogin() {
           </Button>
         </Box>
         <Box w="255px" h="80px" mt={22}>
-        <NaverLogin />
+          <NaverLogin/>
         </Box>
       </Box>
-    </Box>
-  );
+      </Box>
+     {/* <Box>*/}
+
+     {/* <div className="qr-box">*/}
+
+     {/*   <div display={flexbox} className="qr-code">*/}
+     {/*     <QRCode value={qrUuid} size={150}/>*/}
+     {/*   </div>*/}
+
+     {/*   <div className="desc">*/}
+     {/*     <div className="title">*/}
+     {/*       남는 시간:*/}
+     {/*       <span id="timeCheck" className="time">*/}
+     {/*               {`${minutes} : ${seconds}`}*/}
+     {/*             </span>*/}
+     {/*     </div>*/}
+     {/*     <div id="resetBtn" className="ico-reset" onClick={handleResetClick}></div>*/}
+     {/*   </div>*/}
+
+     {/*</div>*/}
+     {/* </Box>*/}
+      </Flex>
+</Box>
+
+
+)
+  ;
 }

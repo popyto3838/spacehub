@@ -39,18 +39,7 @@ public class MemberController {
     private JwtEncoder jwtEncoder;
 
 
-    @PostMapping("signup")
-    public ResponseEntity signup(@RequestBody Member member) {
 
-        if (service.validate(member)) {
-
-            service.addMemberByEmail(member);
-
-            return ResponseEntity.ok().build();
-        } else {
-            return ResponseEntity.badRequest().build();
-        }
-    }
 
     @PostMapping("hostsignup")
     public ResponseEntity hostsignup(@RequestBody Member member) {
@@ -107,8 +96,7 @@ public class MemberController {
         return service.list();
     }
 
-    @GetMapping("{memberId}")
-
+    @GetMapping("/{memberId}")
     public ResponseEntity get(@PathVariable Integer memberId) {
         Member member = service.getById(memberId);
         if (member == null) {
@@ -231,14 +219,22 @@ public class MemberController {
     @PutMapping("host")
     public ResponseEntity host(@RequestBody Member member, Authentication authentication) {
         System.out.println("member = " + member);
-          service.switchHost(member);
-        return ResponseEntity.ok().build();
+        Map<String, Object> map = service.switchHost(member);
+
+        return ResponseEntity.ok(map);
+    }
+
+    @PutMapping("user")
+    public ResponseEntity user(@RequestBody Member member, Authentication authentication) {
+        System.out.println("member = " + member);
+        Map<String, Object> map= service.switchUser(member);
+        return ResponseEntity.ok(map);
     }
 
 
     @PostMapping("account")
     public ResponseEntity account(@RequestBody Host host) {
-
+        System.out.println("host = " + host);
         if (service.validateAccount(host)) {
 
             service.addAccountinfo(host);
@@ -264,7 +260,6 @@ public class MemberController {
 
         service.certifiedPhoneNumber(mobile,verificationCode);
 
-        // 반환할 데이터를 Map에 추가합니다.
         Map<String, Object> response = new HashMap<>();
         response.put("verificationCode", verificationCode);
         response.put("expirationTime", expirationTime);
@@ -281,4 +276,35 @@ public class MemberController {
             return ResponseEntity.ok().build();
 
     }
+
+    @PostMapping("hostInfo")
+    public ResponseEntity hostInfo(@RequestBody Host host){
+        System.out.println("host = " + host);
+        service.addhostInfo(host);
+
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("signup")
+    public ResponseEntity signup(@RequestBody Member member) {
+
+        if (service.validate(member)) {
+
+            service.addMemberByEmail(member);
+
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
+    @PostMapping("nullcheck")
+    public ResponseEntity nullcheck(@RequestBody Host host) {
+        System.out.println("host = " + host);
+        System.out.println("host = " + host);
+        Map<String, Object> map = service.checkHostInfo(host);
+      return ResponseEntity.ok(map);
+    }
+
+
 }

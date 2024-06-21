@@ -148,4 +148,54 @@ public interface MemberMapper {
             WHERE MEMBER_ID = #{memberId}
             """)
     void addPhone(Member member);
+
+
+    @Update("""
+            UPDATE MEMBER
+            SET AUTH ='USER',
+                AUTH_NAME ='USER'
+            WHERE MEMBER_ID = #{memberId}
+            """)
+    void switchUser(Member member);
+
+    @Update("""
+           UPDATE HOST 
+           SET   BUSINESS_NUMBER=#{businessNumber}, 
+                 BUSINESS_NAME=#{businessName}, 
+                 REP_NAME=#{repName},
+                 MEMBER_ID= #{memberId},
+                 ACCOUNT_NUMBER= #{accountNumber},
+                 BANK_NAME= #{bankName}
+           WHERE MEMBER_ID = #{memberId}
+           """)
+    void addHostInfo(Host host);
+
+
+    @Select("""
+           SELECT NICKNAME
+           FROM MEMBER
+           WHERE MEMBER_ID = #{memberId}
+           """)
+    Object getNickNameByMemberId(Member member);
+
+    @Select("""
+            SELECT REP_NAME
+            FROM HOST
+            WHERE MEMBER_ID = #{memberId}
+            """)
+    Object checkHostRep(Host host);
+
+    @Select("""
+            SELECT BUSINESS_NUMBER
+            FROM HOST
+            WHERE MEMBER_ID = #{memberId}
+            """)
+    Object checkHostBusinessNumber(Host host);
+
+    @Select("""
+           SELECT BUSINESS_NAME
+           FROM HOST
+           WHERE MEMBER_ID = #{memberId}
+           """)
+    Object checkHostBusinessName(Host host);
 }

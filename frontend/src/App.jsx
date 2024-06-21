@@ -24,6 +24,7 @@ import {HostSignup} from "./page/member/HostSignup.jsx";
 import {MemberMy} from "./page/member/MemberMy.jsx";
 
 import axios from "axios";
+import {MemberHostInfo} from "./page/member/MemberHostInfo.jsx";
 
 
 // axios interceptor 설정
@@ -38,6 +39,7 @@ axios.interceptors.request.use((config) => {
   // config를 리턴
   return config;
 });
+
 function App() {
   const router = createBrowserRouter([
     {
@@ -68,6 +70,7 @@ function App() {
         {path: "member/host", element: <MemberHost/>},
         {path: "host/signup", element: <HostSignup/>},
         {path: "member/info/:accountId", element: <MemberMy/>},
+        {path: "member/hostinfo/:accountId", element: <MemberHostInfo/>},
       ],
     },
   ]);

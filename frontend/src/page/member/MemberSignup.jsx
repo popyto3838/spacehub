@@ -1,5 +1,6 @@
 import {
   Box,
+  Text,
   Button,
   FormControl,
   FormHelperText,
@@ -30,8 +31,16 @@ export function MemberSignup() {
   const [inputCode, setInputCode] = useState("");
   const [isCodeSent, setIsCodeSent] = useState(false);
   const [expirationTime, setExpirationTime] = useState(null);
+  const [capsLockWarning, setCapsLockWarning] = useState(false);
   const toast = useToast();
   const navigate = useNavigate();
+
+
+
+  const handleCapsLockWarning = (e) => {
+    const isCapsLockOn = e.getModifierState("CapsLock");
+    setCapsLockWarning(isCapsLockOn);
+  };
 
   function handleSignup() {
     setIsLoading(true);
@@ -49,7 +58,7 @@ export function MemberSignup() {
           description: "회원 가입이 완료되었습니다",
           position: "top",
         });
-        navigate("/");
+        navigate("/member/login");
       })
       .catch((err) => {
         if (err.response.status === 400) {
@@ -232,13 +241,18 @@ export function MemberSignup() {
         <Box>
           <FormControl>
             <FormLabel>암호</FormLabel>
-            <Input onChange={(e) => setPassword(e.target.value)} />
+            <Input
+              type="password" onKeyUp={handleCapsLockWarning}
+              onChange={(e) => setPassword(e.target.value)} />
+            {capsLockWarning && <Text color="purple.500">Caps Lock이 켜져 있습니다.</Text>}
           </FormControl>
         </Box>
         <Box>
           <FormControl>
             <FormLabel>암호확인</FormLabel>
-            <Input onChange={(e) => setPasswordCheck(e.target.value)} />
+            <Input
+              type="password"
+              onChange={(e) => setPasswordCheck(e.target.value)} />
             {password === passwordCheck || (
               <FormHelperText>암호가 일치하지 않습니다.</FormHelperText>
             )}

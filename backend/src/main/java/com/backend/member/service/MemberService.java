@@ -44,7 +44,9 @@ public interface MemberService {
 
     Integer selectbyEmail2(Member member);
 
-    void switchHost(Member member);
+    Map<String,Object> switchHost(Member member);
+
+    Map<String,Object> switchUser(Member member);
 
     boolean validateAccount(Host host);
 
@@ -53,4 +55,9 @@ public interface MemberService {
     void certifiedPhoneNumber(String mobile, String verificationCode);
 
     void addPhone(Member member);
+
+
+    void addhostInfo(Host host);
+
+    Map<String, Object> checkHostInfo(Host host);
 }

@@ -11,7 +11,7 @@ import {
   useToast,
   InputGroup, InputRightElement
 } from "@chakra-ui/react";
-import {Avatar} from "@mui/material";
+
 import {useContext, useEffect, useState} from "react";
 import axios from "axios";
 import {LoginContext} from "../../component/LoginProvider.jsx";
@@ -22,6 +22,7 @@ export function MemberMy() {
   const [accountNumber, setAccountNumber] = useState();
   const [bankName, setBankName] = useState()
   const [mobile, setMobile] = useState()
+
   const [member, setMember] = useState({});
   const [oldNickName, setOldNickName] = useState('');
   const [verificationCode, setVerificationCode] = useState("");
@@ -54,6 +55,8 @@ export function MemberMy() {
         });
         navigate("/");
       });
+
+
   }, []);
 
 
@@ -126,7 +129,7 @@ export function MemberMy() {
 
       <HStack alignItems="flex-start" spacing={10}>
         <VStack>
-          <Avatar size="xl" name="popyto2" />
+
           <Button size="sm">프로필 사진 변경</Button>
         </VStack>
 
@@ -140,12 +143,16 @@ export function MemberMy() {
                    }}
             />
             <Text>내 계좌번호</Text>
-            <Input placeholder={member.mobile}
-                   onChange={(e) => {
-                     setAccountNumber(e.target.value);
-                     setIsCheckedMobile(false);
-                   }}
-            />
+            <InputGroup>
+              <InputRightElement w="75px" mr={1}>
+              <Input placeholder={member.mobile}
+                     onChange={(e) => {
+                       setAccountNumber(e.target.value);
+                       setIsCheckedMobile(false);
+                     }}
+              />
+              </InputRightElement>
+            </InputGroup>
             <Button
               onClick={handleAccount}
               size="sm" colorScheme="whiteAlpha">등록하기</Button>
@@ -160,7 +167,7 @@ export function MemberMy() {
                        setIsCheckedMobile(false);
                      }}
               />
-              <Button onClick={sendNumber} size="sm" colorScheme="whiteAlpha">인증하기</Button>
+              <Button onClick={sendNumber} size="sm" >인증하기</Button>
               {isCodeSent && (
                 <Box>
                   <InputGroup>
