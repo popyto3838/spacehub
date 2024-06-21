@@ -50,8 +50,9 @@ public class SpaceController {
     }
 
     @GetMapping("list")
-    public List<Space> selectAll() {
-        return spaceService.selectAll();
+    public ResponseEntity<List<Space>> selectAll() {
+        List<Space> spaces = spaceService.selectAll();
+        return ResponseEntity.ok(spaces);
     }
 
     @GetMapping("/{spaceId}")

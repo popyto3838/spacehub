@@ -19,10 +19,15 @@ public interface FileMapper {
     void insertFile(File file);
 
     @Select("""
-SELECT * 
-FROM FILE
-WHERE PARENT_ID = #{parentId}
-AND DIVISION = #{division}
-""")
+            SELECT f.*
+                FROM FILE f
+                WHERE f.DIVISION = 'SPACE'
+                  AND f.FILE_ID = (
+                      SELECT MIN(f2.FILE_ID)
+                      FROM FILE f2
+                      WHERE f2.PARENT_ID = f.PARENT_ID
+                        AND f2.DIVISION = 'SPACE'
+                      )
+            """)
     List<File> selectAllOfSpaces();
 }
