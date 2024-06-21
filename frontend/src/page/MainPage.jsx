@@ -56,7 +56,7 @@ export function MainPage() {
                   justifyContent="center"
                   _hover={{bg: 'gray.300'}}
                 >
-                  <Box>아이콘이미지 위치</Box>
+                {/*  icon 이미지 위치*/}
                 </Box>
                 <Text _hover={{color: 'teal.500'}}>{type.name}</Text>
               </VStack>
