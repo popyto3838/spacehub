@@ -54,7 +54,6 @@ public interface MemberService {
 
     void certifiedPhoneNumber(String mobile, String verificationCode);
 
-    void addPhone(Member member);
 
 
     void addhostInfo(Host host);

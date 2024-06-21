@@ -203,6 +203,7 @@ public class MemberServiceImpl implements MemberService {
         member.setPassword(passwordEncoder.encode(member.getPassword()));
         member.setEmail(member.getEmail().trim());
         member.setNickname(member.getNickname().trim());
+        member.setMobile(member.getMobile().trim());
 
         mapper.insert(member);
 
@@ -347,10 +348,7 @@ public class MemberServiceImpl implements MemberService {
    };
 
 
-    @Override
-    public void addPhone(Member member){
-        mapper.addPhone(member);
-    }
+
 
     @Override
     public void addhostInfo(Host host){

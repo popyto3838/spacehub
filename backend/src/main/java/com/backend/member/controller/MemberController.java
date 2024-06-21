@@ -268,15 +268,6 @@ public class MemberController {
     }
 
 
-    @PostMapping("phone")
-    public ResponseEntity phone(@RequestBody Member member) {
-
-        service.addPhone(member);
-
-            return ResponseEntity.ok().build();
-
-    }
-
     @PostMapping("hostInfo")
     public ResponseEntity hostInfo(@RequestBody Host host){
         System.out.println("host = " + host);

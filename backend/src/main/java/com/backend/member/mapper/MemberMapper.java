@@ -84,8 +84,8 @@ public interface MemberMapper {
 
 // 테이블 바꾼 후 다시작성한 sql
     @Insert("""
-           INSERT INTO MEMBER (EMAIL, PASSWORD, NICKNAME , AUTH_NAME)
-            VALUES (#{email}, #{password}, #{nickname} , 'USER')
+           INSERT INTO MEMBER (EMAIL, PASSWORD, NICKNAME , MOBILE , AUTH_NAME)
+            VALUES (#{email}, #{password}, #{nickname} , #{mobile},'USER')
             """)
     @Options(useGeneratedKeys = true, keyProperty = "memberId")
     int insert(Member member);
@@ -142,12 +142,6 @@ public interface MemberMapper {
     void insertAccount(Host host);
 
 
-    @Update("""
-            UPDATE MEMBER
-            SET MOBILE = #{mobile}
-            WHERE MEMBER_ID = #{memberId}
-            """)
-    void addPhone(Member member);
 
 
     @Update("""

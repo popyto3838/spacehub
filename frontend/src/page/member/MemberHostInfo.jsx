@@ -21,11 +21,7 @@ export function MemberHostInfo(){
 
   const [accountNumber, setAccountNumber] = useState();
   const [bankName, setBankName] = useState()
-  const [mobile, setMobile] = useState()
-  const [verificationCode, setVerificationCode] = useState("");
-  const [inputCode, setInputCode] = useState("");
-  const [expirationTime, setExpirationTime] = useState(null);
-  const [isCodeSent, setIsCodeSent] = useState(false);
+
   const [repName, setRepName] = useState('');
   const [businessName, setBusinessName] = useState()
 
@@ -78,37 +74,7 @@ export function MemberHostInfo(){
 
   }
 
-  const sendNumber = () => {
 
-    axios
-      .get(`/api/member/p1?mobile=${mobile}`)
-      .then((response) => {
-        alert("인증번호 발송");
-        setVerificationCode(response.data.verificationCode);
-        setExpirationTime(response.data.expirationTime);
-        setIsCodeSent(true);
-      })
-      .catch((error) => {
-        console.error("Error sending verification code:", error);
-      });
-  };
-
-
-
-  const confirmNumber = () => {
-    if (inputCode == verificationCode) {
-      alert("인증되었습니다.");
-      setIsCodeSent(false);
-
-      axios.post("/api/member/phone",{
-        memberId: account.id,
-        mobile: mobile
-      })
-
-    } else {
-      alert("인증에 실패했습니다");
-    }
-  };
 
   useEffect(() => {
     setBusinessNumber(`${part1}-${part2}-${part3}`);
@@ -125,7 +91,6 @@ export function MemberHostInfo(){
       memberId : account.id,
       accountNumber: accountNumber,
       bankName: bankName,
-      auth: account.authority,
     })
       .then(e=>{
         toast({
@@ -183,36 +148,6 @@ export function MemberHostInfo(){
       </InputGroup>
       </Box>
       <Box  p={3} borderRadius="md">
-        <FormControl>
-          <FormLabel>연락처</FormLabel>
-          <InputGroup>
-            <Input
-                   onChange={(e) => {
-                     setMobile(e.target.value);
-                     setIsCheckedMobile(false);
-                   }}
-            />
-            <InputRightElement w="75px" mr={1}>
-              <Button onClick={sendNumber} size="sm" colorScheme="blue">인증하기</Button>
-            </InputRightElement>
-          </InputGroup>
-          {isCodeSent && (
-            <Box>
-              <InputGroup>
-                <Input
-                  type={"text"}
-                  onChange={(e) => {
-                    setInputCode(e.target.value);
-                  }}
-                />
-                <InputRightElement w="75px" mr={1}>
-                  <Button onClick={confirmNumber}>핸드폰 인증</Button>
-                </InputRightElement>
-              </InputGroup>
-              {expirationTime && <TimerComponent expirationTime={expirationTime} />}
-            </Box>
-          )}
-        </FormControl>
 
       <FormControl mb={4}>
         <FormLabel>사업자명(개인/법인)</FormLabel>
