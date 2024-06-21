@@ -289,4 +289,9 @@ public class MemberServiceImpl implements MemberService {
     public void addPhone(Member member){
         mapper.addPhone(member);
     }
+
+    @Override
+    public Integer findHostIdByMemberId(int memberId) {
+        return mapper.findHostIdByMemberId(memberId);
+    }
 }

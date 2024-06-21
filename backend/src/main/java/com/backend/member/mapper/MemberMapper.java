@@ -148,4 +148,11 @@ public interface MemberMapper {
             WHERE MEMBER_ID = #{memberId}
             """)
     void addPhone(Member member);
+
+    @Insert("""
+            SELECT H.HOST_ID
+            FROM MEMBER M JOIN HOST H ON M.MEMBER_ID = H.MEMBER_ID
+            WHERE M.MEMBER_ID = #{memberId}
+            """)
+    int findHostIdByMemberId(int memberId);
 }

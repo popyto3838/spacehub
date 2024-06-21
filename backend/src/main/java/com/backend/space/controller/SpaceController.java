@@ -1,7 +1,9 @@
 package com.backend.space.controller;
 
 import com.backend.file.service.FileService;
+import com.backend.member.service.MemberService;
 import com.backend.space.domain.Space;
+import com.backend.space.domain.SpaceDTO;
 import com.backend.space.service.SpaceService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -22,25 +24,26 @@ public class SpaceController {
     private final SpaceService spaceService;
     private final ObjectMapper objectMapper;
     private final FileService fileService;
+    private final MemberService memberService;
 
     @PostMapping("insert")
-    public void add(@RequestPart("space") String spaceJson,
-                    @RequestPart("optionList") String optionListJson,
-                    @RequestPart(value = "files", required = false) List<MultipartFile> files) throws IOException {
+    public void add(@RequestPart("spaceDto") SpaceDTO spaceDto) throws IOException {
 
-        // JSON 문자열을 객체로 변환
-        Space space = objectMapper.readValue(spaceJson, Space.class);
+        Space space = spaceDto.getSpace();
+        int memberId = spaceDto.getMemberId();
+        List<Integer> optionList = spaceDto.getOptionList();
+        List<MultipartFile> files = spaceDto.getFiles();
+
+        // memberId로 hostId 조회
+        Integer hostId = memberService.findHostIdByMemberId(memberId);
+        space.setHostId(hostId); // hostId 설정
         // SPACE CREATE
         spaceService.insertSpace(space);
-
-        // JSON 배열 형태 -> List 형태 
-        List<Integer> optionList = objectMapper.readValue(optionListJson, List.class);
 
         // 이미지 파일 업로드
         if (files != null && !files.isEmpty()) {
             for (MultipartFile file : files) {
                 fileService.addFile(space.getSpaceId(), "SPACE", file);
-
             }
         }
     }

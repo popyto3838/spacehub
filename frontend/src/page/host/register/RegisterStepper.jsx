@@ -107,42 +107,37 @@ const RegisterStepper = () => {
   const handleSubmit = async () => {
     const formDataToSend = new FormData();
 
-    // JWT 토큰에서 memberId 추출
-    const token = localStorage.getItem('token');
-    const decodedToken = jwtDecode(token);
-    const memberId = Number(decodedToken.sub); // 숫자로 변환
+    // spaceDto 객체 생성
+    const spaceDto = {
+      memberId: memberId, // LoginContext에서 가져온 memberId 사용
+      space: {
+        typeId: formData.typeId,
+        type: formData.type,
+        title: formData.title,
+        subTitle: formData.subTitle,
+        zonecode: formData.zonecode,
+        address: formData.address,
+        detailAddress: formData.detailAddress,
+        extraAddress: formData.extraAddress,
+        latitude: formData.latitude,
+        longitude: formData.longitude,
+        introduce: formData.introduce,
+        facility: formData.facility,
+        notice: formData.notice,
+        price: formData.price,
+        capacity: formData.capacity,
+        floor: formData.floor,
+        parkingSpace: formData.parkingSpace,
+      },
+      optionList: formData.options,
+    };
 
-    // 1. memberId 추가
-    formDataToSend.append('memberId', memberId);
+    formDataToSend.append('spaceDto', JSON.stringify(spaceDto));
 
-    // 2. space 데이터 추가
-    formDataToSend.append('space', JSON.stringify({
-      typeId: formData.typeId,
-      type: formData.type,
-      title: formData.title,
-      subTitle: formData.subTitle,
-      zonecode: formData.zonecode,
-      address: formData.address,
-      detailAddress: formData.detailAddress,
-      extraAddress: formData.extraAddress,
-      latitude: formData.latitude,
-      longitude: formData.longitude,
-      introduce:formData.introduce,
-      facility: formData.facility,
-      notice: formData.notice,
-      price: formData.price,
-      capacity: formData.capacity,
-      floor: formData.floor,
-      parkingSpace: formData.parkingSpace,
-    }));
-
-    // 3. optionList 데이터 추가 (배열 형태로)
-    formDataToSend.append('optionList', JSON.stringify(formData.options)); // 배열을 JSON 문자열로 변환하여 추가
-
-    // 4. 파일 데이터 추가
-    if (formData.files && formData.files.length > 0) { // 파일이 존재하는 경우에만 추가
+    // 파일 데이터 추가
+    if (formData.files && formData.files.length > 0) {
       for (const file of formData.files) {
-        formDataToSend.append('files', file); // files[] 대신 files를 사용
+        formDataToSend.append('files', file);
       }
     }
 
