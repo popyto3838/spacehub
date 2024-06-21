@@ -33,14 +33,11 @@ public interface MemberService {
 
     void addMemberByEmail(Member member);
 
-     Member
-
-     findByEmail(String email);
+    Member findByEmail(String email);
 
     void insertMember(Member member);
 
    void addHostMemberByEmail(Member member);
-
 
     Integer selectbyEmail2(Member member);
 
@@ -54,11 +51,13 @@ public interface MemberService {
 
     void certifiedPhoneNumber(String mobile, String verificationCode);
 
-
-
     void addhostInfo(Host host);
 
     Map<String, Object> checkHostInfo(Host host);
 
     Member emailByMobile(String mobile);
+
+    void addPhone(Member member);
+
+    Integer findHostIdByMemberId(int memberId);
 }

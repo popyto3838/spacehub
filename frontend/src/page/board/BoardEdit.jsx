@@ -1,9 +1,13 @@
 import {
+  Badge,
   Box,
   Button,
+  Flex,
   FormControl,
+  FormHelperText,
   FormLabel,
   Heading,
+  Image,
   Input,
   Modal,
   ModalBody,
@@ -11,6 +15,8 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
+  Switch,
+  Text,
   Textarea,
   useDisclosure,
   useToast,
@@ -24,6 +30,10 @@ export function BoardEdit() {
   const { boardId } = useParams();
   const [board, setBoard] = useState({});
 
+  // 파일 삭제,추가를 위한 상태
+  const [removeFileList, setRemoveFileList] = useState([]);
+  const [addFileList, setAddFileList] = useState([]);
+
   const navigate = useNavigate();
   const toast = useToast();
   const { isOpen, onClose, onOpen } = useDisclosure();
@@ -36,15 +46,49 @@ export function BoardEdit() {
   }, []);
 
   function handleClickSave() {
-    axios.put(`/api/board/${boardId}/edit`, board).then((res) => {
-      setBoard(res.data);
-      toast({
-        status: "success",
-        description: "게시물이 수정되었습니다.",
-        position: "top",
+    axios
+      .putForm(`/api/board/${boardId}/edit`, {
+        id: board.boardId,
+        title: board.title,
+        content: board.content,
+        removeFileList,
+        addFileList,
+      })
+      .then((res) => {
+        setBoard(res.data);
+        toast({
+          status: "success",
+          description: "게시물이 수정되었습니다.",
+          position: "top",
+        });
+        navigate(`/board/${boardId}`);
       });
-      navigate(`/board/${boardId}`);
-    });
+  }
+
+  // 추가하려는 파일이 존재하면 덮어쓰기
+  const fileNameList = [];
+  for (let addFile of addFileList) {
+    let duplicate = false;
+    for (let file of board.filesLists) {
+      if (file.fileName === addFile.name) {
+        duplicate = true;
+        break;
+      }
+    }
+    fileNameList.push(
+      <li>
+        {addFile.name}
+        {duplicate && <Badge colorScheme={"red"}>중복</Badge>}
+      </li>,
+    );
+  }
+
+  function handleSwitchChangeRemove(fileName, checked) {
+    if (checked) {
+      setRemoveFileList([...removeFileList, fileName]);
+    } else {
+      setRemoveFileList(removeFileList.filter((item) => item !== fileName));
+    }
   }
 
   return (
@@ -82,6 +126,55 @@ export function BoardEdit() {
             <FormLabel>작성일시</FormLabel>
             <Input value={board.updateDateAndTime} readOnly />
           </FormControl>
+        </Box>
+
+        {/* 게시물에 첨부된 파일 */}
+        <Box>
+          <Box>첨부 파일 목록</Box>
+          {board.filesLists &&
+            board.filesLists.map((file) => (
+              <Box border={"1px solid black"} key={file.fileName}>
+                <Flex>
+                  지우기 :
+                  <Switch
+                    onChange={(e) =>
+                      handleSwitchChangeRemove(file.fileName, e.target.checked)
+                    }
+                  />
+                  <Text>{file.fileName}</Text>
+                </Flex>
+                <Box>
+                  <Image
+                    sx={
+                      removeFileList.includes(file.fileName)
+                        ? { filter: "blur(8px)" }
+                        : {}
+                    }
+                    src={file.src}
+                    alt={file.fileName}
+                  />
+                </Box>
+              </Box>
+            ))}
+        </Box>
+
+        {/* 게시물에 파일 첨부 */}
+        <Box>
+          <FormControl>
+            <FormLabel>파일 첨부</FormLabel>
+            <Input
+              multiple={true}
+              type={"file"}
+              accept={"image/*, .pdf, .doc, .docx, .xls, .txt, .ppt"}
+              onChange={(e) => setAddFileList(e.target.files)}
+            />
+            <FormHelperText>
+              첨부 파일의 총 용량은 10MB, 한 파일은 1MB를 초과할 수 없습니다.
+            </FormHelperText>
+          </FormControl>
+          <Box>
+            <ul>{fileNameList}</ul>
+          </Box>
         </Box>
 
         <Box>

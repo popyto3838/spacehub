@@ -370,4 +370,9 @@ public class MemberServiceImpl implements MemberService {
     public Member emailByMobile(String mobile){
         return mapper.emailByMobile(mobile);
     }
+
+    @Override
+    public Integer findHostIdByMemberId(int memberId) {
+        return mapper.findHostIdByMemberId(memberId);
+    }
 }

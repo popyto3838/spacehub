@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {
   Box,
   Button,
@@ -22,6 +22,8 @@ import RegisterPage5 from "./RegisterPage5.jsx";
 import RegisterPage6 from "./RegisterPage6.jsx";
 import {useLocation, useNavigate} from "react-router-dom";
 import axios from "axios";
+import {jwtDecode} from "jwt-decode";
+import {LoginContext} from "../../../component/LoginProvider.jsx";
 
 // Stepper steps definition
 const steps = [
@@ -53,6 +55,8 @@ const StepContent = ({step, formData, setFormData}) => {
 };
 
 const RegisterStepper = () => {
+  const { memberId } = useContext(LoginContext); // LoginContext에서 memberId를 가져옵니다.
+
   const navigate = useNavigate();
   const location = useLocation();
   const toast = useToast();
@@ -65,28 +69,35 @@ const RegisterStepper = () => {
   const [formData, setFormData] = useState(() => {
     const storedData = sessionStorage.getItem('formData');
     return storedData ? JSON.parse(storedData) : {
-      page1Data: {
-        type: '', title: '', subTitle: ''
-      },
-      page2Data: {
-        location: '', postcode: '', address: '', detailAddress: '', extraAddress: '', latitude: '', longitude: ''
-      },
-      page3Data: {
-        introduce: '', facility: '', notice: ''
-      },
-      page4Data: {
-        price: '', capacity: '', floor: '', parkingSpace: ''
-      },
-      page5Data: {
-        files: []
-      },
-      page6Data: {
-        options: []
-      },
+      // page별 데이터 구분 없이 저장
+      memberId: memberId,
+      type: null,
+      title: '',
+      subTitle: '',
+      zonecode: '',
+      address: '',
+      detailAddress: '',
+      extraAddress: '',
+      latitude: '',
+      longitude: '',
+      introduce: '',
+      facility: '',
+      notice: '',
+      price: 0,
+      capacity: 0,
+      floor: 0,
+      parkingSpace: 0,
+      files: [],
+      options: [],
     };
   });
 
   const {steps: chakraSteps} = useSteps({initialStep: activeStep});
+
+  const handleBack = () => {
+    setActiveStep(activeStep - 1);
+    sessionStorage.setItem('activeStep', (activeStep - 1).toString());
+  };
 
   const handleNext = () => {
     setActiveStep(activeStep + 1);
@@ -96,44 +107,71 @@ const RegisterStepper = () => {
   const handleSubmit = async () => {
     const formDataToSend = new FormData();
 
-    // 1. 텍스트 데이터 추가 (formData의 page1Data, page2Data, ... 등)
-    Object.entries(formData).forEach(([pageKey, pageData]) => {
-      if (pageKey !== 'page5Data' && pageKey !== 'page6Data') { // page5Data는 파일 데이터이므로 제외
-        Object.entries(pageData).forEach(([key, value]) => {
-          formDataToSend.append(key, value);
-        });
-      }
-    });
+    // spaceDto 객체 생성
+    const spaceDto = {
+      memberId: memberId, // LoginContext에서 가져온 memberId 사용
+      space: {
+        typeId: formData.typeId,
+        type: formData.type,
+        title: formData.title,
+        subTitle: formData.subTitle,
+        zonecode: formData.zonecode,
+        address: formData.address,
+        detailAddress: formData.detailAddress,
+        extraAddress: formData.extraAddress,
+        latitude: formData.latitude,
+        longitude: formData.longitude,
+        introduce: formData.introduce,
+        facility: formData.facility,
+        notice: formData.notice,
+        price: formData.price,
+        capacity: formData.capacity,
+        floor: formData.floor,
+        parkingSpace: formData.parkingSpace,
+      },
+      optionList: formData.options,
+    };
 
-    // 2. 파일 데이터 추가
-    for (const file of formData.page5Data.files) {
-      formDataToSend.append('files', file); // files는 서버에서 처리할 때 사용할 필드 이름
+    formDataToSend.append('spaceDto', JSON.stringify(spaceDto));
+
+    // 파일 데이터 추가
+    if (formData.files && formData.files.length > 0) {
+      for (const file of formData.files) {
+        formDataToSend.append('files', file);
+      }
     }
 
-    // 3. 옵션 데이터 추가 (배열 형태로)
-    formData.page6Data.options.forEach(optionId => {
-      formDataToSend.append('options[]', optionId); // 대괄호([])를 사용하여 배열 형태로 전송
-    });
+    // 5. API 요청 보내기
+    try {
+      const response = await axios.post('/api/space/insert', formDataToSend, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          'Authorization': `Bearer ${localStorage.getItem('token')}` // 헤더에 토큰 추가
+        }
+      });
 
-    // 4. API 요청 보내기
-    await axios.post(`/api/space/insert`, formDataToSend, {
-      headers: {
-        'Content-Type': 'multipart/form-data'
-      }
-    })
-      .then(() => {
-        // 5. Form submission 완료 후 sessionStorage 초기화
-        sessionStorage.removeItem('formData');
-        sessionStorage.removeItem('activeStep');
-        navigate('/');
-      })
-      .catch()
-      .finally();
-  };
+      // 6. 성공적으로 제출되었을 때 처리
+      toast({
+        title: '공간 등록이 완료되었습니다.',
+        status: 'success',
+        duration: 3000,
+        isClosable: true,
+      });
+      sessionStorage.removeItem('formData');
+      sessionStorage.removeItem('activeStep');
+      navigate('/');
 
-  const handleBack = () => {
-    setActiveStep(activeStep - 1);
-    sessionStorage.setItem('activeStep', (activeStep - 1).toString());
+    } catch (error) {
+      // 7. 제출 실패 시 에러 처리
+      console.error("Error submitting space data:", error);
+      toast({
+        title: '공간 등록에 실패했습니다.',
+        description: error.response?.data?.message || '잠시 후 다시 시도해주세요.',
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+      });
+    }
   };
 
   useEffect(() => {

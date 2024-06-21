@@ -18,11 +18,11 @@
 
 
 .content {
-    width: 60%;
+    width: 80%;
     flex: 1;
     display: flex;
     justify-content: center;
     flex-direction: column;
-    min-height: 120vh;
+    min-height: 100vh;
     margin: auto;
 }

@@ -7,7 +7,6 @@ import {BoardList} from "./page/board/BoardList.jsx";
 import {BoardView} from "./page/board/BoardView.jsx";
 import {BoardEdit} from "./page/board/BoardEdit.jsx";
 import RegisterStepper from "./page/host/register/RegisterStepper.jsx";
-import {Reserve} from "./page/Reserve.jsx";
 import {SpaceOption} from "./page/admin/space_config/SpaceOption.jsx";
 import {MemberSignup} from "./page/member/MemberSignup.jsx";
 import NaverLogin from "./page/member/NaverLogin.jsx";
@@ -24,6 +23,7 @@ import {HostSignup} from "./page/member/HostSignup.jsx";
 import {MemberMy} from "./page/member/MemberMy.jsx";
 
 import axios from "axios";
+import SpaceView from "./page/admin/space_config/SpaceView.jsx";
 import {MemberHostInfo} from "./page/member/MemberHostInfo.jsx";
 
 
@@ -39,17 +39,12 @@ axios.interceptors.request.use((config) => {
   // config를 리턴
   return config;
 });
-
 function App() {
   const router = createBrowserRouter([
     {
       path: "/",
       element: <Home/>,
       children: [
-        {
-          path: "reserve",
-          element: <Reserve/>
-        },
         {index: true, element: <MainPage/>},
         {path: "board/write", element: <BoardWrite/>},
         {path: "board/list", element: <BoardList/>},
@@ -57,6 +52,7 @@ function App() {
         {path: "board/:boardId/edit", element: <BoardEdit/>},
         {path: "space/register", element: <RegisterStepper/>},
         {path: "space/option", element: <SpaceOption/>},
+        {path: "space/:spaceId", element: <SpaceView/>},
         {path: "space/type", element: <SpaceType/>},
         {path: "member/signup", element: <MemberSignup/>},
         {path: "member/naver", element: <NaverLogin/>},
@@ -65,7 +61,7 @@ function App() {
         {path: "member/login", element: <MemberLogin/>},
         {path: "member/edit/:memberId", element: <MemberEdit/>},
         {path: "auth/naverlogin", element: <NaverLoginHandler/>},
-        {path: "paid/payment", element: <Payment/>},
+        {path: "paid/payment/:reservationId", element: <Payment/>},
         {path: "member/naverlogin", element: <NaverLoginHandler/>},
         {path: "member/host", element: <MemberHost/>},
         {path: "host/signup", element: <HostSignup/>},

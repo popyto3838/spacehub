@@ -1,5 +1,6 @@
 
 import {
+  Badge,
   Box,
   Button,
   Center,
@@ -156,9 +157,15 @@ export function BoardList() {
                 >
                   <Td>{board.boardId}</Td>
                   <Td>{board.views}</Td>
-                  <Td>{board.title}</Td>
+                  <Td>
+                    {board.title}
+                    {/* 첨부된 이미지가 있으면 Badge에 파일수 출력 */}
+                    {board.numberOfImages && (
+                      <Badge>이미지 : {board.numberOfImages}</Badge>
+                    )}
+                  </Td>
                   <Td>{board.categoryId}</Td>
-                  <Td>{account.nickname}</Td>
+                  <Td>{board.writer}</Td>
                   {categoryList.map(
                     (category) =>
                       category.categoryId === board.categoryId && (

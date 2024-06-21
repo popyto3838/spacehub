@@ -1,19 +1,36 @@
 // eslint-disable-next-line no-unused-vars
-import React, {useContext, useState} from 'react';
+import React, {useContext, useState, useEffect} from 'react';
 import '/public/css/component/DatePicker.css';
 import axios from "axios";
 import {LoginContext} from "./LoginProvider.jsx";
-import {useToast} from "@chakra-ui/react";
+import {Button, useToast} from "@chakra-ui/react";
 import {useNavigate} from "react-router-dom";
 
 
-const Calendar = () => {
+const Calendar = (props) => {
     const account = useContext(LoginContext);
     const toast = useToast();
     const today = new Date();
+    today.setHours(0, 0, 0, 0);
     const navigate = useNavigate();
     const [selectedDate, setSelectedDate] = useState(today);
     const [currentDate, setCurrentDate] = useState(today);
+    const [reservations, setReservations] = useState([]);
+    useEffect(() => {
+        fetchReservations();
+        console.log("gdgd")
+        console.log(reservations)
+        console.log("=============dddd=======d===", props.spaceId)
+    }, []);
+
+    const fetchReservations = async () => {
+        try {
+            const response = await axios.get("/api/reservation/list");
+            setReservations(response.data);
+        } catch (error) {
+            console.error("Failed to fetch reservations:", error);
+        }
+    };
     const months = [
         '1월', '2월', '3월', '4월', '5월', '6월',
         '7월', '8월', '9월', '10월', '11월', '12월'
@@ -125,19 +142,40 @@ const Calendar = () => {
         }
     };
 
+    const isTimeSlotReserved = (date, hour) => {
+        return reservations.some((reservation) => {
+            const reservationDate = new Date(reservation.startDate);
+            const selectedDate = new Date(date);
+
+            return (
+                reservationDate.toDateString() === selectedDate.toDateString() &&
+                reservation.startTime.split(":")[0] <= hour &&
+                reservation.endTime.split(":")[0] > hour
+            );
+        });
+    };
+
     const renderHourCheckboxes = () => {
         const hours = Array.from({length: 24}, (_, i) => i);
 
-        return hours.map((hour) => (
-            <button
-                key={hour}
-                className={`hour-button ${selectedHours.includes(hour) ? 'selected' : ''}`}
-                onClick={() => handleHourChange(hour)}
-            >
-                {hour < 10 ? `0${hour}:00` : `${hour}:00`}
-            </button>
-        ));
+        return hours.map((hour) => {
+            const isReserved = isTimeSlotReserved(selectedDate, hour);
+
+            return (
+                <button
+                    key={hour}
+                    className={`hour-button ${selectedHours.includes(hour) ? 'selected' : ''} ${
+                        isReserved ? 'reserved' : ''
+                    }`}
+                    onClick={() => handleHourChange(hour)}
+                    disabled={isReserved}
+                >
+                    {hour < 10 ? `0${hour}:00` : `${hour}:00`}
+                </button>
+            );
+        });
     };
+
 
     const handleReservation = () => {
         if (selectedDate && selectedHours.length > 0) {
@@ -153,7 +191,7 @@ const Calendar = () => {
 
             axios
                 .post("/api/reservation/write", {
-                    "spaceId": 2,
+                    "spaceId": props.spaceId,
                     "memberId": account.id,
                     "startDate": formattedDate,
                     "endDate": formattedDate,
@@ -161,15 +199,16 @@ const Calendar = () => {
                     "endTime": endTime
                 })
                 .then((res) => {
+                    console.log(res.data.reservationId);
                     toast({
                         status: "success",
                         description: "예약을 신청하였습니다.",
                         position: "top",
                         duration: 1000,
                     });
-                    navigate("/paid/payment");
+                    navigate("/paid/payment/" + res.data.reservationId);
                 })
-                .catch((res) => {
+                .catch((error) => {
                     toast({
                         status: "error",
                         description: "예약을 실패하였습니다.",
@@ -208,7 +247,13 @@ const Calendar = () => {
                 <div className="hour-button-container">{renderHourCheckboxes()}</div>
 
             </div>
-            <button onClick={handleReservation}>예약하기</button>
+            <div className="priceArea">
+                <p className="totalPrice">₩{props.price}</p>
+            </div>
+            <div className="buttonArea">
+                <Button className="reservationBtn" colorScheme='purple' onClick={handleReservation}
+                        height="60px">예약하기</Button>
+            </div>
         </div>
     );
 };

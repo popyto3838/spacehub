@@ -27,8 +27,8 @@ public class TypeListController {
     }
 
     @GetMapping("/list")
-    public List<TypeList> list() {
-        return service.list();
+    public List<TypeList> selectAll() {
+        return service.selectAll();
     }
 
     @DeleteMapping("/{typeListId}")

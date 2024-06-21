@@ -4,7 +4,7 @@
     border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     overflow: hidden;
-    max-width: 40%;
+    max-width: 100%;
     margin: 0 auto;
 }
 
@@ -112,4 +112,8 @@
 
 .hour-button.selected:hover {
     background-color: #0056b3;
+}
+.hour-button.reserved {
+    background-color: #ccc;
+    cursor: not-allowed;
 }

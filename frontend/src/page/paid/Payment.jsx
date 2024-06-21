@@ -2,9 +2,8 @@ import axios from 'axios';
 import {Button, useToast} from "@chakra-ui/react";
 import '/public/css/paid/Payment.css';
 import React, {useContext, useEffect, useState} from 'react';
+import {useNavigate, useParams} from "react-router-dom";
 import {LoginContext} from "../../component/LoginProvider.jsx";
-import {useNavigate} from "react-router-dom";
- import DatePicker from "../../component/DatePicker.jsx";
 
 
 const Payment = () => {
@@ -12,17 +11,28 @@ const Payment = () => {
     const account = useContext(LoginContext);
     const navigate = useNavigate();
     const [reservationStatus, setReservationStatus] = useState('');
+    const [spaceIdResult, setSpaceId] = useState('');
+    const {reservationId} = useParams();
 
 
     useEffect(() => {
-        axios.get("/api/reservation/" + 25)
+        console.log("=========")
+        console.log(reservationId)
+        console.log("=========")
+        axios.get("/api/reservation/" + reservationId)
             .then((res) => {
                 setReservationStatus(res.data.status);
+                setSpaceId(res.data.spaceId)
             })
             .catch((err) => {
                 console.error(err);
             });
     }, []);
+
+    useEffect(() => {
+        console.log("=================================spaceIdResult",spaceIdResult)
+    }, [spaceIdResult]);
+
 
 
     useEffect(() => {
@@ -39,7 +49,7 @@ const Payment = () => {
     }, []);
 
     const requestPay = () => {
-
+        console.log("========spaceIdResultspaceIdResult===============",spaceIdResult)
         if (reservationStatus !== 'ACCEPT') {
             toast({
                 status: "warning",
@@ -70,8 +80,8 @@ const Payment = () => {
                 alert("결제성공")
                 axios
                     .post("/api/paid/write", {
-                        "spaceId": 2,
-                        "reservationId": 2,
+                        "spaceId": spaceIdResult,
+                        "reservationId": reservationId,
                         "memberId": account.id,
                         "totalPrice": 1000
                     })
@@ -129,7 +139,6 @@ const Payment = () => {
                     <p className="statusAccept">호스트가 결제를 수락하지 않았습니다.</p>
                 ) : null}
             </div>
-            <DatePicker></DatePicker>
         </div>
     );
 };
