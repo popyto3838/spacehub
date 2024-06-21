@@ -7,10 +7,7 @@ import com.backend.space.domain.SpaceDTO;
 import com.backend.space.service.SpaceService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -46,5 +43,10 @@ public class SpaceController {
                 fileService.addFile(space.getSpaceId(), "SPACE", file);
             }
         }
+    }
+
+    @GetMapping("list")
+    public List<Space> selectAll() {
+        return spaceService.selectAll();
     }
 }
