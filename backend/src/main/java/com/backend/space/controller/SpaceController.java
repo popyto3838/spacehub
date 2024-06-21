@@ -3,15 +3,15 @@ package com.backend.space.controller;
 import com.backend.file.domain.File;
 import com.backend.file.service.FileService;
 import com.backend.file.service.impl.FileServiceImpl;
+import com.backend.reservation.domain.Reservation;
+import com.backend.space.domain.FindResponseSpaceJoinDTO;
 import com.backend.space.domain.Space;
 import com.backend.space.service.SpaceService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -39,4 +39,14 @@ public class SpaceController {
         // JSON 배열 형태 -> List 형태 
         List<Integer> optionList = objectMapper.readValue(optionListJson, List.class);
     }
+
+    @GetMapping("/{spaceId}")
+    public ResponseEntity view(@PathVariable Integer spaceId) {
+        FindResponseSpaceJoinDTO space = spaceService.view(spaceId);
+        if (space == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok().body(space);
+    }
+
 }
