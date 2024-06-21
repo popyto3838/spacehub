@@ -6,6 +6,7 @@ import axios from "axios";
 import {useNavigate, useParams} from "react-router-dom";
 import {useToast} from "@chakra-ui/react";
 import {Link} from 'react-scroll';
+import KakaoMap from "../../../component/KakaoMap.jsx";
 
 
 function SpaceView() {
@@ -151,6 +152,7 @@ function SpaceView() {
                 </div>
                 <div className="reservationArea">
                     <DatePicker price={space.price} spaceId={spaceId}></DatePicker>
+                    {/*<KakaoMap latitude={space.latitude} longitude={space.longitude}></KakaoMap>*/}
                 </div>
             </div>
 

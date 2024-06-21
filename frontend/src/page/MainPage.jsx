@@ -68,7 +68,7 @@ export function MainPage() {
         <Text fontSize="2xl" fontWeight="bold">공간 목록</Text>
         <Grid templateColumns="repeat(auto-fill, minmax(250px, 1fr))" gap={6} mt={4}>
           {spaces.map(space => (
-            <GridItem key={space.id} onClick={() => {
+            <GridItem cursor="pointer" key={space.id} onClick={() => {
               handleCardClick(space.spaceId)
             }}>
               <SpaceCard space={space}/>
