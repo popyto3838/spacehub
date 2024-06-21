@@ -4,7 +4,7 @@ import '/public/css/paid/Payment.css';
 import React, {useContext, useEffect, useState} from 'react';
 import {LoginContext} from "../../component/LoginProvider.jsx";
 import {useNavigate} from "react-router-dom";
- import DatePicker from "../../component/DatePicker.jsx";
+import DatePicker from "../../component/DatePicker.jsx";
 
 
 const Payment = () => {
@@ -129,7 +129,6 @@ const Payment = () => {
                     <p className="statusAccept">호스트가 결제를 수락하지 않았습니다.</p>
                 ) : null}
             </div>
-            <DatePicker></DatePicker>
         </div>
     );
 };

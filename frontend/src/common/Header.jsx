@@ -31,7 +31,7 @@ const Header = () => {
                 </div>
                 <nav className={isOpen ? 'menu open' : 'menu'}>
                     <ul>
-                        <li><a href="#home">Home</a></li>
+                        <li><a href="/">Home</a></li>
                       {account.isLoggedOut() &&<li>
                         <a href="/member/login">로그인</a>
                       </li>}

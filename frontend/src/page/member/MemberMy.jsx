@@ -11,7 +11,6 @@ import {
   useToast,
   InputGroup, InputRightElement
 } from "@chakra-ui/react";
-import {Avatar} from "@mui/material";
 import {useContext, useEffect, useState} from "react";
 import axios from "axios";
 import {LoginContext} from "../../component/LoginProvider.jsx";
@@ -126,7 +125,6 @@ export function MemberMy() {
 
       <HStack alignItems="flex-start" spacing={10}>
         <VStack>
-          <Avatar size="xl" name="popyto2" />
           <Button size="sm">프로필 사진 변경</Button>
         </VStack>
 
