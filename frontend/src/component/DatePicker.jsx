@@ -3,11 +3,11 @@ import React, {useContext, useState, useEffect} from 'react';
 import '/public/css/component/DatePicker.css';
 import axios from "axios";
 import {LoginContext} from "./LoginProvider.jsx";
-import {useToast} from "@chakra-ui/react";
+import {Button, useToast} from "@chakra-ui/react";
 import {useNavigate} from "react-router-dom";
 
 
-const Calendar = () => {
+const Calendar = (props) => {
     const account = useContext(LoginContext);
     const toast = useToast();
     const today = new Date();
@@ -20,6 +20,7 @@ const Calendar = () => {
         fetchReservations();
         console.log("gdgd")
         console.log(reservations)
+        console.log("=============dddd=======d===", props.spaceId)
     }, []);
 
     const fetchReservations = async () => {
@@ -115,10 +116,28 @@ const Calendar = () => {
         const isSelected = selectedHours.includes(hour);
 
         if (isSelected) {
-            const newSelectedHours = selectedHours.filter((selectedHour) => selectedHour !== hour);
-            setSelectedHours(newSelectedHours);
+            if (hour === selectedHours[0]) {
+                setSelectedHours([]);
+            } else {
+                const startHour = selectedHours[0];
+                const endHour = hour;
+                const newSelectedHours = [];
+
+                for (let i = startHour; i <= endHour; i++) {
+                    newSelectedHours.push(i);
+                }
+
+                setSelectedHours(newSelectedHours);
+            }
         } else {
-            const newSelectedHours = [...selectedHours, hour].sort((a, b) => a - b);
+            const startHour = selectedHours.length > 0 ? selectedHours[0] : hour;
+            const endHour = hour;
+            const newSelectedHours = [];
+
+            for (let i = startHour; i <= endHour; i++) {
+                newSelectedHours.push(i);
+            }
+
             setSelectedHours(newSelectedHours);
         }
     };
@@ -137,7 +156,7 @@ const Calendar = () => {
     };
 
     const renderHourCheckboxes = () => {
-        const hours = Array.from({ length: 24 }, (_, i) => i);
+        const hours = Array.from({length: 24}, (_, i) => i);
 
         return hours.map((hour) => {
             const isReserved = isTimeSlotReserved(selectedDate, hour);
@@ -172,7 +191,7 @@ const Calendar = () => {
 
             axios
                 .post("/api/reservation/write", {
-                    "spaceId": 3,
+                    "spaceId": props.spaceId,
                     "memberId": account.id,
                     "startDate": formattedDate,
                     "endDate": formattedDate,
@@ -186,7 +205,7 @@ const Calendar = () => {
                         position: "top",
                         duration: 1000,
                     });
-                    navigate("/paid/payment");
+                    navigate("/space/view");
                 })
                 .catch((res) => {
                     toast({
@@ -227,7 +246,13 @@ const Calendar = () => {
                 <div className="hour-button-container">{renderHourCheckboxes()}</div>
 
             </div>
-            <button onClick={handleReservation}>예약하기</button>
+            <div className="priceArea">
+                <p className="totalPrice">₩{props.price}</p>
+            </div>
+            <div className="buttonArea">
+                <Button className="reservationBtn" colorScheme='purple' onClick={handleReservation}
+                        height="60px">예약하기</Button>
+            </div>
         </div>
     );
 };

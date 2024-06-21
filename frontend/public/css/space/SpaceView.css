@@ -12,22 +12,153 @@
     font-style: normal;
 }
 
+@font-face {
+    font-family: 'TTLaundryGothicB';
+    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/2403-2@1.0/TTLaundryGothicB.woff2') format('woff2');
+    font-weight: 700;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'CookieRun-Regular';
+    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/CookieRun-Regular.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
 * {
     margin: 0;
 }
+
+.titleArea {
+    font-family: TTLaundryGothicB;
+    display: flex;
+    justify-content: left;
+    flex-direction: column;
+    margin-top: 10%;
+    margin-bottom: 0;
+    margin-left: 4%;
+    width: 100%;
+    height: 10vh;
+}
+
+.title {
+    color: #6c5ce7;
+    font-size: 4rem;
+}
+
+.subTitle {
+    font-size: 1rem;
+    color: #727272;
+}
+
 .parentArea {
-    margin-top: 10%; margin-bottom: 10%;
-    width: 100%; height: 300vh;
-    border: 1px solid black;
+    width: 100%;
+    height: 300vh;
     display: flex;
     justify-content: center;
     align-items: center;
 }
+
 .spaceViewArea {
-    border: 1px solid red;
-    width: 70%; height: 100%;
+    /*border: 1px solid red;*/
+    width: 70%;
+    height: 100%;
 }
+
 .reservationArea {
-    border: 1px solid blue;
-    width: 30%; height: 100%;
+    width: 30%;
+    height: 95%;
+}
+
+.buttonArea {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.reservationBtn {
+    width: 80%;
+    height: 20%;
+}
+
+.priceArea {
+    margin-top: 10%;
+    width: 100%;
+    height: 10vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.totalPrice {
+    font-family: TTLaundryGothicB;
+    font-size: 3rem;
+    color: #6c5ce7;
+}
+
+.imgArea {
+    width: 80%;
+    height: 20%;
+    margin-top: 10%;
+    margin-left: 5%;
+}
+
+.imgBox {
+    width: 100%;
+    height: 100%;
+    border-radius: 10px;
+}
+
+.introduceArea {
+    /*border: 1px solid black; */
+    width: 85%;
+    height: 30%;
+    margin-top: 5%;
+}
+
+.introduceTitle {
+    color: #595959;
+    font-family: TTLaundryGothicB;
+    font-size: 3rem;
+}
+
+/*.sectionArea {*/
+/*    border: 1px solid black;*/
+/*}*/
+section {
+    padding: 5%;
+    border-top: 1px solid #919191;
+}
+
+section h2 {
+    font-size: 2rem;
+    font-family: CookieRun-Regular;
+    color: #727272;
+}
+
+#introduceArea {
+    margin-top: 2%;
+    width: 100%;
+    height: 40vh;
+}
+
+#facilityArea {
+    width: 100%;
+    height: 40vh;
+}
+
+#noticeArea {
+    width: 100%;
+    height: 40vh;
+}
+
+#QA {
+    width: 100%;
+    height: 40vh;
+}
+
+#comment {
+    width: 100%;
+    height: 60vh;
 }

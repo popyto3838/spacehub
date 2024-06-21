@@ -56,7 +56,7 @@ function App() {
         {path: "board/:boardId/edit", element: <BoardEdit/>},
         {path: "space/register", element: <RegisterStepper/>},
         {path: "space/option", element: <SpaceOption/>},
-        {path: "space/view", element: <SpaceView/>},
+        {path: "space/:spaceId", element: <SpaceView/>},
         {path: "space/type", element: <SpaceType/>},
         {path: "member/signup", element: <MemberSignup/>},
         {path: "member/naver", element: <NaverLogin/>},
