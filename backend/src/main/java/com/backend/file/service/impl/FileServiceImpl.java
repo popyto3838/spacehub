@@ -78,4 +78,19 @@ public class FileServiceImpl implements FileService {
         }
         fileMapper.deleteFileByFullPath(fullPath);
     }
+
+    @Override
+    public void deleteFileById(int fileId) throws IOException {
+        File file = fileMapper.selectFileById(fileId);
+        if (file != null) {
+            // 파일 경로 생성
+            Path filePath = Paths.get(baseDir + file.getFileName());
+            // 파일이 존재하면 삭제
+            if (Files.exists(filePath)) {
+                Files.delete(filePath);
+            }
+            // DB에서 파일 정보 삭제
+            fileMapper.deleteFileById(fileId);
+        }
+    }
 }

@@ -57,4 +57,17 @@ public interface FileMapper {
             WHERE FILE_NAME = #{fullPath}
             """)
     void deleteFileByFullPath(String fullPath);
+
+    @Select("""
+            SELECT *
+            FROM FILE
+            WHERE FILE_ID = #{fileId}
+            """)
+    File selectFileById(int fileId);
+
+    @Delete("""
+            DELETE FROM FILE
+            WHERE FILE_ID = #{fileId}
+            """)
+    void deleteFileById(int fileId);
 }

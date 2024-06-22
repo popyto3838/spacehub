@@ -12,16 +12,17 @@ import {
   Tr,
   useToast,
   Input,
+  Image,
+  Flex
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTrashCan } from "@fortawesome/free-solid-svg-icons";
+import { faTrashCan, faUpload } from "@fortawesome/free-solid-svg-icons";
 
 export function SpaceTypeList() {
   const [isLoading, setIsLoading] = useState(true);
   const [typeLists, setTypeLists] = useState([]);
-  const [fileList, setFileList] = useState([]);
   const [typeStates, setTypeStates] = useState(new Map());
   const toast = useToast();
 
@@ -106,8 +107,8 @@ export function SpaceTypeList() {
     }
   };
 
-  const handleIconUpload = async (event, typeListId) => {
-    const file = event.target.files[0];
+  const handleIconUpload = async (e, typeListId) => {
+    const file = e.target.files[0];
     if (!file) return;
 
     const formData = new FormData();
@@ -123,9 +124,8 @@ export function SpaceTypeList() {
         duration: 3000,
         isClosable: true,
       });
-      axios.get(`/api/space/type/list`).then((res) => {
-        setTypeLists(res.data);
-      });
+      const res = await axios.get(`/api/space/type/list`);
+      setTypeLists(res.data);
     } catch (error) {
       toast({
         title: "아이콘 업로드에 실패했습니다.",
@@ -139,10 +139,9 @@ export function SpaceTypeList() {
 
   const handleDeleteIcon = async (fileId) => {
     try {
-      await axios.delete(`/api/file/${fileId}`);
-      axios.get(`/api/space/type/list`).then((res) => {
-        setTypeLists(res.data);
-      });
+      await axios.delete(`/api/file/icon/${fileId}`);
+      const res = await axios.get(`/api/space/type/list`);
+      setTypeLists(res.data);
       toast({
         title: "아이콘이 삭제되었습니다.",
         status: "success",
@@ -158,7 +157,7 @@ export function SpaceTypeList() {
         isClosable: true,
       });
     }
-  }
+  };
 
   if (isLoading) {
     return <Spinner />;
@@ -177,18 +176,18 @@ export function SpaceTypeList() {
         <Table>
           <Thead>
             <Tr>
-              <Th>#</Th>
-              <Th>옵션명</Th>
-              <Th>활성화</Th>
-              <Th>삭제</Th>
-              <Th>아이콘</Th>
+              <Th width="10%">#</Th>
+              <Th width="50%" textAlign="center">옵션명</Th>
+              <Th width="10%">활성화</Th>
+              <Th width="20%">아이콘</Th>
+              <Th width="10%">유형삭제</Th>
             </Tr>
           </Thead>
           <Tbody>
             {typeLists.map((typeList) => (
               <Tr key={typeList.typeListId} _hover={{ bgColor: "gray.200" }}>
                 <Td>{typeList.typeListId}</Td>
-                <Td>{typeList.name}</Td>
+                <Td textAlign="center">{typeList.name}</Td>
                 <Td>
                   <Switch
                     size="md"
@@ -197,26 +196,42 @@ export function SpaceTypeList() {
                   />
                 </Td>
                 <Td>
-                  <Button onClick={() => handleDeleteType(typeList.typeListId)}>
-                    <FontAwesomeIcon icon={faTrashCan} />
-                  </Button>
-                </Td>
-                <Td>
-                  {typeList.file ? (
-                    <Box>
-                      <img
-                        src={typeList.file.fileName}
+                  {typeList.iconFile ? (
+                    <Flex align="center">
+                      <Image
+                        src={typeList.iconFile.fileName}
                         alt={typeList.name}
-                        width="50"
-                        height="50"
+                        boxSize="50px"
+                        objectFit="cover"
+                        mr={2}
                       />
-                      <Button onClick={() => handleDeleteIcon(typeList.file.fileId)}>
+                      <Button colorScheme="red" onClick={() => handleDeleteIcon(typeList.iconFile.fileId)}>
                         <FontAwesomeIcon icon={faTrashCan} />
                       </Button>
-                    </Box>
+                    </Flex>
                   ) : (
-                    <Input type="file" onChange={(e) => handleIconUpload(e, typeList.typeListId)} />
+                    <Flex align="center">
+                      <Input
+                        type="file"
+                        onChange={(e) => handleIconUpload(e, typeList.typeListId)}
+                        display="none"
+                      />
+                      <Button
+                        leftIcon={<FontAwesomeIcon icon={faUpload} />}
+                        onClick={(e) => {
+                          const input = e.target.previousSibling;
+                          if (input) input.click();
+                        }}
+                      >
+                        아이콘 업로드
+                      </Button>
+                    </Flex>
                   )}
+                </Td>
+                <Td>
+                  <Button colorScheme="red" onClick={() => handleDeleteType(typeList.typeListId)}>
+                    <FontAwesomeIcon icon={faTrashCan} />
+                  </Button>
                 </Td>
               </Tr>
             ))}
@@ -226,3 +241,5 @@ export function SpaceTypeList() {
     </>
   );
 }
+
+export default SpaceTypeList;

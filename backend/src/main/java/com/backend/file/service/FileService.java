@@ -15,4 +15,6 @@ public interface FileService {
     File getFileByDivisionAndParentId(String division, int parentId);
 
     void deleteFileByDivisionAndParentIdAndFileName(String division, int parentId, String fileName) throws IOException;
+
+    void deleteFileById(int fileId) throws IOException;
 }
