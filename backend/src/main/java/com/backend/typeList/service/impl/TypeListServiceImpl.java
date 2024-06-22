@@ -38,7 +38,7 @@ public class TypeListServiceImpl implements TypeListService {
             dto.setName(typeList.getName());
             dto.setActive(typeList.isActive());
 
-            File iconFile = fileMapper.selectFileByParentIdAndDivision(typeList.getTypeListId(), "TYPE");
+            File iconFile = fileMapper.selectFileByDivisionAndParentId("TYPE", typeList.getTypeListId());
             dto.setIconFile(iconFile);
 
             return dto;

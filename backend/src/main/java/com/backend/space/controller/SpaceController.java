@@ -46,7 +46,7 @@ public class SpaceController {
         // 이미지 파일 업로드
         if (files != null && !files.isEmpty()) {
             for (MultipartFile file : files) {
-                fileService.addFile("SPACE", space.getSpaceId(), file);
+                fileService.addOrUpdateFile("SPACE", space.getSpaceId(), file);
             }
         }
 

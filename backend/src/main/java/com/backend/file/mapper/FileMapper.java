@@ -1,9 +1,8 @@
 package com.backend.file.mapper;
 
 import com.backend.file.domain.File;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.*;
+import retrofit2.http.DELETE;
 
 import java.util.List;
 
@@ -37,5 +36,25 @@ public interface FileMapper {
             WHERE PARENT_ID = #{parentId}
             AND DIVISION = #{division}
             """)
-    File selectFileByParentIdAndDivision(int parentId, String division);
+    File selectFileByDivisionAndParentId(String division, int parentId);
+
+    @Select("""
+            SELECT *
+            FROM FILE
+            WHERE FILE_NAME = #{fullPath}
+            """)
+    File findFileByFullPath(String fullPath);
+
+    @Update("""
+            UPDATE FILE 
+            SET FILE_NAME = #{fileName} 
+            WHERE FILE_ID = #{fileId}
+            """)
+    void updateFile(File existingFile);
+
+    @Delete("""
+            DELETE FROM FILE
+            WHERE FILE_NAME = #{fullPath}
+            """)
+    void deleteFileByFullPath(String fullPath);
 }

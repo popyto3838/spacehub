@@ -137,6 +137,29 @@ export function SpaceTypeList() {
     }
   };
 
+  const handleDeleteIcon = async (fileId) => {
+    try {
+      await axios.delete(`/api/file/${fileId}`);
+      axios.get(`/api/space/type/list`).then((res) => {
+        setTypeLists(res.data);
+      });
+      toast({
+        title: "아이콘이 삭제되었습니다.",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
+    } catch (error) {
+      toast({
+        title: "아이콘 삭제에 실패했습니다.",
+        description: error.message,
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    }
+  }
+
   if (isLoading) {
     return <Spinner />;
   }

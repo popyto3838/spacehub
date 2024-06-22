@@ -27,7 +27,7 @@ public class FileController {
             @RequestParam("parentId") int parentId,
             @RequestParam("division") String division) {
         try {
-            fileService.addFile(division, parentId, file);
+            fileService.addOrUpdateFile(division, parentId, file);
             return ResponseEntity.ok("File uploaded successfully.");
         } catch (Exception e) {
             return ResponseEntity.status(500).body("File upload failed.");
