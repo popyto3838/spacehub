@@ -11,11 +11,14 @@ import {
   Thead,
   Tr,
   useToast,
+  Input,
+  Image,
+  Flex
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTrashCan } from "@fortawesome/free-solid-svg-icons";
+import { faTrashCan, faUpload } from "@fortawesome/free-solid-svg-icons";
 
 export function SpaceOptionList() {
   const [isLoading, setIsLoading] = useState(true);
@@ -104,26 +107,57 @@ export function SpaceOptionList() {
     }
   };
 
-  useEffect(() => {
-    for (const [optionListId, isActive] of optionStates) {
-      const optionToUpdate = optionLists.find((option) => option.optionListId === optionListId);
+  const handleIconUpload = async (e, optionListId) => {
+    const file = e.target.files[0];
+    if (!file) return;
 
-      if (optionToUpdate) {
-        const updatedOption = { ...optionToUpdate, active: isActive };
-        axios
-          .put(`/api/space/option/${optionListId}`, updatedOption)
-          .then(() => {
-            toast({
-              title: "옵션 상태가 업데이트되었습니다.",
-              status: "success",
-              duration: 3000,
-              isClosable: true,
-            });
-          })
-          .catch(() => {});
-      }
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("parentId", optionListId);
+    formData.append("division", "OPTION");
+
+    try {
+      await axios.post(`/api/file/upload/typeIcon`, formData);
+      toast({
+        title: "아이콘이 업로드되었습니다.",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
+      const res = await axios.get(`/api/space/option/list`);
+      setOptionLists(res.data);
+    } catch (error) {
+      toast({
+        title: "아이콘 업로드에 실패했습니다.",
+        description: error.message,
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
     }
-  }, []);
+  };
+
+  const handleDeleteIcon = async (fileId) => {
+    try {
+      await axios.delete(`/api/file/icon/${fileId}`);
+      const res = await axios.get(`/api/space/option/list`);
+      setOptionLists(res.data);
+      toast({
+        title: "아이콘이 삭제되었습니다.",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
+    } catch (error) {
+      toast({
+        title: "아이콘 삭제에 실패했습니다.",
+        description: error.message,
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    }
+  };
 
   if (isLoading) {
     return <Spinner />;
@@ -136,23 +170,24 @@ export function SpaceOptionList() {
   return (
     <>
       <Box>
-        <Heading>option list Read Page</Heading>
+        <Heading>Option List</Heading>
       </Box>
       <Box>
         <Table>
           <Thead>
             <Tr>
-              <Th>#</Th>
-              <Th>옵션명</Th>
-              <Th>활성화</Th>
-              <Th>삭제</Th>
+              <Th width="10%">#</Th>
+              <Th width="50%" textAlign="center">옵션명</Th>
+              <Th width="10%">활성화</Th>
+              <Th width="20%">아이콘</Th>
+              <Th width="10%">옵션삭제</Th>
             </Tr>
           </Thead>
           <Tbody>
             {optionLists.map((optionList) => (
               <Tr key={optionList.optionListId} _hover={{ bgColor: "gray.200" }}>
                 <Td>{optionList.optionListId}</Td>
-                <Td>{optionList.name}</Td>
+                <Td textAlign="center">{optionList.name}</Td>
                 <Td>
                   <Switch
                     size="md"
@@ -161,7 +196,40 @@ export function SpaceOptionList() {
                   />
                 </Td>
                 <Td>
-                  <Button onClick={() => handleDeleteOption(optionList.optionListId)}>
+                  {optionList.iconFile ? (
+                    <Flex align="center">
+                      <Image
+                        src={optionList.iconFile.fileName}
+                        alt={optionList.name}
+                        boxSize="50px"
+                        objectFit="cover"
+                        mr={2}
+                      />
+                      <Button colorScheme="red" onClick={() => handleDeleteIcon(optionList.iconFile.fileId)}>
+                        <FontAwesomeIcon icon={faTrashCan} />
+                      </Button>
+                    </Flex>
+                  ) : (
+                    <Flex align="center">
+                      <Input
+                        type="file"
+                        onChange={(e) => handleIconUpload(e, optionList.optionListId)}
+                        display="none"
+                      />
+                      <Button
+                        leftIcon={<FontAwesomeIcon icon={faUpload} />}
+                        onClick={(e) => {
+                          const input = e.target.previousSibling;
+                          if (input) input.click();
+                        }}
+                      >
+                        아이콘 업로드
+                      </Button>
+                    </Flex>
+                  )}
+                </Td>
+                <Td>
+                  <Button colorScheme="red" onClick={() => handleDeleteOption(optionList.optionListId)}>
                     <FontAwesomeIcon icon={faTrashCan} />
                   </Button>
                 </Td>
@@ -173,3 +241,5 @@ export function SpaceOptionList() {
     </>
   );
 }
+
+export default SpaceOptionList;
