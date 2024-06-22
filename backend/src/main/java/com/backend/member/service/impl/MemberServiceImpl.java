@@ -240,6 +240,7 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public Map<String, Object> switchHost(Member member){
+
         mapper.switchHost(member);
 
         Map<String, Object> result = new HashMap<>();

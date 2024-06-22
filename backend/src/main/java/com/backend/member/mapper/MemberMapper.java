@@ -199,7 +199,7 @@ public interface MemberMapper {
            WHERE MOBILE=#{mobile}
            """)
     Member emailByMobile(String mobile);
-    void addPhone(Member member);
+
 
     @Insert("""
             SELECT H.HOST_ID

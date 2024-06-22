@@ -57,7 +57,6 @@ public interface MemberService {
 
     Member emailByMobile(String mobile);
 
-    void addPhone(Member member);
 
     Integer findHostIdByMemberId(int memberId);
 }

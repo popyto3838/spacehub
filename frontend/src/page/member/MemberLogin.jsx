@@ -202,7 +202,9 @@ export function MemberLogin() {
             </HStack>
 
             <HStack as="button" spacing={2} p={2} borderWidth={1} borderRadius="md" _hover={{ bg: "orange" }}>
-              <Text>비밀번호 찾기</Text>
+              <Text
+              onClick={onSecondModalOpen}
+              >비밀번호 찾기</Text>
             </HStack>
 
             <HStack as="button" spacing={2} p={2} borderWidth={1} borderRadius="md" _hover={{ bg: "orange" }}>
@@ -261,10 +263,42 @@ export function MemberLogin() {
          <Modal isOpen={isSecondModalOpen} onClose={onSecondModalClose}>
           <ModalOverlay />
           <ModalContent>
-            <ModalHeader>두 번째 모달</ModalHeader>
+            <ModalHeader>비밀번호 찾기</ModalHeader>
             <ModalCloseButton />
             <ModalBody>
-              두 번째 모달의 내용입니다.
+              <FormControl>
+                <FormLabel>핸드폰번호를 입력해주세요</FormLabel>
+                <Input
+                  onChange={(e) => {
+                    setMobile(e.target.value);
+                  }}
+                  placeholder="01012345678" />
+                <Button colorScheme={"purple"} type="button" onClick={sendNumberMobile}>
+                  인증번호받기
+                </Button>
+                {isCodeSent && (
+                  <Box>
+                    <InputGroup>
+                      <Input
+                        type={"text"}
+                        onChange={(e) => {
+                          setInputCode(e.target.value);
+                        }}
+                      />
+                      <InputRightElement w="75px" mr={1}>
+                        <Button onClick={confirmNumberMobile}>핸드폰 인증</Button>
+                      </InputRightElement>
+                    </InputGroup>
+                    {expirationTime && <TimerComponent expirationTime={expirationTime} />}
+                  </Box>
+                )}
+              </FormControl>
+
+              <FormControl mt={4}>
+                <FormLabel>비밀번호를 재설정 해주세요</FormLabel>
+                <Input  placeholder={"새 비밀번호"} />
+                <Input mt={7} placeholder={"새 비밀번호 확인"} />
+              </FormControl>
             </ModalBody>
             <ModalFooter>
               <Button colorScheme="blue" mr={3} onClick={onSecondModalClose}>

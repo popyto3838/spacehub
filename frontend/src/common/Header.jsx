@@ -54,8 +54,8 @@ const Header = () => {
                                     style={{color: 'white', backgroundColor: 'mediumblue'}}>마이페이지
                             </Button>
                         </li>}
-                        <li><a href="/member/host" style={{color: 'white', backgroundColor: 'mediumblue'}}>호스트센터로 이동하기</a>
-                        </li>
+                      {account.isLoggedIn() && <li><a href="/member/host" style={{color: 'white', backgroundColor: 'mediumblue'}}>호스트센터로 이동하기</a>
+                        </li>}
 
                         {account.isLoggedIn()&& <li>
                             <Button
