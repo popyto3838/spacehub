@@ -2,8 +2,6 @@ package com.backend.space.controller;
 
 import com.backend.file.service.FileService;
 import com.backend.member.service.MemberService;
-import com.backend.file.service.impl.FileServiceImpl;
-import com.backend.reservation.domain.Reservation;
 import com.backend.space.domain.FindResponseSpaceJoinDTO;
 import com.backend.space.domain.Space;
 import com.backend.space.domain.SpaceDTO;
@@ -14,7 +12,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
@@ -29,16 +26,20 @@ public class SpaceController {
     private final MemberService memberService;
 
     @PostMapping("insert")
-    public void add(@RequestPart("spaceDto") SpaceDTO spaceDto) throws IOException {
-
+    public ResponseEntity<String> add(@RequestPart("spaceDto") String spaceDtoStr,
+                                      @RequestPart(value = "files", required = false) List<MultipartFile> files) throws IOException {
+        SpaceDTO spaceDto = objectMapper.readValue(spaceDtoStr, SpaceDTO.class);
         Space space = spaceDto.getSpace();
         int memberId = spaceDto.getMemberId();
-        List<Integer> optionList = spaceDto.getOptionList();
-        List<MultipartFile> files = spaceDto.getFiles();
 
         // memberId로 hostId 조회
         Integer hostId = memberService.findHostIdByMemberId(memberId);
+        if (hostId == null) {
+            return ResponseEntity.badRequest().body("Invalid memberId, hostId not found");
+        }
+        space.setMemberId(memberId); // memberId 설정
         space.setHostId(hostId); // hostId 설정
+
         // SPACE CREATE
         spaceService.insertSpace(space);
 
@@ -48,6 +49,8 @@ public class SpaceController {
                 fileService.addFile(space.getSpaceId(), "SPACE", file);
             }
         }
+
+        return ResponseEntity.ok("Space created successfully");
     }
 
     @GetMapping("list")
