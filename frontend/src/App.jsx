@@ -24,6 +24,8 @@ import {MemberMy} from "./page/member/MemberMy.jsx";
 
 import axios from "axios";
 import SpaceView from "./page/admin/space_config/SpaceView.jsx";
+import {HostDashboard} from "./page/dashboard/HostDashboard.jsx";
+import AdminDashboard from "./page/dashboard/AdminDashboard.jsx";
 
 
 // axios interceptor 설정
@@ -65,6 +67,8 @@ function App() {
         {path: "member/host", element: <MemberHost/>},
         {path: "host/signup", element: <HostSignup/>},
         {path: "member/info/:accountId", element: <MemberMy/>},
+        { path: "dashboard/host", element: <HostDashboard /> },
+        { path: "dashboard/admin", element: <AdminDashboard /> },
       ],
     },
   ]);
