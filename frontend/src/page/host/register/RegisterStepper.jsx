@@ -132,8 +132,6 @@ const RegisterStepper = () => {
       optionList: formData.options,
     };
 
-    //확인 로그
-    console.log('spaceDTO: ', spaceDto);
 
     formDataToSend.append('spaceDto', JSON.stringify(spaceDto));
 
