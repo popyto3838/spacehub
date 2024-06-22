@@ -1,5 +1,6 @@
 package com.backend.typeList.mapper;
 
+import com.backend.dto.TypeListResponseDto;
 import com.backend.typeList.domain.TypeList;
 import org.apache.ibatis.annotations.*;
 
@@ -17,8 +18,6 @@ public interface TypeListMapper {
     @Select("""
             SELECT *
             FROM TYPE_LIST
-            WHERE IS_ACTIVE = true
-            ORDER BY TYPE_LIST_ID DESC 
             """)
     List<TypeList> selectAll();
 

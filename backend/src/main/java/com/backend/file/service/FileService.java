@@ -8,7 +8,10 @@ import java.util.List;
 
 public interface FileService {
 
-    void addFile(int parentId, String division, MultipartFile file) throws IOException;
+    void addFile(String division, int parentId, MultipartFile file) throws IOException;
 
     List<File> selectAllOfSpaces();
+
+    File getFileByParentIdAndDivision(int parentId, String division);
+
 }

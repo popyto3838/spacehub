@@ -30,4 +30,12 @@ public interface FileMapper {
                       )
             """)
     List<File> selectAllOfSpaces();
+
+    @Select("""
+            SELECT *
+            FROM FILE
+            WHERE PARENT_ID = #{parentId}
+            AND DIVISION = #{division}
+            """)
+    File selectFileByParentIdAndDivision(int parentId, String division);
 }

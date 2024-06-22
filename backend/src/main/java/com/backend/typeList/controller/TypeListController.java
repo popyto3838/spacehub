@@ -1,11 +1,16 @@
 package com.backend.typeList.controller;
 
+import com.backend.dto.TypeListResponseDto;
+import com.backend.file.domain.File;
+import com.backend.file.service.FileService;
 import com.backend.typeList.domain.TypeList;
 import com.backend.typeList.service.TypeListService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -13,12 +18,13 @@ import java.util.List;
 @RequestMapping("/api/space/type")
 public class TypeListController {
 
-    private final TypeListService service;
+    private final TypeListService typeListService;
+    private final FileService fileService;
 
     @PostMapping("/write")
     public ResponseEntity write(@RequestBody List<TypeList> typeLists) {
         try {
-            service.insertTypeList(typeLists); // 서비스에 옵션 목록 전달
+            typeListService.insertTypeList(typeLists); // 서비스에 옵션 목록 전달
             return ResponseEntity.ok("타입 저장 성공");
         } catch (Exception e) {
             e.printStackTrace();
@@ -27,14 +33,15 @@ public class TypeListController {
     }
 
     @GetMapping("/list")
-    public List<TypeList> selectAll() {
-        return service.selectAll();
+    public ResponseEntity<List<TypeListResponseDto>> getTypeLists() {
+        List<TypeListResponseDto> response = typeListService.selectAll();
+        return ResponseEntity.ok(response);
     }
 
     @DeleteMapping("/{typeListId}")
     public ResponseEntity delete(@PathVariable int typeListId) {
         try {
-            service.deleteSpaceType(typeListId);
+            typeListService.deleteSpaceType(typeListId);
             return ResponseEntity.ok("타입이 삭제되었습니다.");
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("타입 삭제에 실패했습니다: " + e.getMessage());
@@ -43,6 +50,6 @@ public class TypeListController {
 
     @PutMapping("/{typeListId}")
     public void update(@RequestBody TypeList typeList) {
-        service.update(typeList);
+        typeListService.update(typeList);
     }
 }

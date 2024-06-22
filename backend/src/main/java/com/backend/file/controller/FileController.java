@@ -3,9 +3,9 @@ package com.backend.file.controller;
 import com.backend.file.domain.File;
 import com.backend.file.service.FileService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -19,5 +19,18 @@ public class FileController {
     @GetMapping("/space/list")
     public List<File> selectAllOfSpaces() {
         return fileService.selectAllOfSpaces();
+    }
+
+    @PostMapping("/upload/typeIcon")
+    public ResponseEntity<String> uploadTypeIcon(
+            @RequestParam("file") MultipartFile file,
+            @RequestParam("parentId") int parentId,
+            @RequestParam("division") String division) {
+        try {
+            fileService.addFile(division, parentId, file);
+            return ResponseEntity.ok("File uploaded successfully.");
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("File upload failed.");
+        }
     }
 }

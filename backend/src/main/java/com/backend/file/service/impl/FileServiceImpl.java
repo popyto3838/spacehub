@@ -24,7 +24,7 @@ public class FileServiceImpl implements FileService {
     private final String baseDir = "/Users/santa/Desktop/study/BackEnd/project/prj3/frontend/public/img/";
 
     @Override
-    public void addFile(int parentId, String division, MultipartFile file) throws IOException {
+    public void addFile(String division, int parentId, MultipartFile file) throws IOException {
         if (file.isEmpty()) {
             throw new IOException("File is empty");
         }
@@ -52,5 +52,10 @@ public class FileServiceImpl implements FileService {
             file.setFileName(filePath);
         }
         return files;
+    }
+
+    @Override
+    public File getFileByParentIdAndDivision(int parentId, String division) {
+        return fileMapper.selectFileByParentIdAndDivision(parentId, division);
     }
 }

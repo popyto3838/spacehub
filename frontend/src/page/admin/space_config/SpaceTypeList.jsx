@@ -11,6 +11,7 @@ import {
   Thead,
   Tr,
   useToast,
+  Input,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import axios from "axios";
@@ -20,6 +21,7 @@ import { faTrashCan } from "@fortawesome/free-solid-svg-icons";
 export function SpaceTypeList() {
   const [isLoading, setIsLoading] = useState(true);
   const [typeLists, setTypeLists] = useState([]);
+  const [fileList, setFileList] = useState([]);
   const [typeStates, setTypeStates] = useState(new Map());
   const toast = useToast();
 
@@ -104,26 +106,36 @@ export function SpaceTypeList() {
     }
   };
 
-  useEffect(() => {
-    for (const [typeListId, isActive] of typeStates) {
-      const typeToUpdate = typeLists.find((type) => type.typeListId === typeListId);
+  const handleIconUpload = async (event, typeListId) => {
+    const file = event.target.files[0];
+    if (!file) return;
 
-      if (typeToUpdate) {
-        const updatedType = { ...typeToUpdate, active: isActive };
-        axios
-          .put(`/api/space/type/${typeListId}`, updatedType)
-          .then(() => {
-            toast({
-              title: "옵션 상태가 업데이트되었습니다.",
-              status: "success",
-              duration: 3000,
-              isClosable: true,
-            });
-          })
-          .catch(() => {});
-      }
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("parentId", typeListId);
+    formData.append("division", "TYPE");
+
+    try {
+      await axios.post(`/api/file/upload/typeIcon`, formData);
+      toast({
+        title: "아이콘이 업로드되었습니다.",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
+      axios.get(`/api/space/type/list`).then((res) => {
+        setTypeLists(res.data);
+      });
+    } catch (error) {
+      toast({
+        title: "아이콘 업로드에 실패했습니다.",
+        description: error.message,
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
     }
-  }, []);
+  };
 
   if (isLoading) {
     return <Spinner />;
@@ -136,7 +148,7 @@ export function SpaceTypeList() {
   return (
     <>
       <Box>
-        <Heading>type list Read Page</Heading>
+        <Heading>Type List</Heading>
       </Box>
       <Box>
         <Table>
@@ -146,6 +158,7 @@ export function SpaceTypeList() {
               <Th>옵션명</Th>
               <Th>활성화</Th>
               <Th>삭제</Th>
+              <Th>아이콘</Th>
             </Tr>
           </Thead>
           <Tbody>
@@ -164,6 +177,23 @@ export function SpaceTypeList() {
                   <Button onClick={() => handleDeleteType(typeList.typeListId)}>
                     <FontAwesomeIcon icon={faTrashCan} />
                   </Button>
+                </Td>
+                <Td>
+                  {typeList.file ? (
+                    <Box>
+                      <img
+                        src={typeList.file.fileName}
+                        alt={typeList.name}
+                        width="50"
+                        height="50"
+                      />
+                      <Button onClick={() => handleDeleteIcon(typeList.file.fileId)}>
+                        <FontAwesomeIcon icon={faTrashCan} />
+                      </Button>
+                    </Box>
+                  ) : (
+                    <Input type="file" onChange={(e) => handleIconUpload(e, typeList.typeListId)} />
+                  )}
                 </Td>
               </Tr>
             ))}
