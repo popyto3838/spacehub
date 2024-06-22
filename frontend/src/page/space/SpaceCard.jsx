@@ -1,35 +1,38 @@
 import React from 'react';
-import { Card, CardBody, Flex, Heading, Image, Text } from '@chakra-ui/react';
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faComment, faHeart, faStar, faThumbsUp } from "@fortawesome/free-solid-svg-icons";
+import {Card, CardBody, CardFooter, CardHeader, Flex, Heading, Image, Text} from '@chakra-ui/react';
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faComment, faHeart, faStar, faThumbsUp} from "@fortawesome/free-solid-svg-icons";
 
-const SpaceCard = ({ space, file }) => {
-  const thumbnailPath = file
-    ? `/resources/images/${file.division}/${file.parentId}/${file.fileName}`
-    : '/default/image/path';
+const SpaceCard = ({space, file}) => {
+  const thumbnailPath = file && file.division && file.parentId && file.fileName
+    ? `/public/img/space/${file.division}/${file.parentId}/${file.fileName}`
+    : 'http://via.placeholder.com/1000.jpg';
 
   return (
     <Card maxW='sm' borderWidth='1px' borderRadius='lg' overflow='hidden'>
-      <Image src={thumbnailPath} alt={space.title} />
-
-      <CardBody>
+      <CardHeader>
         <Flex justify='space-between' align='center'>
           <Heading size='md'>{space.title}</Heading>
-          <FontAwesomeIcon icon={faHeart} />
+          <FontAwesomeIcon icon={faHeart}/>
+          <Text>{space.type}</Text>
         </Flex>
-        <Text>{space.type}</Text>
+      </CardHeader>
+      <CardBody>
+        <Image src={thumbnailPath} alt={space.title} />
+      </CardBody>
+      <CardFooter>
         <Flex align='center' mt='2'>
-          <FontAwesomeIcon icon={faStar} />
+          <FontAwesomeIcon icon={faStar}/>
           <Text ml='1'>별점</Text>
         </Flex>
         <Text mt='2'>₩{space.price} / 시간</Text>
         <Flex mt='2' justify='space-between'>
-          <FontAwesomeIcon icon={faComment} />
+          <FontAwesomeIcon icon={faComment}/>
           리뷰
-          <FontAwesomeIcon icon={faThumbsUp} />
+          <FontAwesomeIcon icon={faThumbsUp}/>
           좋아요
         </Flex>
-      </CardBody>
+      </CardFooter>
     </Card>
   );
 };
