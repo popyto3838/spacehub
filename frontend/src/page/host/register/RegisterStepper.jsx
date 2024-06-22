@@ -55,7 +55,7 @@ const StepContent = ({step, formData, setFormData}) => {
 };
 
 const RegisterStepper = () => {
-  const { memberId } = useContext(LoginContext); // LoginContext에서 memberId를 가져옵니다.
+  const account = useContext(LoginContext); // LoginContext에서 memberId를 가져옵니다.
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -70,7 +70,7 @@ const RegisterStepper = () => {
     const storedData = sessionStorage.getItem('formData');
     return storedData ? JSON.parse(storedData) : {
       // page별 데이터 구분 없이 저장
-      memberId: memberId,
+      id: account.id,
       type: null,
       title: '',
       subTitle: '',
@@ -109,7 +109,7 @@ const RegisterStepper = () => {
 
     // spaceDto 객체 생성
     const spaceDto = {
-      memberId: memberId, // LoginContext에서 가져온 memberId 사용
+      id: account.id, // LoginContext에서 가져온 memberId 사용
       space: {
         typeId: formData.typeId,
         type: formData.type,
@@ -131,6 +131,9 @@ const RegisterStepper = () => {
       },
       optionList: formData.options,
     };
+
+    //확인 로그
+    console.log('spaceDTO: ', spaceDto);
 
     formDataToSend.append('spaceDto', JSON.stringify(spaceDto));
 
