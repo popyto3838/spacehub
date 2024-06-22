@@ -4,8 +4,8 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faComment, faHeart, faStar, faThumbsUp} from "@fortawesome/free-solid-svg-icons";
 
 const SpaceCard = ({space, file}) => {
-  const thumbnailPath = file && file.division && file.parentId && file.fileName
-    ? `/public/img/space/${file.division}/${file.parentId}/${file.fileName}`
+  const thumbnailPath = file && file.fileName
+    ? file.fileName
     : 'http://via.placeholder.com/1000.jpg';
 
   return (
@@ -18,7 +18,12 @@ const SpaceCard = ({space, file}) => {
         </Flex>
       </CardHeader>
       <CardBody>
-        <Image src={thumbnailPath} alt={space.title} />
+        <Image
+          src={thumbnailPath}
+          alt={space.title}
+          boxSize="200px"
+          objectFit="contain"
+        />
       </CardBody>
       <CardFooter>
         <Flex align='center' mt='2'>
