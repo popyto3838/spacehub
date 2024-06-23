@@ -1,6 +1,5 @@
 package com.backend.typeList.mapper;
 
-import com.backend.dto.TypeListResponseDto;
 import com.backend.typeList.domain.TypeList;
 import org.apache.ibatis.annotations.*;
 

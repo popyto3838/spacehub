@@ -1,6 +1,6 @@
 package com.backend.typeList.service.impl;
 
-import com.backend.dto.TypeListResponseDto;
+import com.backend.dto.ItemListResponseDto;
 import com.backend.file.domain.File;
 import com.backend.file.mapper.FileMapper;
 import com.backend.typeList.domain.TypeList;
@@ -29,12 +29,12 @@ public class TypeListServiceImpl implements TypeListService {
     }
 
     @Override
-    public List<TypeListResponseDto> selectAll() {
+    public List<ItemListResponseDto> selectAll() {
         List<TypeList> typeLists = typeListMapper.selectAll();
 
         return typeLists.stream().map(typeList -> {
-            TypeListResponseDto dto = new TypeListResponseDto();
-            dto.setTypeListId(typeList.getTypeListId());
+            ItemListResponseDto dto = new ItemListResponseDto();
+            dto.setItemId(typeList.getTypeListId());
             dto.setName(typeList.getName());
             dto.setActive(typeList.isActive());
 

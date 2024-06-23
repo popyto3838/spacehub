@@ -1,16 +1,13 @@
 package com.backend.typeList.controller;
 
-import com.backend.dto.TypeListResponseDto;
-import com.backend.file.domain.File;
+import com.backend.dto.ItemListResponseDto;
 import com.backend.file.service.FileService;
 import com.backend.typeList.domain.TypeList;
 import com.backend.typeList.service.TypeListService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -32,9 +29,14 @@ public class TypeListController {
         }
     }
 
+    @PutMapping("/{typeListId}")
+    public void update(@RequestBody TypeList typeList) {
+        typeListService.update(typeList);
+    }
+
     @GetMapping("/list")
-    public ResponseEntity<List<TypeListResponseDto>> getTypeLists() {
-        List<TypeListResponseDto> response = typeListService.selectAll();
+    public ResponseEntity<List<ItemListResponseDto>> getTypeLists() {
+        List<ItemListResponseDto> response = typeListService.selectAll();
         return ResponseEntity.ok(response);
     }
 
@@ -46,10 +48,5 @@ public class TypeListController {
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("타입 삭제에 실패했습니다: " + e.getMessage());
         }
-    }
-
-    @PutMapping("/{typeListId}")
-    public void update(@RequestBody TypeList typeList) {
-        typeListService.update(typeList);
     }
 }
