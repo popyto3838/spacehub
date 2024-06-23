@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -20,7 +21,7 @@ public class FileServiceImpl implements FileService {
 
     private final FileMapper fileMapper;
 
-    private final String baseDir = "/Users/santa/Desktop/study/BackEnd/project/prj3/backend/src/main/resources/images/";
+    private final String baseDir = "/Users/santa/Desktop/study/BackEnd/project/prj3/frontend/public/img/";
 
     @Override
     public void addFile(int parentId, String division, MultipartFile file) throws IOException {
@@ -38,8 +39,18 @@ public class FileServiceImpl implements FileService {
         File fileList = new File();
         fileList.setParentId(parentId);
         fileList.setDivision(division);
-        fileList.setFileName(fileName);
+        fileList.setFileName("/img/" + division + "/" + parentId + "/" + fileName);
 
         fileMapper.insertFile(fileList);
+    }
+
+    @Override
+    public List<File> selectAllOfSpaces() {
+        List<File> files = fileMapper.selectAllOfSpaces();
+        for (File file : files) {
+            String filePath = "/img/" + file.getDivision() + "/" + file.getParentId() + "/" + file.getFileName();
+            file.setFileName(filePath);
+        }
+        return files;
     }
 }

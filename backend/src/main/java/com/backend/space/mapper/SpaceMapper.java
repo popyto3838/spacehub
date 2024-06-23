@@ -15,6 +15,7 @@ public interface SpaceMapper {
     @Insert("""
             INSERT INTO SPACE
             (       HOST_ID
+            ,       MEMBER_ID
             ,       TYPE_LIST_ID
             ,       TITLE
             ,       SUB_TITLE
@@ -30,10 +31,11 @@ public interface SpaceMapper {
             ,       PRICE
             ,       CAPACITY
             ,       FLOOR
-            ,       PARKING_SPACE
-            ) VALUES
-            (       1
-            ,       #{typeId}
+            ,       PARKING_SPACE)
+            VALUES
+            (       #{hostId}
+            ,       #{memberId}
+            ,       #{typeListId}
             ,       #{title}
             ,       #{subTitle}
             ,       #{zonecode}
@@ -48,8 +50,7 @@ public interface SpaceMapper {
             ,       #{price}
             ,       #{capacity}
             ,       #{floor}
-            ,       #{parkingSpace}
-            )
+            ,       #{parkingSpace})
             """)
     @Options(useGeneratedKeys = true, keyProperty = "spaceId")
     int insert(Space space);
