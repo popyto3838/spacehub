@@ -35,5 +35,7 @@ public class Board {
     private Integer numberOfImages;
     // 이미지 경로 + 파일명
     private List<FileList> filesLists;
+    // 댓글 갯수
+    private Integer numberOfComments;
 
 }

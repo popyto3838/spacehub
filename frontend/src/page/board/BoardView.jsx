@@ -20,6 +20,7 @@ import { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import { LoginContext } from "../../component/LoginProvider.jsx";
 import { useNavigate, useParams } from "react-router-dom";
+import { CommentComponent } from "../../component/comment/CommentComponent.jsx";
 
 export function BoardView() {
   const { boardId } = useParams();
@@ -120,6 +121,10 @@ export function BoardView() {
           </Box>
         )}
       </Box>
+
+      {/* comment component */}
+      <CommentComponent boardId={board.boardId} categoryId={board.categoryId} />
+
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent>

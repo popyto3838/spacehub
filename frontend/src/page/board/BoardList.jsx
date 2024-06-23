@@ -1,4 +1,3 @@
-
 import {
   Badge,
   Box,
@@ -14,7 +13,7 @@ import {
   Thead,
   Tr,
 } from "@chakra-ui/react";
-import {useContext, useEffect, useState} from "react";
+import { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { LoginContext } from "../../component/LoginProvider.jsx";
@@ -76,8 +75,6 @@ export function BoardList() {
     searchParams.set("page", pageNumber);
     navigate(`/board/list/?${searchParams}`);
   }
-
-
 
   return (
     <Box>
@@ -160,8 +157,12 @@ export function BoardList() {
                   <Td>
                     {board.title}
                     {/* 첨부된 이미지가 있으면 Badge에 파일수 출력 */}
-                    {board.numberOfImages && (
+                    {board.numberOfImages > 0 && (
                       <Badge>이미지 : {board.numberOfImages}</Badge>
+                    )}
+                    {/* 글 목록 볼때, 댓글 갯수 */}
+                    {board.numberOfComments > 0 && (
+                      <Badge>댓글 : {board.numberOfComments}</Badge>
                     )}
                   </Td>
                   <Td>{board.categoryId}</Td>
