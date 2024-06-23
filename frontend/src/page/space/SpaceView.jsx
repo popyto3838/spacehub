@@ -1,13 +1,13 @@
 import React, {useState} from 'react';
 import '/public/css/space/SpaceView.css';
-import DatePicker from "../../../component/DatePicker.jsx";
+import DatePicker from "../../component/DatePicker.jsx";
 import {useEffect} from "react";
 import axios from "axios";
 import {useNavigate, useParams} from "react-router-dom";
 import {useToast} from "@chakra-ui/react";
 import {Link} from 'react-scroll';
-import KakaoMap from "../../../component/KakaoMap.jsx";
-import ImageSlider from "../../../component/ImageSlider.jsx";
+import KakaoMap from "../../component/KakaoMap.jsx";
+import ImageSlider from "../../component/ImageSlider.jsx";
 
 
 function SpaceView() {
