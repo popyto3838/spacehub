@@ -1,18 +1,15 @@
 package com.backend.member.service.impl;
 
 
-import java.util.HashMap;
-
-import net.nurigo.java_sdk.api.Message;
-import net.nurigo.java_sdk.exceptions.CoolsmsException;
-import org.json.simple.JSONObject;
-
+import com.backend.board.mapper.BoardMapper;
 import com.backend.member.domain.member.Host;
 import com.backend.member.domain.member.Member;
 import com.backend.member.mapper.MemberMapper;
 import com.backend.member.service.MemberService;
-
 import lombok.RequiredArgsConstructor;
+import net.nurigo.java_sdk.api.Message;
+import net.nurigo.java_sdk.exceptions.CoolsmsException;
+import org.json.simple.JSONObject;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -36,6 +33,7 @@ public class MemberServiceImpl implements MemberService {
     final MemberMapper mapper;
     private final BCryptPasswordEncoder passwordEncoder;
     private final JwtEncoder jwtEncoder;
+    private final BoardMapper boardMapper;
 
 
     @Override
@@ -107,6 +105,9 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public void remove(Integer memberId) {
+
+        // 회원탈퇴시 좋아요 테이블 먼저 삭제
+        boardMapper.deleteLikeByMemberId(memberId);
 
         mapper.deleteById(memberId);
     }
@@ -233,16 +234,19 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public Integer selectbyEmail2(Member member){
-       return mapper.selectByEmail2(member);
+    public Integer selectbyEmail2(Member member) {
+        return mapper.selectByEmail2(member);
     }
-    @Override
-    public void switchHost(Member member){
-        mapper.switchHost(member);
-    };
 
     @Override
-    public boolean validateAccount(Host host){
+    public void switchHost(Member member) {
+        mapper.switchHost(member);
+    }
+
+    ;
+
+    @Override
+    public boolean validateAccount(Host host) {
         if (host.getBankName() == null || host.getBankName().isBlank()) {
             return false;
         }
@@ -254,39 +258,40 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public void addAccountinfo(Host host){
+    public void addAccountinfo(Host host) {
 
         mapper.insertAccount(host);
     }
 
-   @Override
-    public void certifiedPhoneNumber(String mobile, String verificationCode){
-       String api_key = "NCSTIPYRXIFUD7GF";
-       String api_secret = "HKLXCD3ZJMT8KJ5UV38WBEOLTQ7U01YA";
+    @Override
+    public void certifiedPhoneNumber(String mobile, String verificationCode) {
+        String api_key = "NCSTIPYRXIFUD7GF";
+        String api_secret = "HKLXCD3ZJMT8KJ5UV38WBEOLTQ7U01YA";
 
-       Message coolsms = new Message(api_key, api_secret);
-       HashMap<String, String> params = new HashMap<String, String>();
-       params.put("to", mobile); // 수신전화번호
-       params.put("from", "010-6679-1273"); // 발신전화번호. 테스트시에는 발신,수신 둘다 본인 번호로 하면 됨
-       params.put("type", "SMS");
-       params.put("text", "[BitMovie] 문자 본인인증 서비스 : 인증번호는 " + "[" + verificationCode + "]" + " 입니다.");
-       params.put("SpaceHub", "test app 1.2"); // application name and version
+        Message coolsms = new Message(api_key, api_secret);
+        HashMap<String, String> params = new HashMap<String, String>();
+        params.put("to", mobile); // 수신전화번호
+        params.put("from", "010-6679-1273"); // 발신전화번호. 테스트시에는 발신,수신 둘다 본인 번호로 하면 됨
+        params.put("type", "SMS");
+        params.put("text", "[BitMovie] 문자 본인인증 서비스 : 인증번호는 " + "[" + verificationCode + "]" + " 입니다.");
+        params.put("SpaceHub", "test app 1.2"); // application name and version
 
-       try {
-           JSONObject obj = (JSONObject) coolsms.send(params);
-           System.out.println(obj.toString());
-       } catch (CoolsmsException e) {
-           System.out.println(e.getMessage());
-           System.out.println(e.getCode());
-       }
+        try {
+            JSONObject obj = (JSONObject) coolsms.send(params);
+            System.out.println(obj.toString());
+        } catch (CoolsmsException e) {
+            System.out.println(e.getMessage());
+            System.out.println(e.getCode());
+        }
 
 
+    }
 
-   };
+    ;
 
 
     @Override
-    public void addPhone(Member member){
+    public void addPhone(Member member) {
         mapper.addPhone(member);
     }
 

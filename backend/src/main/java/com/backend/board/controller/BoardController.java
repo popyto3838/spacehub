@@ -38,13 +38,15 @@ public class BoardController {
     }
 
     @GetMapping("{boardId}")
-    public ResponseEntity view(@PathVariable Integer boardId) {
-        Board board = boardService.view(boardId);
+    public ResponseEntity view(@PathVariable Integer boardId,
+                               Authentication authentication) {
+        // Board board = boardService.view(boardId);
+        Map<String, Object> result = boardService.view(boardId, authentication);
 
-        if (board == null) {
+        if (result.get("board") == null) {
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok().body(board);
+        return ResponseEntity.ok().body(result);
     }
 
     @PutMapping("{boardId}/edit")
@@ -73,6 +75,13 @@ public class BoardController {
     @PutMapping("{boardId}/views")
     public void views(@PathVariable Integer boardId) {
         boardService.updateViews(boardId);
+    }
+
+    @PutMapping("like")
+    @PreAuthorize("isAuthenticated()")
+    public Map<String, Object> like(@RequestBody Map<String, Object> req,
+                                    Authentication authentication) {
+        return boardService.like(req, authentication);
     }
 
 }

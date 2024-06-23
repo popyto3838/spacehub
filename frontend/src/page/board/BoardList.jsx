@@ -138,6 +138,7 @@ export function BoardList() {
                 <Th>#</Th>
                 <Th>조회수</Th>
                 <Th>제목</Th>
+                <Th>좋아요 : </Th>
                 <Th>카테고리</Th>
                 <Th>작성자</Th>
               </Tr>
@@ -165,6 +166,7 @@ export function BoardList() {
                       <Badge>댓글 : {board.numberOfComments}</Badge>
                     )}
                   </Td>
+                  <Td>{board.numberOfLike > 0 && board.numberOfLike}</Td>
                   <Td>{board.categoryId}</Td>
                   <Td>{board.writer}</Td>
                   {categoryList.map(

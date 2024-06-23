@@ -39,12 +39,14 @@ public interface BoardMapper {
             SELECT B.BOARD_ID, B.VIEWS, B.TITLE, B.INPUT_DT, B.UPDATE_DT,
                    C.CATEGORY_NAME, C.CATEGORY_ID,
                    CASE WHEN M.WITHDRAWN = 'Y' THEN '탈퇴한 회원입니다.' ELSE M.NICKNAME END AS WRITER,
-                   COUNT(SUBQUERY_TABLE.FILE_NAME) number_of_images,
-                   COUNT(D.COMMENT_ID) number_of_comments
+                   COUNT(DISTINCT SUBQUERY_TABLE.FILE_NAME) number_of_images,
+                   COUNT(DISTINCT D.COMMENT_ID) number_of_comments,
+                   COUNT(DISTINCT L.MEMBER_ID) number_of_likes
             FROM BOARD B LEFT JOIN MEMBER M ON B.MEMBER_ID = M.MEMBER_ID
                          LEFT JOIN CATEGORY C ON B.CATEGORY_ID = C.CATEGORY_ID
                          LEFT JOIN (SELECT PARENT_ID, FILE_NAME FROM FILE_LIST) AS SUBQUERY_TABLE ON B.BOARD_ID = SUBQUERY_TABLE.PARENT_ID
                          LEFT JOIN (SELECT COMMENT_ID, PARENT_ID FROM COMMENT) AS D ON B.BOARD_ID = D.PARENT_ID
+                         LEFT JOIN LIKES L ON B.BOARD_ID = L.BOARD_ID
                 <trim prefix="WHERE" prefixOverrides="OR">
                     <if test="searchType != null">
                         <bind name="pattern" value="'%' + searchKeyword + '%'" />
@@ -77,13 +79,13 @@ public interface BoardMapper {
             """)
     List<Category> selectAllPagingForCategory(Integer offset, String searchType, String searchKeyword);
 
-    // 하나의 게시물 조회
+    // 하나의 게시물 조회(M.MEBER_ID -> B.MEMBER_ID, WHERE에 B.BOARD_ID)
     @Select("""
             SELECT B.BOARD_ID, B.TITLE, B.CONTENT, B.INPUT_DT, B.UPDATE_DT, B.CATEGORY_ID,
                    CASE WHEN M.WITHDRAWN = 'Y' THEN '탈퇴한 회원입니다.' ELSE M.NICKNAME END AS WRITER,
-                   M.MEMBER_ID
+                   B.MEMBER_ID
             FROM BOARD B JOIN MEMBER M ON B.MEMBER_ID = M.MEMBER_ID
-            WHERE BOARD_ID = #{boardId}
+            WHERE B.BOARD_ID = #{boardId}
             """)
     Board selectByBoardId(Integer boardId);
 
@@ -186,4 +188,50 @@ public interface BoardMapper {
             WHERE B.BOARD_ID = #{boardId}
             """)
     Integer selectByBoardIdForComment(Integer boardId);
+
+    // 좋아요 삭제
+    @Delete("""
+            DELETE FROM LIKES
+            WHERE BOARD_ID = #{boardId}
+              AND MEMBER_ID = #{memberId}
+            """)
+    int deleteLikeByBoardIdAndMemberId(Integer boardId, Integer memberId);
+
+    // 좋아요
+    @Insert("""
+            INSERT INTO LIKES (BOARD_ID, MEMBER_ID)
+            VALUES (#{boardId}, #{memberId})
+            """)
+    int insertLikeByBoardIdAndMemberId(Integer boardId, Integer memberId);
+
+    // 좋아요 카운트
+    @Select("""
+            SELECT COUNT(*)
+            FROM LIKES
+            WHERE BOARD_ID = #{boardId}
+            """)
+    int selectCountLikeByBoardId(Integer boardId);
+
+    // 좋아요 했으면 count가 1, 아니면 0
+    @Select("""
+            SELECT COUNT(*)
+            FROM LIKES
+            WHERE BOARD_ID = #{boardId}
+              AND MEMBER_ID = #{memberId}
+            """)
+    int selectLikeByBoardIdAndMemberId(Integer boardId, String memberId);
+
+    // 게시물 삭제시 좋아요 먼저 삭제
+    @Delete("""
+            DELETE FROM LIKES
+            WHERE BOARD_ID = #{boardId}
+            """)
+    int deleteLikeByBoardId(Integer boardId);
+
+    // 회원탈퇴시 좋아요 먼저 삭제
+    @Delete("""
+            DELETE FROM LIKES
+            WHERE MEMBER_ID = #{memberId}
+            """)
+    int deleteLikeByMemberId(Integer memberId);
 }

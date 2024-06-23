@@ -37,5 +37,7 @@ public class Board {
     private List<FileList> filesLists;
     // 댓글 갯수
     private Integer numberOfComments;
+    // 좋아요 갯수
+    private Integer numberOfLikes;
 
 }

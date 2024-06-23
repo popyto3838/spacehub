@@ -29,7 +29,7 @@ public interface CommentMapper {
             WHERE PARENT_ID = #{boardId}
             ORDER BY COMMENT_ID
             """)
-    List<Comment> selectAllByBoardId(Integer boardId);
+    List<Comment> selectAllByBoardId(Integer parentId);
 
     @Delete("""
             DELETE FROM COMMENT

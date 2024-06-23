@@ -13,7 +13,7 @@ public interface BoardService {
 
     Map<String, Object> list(Integer page, String searchType, String searchKeyword);
 
-    Board view(Integer boardId);
+    Map<String, Object> view(Integer boardId, Authentication authentication);
 
     void update(Board board, List<String> removeFileList, MultipartFile[] addFileList) throws IOException;
 
@@ -22,4 +22,6 @@ public interface BoardService {
     void updateViews(Integer boardId);
 
     boolean hasAccess(Integer boardId, Authentication authentication);
+
+    Map<String, Object> like(Map<String, Object> req, Authentication authentication);
 }
