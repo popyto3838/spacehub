@@ -60,4 +60,9 @@ public class CommentServiceImpl implements CommentService {
         }
         return true;
     }
+
+    @Override
+    public void update(Comment comment) {
+        commentMapper.update(comment);
+    }
 }

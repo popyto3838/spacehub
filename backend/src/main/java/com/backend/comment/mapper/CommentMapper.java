@@ -1,10 +1,7 @@
 package com.backend.comment.mapper;
 
 import com.backend.comment.domain.Comment;
-import org.apache.ibatis.annotations.Delete;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.*;
 
 import java.util.List;
 
@@ -24,8 +21,10 @@ public interface CommentMapper {
     int insert(Comment comment);
 
 
+    // WITHDRAWN이 Y이면 탈퇴한 회원입니다로 뜨게
     @Select("""
-            SELECT C.COMMENT_ID, C.CONTENT, C.INPUT_DT, C.UPDATE_DT, M.NICKNAME, C.PARENT_ID
+            SELECT C.COMMENT_ID, C.CONTENT, C.INPUT_DT, C.UPDATE_DT, C.PARENT_ID, C.MEMBER_ID,
+                   CASE WHEN M.WITHDRAWN = 'Y' THEN '탈퇴한 회원입니다.' ELSE M.NICKNAME END AS NICKNAME
             FROM COMMENT C JOIN MEMBER M ON C.MEMBER_ID = M.MEMBER_ID
             WHERE PARENT_ID = #{boardId}
             ORDER BY COMMENT_ID
@@ -45,6 +44,13 @@ public interface CommentMapper {
             WHERE COMMENT_ID = #{commentId}
             """)
     Comment selectById(Integer commentId);
+
+    @Update("""
+            UPDATE COMMENT
+            SET CONTENT = #{content}
+            WHERE COMMENT_ID = #{commentId}
+            """)
+    int update(Comment comment);
 }
 
 

@@ -33,10 +33,20 @@ public class CommentController {
     }
 
     @DeleteMapping("delete")
+    @PreAuthorize("isAuthenticated()")
     public void delete(@RequestBody Comment comment,
                        Authentication authentication) {
         if (commentService.hasAccess(comment, authentication)) {
             commentService.delete(comment);
+        }
+    }
+
+    @PutMapping("edit")
+    @PreAuthorize("isAuthenticated()")
+    public void edit(@RequestBody Comment comment,
+                     Authentication authentication) {
+        if (commentService.hasAccess(comment, authentication)) {
+            commentService.update(comment);
         }
     }
 }

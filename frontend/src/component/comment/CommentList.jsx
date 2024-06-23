@@ -14,7 +14,7 @@ export function CommentList({ boardId, isProcessing, setIsProcessing }) {
           setCommentList(res.data);
         })
         .catch((err) => console.log(err))
-        .finally();
+        .finally(() => {});
     }
   }, [isProcessing]);
 

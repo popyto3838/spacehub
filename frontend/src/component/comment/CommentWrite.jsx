@@ -10,7 +10,6 @@ import {
 } from "@chakra-ui/react";
 import { useContext, useState } from "react";
 import { LoginContext } from "../LoginProvider.jsx";
-import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 export function CommentWrite({
@@ -22,8 +21,6 @@ export function CommentWrite({
   const [content, setContent] = useState("");
 
   const toast = useToast();
-  const navigate = useNavigate();
-
   const account = useContext(LoginContext);
 
   function handleClickCommentWrite() {
@@ -39,8 +36,6 @@ export function CommentWrite({
           position: "top",
           duration: 700,
         });
-        // todo: navigate 수정
-        // navigate(`/board/list`);
       })
       .catch((err) => {})
       .finally(() => {

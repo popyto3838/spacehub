@@ -13,10 +13,17 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import axios from "axios";
+import { useContext, useState } from "react";
+import { LoginContext } from "../LoginProvider.jsx";
+import { CommentEdit } from "./CommentEdit.jsx";
 
 export function CommentItem({ comment, isProcessing, setIsProcessing }) {
+  const [isEditing, setIsEditing] = useState(false);
+
   const toast = useToast();
   const { isOpen, onClose, onOpen } = useDisclosure();
+
+  const account = useContext(LoginContext);
 
   function handleClickDelete() {
     setIsProcessing(true);
@@ -45,27 +52,46 @@ export function CommentItem({ comment, isProcessing, setIsProcessing }) {
         <Spacer />
         <Box>{comment.inputDt}</Box>
       </Flex>
-      <Flex>
-        <Box>{comment.content}</Box>
-        <Box>
-          <Button isLoading={isProcessing} onClick={onOpen}>
-            삭제
-          </Button>
-        </Box>
-      </Flex>
-      <Modal isOpen={isOpen} onClose={onClose}>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>댓글 삭제</ModalHeader>
-          <ModalBody>댓글을 삭제하시겠습니까?</ModalBody>
-          <ModalFooter>
-            <Button onClick={onClose}>취소</Button>
-            <Button isLoading={isProcessing} onClick={handleClickDelete}>
-              삭제
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
+      {isEditing || (
+        /* 수정중이 아닐때는 Flex 박스를 보여줌 */
+        <Flex>
+          <Box>{comment.content}</Box>
+          <Spacer />
+          {account.hasAccess(comment.memberId) && (
+            <Box>
+              <Button onClick={() => setIsEditing(true)}>수정</Button>
+              <Button isLoading={isProcessing} onClick={onOpen}>
+                삭제
+              </Button>
+            </Box>
+          )}
+        </Flex>
+      )}
+
+      {isEditing && (
+        <CommentEdit
+          comment={comment}
+          setIsEditing={setIsEditing}
+          isProcessing={isProcessing}
+          setIsProcessing={setIsProcessing}
+        />
+      )}
+
+      {account.hasAccess(comment.memberId) && (
+        <Modal isOpen={isOpen} onClose={onClose}>
+          <ModalOverlay />
+          <ModalContent>
+            <ModalHeader>댓글 삭제</ModalHeader>
+            <ModalBody>댓글을 삭제하시겠습니까?</ModalBody>
+            <ModalFooter>
+              <Button onClick={onClose}>취소</Button>
+              <Button isLoading={isProcessing} onClick={handleClickDelete}>
+                삭제
+              </Button>
+            </ModalFooter>
+          </ModalContent>
+        </Modal>
+      )}
     </Box>
   );
 }

@@ -9,7 +9,6 @@ public interface CommentService {
 
     void insert(Comment comment, Authentication authentication);
 
-
     List<Comment> list(Integer boardId);
 
     boolean validate(Comment comment);
@@ -17,4 +16,6 @@ public interface CommentService {
     void delete(Comment comment);
 
     boolean hasAccess(Comment comment, Authentication authentication);
+
+    void update(Comment comment);
 }
