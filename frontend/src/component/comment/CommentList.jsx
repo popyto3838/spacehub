@@ -7,7 +7,8 @@ export function CommentList({ boardId, isProcessing, setIsProcessing }) {
   const [commentList, setCommentList] = useState([]);
 
   useEffect(() => {
-    if (!isProcessing) {
+    // todo: if의 boardId랑 dependency의 boardId 넣은거 질문하기(예전에 boardId를 넣으면 안된다고 배웠었던걸로)
+    if (boardId && !isProcessing) {
       axios
         .get(`/api/comment/list/${boardId}`)
         .then((res) => {
@@ -16,7 +17,7 @@ export function CommentList({ boardId, isProcessing, setIsProcessing }) {
         .catch((err) => console.log(err))
         .finally(() => {});
     }
-  }, [isProcessing]);
+  }, [boardId, isProcessing]);
 
   if (commentList.length === 0) {
     return <Box>댓글이 없습니다. 첫 댓글을 작성해보세요.</Box>;
