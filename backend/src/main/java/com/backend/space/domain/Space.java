@@ -9,8 +9,9 @@ import java.time.LocalDateTime;
 public class Space {
 
     private int spaceId; // SPACE(PK)
+    private int memberId;
     private int hostId; // HOST(FK)
-    private int typeId; // TYPE_LIST(FK)
+    private int typeListId; // TYPE_LIST(FK)
 
     private String title;
     private String subTitle;
@@ -33,5 +34,7 @@ public class Space {
 
     private LocalDateTime inputDt;
     private LocalDateTime updateDt;
+
+    private String thumbnailPath; // frontend 썸네일 출력용 경로
 
 }

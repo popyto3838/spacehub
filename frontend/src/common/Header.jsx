@@ -48,6 +48,8 @@ const Header = () => {
                         <li><a href="/space/type">공간유형</a></li>
                         <li><a href="/space/option">공간옵션</a></li>
                         <li><a href="/paid/payment">결제상태</a></li>
+                        <li><a href="/dashboard/host">호스트 페이지</a></li>
+                        <li><a href="/dashboard/admin">관리자 페이지</a></li>
                         <li>
                             <Button onClick={() => navigate(`/member/info/${account.id}`)}
                                     style={{color: 'white', backgroundColor: 'mediumblue'}}>마이페이지

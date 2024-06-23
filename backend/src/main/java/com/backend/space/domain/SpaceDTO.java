@@ -10,5 +10,4 @@ public class SpaceDTO {
     private int memberId;
     private Space space;
     private List<Integer> optionList;
-    private List<MultipartFile> files;
 }
