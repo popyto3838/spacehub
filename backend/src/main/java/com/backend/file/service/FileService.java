@@ -1,5 +1,6 @@
 package com.backend.file.service;
 
+import com.backend.dto.ItemListResponseDto;
 import com.backend.file.domain.File;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -12,9 +13,13 @@ public interface FileService {
 
     List<File> selectAllOfSpaces();
 
-    File getFileByDivisionAndParentId(String division, int parentId);
+    List<File> getFileByDivisionAndParentId(String division, int parentId);
 
     void deleteFileByDivisionAndParentIdAndFileName(String division, int parentId, String fileName) throws IOException;
 
     void deleteFileById(int fileId) throws IOException;
+
+    List<ItemListResponseDto> getTypeLists();
+
+    List<ItemListResponseDto> getOptionLists();
 }

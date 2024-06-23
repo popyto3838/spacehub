@@ -15,7 +15,7 @@ import {
   Image,
   Flex
 } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrashCan, faUpload } from "@fortawesome/free-solid-svg-icons";
@@ -25,14 +25,16 @@ export function SpaceOptionList() {
   const [optionLists, setOptionLists] = useState([]);
   const [optionStates, setOptionStates] = useState(new Map());
   const toast = useToast();
+  const fileInputRefs = useRef({}); // useRef로 각 파일 입력 요소를 저장
 
   useEffect(() => {
     axios
       .get(`/api/space/option/list`)
       .then((res) => {
         const options = res.data;
+        console.log("options:", options); // 데이터 확인을 위해 추가
         setOptionLists(options);
-        const newOptionStates = new Map(options.map((option) => [option.optionListId, option.active]));
+        const newOptionStates = new Map(options.map((option) => [option.itemId, option.active]));
         setOptionStates(newOptionStates);
       })
       .catch((err) => {
@@ -49,13 +51,13 @@ export function SpaceOptionList() {
       });
   }, [toast]);
 
-  const handleDeleteOption = async (optionListId) => {
+  const handleDeleteOption = async (itemId) => {
     try {
-      await axios.delete(`/api/space/option/${optionListId}`);
-      setOptionLists(optionLists.filter((option) => option.optionListId !== optionListId));
+      await axios.delete(`/api/space/option/${itemId}`);
+      setOptionLists(optionLists.filter((option) => option.itemId !== itemId));
       setOptionStates((prevState) => {
         const newState = new Map(prevState);
-        newState.delete(optionListId);
+        newState.delete(itemId);
         return newState;
       });
       toast({
@@ -75,18 +77,18 @@ export function SpaceOptionList() {
     }
   };
 
-  const handleSwitchChange = async (optionListId) => {
-    const updatedStatus = !optionStates.get(optionListId);
-    const optionToUpdate = optionLists.find((option) => option.optionListId === optionListId);
+  const handleSwitchChange = async (itemId) => {
+    const updatedStatus = !optionStates.get(itemId);
+    const optionToUpdate = optionLists.find((option) => option.itemId === itemId);
 
     if (optionToUpdate) {
       const updatedOption = { ...optionToUpdate, active: updatedStatus };
 
       try {
-        await axios.put(`/api/space/option/${optionListId}`, updatedOption); // 변경된 옵션만 업데이트
+        await axios.put(`/api/space/option/${itemId}`, updatedOption); // 변경된 옵션만 업데이트
         setOptionStates((prevOptionStates) => {
           const newOptionStates = new Map(prevOptionStates);
-          newOptionStates.set(optionListId, updatedStatus);
+          newOptionStates.set(itemId, updatedStatus);
           return newOptionStates;
         });
         toast({
@@ -107,17 +109,18 @@ export function SpaceOptionList() {
     }
   };
 
-  const handleIconUpload = async (e, optionListId) => {
+  const handleIconUpload = async (e, itemId) => {
+    console.log("optionListId:", itemId);  // 여기에 console.log 추가
     const file = e.target.files[0];
     if (!file) return;
 
     const formData = new FormData();
     formData.append("file", file);
-    formData.append("parentId", optionListId);
+    formData.append("parentId", itemId);
     formData.append("division", "OPTION");
 
     try {
-      await axios.post(`/api/file/upload/typeIcon`, formData);
+      await axios.post(`/api/file/upload/icon`, formData);
       toast({
         title: "아이콘이 업로드되었습니다.",
         status: "success",
@@ -185,14 +188,14 @@ export function SpaceOptionList() {
           </Thead>
           <Tbody>
             {optionLists.map((optionList) => (
-              <Tr key={optionList.optionListId} _hover={{ bgColor: "gray.200" }}>
-                <Td>{optionList.optionListId}</Td>
+              <Tr key={optionList.itemId} _hover={{ bgColor: "gray.200" }}>
+                <Td>{optionList.itemId}</Td>
                 <Td textAlign="center">{optionList.name}</Td>
                 <Td>
                   <Switch
                     size="md"
-                    isChecked={optionStates.get(optionList.optionListId)}
-                    onChange={() => handleSwitchChange(optionList.optionListId)}
+                    isChecked={optionStates.get(optionList.itemId)}
+                    onChange={() => handleSwitchChange(optionList.itemId)}
                   />
                 </Td>
                 <Td>
@@ -213,15 +216,13 @@ export function SpaceOptionList() {
                     <Flex align="center">
                       <Input
                         type="file"
-                        onChange={(e) => handleIconUpload(e, optionList.optionListId)}
+                        onChange={(e) => handleIconUpload(e, optionList.itemId)}
                         display="none"
+                        ref={(el) => (fileInputRefs.current[optionList.itemId] = el)}
                       />
                       <Button
                         leftIcon={<FontAwesomeIcon icon={faUpload} />}
-                        onClick={(e) => {
-                          const input = e.target.previousSibling;
-                          if (input) input.click();
-                        }}
+                        onClick={() => fileInputRefs.current[optionList.itemId].click()}
                       >
                         아이콘 업로드
                       </Button>
@@ -229,7 +230,7 @@ export function SpaceOptionList() {
                   )}
                 </Td>
                 <Td>
-                  <Button colorScheme="red" onClick={() => handleDeleteOption(optionList.optionListId)}>
+                  <Button colorScheme="red" onClick={() => handleDeleteOption(optionList.itemId)}>
                     <FontAwesomeIcon icon={faTrashCan} />
                   </Button>
                 </Td>

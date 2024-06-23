@@ -36,7 +36,7 @@ public interface FileMapper {
             WHERE PARENT_ID = #{parentId}
             AND DIVISION = #{division}
             """)
-    File selectFileByDivisionAndParentId(String division, int parentId);
+    List<File> selectFileByDivisionAndParentId(String division, int parentId);
 
     @Select("""
             SELECT *

@@ -21,8 +21,8 @@ public class FileController {
         return fileService.selectAllOfSpaces();
     }
 
-    @PostMapping("/upload/typeIcon")
-    public ResponseEntity<String> uploadTypeIcon(
+    @PostMapping("/upload/icon")
+    public ResponseEntity<String> uploadIcon(
             @RequestParam("file") MultipartFile file,
             @RequestParam("parentId") int parentId,
             @RequestParam("division") String division) {

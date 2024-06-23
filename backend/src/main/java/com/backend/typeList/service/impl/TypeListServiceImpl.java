@@ -38,9 +38,11 @@ public class TypeListServiceImpl implements TypeListService {
             dto.setName(typeList.getName());
             dto.setActive(typeList.isActive());
 
-            File iconFile = fileMapper.selectFileByDivisionAndParentId("TYPE", typeList.getTypeListId());
-            if (iconFile != null) {
-                dto.setIconFile(iconFile);
+            List<File> iconFiles = fileMapper.selectFileByDivisionAndParentId("TYPE", typeList.getTypeListId());
+            if (iconFiles != null && !iconFiles.isEmpty()) {
+                dto.setIconFile(iconFiles.get(0)); // 여러 개의 파일 중 첫 번째 파일을 설정
+            } else {
+                dto.setIconFile(null); // 파일이 없을 경우 null로 설정
             }
 
             return dto;
@@ -54,7 +56,7 @@ public class TypeListServiceImpl implements TypeListService {
 
     @Override
     public void update(TypeList typeList) {
-        typeListMapper.update(typeList);
+        typeListMapper.updateTypelist(typeList);
     }
 
 }

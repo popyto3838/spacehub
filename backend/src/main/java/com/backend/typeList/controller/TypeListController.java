@@ -30,18 +30,24 @@ public class TypeListController {
     }
 
     @PutMapping("/{typeListId}")
-    public void update(@RequestBody TypeList typeList) {
-        typeListService.update(typeList);
+    public ResponseEntity<String> update(@RequestBody TypeList typeList) {
+        try {
+            typeListService.update(typeList);
+            return ResponseEntity.ok("타입이 업데이트되었습니다.");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("타입 업데이트 실패: " + e.getMessage());
+        }
     }
 
     @GetMapping("/list")
     public ResponseEntity<List<ItemListResponseDto>> getTypeLists() {
         List<ItemListResponseDto> response = typeListService.selectAll();
+        System.out.println("response = " + response);
         return ResponseEntity.ok(response);
     }
 
     @DeleteMapping("/{typeListId}")
-    public ResponseEntity delete(@PathVariable int typeListId) {
+    public ResponseEntity<String> delete(@PathVariable int typeListId) {
         try {
             typeListService.deleteSpaceType(typeListId);
             return ResponseEntity.ok("타입이 삭제되었습니다.");

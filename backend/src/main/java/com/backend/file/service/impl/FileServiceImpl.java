@@ -1,8 +1,11 @@
 package com.backend.file.service.impl;
 
+import com.backend.dto.ItemListResponseDto;
 import com.backend.file.domain.File;
 import com.backend.file.mapper.FileMapper;
 import com.backend.file.service.FileService;
+import com.backend.optionList.mapper.OptionListMapper;
+import com.backend.typeList.mapper.TypeListMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,6 +16,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -20,6 +24,8 @@ import java.util.List;
 public class FileServiceImpl implements FileService {
 
     private final FileMapper fileMapper;
+    private final TypeListMapper typeListMapper;
+    private final OptionListMapper optionListMapper;
 
     private final String baseDir = "/Users/santa/Desktop/study/BackEnd/project/prj3/frontend/public/img/";
 
@@ -65,7 +71,7 @@ public class FileServiceImpl implements FileService {
     }
 
     @Override
-    public File getFileByDivisionAndParentId(String division, int parentId) {
+    public List<File> getFileByDivisionAndParentId(String division, int parentId) {
         return fileMapper.selectFileByDivisionAndParentId(division, parentId);
     }
 
@@ -92,5 +98,34 @@ public class FileServiceImpl implements FileService {
             // DB에서 파일 정보 삭제
             fileMapper.deleteFileById(fileId);
         }
+    }
+
+    @Override
+    public List<ItemListResponseDto> getTypeLists() {
+        return typeListMapper.selectAll().stream().map(typeList -> {
+            ItemListResponseDto dto = new ItemListResponseDto();
+            dto.setItemId(typeList.getTypeListId());
+            dto.setName(typeList.getName());
+            dto.setActive(typeList.isActive());
+
+            List<File> iconFiles = fileMapper.selectFileByDivisionAndParentId("TYPE", typeList.getTypeListId());
+            dto.setIconFile(iconFiles.get(0)); // 여러 개의 파일 중 첫 번째 파일을 설정
+
+            return dto;
+        }).collect(Collectors.toList());    }
+
+    @Override
+    public List<ItemListResponseDto> getOptionLists() {
+        return optionListMapper.selectAll().stream().map(optionList -> {
+            ItemListResponseDto dto = new ItemListResponseDto();
+            dto.setItemId(optionList.getOptionListId());
+            dto.setName(optionList.getName());
+            dto.setActive(optionList.isActive());
+
+            List<File> iconFiles = fileMapper.selectFileByDivisionAndParentId("OPTION", optionList.getOptionListId());
+            dto.setIconFile(iconFiles.get(0)); // 여러 개의 파일 중 첫 번째 파일을 설정
+
+            return dto;
+        }).collect(Collectors.toList());
     }
 }
