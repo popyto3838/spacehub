@@ -13,7 +13,12 @@ import { LoginContext } from "../LoginProvider.jsx";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
-export function CommentWrite({ boardId, categoryId, isSending, setIsSending }) {
+export function CommentWrite({
+  boardId,
+  categoryId,
+  isProcessing,
+  setIsProcessing,
+}) {
   const [content, setContent] = useState("");
 
   const toast = useToast();
@@ -22,7 +27,7 @@ export function CommentWrite({ boardId, categoryId, isSending, setIsSending }) {
   const account = useContext(LoginContext);
 
   function handleClickCommentWrite() {
-    setIsSending(true);
+    setIsProcessing(true);
 
     axios
       .post("/api/comment/write", { boardId, content, categoryId })
@@ -39,7 +44,7 @@ export function CommentWrite({ boardId, categoryId, isSending, setIsSending }) {
       })
       .catch((err) => {})
       .finally(() => {
-        setIsSending(false);
+        setIsProcessing(false);
       });
   }
 
@@ -71,7 +76,7 @@ export function CommentWrite({ boardId, categoryId, isSending, setIsSending }) {
                 isDisabled={
                   content.trim().length === 0 || !account.isLoggedIn()
                 }
-                isLoading={isSending}
+                isLoading={isProcessing}
                 onClick={handleClickCommentWrite}
               >
                 등록

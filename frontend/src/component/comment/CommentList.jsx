@@ -1,12 +1,13 @@
-import { Box, Flex, Spacer } from "@chakra-ui/react";
+import { Box } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { CommentItem } from "./CommentItem.jsx";
 
-export function CommentList({ boardId, isSending, setIsSending }) {
+export function CommentList({ boardId, isProcessing, setIsProcessing }) {
   const [commentList, setCommentList] = useState([]);
 
   useEffect(() => {
-    if (!isSending) {
+    if (!isProcessing) {
       axios
         .get(`/api/comment/list/${boardId}`)
         .then((res) => {
@@ -15,7 +16,7 @@ export function CommentList({ boardId, isSending, setIsSending }) {
         .catch((err) => console.log(err))
         .finally();
     }
-  }, [isSending]);
+  }, [isProcessing]);
 
   if (commentList.length === 0) {
     return <Box>댓글이 없습니다. 첫 댓글을 작성해보세요.</Box>;
@@ -26,14 +27,12 @@ export function CommentList({ boardId, isSending, setIsSending }) {
     <Box>
       전체 댓글 (숫자 나오게)개
       {commentList.map((comment) => (
-        <Box key={comment.commentId} border={"1px solid black"}>
-          <Flex>
-            <Box>{comment.nickname}</Box>
-            <Spacer />
-            <Box>{comment.inputDt}</Box>
-          </Flex>
-          <Box>{comment.content}</Box>
-        </Box>
+        <CommentItem
+          isProcessing={isProcessing}
+          setIsProcessing={setIsProcessing}
+          comment={comment}
+          key={comment.commentId}
+        />
       ))}
     </Box>
   );

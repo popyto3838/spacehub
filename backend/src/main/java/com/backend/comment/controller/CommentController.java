@@ -31,4 +31,12 @@ public class CommentController {
     public List<Comment> list(@PathVariable Integer boardId) {
         return commentService.list(boardId);
     }
+
+    @DeleteMapping("delete")
+    public void delete(@RequestBody Comment comment,
+                       Authentication authentication) {
+        if (commentService.hasAccess(comment, authentication)) {
+            commentService.delete(comment);
+        }
+    }
 }

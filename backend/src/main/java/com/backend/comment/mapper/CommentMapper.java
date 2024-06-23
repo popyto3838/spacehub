@@ -1,6 +1,7 @@
 package com.backend.comment.mapper;
 
 import com.backend.comment.domain.Comment;
+import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
@@ -29,7 +30,21 @@ public interface CommentMapper {
             WHERE PARENT_ID = #{boardId}
             ORDER BY COMMENT_ID
             """)
-    List<Comment> selectByBoardId(Integer boardId);
+    List<Comment> selectAllByBoardId(Integer boardId);
+
+    @Delete("""
+            DELETE FROM COMMENT
+            WHERE COMMENT_ID = #{commentId}
+            """)
+    int deleteById(Integer commentId);
+
+    // 권한을 조회하기 위해서
+    @Select("""
+            SELECT *
+            FROM COMMENT
+            WHERE COMMENT_ID = #{commentId}
+            """)
+    Comment selectById(Integer commentId);
 }
 
 

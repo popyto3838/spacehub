@@ -27,7 +27,7 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public List<Comment> list(Integer boardId) {
-        return commentMapper.selectByBoardId(boardId);
+        return commentMapper.selectAllByBoardId(boardId);
     }
 
     @Override
@@ -39,6 +39,23 @@ public class CommentServiceImpl implements CommentService {
             return false;
         }
         if (comment.getBoardId() == null) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public void delete(Comment comment) {
+        commentMapper.deleteById(comment.getCommentId());
+    }
+
+    @Override
+    public boolean hasAccess(Comment comment, Authentication authentication) {
+        Comment db = commentMapper.selectById(comment.getCommentId());
+        if (db == null) {
+            return false;
+        }
+        if (!authentication.getName().equals(db.getMemberId().toString())) {
             return false;
         }
         return true;

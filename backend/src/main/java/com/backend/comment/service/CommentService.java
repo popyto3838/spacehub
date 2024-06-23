@@ -13,4 +13,8 @@ public interface CommentService {
     List<Comment> list(Integer boardId);
 
     boolean validate(Comment comment);
+
+    void delete(Comment comment);
+
+    boolean hasAccess(Comment comment, Authentication authentication);
 }
