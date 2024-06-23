@@ -21,6 +21,11 @@ public class FileController {
         return fileService.selectAllOfSpaces();
     }
 
+    @GetMapping("/type/list")
+    public List<File> selectAllOfTypes() {
+        return fileService.selectAllOfTypes();
+    }
+
     @PostMapping("/upload/icon")
     public ResponseEntity<String> uploadIcon(
             @RequestParam("file") MultipartFile file,

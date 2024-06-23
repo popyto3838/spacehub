@@ -128,4 +128,9 @@ public class FileServiceImpl implements FileService {
             return dto;
         }).collect(Collectors.toList());
     }
+
+    @Override
+    public List<File> selectAllOfTypes() {
+        return fileMapper.selectAllOfTypes();
+    }
 }

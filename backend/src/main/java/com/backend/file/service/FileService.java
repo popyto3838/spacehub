@@ -22,4 +22,6 @@ public interface FileService {
     List<ItemListResponseDto> getTypeLists();
 
     List<ItemListResponseDto> getOptionLists();
+
+    List<File> selectAllOfTypes();
 }

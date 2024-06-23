@@ -70,4 +70,17 @@ public interface FileMapper {
             WHERE FILE_ID = #{fileId}
             """)
     void deleteFileById(int fileId);
+
+    @Select("""
+            SELECT f.PARENT_ID, f.DIVISION, f.FILE_NAME
+                    FROM FILE f
+                    WHERE f.DIVISION = 'TYPE'
+                      AND f.FILE_ID = (
+                          SELECT MIN(f2.FILE_ID)
+                          FROM FILE f2
+                          WHERE f2.PARENT_ID = f.PARENT_ID
+                            AND f2.DIVISION = 'TYPE'
+                      )
+            """)
+    List<File> selectAllOfTypes();
 }
