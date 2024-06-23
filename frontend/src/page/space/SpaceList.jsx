@@ -61,46 +61,46 @@ export function SpaceList() {
 
   return (
     <>
-      <Box py={10} px={5}>
-        <Heading as="h2" size="lg" mb={6}>찾는 공간이 있나요?</Heading>
-        <Grid templateColumns="repeat(auto-fill, minmax(150px, 1fr))" gap={6}>
+      <Box py={12} px={8} bg="gray.50">
+        <Heading as="h2" size="xl" mb={8} textAlign="center">찾는 공간이 있나요?</Heading>
+        <Grid templateColumns="repeat(auto-fill, minmax(180px, 1fr))" gap={8}>
           {spaceTypes.slice(0, visibleTypes).map(type => (
             <GridItem key={type.itemId} w="100%" textAlign="center">
               <VStack
                 cursor="pointer"
-                _hover={{ transform: 'scale(1.05)', transition: 'transform 0.2s' }}
-                p={4}
+                _hover={{ transform: 'translateY(-5px)', transition: 'transform 0.3s' }}
+                p={6}
                 bg="white"
-                borderWidth="1px"
-                borderRadius="lg"
-                shadow="md"
+                borderRadius="xl"
+                boxShadow="lg"
               >
                 <Box
-                  w={12}
-                  h={12}
-                  bg="gray.100"
+                  w={16}
+                  h={16}
+                  bg="yellow.200"
                   display="flex"
                   alignItems="center"
                   justifyContent="center"
                   borderRadius="full"
+                  boxShadow="inner"
                 >
                   <Image
                     src={type.iconFile?.fileName || 'http://via.placeholder.com/1000.jpg'}
                     alt={type.name}
                     objectFit="cover"
                     borderRadius="full"
-                    boxSize="100%"
+                    boxSize="80%"
                   />
                 </Box>
-                <Text fontWeight="bold" mt={2}>{type.name}</Text>
+                <Text fontWeight="semibold" mt={3} color="gray.700">{type.name}</Text>
               </VStack>
             </GridItem>
           ))}
         </Grid>
         {showMoreTypes && visibleTypes < spaceTypes.length && (
-          <Box display="flex" justifyContent="center" mt={6}>
-            <Button onClick={handleShowMoreTypes} colorScheme="teal">더보기</Button>
-          </Box>
+          <Flex justifyContent="center" mt={10}>
+            <Button onClick={handleShowMoreTypes} colorScheme="teal" size="lg" fontWeight="bold" boxShadow="md">더보기</Button>
+          </Flex>
         )}
       </Box>
       <Box py={10} px={5}>
