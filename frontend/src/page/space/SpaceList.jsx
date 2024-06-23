@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Grid, GridItem, Text, Button, VStack, Image } from "@chakra-ui/react";
+import { Box, Grid, GridItem, Text, Button, VStack, Image, Heading, Flex } from "@chakra-ui/react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import SpaceCard from "./SpaceCard.jsx";
@@ -61,46 +61,51 @@ export function SpaceList() {
 
   return (
     <>
-      <Box py={5}>
-        <Text fontSize="2xl" fontWeight="bold">찾는 공간이 있나요?</Text>
-        <Grid templateColumns="repeat(5, 1fr)" gap={6} mt={4}>
+      <Box py={10} px={5}>
+        <Heading as="h2" size="lg" mb={6}>찾는 공간이 있나요?</Heading>
+        <Grid templateColumns="repeat(auto-fill, minmax(150px, 1fr))" gap={6}>
           {spaceTypes.slice(0, visibleTypes).map(type => (
-            <GridItem key={type.id} w="100%" textAlign="center">
+            <GridItem key={type.itemId} w="100%" textAlign="center">
               <VStack
                 cursor="pointer"
-                _hover={{ color: 'blue' }}
+                _hover={{ transform: 'scale(1.05)', transition: 'transform 0.2s' }}
+                p={4}
+                bg="white"
+                borderWidth="1px"
+                borderRadius="lg"
+                shadow="md"
               >
                 <Box
-                  w={10}
-                  h={10}
-                  bg="gray.200"
+                  w={12}
+                  h={12}
+                  bg="gray.100"
                   display="flex"
                   alignItems="center"
                   justifyContent="center"
-                  _hover={{ bg: 'gray.300' }}
+                  borderRadius="full"
                 >
                   <Image
                     src={type.iconFile?.fileName || 'http://via.placeholder.com/1000.jpg'}
                     alt={type.name}
                     objectFit="cover"
-                    width="100%"
-                    height="100%"
+                    borderRadius="full"
+                    boxSize="100%"
                   />
                 </Box>
-                <Text _hover={{ color: 'teal.500' }}>{type.name}</Text>
+                <Text fontWeight="bold" mt={2}>{type.name}</Text>
               </VStack>
             </GridItem>
           ))}
         </Grid>
         {showMoreTypes && visibleTypes < spaceTypes.length && (
-          <Box display="flex" justifyContent="center" mt={4}>
-            <Button onClick={handleShowMoreTypes}>더보기</Button>
+          <Box display="flex" justifyContent="center" mt={6}>
+            <Button onClick={handleShowMoreTypes} colorScheme="teal">더보기</Button>
           </Box>
         )}
       </Box>
-      <Box py={5}>
-        <Text fontSize="2xl" fontWeight="bold">공간 목록</Text>
-        <Grid templateColumns="repeat(auto-fill, minmax(250px, 1fr))" gap={6} mt={4}>
+      <Box py={10} px={5}>
+        <Heading as="h2" size="lg" mb={6}>공간 목록</Heading>
+        <Grid templateColumns="repeat(auto-fill, minmax(250px, 1fr))" gap={6}>
           {spaces.slice(0, visibleSpaces).map(space => {
             const file = spaceFiles.find(f => f.parentId === space.spaceId && f.division === 'SPACE');
             return (
@@ -110,6 +115,8 @@ export function SpaceList() {
                 onClick={() => {
                   handleCardClick(space.spaceId)
                 }}
+                transition="transform 0.2s"
+                _hover={{ transform: 'scale(1.05)' }}
               >
                 <SpaceCard space={space} file={file} />
               </GridItem>
@@ -117,8 +124,8 @@ export function SpaceList() {
           })}
         </Grid>
         {showMoreSpaces && visibleSpaces < spaces.length && (
-          <Box display="flex" justifyContent="center" mt={4}>
-            <Button onClick={handleShowMoreSpaces}>더보기</Button>
+          <Box display="flex" justifyContent="center" mt={6}>
+            <Button onClick={handleShowMoreSpaces} colorScheme="teal">더보기</Button>
           </Box>
         )}
       </Box>
