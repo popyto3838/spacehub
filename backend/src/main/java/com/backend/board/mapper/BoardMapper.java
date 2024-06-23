@@ -61,7 +61,7 @@ public interface BoardMapper {
                             OR CONTENT LIKE #{pattern}
                         </if>
                         <if test="searchType == 'nickname'">
-                            OR NICKNAME LIKE #{pattern}
+                            OR M.NICKNAME LIKE #{pattern}
                         </if>
                     </if>
                 </trim>
@@ -157,8 +157,8 @@ public interface BoardMapper {
     // 게시물 목록에서 총 게시물 개수 조회
     @Select("""
             <script>
-            SELECT COUNT(BOARD_ID)
-            FROM BOARD
+            SELECT COUNT(BOARD_ID), M.NICKNAME
+            FROM BOARD B LEFT JOIN MEMBER M ON B.MEMBER_ID = M.MEMBER_ID
                 <trim prefix="WHERE" prefixOverrides="OR">
                     <if test="searchType != null">
                         <bind name="pattern" value="'%' + searchKeyword + '%'" />
@@ -173,7 +173,7 @@ public interface BoardMapper {
                             OR CONTENT LIKE #{pattern}
                         </if>
                         <if test="searchType == 'nickname'">
-                            OR NICKNAME LIKE #{pattern}
+                            OR M.NICKNAME LIKE #{pattern}
                         </if>
                     </if>
                 </trim>
