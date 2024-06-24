@@ -16,7 +16,6 @@ const Payment = () => {
     const [member,setMember] = useState(null);
 
     useEffect(() => {
-        console.log(reservationId);
         axios.get("/api/reservation/" + reservationId)
             .then((res) => {
                 setReservationStatus(res.data.status);
