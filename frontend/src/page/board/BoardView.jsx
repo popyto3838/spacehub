@@ -151,13 +151,17 @@ export function BoardView() {
         <Box>
           <FormControl>
             <FormLabel>작성일시</FormLabel>
-            {board.updateDt ===
+            <Input value={board.inputDateAndTime} readOnly />
+            <Input value={board.updateDateAndTime} readOnly />
+
+            {/*            {board.updateDateAndTime ===
             <Input value={board.inputDateAndTime} readOnly /> && (
               <Input value={board.inputDateAndTime} readOnly />
             )}
-            {board.updateDt !== <Input value={board.inputDt} readOnly /> && (
+            {board.updateDateAndTime !==
+            <Input value={board.inputDt} readOnly /> && (
               <Input value={board.updateDateAndTime} readOnly />
-            )}
+            )}*/}
           </FormControl>
         </Box>
 

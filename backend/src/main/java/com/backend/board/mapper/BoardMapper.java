@@ -120,7 +120,8 @@ public interface BoardMapper {
     @Update("""
             UPDATE BOARD
             SET TITLE = #{title},
-                CONTENT = #{content}
+                CONTENT = #{content},
+                UPDATE_DT = CURRENT_TIMESTAMP
             WHERE BOARD_ID = #{boardId}
             """)
     int update(Board board);

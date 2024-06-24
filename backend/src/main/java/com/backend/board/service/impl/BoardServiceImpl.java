@@ -164,6 +164,11 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
+    public void updateViews(Integer boardId) {
+        boardMapper.updateViews(boardId);
+    }
+
+    @Override
     public void delete(Integer boardId) {
         // file명 조회
         List<String> fileNames = boardMapper.selectByFileNameByBoardId(boardId);
@@ -187,10 +192,6 @@ public class BoardServiceImpl implements BoardService {
         boardMapper.deleteByBoardId(boardId);
     }
 
-    @Override
-    public void updateViews(Integer boardId) {
-        boardMapper.updateViews(boardId);
-    }
 
     @Override
     public boolean hasAccess(Integer boardId, Authentication authentication) {

@@ -29,7 +29,6 @@ public class BoardController {
 
     }
 
-    // todo: 게시판 페이징
     @GetMapping("list")
     public Map<String, Object> list(@RequestParam(defaultValue = "1") Integer page,
                                     @RequestParam(value = "type", required = false) String searchType,
@@ -72,11 +71,13 @@ public class BoardController {
         }
     }
 
+    // 조회수
     @PutMapping("{boardId}/views")
     public void views(@PathVariable Integer boardId) {
         boardService.updateViews(boardId);
     }
 
+    // 좋아요
     @PutMapping("like")
     @PreAuthorize("isAuthenticated()")
     public Map<String, Object> like(@RequestBody Map<String, Object> req,
