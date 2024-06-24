@@ -1,10 +1,9 @@
 import axios from 'axios';
-import {Button, useToast} from "@chakra-ui/react";
+import { Button, useToast } from "@chakra-ui/react";
 import '/public/css/paid/Payment.css';
-import React, {useContext, useEffect, useState} from 'react';
-import {useNavigate, useParams} from "react-router-dom";
-import {LoginContext} from "../../component/LoginProvider.jsx";
-
+import React, { useContext, useEffect, useState } from 'react';
+import { useNavigate, useParams } from "react-router-dom";
+import { LoginContext } from "../../component/LoginProvider.jsx";
 
 const Payment = () => {
     const toast = useToast();
@@ -12,28 +11,24 @@ const Payment = () => {
     const navigate = useNavigate();
     const [reservationStatus, setReservationStatus] = useState('');
     const [spaceIdResult, setSpaceId] = useState('');
-    const {reservationId} = useParams();
-
+    const { reservationId } = useParams();
+    const [totalPrice, setTotalPrice] = useState(0);
+    const [member,setMember] = useState(null);
 
     useEffect(() => {
-        console.log("=========")
-        console.log(reservationId)
-        console.log("=========")
+        console.log(reservationId);
         axios.get("/api/reservation/" + reservationId)
             .then((res) => {
                 setReservationStatus(res.data.status);
-                setSpaceId(res.data.spaceId)
+                setSpaceId(res.data.spaceId);
+                setTotalPrice(res.data.totalPrice); // 총 금액 설정
             })
             .catch((err) => {
                 console.error(err);
             });
     }, []);
 
-    useEffect(() => {
-        console.log("=================================spaceIdResult",spaceIdResult)
-    }, [spaceIdResult]);
-
-
+    useEffect(() => { }, [spaceIdResult]);
 
     useEffect(() => {
         const jquery = document.createElement("script");
@@ -48,8 +43,19 @@ const Payment = () => {
         };
     }, []);
 
+    useEffect(() => {
+        axios.get("/api/member/" + account.id)
+            .then((res) => {
+                setMember(res.data);
+            })
+            .catch((err) => {
+                console.error(err);
+            });
+    }, [account.id]);
+
+    useEffect(() => {
+    }, [member]);
     const requestPay = () => {
-        console.log("========spaceIdResultspaceIdResult===============",spaceIdResult)
         if (reservationStatus !== 'ACCEPT') {
             toast({
                 status: "warning",
@@ -60,30 +66,27 @@ const Payment = () => {
             return;
         }
 
-        const {IMP} = window;
+        const { IMP } = window;
         IMP.init('imp61364323');
-
         IMP.request_pay({
             pg: 'html5_inicis.INIpayTest',
             pay_method: 'card',
             merchant_uid: new Date().getTime(),
             name: '원용님 결제 전용',
-            amount: 100,
-            buyer_email: 'dlehddud60@naver.com',
-            buyer_name: '이동영',
-            buyer_tel: '010-3275-5687',
-            buyer_addr: '서울특별시',
-            buyer_postcode: '123-456',
+            // amount: totalPrice, // 총 금액 사용
+            amount: 100, // 총 금액 사용
+            buyer_email: member.email,
+            buyer_name: member.nickname,
         }, async (rsp) => {
-            console.log(rsp)
+            console.log(rsp);
             if (rsp.success == true) {
-                alert("결제성공")
+                alert("결제성공");
                 axios
                     .post("/api/paid/write", {
                         "spaceId": spaceIdResult,
                         "reservationId": reservationId,
                         "memberId": account.id,
-                        "totalPrice": 1000
+                        "totalPrice": totalPrice // 총 금액 사용
                     })
                     .then((res) => {
                         toast({
@@ -92,7 +95,7 @@ const Payment = () => {
                             position: "top",
                             duration: 1000,
                         });
-                        navigate("/paid/payment")
+                        navigate("/paid/payment");
                     })
                     .catch((err) => {
                         toast({
@@ -101,10 +104,10 @@ const Payment = () => {
                             position: "top",
                             duration: 1000,
                         });
-                    })
+                    });
 
             } else {
-                alert("결제 실패")
+                alert("결제 실패");
             }
         });
     };

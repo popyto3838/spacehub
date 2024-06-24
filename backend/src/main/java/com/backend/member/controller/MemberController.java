@@ -7,6 +7,7 @@ import com.backend.member.service.MailService;
 import com.backend.member.service.MemberService;
 import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -30,7 +31,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/member")
-
+@Log4j2
 public class MemberController {
     final MailService mailService;
     final MemberService service;
@@ -100,6 +101,7 @@ public class MemberController {
 
     @GetMapping("/{memberId}")
     public ResponseEntity get(@PathVariable Integer memberId) {
+        log.info("============memberIdmemberId===================",memberId);
         Member member = service.getById(memberId);
         if (member == null) {
             return ResponseEntity.notFound().build();

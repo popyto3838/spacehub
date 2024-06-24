@@ -17,6 +17,7 @@ public interface ReservationMapper {
                     ,       START_TIME
                     ,       END_TIME
                     ,       STATUS
+                    ,       TOTAL_PRICE
                     ) VALUES 
                     (       #{spaceId}
                     ,       #{memberId}
@@ -25,6 +26,7 @@ public interface ReservationMapper {
                     ,       #{startTime}
                     ,       #{endTime}
                     ,       #{status}
+                    ,       #{totalPrice}
                     )
             """)
     @Options(useGeneratedKeys = true, keyProperty = "reservationId")
@@ -47,7 +49,8 @@ public interface ReservationMapper {
 
     @Update("""
             UPDATE RESERVATION 
-            SET     START_DATE      = #{startDate}
+            SET     TOTAL_PRICE     = #{totalPrice}
+            ,       START_DATE      = #{startDate}
             ,       END_DATE        = #{endDate}
             ,       START_TIME      = #{startTime}
             ,       END_TIME        = #{endTime}
