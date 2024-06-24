@@ -51,11 +51,10 @@ export function BoardList() {
     }
   }, [searchParams]);
 
-  // todo: 게시물 클릭하면 클릭한 시간으로 작성일시 바뀌는거 수정
   const handleClickBoardAndCountViews = (board) => {
     axios
       .put(`/api/board/${board.boardId}/views`, {
-        views: board.views + 1,
+        views: board.views,
       })
       .then(() => {
         navigate(`/board/${board.boardId}`);

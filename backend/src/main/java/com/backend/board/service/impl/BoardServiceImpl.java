@@ -165,6 +165,7 @@ public class BoardServiceImpl implements BoardService {
 
     @Override
     public void updateViews(Integer boardId) {
+
         boardMapper.updateViews(boardId);
     }
 
