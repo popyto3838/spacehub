@@ -182,8 +182,13 @@ export function BoardView() {
         )}
       </Box>
 
-      {/* comment component */}
-      <CommentComponent boardId={board.boardId} categoryId={board.categoryId} />
+      {/* comment component -> boardId가 있을때만 넘겨줌(undefined 해결) */}
+      {board.boardId && (
+        <CommentComponent
+          boardId={board.boardId}
+          categoryId={board.categoryId}
+        />
+      )}
 
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
