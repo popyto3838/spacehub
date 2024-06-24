@@ -1,5 +1,6 @@
 package com.backend.typeList.mapper;
 
+import com.backend.dto.ItemListResponseDto;
 import com.backend.typeList.domain.TypeList;
 import org.apache.ibatis.annotations.*;
 
@@ -9,7 +10,7 @@ import java.util.List;
 public interface TypeListMapper {
 
     @Insert("""
-            INSERT INTO TYPE_LIST (name) VALUES (#{name})
+            INSERT INTO TYPE_LIST (NAME) VALUES (#{name})
             """)
     int insertTypeList(TypeList typeList);
 
@@ -17,8 +18,6 @@ public interface TypeListMapper {
     @Select("""
             SELECT *
             FROM TYPE_LIST
-            WHERE IS_ACTIVE = true
-            ORDER BY TYPE_LIST_ID DESC 
             """)
     List<TypeList> selectAll();
 
@@ -30,8 +29,8 @@ public interface TypeListMapper {
 
     @Update("""
             UPDATE TYPE_LIST
-            SET IS_ACTIVE = #{isActive}
+            SET NAME = #{name}, ACTIVE = #{active}
             WHERE TYPE_LIST_ID = #{typeListId}
             """)
-    int update(TypeList typeListId);
+    int updateTypelist(TypeList typeListId);
 }
