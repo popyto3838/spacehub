@@ -18,4 +18,5 @@ public class Reservation {
     private ReservationStatus status;
     private Timestamp inputDt;
     private Timestamp updateDt;
+    private Integer totalPrice;
 }
