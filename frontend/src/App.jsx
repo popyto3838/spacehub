@@ -27,6 +27,8 @@ import SpaceView from "./page/space/SpaceView.jsx";
 import {HostDashboard} from "./page/dashboard/HostDashboard.jsx";
 import AdminDashboard from "./page/dashboard/AdminDashboard.jsx";
 import SpaceList from "./page/space/SpaceList.jsx";
+import {MemberHostInfo} from "./page/member/MemberHostInfo.jsx";
+import {MemberHostPage} from "./page/member/MemberHostPage.jsx";
 
 
 // axios interceptor 설정
@@ -41,6 +43,7 @@ axios.interceptors.request.use((config) => {
   // config를 리턴
   return config;
 });
+
 function App() {
   const router = createBrowserRouter([
     {
@@ -70,6 +73,9 @@ function App() {
         {path: "member/info/:accountId", element: <MemberMy/>},
         { path: "dashboard/host", element: <HostDashboard /> },
         { path: "dashboard/admin", element: <AdminDashboard /> },
+        {path: "member/hostinfo/:accountId", element: <MemberHostInfo/>},
+        {path: "member/hostpage", element: <MemberHostPage/>},
+
       ],
     },
   ]);

@@ -35,7 +35,8 @@ const Header = () => {
                 </div>
                 <nav className={isOpen ? 'menu open' : 'menu'}>
                     <ul>
-                        <li><a href="/">Home</a></li>
+                      <li>{account.nickname}</li>
+                      <li><a href="/">Home</a></li>
                       {account.isLoggedOut() &&<li>
                         <a href="/member/login">로그인</a>
                       </li>}
@@ -50,14 +51,13 @@ const Header = () => {
                         <li><a href="/paid/payment">결제상태</a></li>
                         <li><a href="/dashboard/host">호스트 페이지</a></li>
                         <li><a href="/dashboard/admin">관리자 페이지</a></li>
-                        <li>
-                            <Button onClick={() => navigate(`/member/info/${account.id}`)}
-                                    style={{color: 'white', backgroundColor: 'mediumblue'}}>마이페이지
-                            </Button>
-                        </li>
-                        <li><a href="/member/host" style={{color: 'white', backgroundColor: 'mediumblue'}}>호스트센터로 이동하기</a>
-                        </li>
-
+                      {account.isLoggedIn() && <li>
+                        <Button onClick={() => navigate(`/member/info/${account.id}`)}
+                                style={{color: 'white', backgroundColor: 'mediumblue'}}>마이페이지
+                        </Button>
+                      </li>}
+                      {account.isLoggedIn() && <li><a href="/member/host" style={{color: 'white', backgroundColor: 'mediumblue'}}>호스트센터로 이동하기</a>
+                      </li>}
                         {account.isLoggedIn()&& <li>
                             <Button
 

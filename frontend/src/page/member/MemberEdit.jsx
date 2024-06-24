@@ -137,7 +137,7 @@ export function MemberEdit() {
   }
 
   return (
-    <Box maxW="md" mx="auto" p={6} bg="white" borderRadius="md" boxShadow="md">
+    <Box maxW="md" mx="auto" p={6} bg="white" borderRadius="md" boxShadow="md" w={450}>
       <Box size="lg" textAlign="center">
         회원 정보 수정
       </Box>

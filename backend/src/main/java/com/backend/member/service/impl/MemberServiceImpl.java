@@ -203,6 +203,7 @@ public class MemberServiceImpl implements MemberService {
         member.setPassword(passwordEncoder.encode(member.getPassword()));
         member.setEmail(member.getEmail().trim());
         member.setNickname(member.getNickname().trim());
+        member.setMobile(member.getMobile().trim());
 
         mapper.insert(member);
 
@@ -236,9 +237,72 @@ public class MemberServiceImpl implements MemberService {
     public Integer selectbyEmail2(Member member){
        return mapper.selectByEmail2(member);
     }
+
     @Override
-    public void switchHost(Member member){
+    public Map<String, Object> switchHost(Member member){
+
         mapper.switchHost(member);
+
+        Map<String, Object> result = new HashMap<>();
+
+        String token = "";
+        Instant now = Instant.now();
+
+        List<String> authority = mapper.selectAuthorityByMemberId(member.getMemberId());
+
+        String authorityString = authority.stream()
+                .collect(Collectors.joining(" "));
+
+        System.out.println(authorityString);
+
+        // https://github.com/spring-projects/spring-security-samples/blob/main/servlet/spring-boot/java/jwt/login/src/main/java/example/web/TokenController.java
+        JwtClaimsSet claims = JwtClaimsSet.builder()
+                .issuer("self")
+                .issuedAt(now)
+                .expiresAt(now.plusSeconds(60 * 60 * 24 * 7))
+                .subject(member.getMemberId().toString())
+                .claim("scope", authorityString) // 권한
+                .claim("nickname", mapper.getNickNameByMemberId(member))
+                .build();
+
+        token = jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
+
+        result.put("token", token);
+
+        return result;
+    };
+
+    @Override
+    public Map<String,Object> switchUser(Member member){
+        mapper.switchUser(member);
+
+        Map<String, Object> result = new HashMap<>();
+
+        String token = "";
+        Instant now = Instant.now();
+
+        List<String> authority = mapper.selectAuthorityByMemberId(member.getMemberId());
+
+        String authorityString = authority.stream()
+                .collect(Collectors.joining(" "));
+
+        System.out.println(authorityString);
+
+        // https://github.com/spring-projects/spring-security-samples/blob/main/servlet/spring-boot/java/jwt/login/src/main/java/example/web/TokenController.java
+        JwtClaimsSet claims = JwtClaimsSet.builder()
+                .issuer("self")
+                .issuedAt(now)
+                .expiresAt(now.plusSeconds(60 * 60 * 24 * 7))
+                .subject(member.getMemberId().toString())
+                .claim("scope", authorityString) // 권한
+                .claim("nickname", mapper.getNickNameByMemberId(member))
+                .build();
+
+        token = jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
+
+        result.put("token", token);
+
+        return result;
     };
 
     @Override
@@ -285,9 +349,27 @@ public class MemberServiceImpl implements MemberService {
    };
 
 
+
+
     @Override
-    public void addPhone(Member member){
-        mapper.addPhone(member);
+    public void addhostInfo(Host host){
+        mapper.addHostInfo(host);
+    };
+
+    @Override
+    public Map<String, Object> checkHostInfo(Host host){
+        Map<String, Object> result = new HashMap<>();
+
+        result.put("key1",mapper.checkHostRep(host));
+        result.put("key2",mapper.checkHostBusinessNumber(host));
+        result.put("key3",mapper.checkHostBusinessName(host));
+
+        return result;
+    };
+
+    @Override
+    public Member emailByMobile(String mobile){
+        return mapper.emailByMobile(mobile);
     }
 
     @Override

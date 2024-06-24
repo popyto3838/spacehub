@@ -1,23 +1,57 @@
 import {
   Box,
   Button,
-  FormControl,
+  Divider,
+  Flex,
+  flexbox,
+  FormControl, FormHelperText,
   FormLabel,
+  HStack,
   Input,
+  InputGroup,
+  InputRightElement,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
+  Text,
+  useDisclosure,
   useToast,
+  VStack,
 } from "@chakra-ui/react";
-import { useContext, useState } from "react";
+import React, {useContext, useEffect, useState} from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { LoginContext } from "../../component/LoginProvider.jsx";
 import NaverLogin from "./NaverLogin.jsx";
+import QRCode from "qrcode.react";
+import TimerComponent from "./TimerComponent.jsx";
 
 export function MemberLogin() {
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
+  const [qrUuid, setQrUuid] = useState('');
+  const [time, setTime] = useState(300);
+  const [minutes, setMinutes] = useState('');
+  const [seconds, setSeconds] = useState('');
+  const [mobile, setMobile] = useState()
+  const [isCodeSent, setIsCodeSent] = useState(false);
+  const [verificationCode, setVerificationCode] = useState("");
+  const [expirationTime, setExpirationTime] = useState(null);
+  const [inputCode, setInputCode] = useState("");
+  const [foundEmail, setFoundEmail] = useState();
+  const [member, setMember] = useState({});
+  const [passwordCheck, setPasswordCheck] = useState()
+
   const toast = useToast();
   const navigate = useNavigate();
   const account = useContext(LoginContext);
+
+  const { isOpen: isFirstModalOpen, onOpen: onFirstModalOpen, onClose: onFirstModalClose } = useDisclosure();
+  const { isOpen: isSecondModalOpen, onOpen: onSecondModalOpen, onClose: onSecondModalClose } = useDisclosure();
 
   function handleLogin() {
     axios
@@ -44,6 +78,97 @@ export function MemberLogin() {
       });
   }
 
+
+
+
+
+
+
+
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setMinutes(String(Math.floor(time / 60)).padStart(2, '0'));
+      setSeconds(String(time % 60).padStart(2, '0'));
+      setTime(time - 1);
+
+      if (time < 1) {
+        refreshQr();
+      }
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [time]);
+
+  useEffect(() => {
+    const requestIpAddress = '${requestIpAddress}';
+    const serverPort = '${serverPort}';
+
+
+    setTime(300);
+
+    return () => {
+
+    };
+  }, []);
+
+  const refreshQr = () => {
+    // QR 코드 및 타이머 새로고침 로직 구현
+    setTime(300);
+  };
+
+  const handleResetClick = () => {
+    refreshQr();
+  };
+
+  const handleInfoAnotherClick = () => {
+    closeSocket();
+    // 일반 로그인 페이지로 이동
+    window.location.href = '/SYJ_Mall/login.action';
+  };
+
+  const sendNumberMobile = () => {
+    axios
+      .get(`/api/member/p1?mobile=${mobile}`)
+      .then((response) => {
+        alert("인증번호 발송");
+        setVerificationCode(response.data.verificationCode);
+        setExpirationTime(response.data.expirationTime);
+        setIsCodeSent(true);
+      })
+      .catch((error) => {
+        console.error("Error sending verification code:", error);
+      });
+  };
+
+  const confirmNumberMobile = () => {
+    if (inputCode == verificationCode) {
+      alert("인증되었습니다.");
+      setIsCodeSent(false);
+      axios
+        .get("/api/member/findemail",{
+          params: {
+            mobile: mobile,
+          }
+        })
+        .then((res) => {
+          setFoundEmail(res.data);
+        })
+
+
+    } else {
+      alert("인증에 실패했습니다");
+    }
+  };
+
+
+  function handleClickSave() {
+
+    axios
+      .put("api/member/modifyPassword", {password : password})
+
+  }
+
   return (
     <Box
       maxW="md"
@@ -54,6 +179,9 @@ export function MemberLogin() {
       borderRadius="lg"
       boxShadow="lg"
     >
+      <Flex justify="center" align="center" flexDirection="column">
+
+      <Box>
       <Box textAlign="center" fontSize="xl" fontWeight="bold">
         로그인
       </Box>
@@ -61,7 +189,7 @@ export function MemberLogin() {
         <Box mt={4}>
           <FormControl>
             <FormLabel>이메일</FormLabel>
-            <Input onChange={(e) => setEmail(e.target.value)} />
+            <Input onChange={(e) => setEmail(e.target.value)}/>
           </FormControl>
         </Box>
         <Box mt={4}>
@@ -69,18 +197,170 @@ export function MemberLogin() {
             <FormLabel>패스워드</FormLabel>
             <Input
               type="password"
-              onChange={(e) => setPassword(e.target.value)} />
+              onChange={(e) => setPassword(e.target.value)}/>
           </FormControl>
         </Box>
-        <Box mt={6} w={255}>
-          <Button w="255px" onClick={handleLogin} colorScheme={"blue"}>
+        <Box mt={6} w={370}>
+          <Button w="370px" onClick={handleLogin} colorScheme={"blue"}>
             로그인
           </Button>
         </Box>
         <Box w="255px" h="80px" mt={22}>
-        <NaverLogin />
+          <NaverLogin/>
         </Box>
+        <VStack spacing={4} align="stretch">
+
+          <HStack spacing={4} align="center">
+            <HStack as="button" spacing={2} p={2} borderWidth={1} borderRadius="md" _hover={{ bg: "orange" }}>
+              <Text
+                onClick={onFirstModalOpen}
+              >아이디 찾기</Text>
+            </HStack>
+
+            <HStack as="button" spacing={2} p={2} borderWidth={1} borderRadius="md" _hover={{ bg: "orange" }}>
+              <Text
+              onClick={onSecondModalOpen}
+              >비밀번호 찾기</Text>
+            </HStack>
+
+            <HStack as="button" spacing={2} p={2} borderWidth={1} borderRadius="md" _hover={{ bg: "orange" }}>
+              <Text
+                onClick={()=>navigate("/member/signup")}
+              >회원가입</Text>
+            </HStack>
+          </HStack>
+
+        <Modal isOpen={isFirstModalOpen} onClose={onFirstModalClose}>
+          <ModalOverlay />
+          <ModalContent>
+            <ModalHeader>아이디 찾기</ModalHeader>
+            <ModalCloseButton />
+            <ModalBody>
+              <FormControl>
+                <FormLabel>핸드폰번호를 입력해주세요</FormLabel>
+                <Input
+                  onChange={(e) => {
+                    setMobile(e.target.value);
+                  }}
+                  placeholder="01012345678" />
+                <Button colorScheme={"purple"} type="button" onClick={sendNumberMobile}>
+                  인증번호받기
+                </Button>
+                {isCodeSent && (
+                  <Box>
+                    <InputGroup>
+                      <Input
+                        type={"text"}
+                        onChange={(e) => {
+                          setInputCode(e.target.value);
+                        }}
+                      />
+                      <InputRightElement w="75px" mr={1}>
+                        <Button onClick={confirmNumberMobile}>핸드폰 인증</Button>
+                      </InputRightElement>
+                    </InputGroup>
+                    {expirationTime && <TimerComponent expirationTime={expirationTime} />}
+                  </Box>
+                )}
+              </FormControl>
+
+              <FormControl mt={4}>
+                <FormLabel>가입하신 아이디는</FormLabel>
+                <Input placeholder={foundEmail ? `${foundEmail} 입니다` : ''} readOnly />
+              </FormControl>
+            </ModalBody>
+            <ModalFooter>
+              <Button colorScheme="blue" mr={3} onClick={onFirstModalClose}>
+                닫기
+              </Button>
+            </ModalFooter>
+          </ModalContent>
+        </Modal>
+         <Modal isOpen={isSecondModalOpen} onClose={onSecondModalClose}>
+          <ModalOverlay />
+          <ModalContent>
+            <ModalHeader>비밀번호 찾기</ModalHeader>
+            <ModalCloseButton />
+            <ModalBody>
+              <FormControl>
+                <FormLabel>핸드폰번호를 입력해주세요</FormLabel>
+                <Input
+                  onChange={(e) => {
+                    setMobile(e.target.value);
+                  }}
+                  placeholder="01012345678" />
+                <Button colorScheme={"purple"} type="button" onClick={sendNumberMobile}>
+                  인증번호받기
+                </Button>
+                {isCodeSent && (
+                  <Box>
+                    <InputGroup>
+                      <Input
+                        type={"text"}
+                        onChange={(e) => {
+                          setInputCode(e.target.value);
+                        }}
+                      />
+                      <InputRightElement w="75px" mr={1}>
+                        <Button onClick={confirmNumberMobile}>핸드폰 인증</Button>
+                      </InputRightElement>
+                    </InputGroup>
+                    {expirationTime && <TimerComponent expirationTime={expirationTime} />}
+                  </Box>
+                )}
+              </FormControl>
+
+              <FormControl mt={4}>
+                <FormLabel>비밀번호를 재설정 해주세요</FormLabel>
+                <Input
+                  onChange={(e) =>
+                    setPassword(e.target.value)
+                  }
+                  placeholder={"새 비밀번호"} />
+                 
+                <Input
+                  onChange={(e) => setPasswordCheck(e.target.value)}
+                  mt={7} placeholder={"새 비밀번호 확인"} />
+                {password === passwordCheck || (
+                  <FormHelperText>암호가 일치하지 않습니다.</FormHelperText>
+                )}
+              </FormControl>
+            </ModalBody>
+            <ModalFooter>
+              <Button onClick={onSecondModalClose}>취소</Button>
+              <Button colorScheme="blue" mr={3} onClick={handleClickSave}>
+                저장
+              </Button>
+            </ModalFooter>
+          </ModalContent>
+         </Modal>
+        </VStack>
       </Box>
-    </Box>
-  );
+      </Box>
+      <Box>
+
+     {/* <div className="qr-box">*/}
+
+     {/*   <div display={flexbox} className="qr-code">*/}
+     {/*     <QRCode value={qrUuid} size={150}/>*/}
+     {/*   </div>*/}
+
+     {/*   <div className="desc">*/}
+     {/*     <div className="title">*/}
+     {/*       남는 시간:*/}
+     {/*       <span id="timeCheck" className="time">*/}
+     {/*               {`${minutes} : ${seconds}`}*/}
+     {/*             </span>*/}
+     {/*     </div>*/}
+     {/*     <div id="resetBtn" className="ico-reset" onClick={handleResetClick}></div>*/}
+     {/*   </div>*/}
+
+     {/*</div>*/}
+      </Box>
+      </Flex>
+</Box>
+
+
+)
+  ;
 }

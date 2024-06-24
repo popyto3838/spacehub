@@ -1,5 +1,6 @@
 import {
   Box,
+  Text,
   Button,
   FormControl,
   FormHelperText,
@@ -10,7 +11,7 @@ import {
   Select,
   useToast,
 } from "@chakra-ui/react";
-import { useState } from "react";
+import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import TimerComponent from "./TimerComponent.jsx";
@@ -21,6 +22,8 @@ export function MemberSignup() {
   const [password, setPassword] = useState("");
   const [nickname, setNickname] = useState("");
   const [passwordCheck, setPasswordCheck] = useState("");
+  const [mobile, setMobile] = useState()
+
   const [authName, setAuthName] = useState()
   const [isLoading, setIsLoading] = useState(false);
   const [isCheckedEmail, setIsCheckedEmail] = useState(false);
@@ -30,8 +33,18 @@ export function MemberSignup() {
   const [inputCode, setInputCode] = useState("");
   const [isCodeSent, setIsCodeSent] = useState(false);
   const [expirationTime, setExpirationTime] = useState(null);
+  const [capsLockWarning, setCapsLockWarning] = useState(false);
+
+
   const toast = useToast();
   const navigate = useNavigate();
+
+
+
+  const handleCapsLockWarning = (e) => {
+    const isCapsLockOn = e.getModifierState("CapsLock");
+    setCapsLockWarning(isCapsLockOn);
+  };
 
   function handleSignup() {
     setIsLoading(true);
@@ -40,7 +53,8 @@ export function MemberSignup() {
         {
           email: email,
           password: password,
-          nickname: nickname
+          nickname: nickname,
+          mobile : mobile
         }
       )
       .then((res) => {
@@ -49,7 +63,7 @@ export function MemberSignup() {
           description: "회원 가입이 완료되었습니다",
           position: "top",
         });
-        navigate("/");
+        navigate("/member/login");
       })
       .catch((err) => {
         if (err.response.status === 400) {
@@ -163,6 +177,35 @@ export function MemberSignup() {
     }
   };
 
+  const sendNumberMobile = () => {
+
+    axios
+      .get(`/api/member/p1?mobile=${mobile}`)
+      .then((response) => {
+        alert("인증번호 발송");
+        setVerificationCode(response.data.verificationCode);
+        setExpirationTime(response.data.expirationTime);
+        setIsCodeSent(true);
+      })
+      .catch((error) => {
+        console.error("Error sending verification code:", error);
+      });
+  };
+
+
+
+  const confirmNumberMobile = () => {
+    if (inputCode == verificationCode) {
+      alert("인증되었습니다.");
+      setIsCodeSent(false);
+
+
+    } else {
+      alert("인증에 실패했습니다");
+    }
+  };
+
+
   return (
     <Box
       w="450px"
@@ -208,7 +251,7 @@ export function MemberSignup() {
                 올바른 이메일 형식으로 작성해주세요.
               </FormHelperText>
             )}
-            <Button type="button" onClick={sendNumber}>
+            <Button colorScheme={"purple"} type="button" onClick={sendNumber}>
               인증번호받기
             </Button>
             {isCodeSent && (
@@ -228,17 +271,51 @@ export function MemberSignup() {
               </Box>
             )}
           </FormControl>
+          <FormControl>
+            <FormLabel>연락처</FormLabel>
+            <Input
+                onChange={(e) => {
+                  setMobile(e.target.value);
+                  setIsCheckedMobile(false);
+                }}
+              />
+              <Button colorScheme={"purple"} type="button" onClick={sendNumberMobile}>
+                인증번호받기
+              </Button>
+            {isCodeSent && (
+              <Box>
+                <InputGroup>
+                  <Input
+                    type={"text"}
+                    onChange={(e) => {
+                      setInputCode(e.target.value);
+                    }}
+                  />
+                  <InputRightElement w="75px" mr={1}>
+                    <Button onClick={confirmNumberMobile}>핸드폰 인증</Button>
+                  </InputRightElement>
+                </InputGroup>
+                {expirationTime && <TimerComponent expirationTime={expirationTime} />}
+              </Box>
+            )}
+          </FormControl>
+
         </Box>
         <Box>
           <FormControl>
             <FormLabel>암호</FormLabel>
-            <Input onChange={(e) => setPassword(e.target.value)} />
+            <Input
+              type="password" onKeyUp={handleCapsLockWarning}
+              onChange={(e) => setPassword(e.target.value)} />
+            {capsLockWarning && <Text color="purple.500">Caps Lock이 켜져 있습니다.</Text>}
           </FormControl>
         </Box>
         <Box>
           <FormControl>
             <FormLabel>암호확인</FormLabel>
-            <Input onChange={(e) => setPasswordCheck(e.target.value)} />
+            <Input
+              type="password"
+              onChange={(e) => setPasswordCheck(e.target.value)} />
             {password === passwordCheck || (
               <FormHelperText>암호가 일치하지 않습니다.</FormHelperText>
             )}

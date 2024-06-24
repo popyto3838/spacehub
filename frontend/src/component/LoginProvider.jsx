@@ -10,6 +10,7 @@ export function LoginProvider({ children }) {
   const [expired, setExpired] = useState(0);
   const [authority, setAuthority] = useState("");
 
+  console.log(authority)
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -44,11 +45,17 @@ export function LoginProvider({ children }) {
     return authority.includes("USER");
   }
 
+
+
+
+
   function login(token) {
     localStorage.setItem("token", token);
     const payload = jwtDecode(token);
     setExpired(payload.exp);
     setId(payload.sub);
+    setNickname(payload.nickname);
+    console.log(id);
     setAuthority(payload.scope.split(" "));
   }
   function logout() {
@@ -95,6 +102,7 @@ export function LoginProvider({ children }) {
         isAdmin: isAdmin,
         isHost: isHost,
         isUser: isUser,
+
       }}
     >
       {children}
@@ -102,4 +110,4 @@ export function LoginProvider({ children }) {
   );
 }
 
-//아우
+
