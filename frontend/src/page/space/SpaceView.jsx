@@ -29,8 +29,6 @@ function SpaceView() {
     ];
 
     useEffect(() => {
-
-
         axios
             .get(`/api/space/${spaceId}`)
             .then((res) => {
