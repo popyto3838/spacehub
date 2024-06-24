@@ -1,10 +1,9 @@
 import {
   Box,
   Button,
-  Divider,
   Flex,
-  flexbox,
-  FormControl, FormHelperText,
+  FormControl,
+  FormHelperText,
   FormLabel,
   HStack,
   Input,
@@ -22,12 +21,11 @@ import {
   useToast,
   VStack,
 } from "@chakra-ui/react";
-import React, {useContext, useEffect, useState} from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { LoginContext } from "../../component/LoginProvider.jsx";
 import NaverLogin from "./NaverLogin.jsx";
-import QRCode from "qrcode.react";
 import TimerComponent from "./TimerComponent.jsx";
 
 export function MemberLogin() {

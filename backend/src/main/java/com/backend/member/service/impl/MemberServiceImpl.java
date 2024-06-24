@@ -11,6 +11,7 @@ import com.backend.member.domain.member.Host;
 import com.backend.member.domain.member.Member;
 import com.backend.member.mapper.MemberMapper;
 import com.backend.member.service.MemberService;
+import com.backend.board.mapper.BoardMapper;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
@@ -36,6 +37,7 @@ public class MemberServiceImpl implements MemberService {
     final MemberMapper mapper;
     private final BCryptPasswordEncoder passwordEncoder;
     private final JwtEncoder jwtEncoder;
+    private final BoardMapper boardMapper;
 
 
     @Override
@@ -107,6 +109,9 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public void remove(Integer memberId) {
+
+        // 회원탈퇴시 좋아요 테이블 먼저 삭제
+        boardMapper.deleteLikeByMemberId(memberId);
 
         mapper.deleteById(memberId);
     }

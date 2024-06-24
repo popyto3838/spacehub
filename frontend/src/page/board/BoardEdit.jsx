@@ -41,7 +41,8 @@ export function BoardEdit() {
 
   useEffect(() => {
     axios.get(`/api/board/${boardId}`).then((res) => {
-      setBoard(res.data);
+      /*res.data -> res.data.board*/
+      setBoard(res.data.board);
     });
   }, []);
 

@@ -1,6 +1,7 @@
 import {
   Box,
   Button,
+  Flex,
   FormControl,
   FormLabel,
   Heading,
@@ -12,7 +13,10 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
+  Spacer,
+  Spinner,
   Textarea,
+  Tooltip,
   useDisclosure,
   useToast,
 } from "@chakra-ui/react";
@@ -20,10 +24,22 @@ import { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import { LoginContext } from "../../component/LoginProvider.jsx";
 import { useNavigate, useParams } from "react-router-dom";
+import { CommentComponent } from "../../component/comment/CommentComponent.jsx";
+import { faHeart as emptyHeart } from "@fortawesome/free-regular-svg-icons";
+import { faHeart as fullHeart } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 export function BoardView() {
   const { boardId } = useParams();
   const [board, setBoard] = useState({});
+
+  // 좋아요
+  const [like, setLike] = useState({
+    like: false,
+    count: 0,
+  });
+  // 화면에서 진행중인지 판단하는 상태
+  const [isLikeProcessing, setIsLikeProcessing] = useState(false);
 
   const navigate = useNavigate();
   const toast = useToast();
@@ -33,7 +49,11 @@ export function BoardView() {
   useEffect(() => {
     axios
       .get(`/api/board/${boardId}`)
-      .then((res) => setBoard(res.data))
+      .then((res) => {
+        /* res.data -> res.data.board */
+        setBoard(res.data.board);
+        setLike(res.data.like);
+      })
       .catch((err) => {
         if (err.response.status === 404) {
           toast({
@@ -63,11 +83,52 @@ export function BoardView() {
       });
   }
 
+  function handleClickLike() {
+    if (!account.isLoggedIn()) {
+      return;
+    }
+    setIsLikeProcessing(true);
+    axios
+      .put("/api/board/like", { boardId: board.boardId })
+      .then((res) => {
+        setLike(res.data);
+      })
+      .catch(() => {})
+      .finally(() => {
+        setIsLikeProcessing(false);
+      });
+  }
+
   return (
     <Box>
-      <Box>
+      <Flex>
         <Heading>{board.boardId}번 게시물</Heading>
-      </Box>
+        <Spacer />
+        {isLikeProcessing || (
+          <Flex>
+            <Tooltip
+              isDisabled={account.isLoggedIn()}
+              hasArrow
+              label={"로그인 해주세요."}
+            >
+              <Box
+                onClick={handleClickLike}
+                cursor={"pointer"}
+                fontSize={"3xl"}
+              >
+                {like.like && <FontAwesomeIcon icon={fullHeart} />}
+                {like.like || <FontAwesomeIcon icon={emptyHeart} />}
+              </Box>
+            </Tooltip>
+            <Box fontSize={"3xl"}>{like.count}</Box>
+          </Flex>
+        )}
+        {isLikeProcessing && (
+          <Box pr={3}>
+            <Spinner />
+          </Box>
+        )}
+      </Flex>
       <Box>
         <Box>
           <FormControl>
@@ -90,13 +151,17 @@ export function BoardView() {
         <Box>
           <FormControl>
             <FormLabel>작성일시</FormLabel>
-            {board.updateDt ===
+            <Input value={board.inputDateAndTime} readOnly />
+            <Input value={board.updateDateAndTime} readOnly />
+
+            {/*            {board.updateDateAndTime ===
             <Input value={board.inputDateAndTime} readOnly /> && (
               <Input value={board.inputDateAndTime} readOnly />
             )}
-            {board.updateDt !== <Input value={board.inputDt} readOnly /> && (
+            {board.updateDateAndTime !==
+            <Input value={board.inputDt} readOnly /> && (
               <Input value={board.updateDateAndTime} readOnly />
-            )}
+            )}*/}
           </FormControl>
         </Box>
 
@@ -120,6 +185,15 @@ export function BoardView() {
           </Box>
         )}
       </Box>
+
+      {/* comment component -> boardId가 있을때만 넘겨줌(undefined 해결) */}
+      {board.boardId && (
+        <CommentComponent
+          boardId={board.boardId}
+          categoryId={board.categoryId}
+        />
+      )}
+
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent>

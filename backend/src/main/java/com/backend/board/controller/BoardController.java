@@ -29,7 +29,6 @@ public class BoardController {
 
     }
 
-    // todo: 게시판 페이징
     @GetMapping("list")
     public Map<String, Object> list(@RequestParam(defaultValue = "1") Integer page,
                                     @RequestParam(value = "type", required = false) String searchType,
@@ -38,13 +37,15 @@ public class BoardController {
     }
 
     @GetMapping("{boardId}")
-    public ResponseEntity view(@PathVariable Integer boardId) {
-        Board board = boardService.view(boardId);
+    public ResponseEntity view(@PathVariable Integer boardId,
+                               Authentication authentication) {
+        // Board board = boardService.view(boardId);
+        Map<String, Object> result = boardService.view(boardId, authentication);
 
-        if (board == null) {
+        if (result.get("board") == null) {
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok().body(board);
+        return ResponseEntity.ok().body(result);
     }
 
     @PutMapping("{boardId}/edit")
@@ -70,9 +71,18 @@ public class BoardController {
         }
     }
 
+    // 조회수
     @PutMapping("{boardId}/views")
     public void views(@PathVariable Integer boardId) {
         boardService.updateViews(boardId);
+    }
+
+    // 좋아요
+    @PutMapping("like")
+    @PreAuthorize("isAuthenticated()")
+    public Map<String, Object> like(@RequestBody Map<String, Object> req,
+                                    Authentication authentication) {
+        return boardService.like(req, authentication);
     }
 
 }

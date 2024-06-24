@@ -4,7 +4,6 @@ import com.backend.board.domain.Board;
 import com.backend.board.mapper.BoardMapper;
 import com.backend.board.service.BoardService;
 import com.backend.fileList.domain.FileList;
-import com.backend.member.mapper.MemberMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
@@ -23,7 +22,6 @@ import java.util.Map;
 public class BoardServiceImpl implements BoardService {
 
     final BoardMapper boardMapper;
-    private final MemberMapper memberMapper;
 
     @Override
     public void insert(Board board, Authentication authentication, MultipartFile[] files) throws IOException {
@@ -85,7 +83,9 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
-    public Board view(Integer boardId) {
+    public Map<String, Object> view(Integer boardId, Authentication authentication) {
+        Map<String, Object> result = new HashMap<>();
+
         // 하나의 게시물 조회
         Board board = boardMapper.selectByBoardId(boardId);
         // fileNames에서 파일 이름 조회
@@ -105,7 +105,20 @@ public class BoardServiceImpl implements BoardService {
         System.out.println("view의 board = " + board);
         board.setFilesLists(files);
 
-        return board;
+        Map<String, Object> like = new HashMap<>();
+        if (authentication == null) {
+            like.put("like", false);
+        } else {
+            int c = boardMapper.selectLikeByBoardIdAndMemberId(boardId, authentication.getName());
+            like.put("like", c == 1);
+        }
+        like.put("count", boardMapper.selectCountLikeByBoardId(boardId));
+        result.put("board", board);
+        result.put("like", like);
+
+        System.out.println("보드 = " + board.getBoardId());
+        System.out.println("멤버 = " + board.getMemberId());
+        return result;
     }
 
 
@@ -151,6 +164,11 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
+    public void updateViews(Integer boardId) {
+        boardMapper.updateViews(boardId);
+    }
+
+    @Override
     public void delete(Integer boardId) {
         // file명 조회
         List<String> fileNames = boardMapper.selectByFileNameByBoardId(boardId);
@@ -168,13 +186,12 @@ public class BoardServiceImpl implements BoardService {
         // File 테이블 지움
         boardMapper.deleteFileByBoardId(boardId);
 
+        // Likes 테이블 지움
+        boardMapper.deleteLikeByBoardId(boardId);
+
         boardMapper.deleteByBoardId(boardId);
     }
 
-    @Override
-    public void updateViews(Integer boardId) {
-        boardMapper.updateViews(boardId);
-    }
 
     @Override
     public boolean hasAccess(Integer boardId, Authentication authentication) {
@@ -183,5 +200,23 @@ public class BoardServiceImpl implements BoardService {
 
         // 게시물의 멤버 id와 authentication의 name과 같은지 리턴
         return board.getMemberId().equals(Integer.valueOf(authentication.getName()));
+    }
+
+    @Override
+    public Map<String, Object> like(Map<String, Object> req, Authentication authentication) {
+        Map<String, Object> result = new HashMap<>();
+        result.put("like", false);
+
+        Integer boardId = (Integer) req.get("boardId");
+        Integer memberId = Integer.valueOf(authentication.getName());
+
+        int count = boardMapper.deleteLikeByBoardIdAndMemberId(boardId, memberId);
+        if (count == 0) {
+            boardMapper.insertLikeByBoardIdAndMemberId(boardId, memberId);
+            result.put("like", true);
+        }
+        result.put("count", boardMapper.selectCountLikeByBoardId(boardId));
+
+        return result;
     }
 }

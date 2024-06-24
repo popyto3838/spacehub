@@ -1,4 +1,3 @@
-
 import {
   Badge,
   Box,
@@ -14,7 +13,7 @@ import {
   Thead,
   Tr,
 } from "@chakra-ui/react";
-import {useContext, useEffect, useState} from "react";
+import { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { LoginContext } from "../../component/LoginProvider.jsx";
@@ -53,7 +52,7 @@ export function BoardList() {
   }, [searchParams]);
 
   // todo: 게시물 클릭하면 클릭한 시간으로 작성일시 바뀌는거 수정
-  const handleClickCountViews = (board) => {
+  const handleClickBoardAndCountViews = (board) => {
     axios
       .put(`/api/board/${board.boardId}/views`, {
         views: board.views + 1,
@@ -76,8 +75,6 @@ export function BoardList() {
     searchParams.set("page", pageNumber);
     navigate(`/board/list/?${searchParams}`);
   }
-
-
 
   return (
     <Box>
@@ -110,6 +107,15 @@ export function BoardList() {
           <Button onClick={() => account.logout()}>로그아웃</Button>
         )}
       </Flex>
+
+      {/* 카테고리 */}
+      <Flex>
+        <Button>ALL</Button>
+        {categoryList.map((category) => (
+          <Button key={category.categoryId}>{category.categoryName}</Button>
+        ))}
+      </Flex>
+
       <Flex>
         <Box>
           <Button
@@ -129,6 +135,7 @@ export function BoardList() {
           </Button>
         </Box>
       </Flex>
+
       <Box>
         <Button onClick={() => navigate("/board/write")}>글쓰기</Button>
       </Box>
@@ -141,6 +148,7 @@ export function BoardList() {
                 <Th>#</Th>
                 <Th>조회수</Th>
                 <Th>제목</Th>
+                <Th>좋아요 : </Th>
                 <Th>카테고리</Th>
                 <Th>작성자</Th>
               </Tr>
@@ -150,7 +158,7 @@ export function BoardList() {
                 <Tr
                   key={board.boardId}
                   onClick={() => {
-                    handleClickCountViews(board);
+                    handleClickBoardAndCountViews(board);
                   }}
                   cursor={"pointer"}
                   _hover={{ bgColor: "blue.200" }}
@@ -160,10 +168,16 @@ export function BoardList() {
                   <Td>
                     {board.title}
                     {/* 첨부된 이미지가 있으면 Badge에 파일수 출력 */}
-                    {board.numberOfImages && (
+                    {board.numberOfImages > 0 && (
                       <Badge>이미지 : {board.numberOfImages}</Badge>
                     )}
+                    {/* 글 목록 볼때, 댓글 갯수 */}
+                    {board.numberOfComments > 0 && (
+                      <Badge>댓글 : {board.numberOfComments}</Badge>
+                    )}
                   </Td>
+                  {/* 좋아요 갯수 */}
+                  <Td>{board.numberOfLikes > 0 && board.numberOfLikes}</Td>
                   <Td>{board.categoryId}</Td>
                   <Td>{board.writer}</Td>
                   {categoryList.map(
