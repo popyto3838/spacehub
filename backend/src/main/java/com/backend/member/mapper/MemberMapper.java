@@ -197,7 +197,7 @@ public interface MemberMapper {
     Member emailByMobile(String mobile);
 
 
-    @Insert("""
+    @Select("""
             SELECT H.HOST_ID
             FROM MEMBER M JOIN HOST H ON M.MEMBER_ID = H.MEMBER_ID
             WHERE M.MEMBER_ID = #{memberId}

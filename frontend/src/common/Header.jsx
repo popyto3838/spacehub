@@ -43,20 +43,21 @@ const Header = () => {
                       {account.isLoggedOut() &&<li>
                         <a href="/member/signup">회원가입</a>
                       </li>}
-                      <li><a href="/board/list">게시판</a></li>
-                      <li><a href="#contact">공간예약</a></li>
-                      <li><a href="/space/register">공간등록</a></li>
-                      <li><a href="/space/type">공간유형</a></li>
-                      <li><a href="/space/option">공간옵션</a></li>
-                      <li><a href="/paid/payment">결제상태</a></li>
+                        <li><a href="/board/list">게시판</a></li>
+                        <li><a href="#contact">공간예약</a></li>
+                        <li><a href="/space/register">공간등록</a></li>
+                        <li><a href="/space/type">공간유형</a></li>
+                        <li><a href="/space/option">공간옵션</a></li>
+                        <li><a href="/paid/payment">결제상태</a></li>
+                        <li><a href="/dashboard/host">호스트 페이지</a></li>
+                        <li><a href="/dashboard/admin">관리자 페이지</a></li>
                       {account.isLoggedIn() && <li>
-                            <Button onClick={() => navigate(`/member/info/${account.id}`)}
-                                    style={{color: 'white', backgroundColor: 'mediumblue'}}>마이페이지
-                            </Button>
-                        </li>}
+                        <Button onClick={() => navigate(`/member/info/${account.id}`)}
+                                style={{color: 'white', backgroundColor: 'mediumblue'}}>마이페이지
+                        </Button>
+                      </li>}
                       {account.isLoggedIn() && <li><a href="/member/host" style={{color: 'white', backgroundColor: 'mediumblue'}}>호스트센터로 이동하기</a>
-                        </li>}
-
+                      </li>}
                         {account.isLoggedIn()&& <li>
                             <Button
 
