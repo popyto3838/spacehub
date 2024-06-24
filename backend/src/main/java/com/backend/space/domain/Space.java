@@ -10,7 +10,6 @@ public class Space {
 
     private int spaceId; // SPACE(PK)
     private int memberId;
-    private int hostId; // HOST(FK)
     private int typeListId; // TYPE_LIST(FK)
 
     private String title;

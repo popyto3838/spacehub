@@ -71,6 +71,7 @@ const RegisterStepper = () => {
     return storedData ? JSON.parse(storedData) : {
       // page별 데이터 구분 없이 저장
       id: account.id,
+      typeListId: 0,
       type: null,
       title: '',
       subTitle: '',
