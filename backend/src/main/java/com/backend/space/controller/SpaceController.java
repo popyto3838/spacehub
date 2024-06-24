@@ -29,16 +29,11 @@ public class SpaceController {
     public ResponseEntity<String> add(@RequestPart("spaceDto") String spaceDtoStr,
                                       @RequestPart(value = "files", required = false) List<MultipartFile> files) throws IOException {
         SpaceDTO spaceDto = objectMapper.readValue(spaceDtoStr, SpaceDTO.class);
+        System.out.println("===========spaceDto.toString() = " + spaceDto.toString());
         Space space = spaceDto.getSpace();
         int memberId = spaceDto.getMemberId();
 
-        // memberId로 hostId 조회
-        Integer hostId = memberService.findHostIdByMemberId(memberId);
-        if (hostId == null) {
-            return ResponseEntity.badRequest().body("Invalid memberId, hostId not found");
-        }
-        space.setMemberId(memberId); // memberId 설정
-        space.setHostId(hostId); // hostId 설정
+        space.setMemberId(memberId);
 
         // SPACE CREATE
         spaceService.insertSpace(space);
@@ -50,21 +45,12 @@ public class SpaceController {
             }
         }
 
-        return ResponseEntity.ok("Space created successfully");
+        return ResponseEntity.ok("공간 등록이 성공적으로 처리되었습니다.");
     }
 
     @GetMapping("list")
     public ResponseEntity<List<Space>> selectAll() {
         List<Space> spaces = spaceService.selectAll();
-//        List<File> files = fileService.selectAllOfSpaces();
-//        for (Space space : spaces) {
-//            for (File file : files) {
-//                if (space.getSpaceId() == file.getParentId()) {
-//                    space.setThumbnailPath(file.getFilePath());
-//                    break;
-//                }
-//            }
-//        }
         return ResponseEntity.ok(spaces);
     }
 
