@@ -175,6 +175,7 @@ const Calendar = (props) => {
             const endHour = String(selectedHours[selectedHours.length - 1]).padStart(2, '0');
             const startTime = `${startHour}:00`;
             const endTime = `${endHour}:00`;
+            const totalPrice = props.price * selectedHours.length;
 
             axios
                 .post('/api/reservation/write', {
@@ -183,10 +184,10 @@ const Calendar = (props) => {
                     startDate: formattedDate,
                     endDate: formattedDate,
                     startTime: startTime,
-                    endTime: endTime
+                    endTime: endTime,
+                    totalPrice: totalPrice // totalPrice 추가
                 })
                 .then((res) => {
-                    console.log(res.data.reservationId);
                     toast({
                         status: 'success',
                         description: '예약을 신청하였습니다.',
