@@ -1,6 +1,7 @@
 import { createContext, useEffect, useState } from "react";
 import { jwtDecode } from "jwt-decode";
 
+
 export const LoginContext = createContext(null);
 
 export function LoginProvider({ children }) {
@@ -8,6 +9,8 @@ export function LoginProvider({ children }) {
   const [nickname, setNickname] = useState("");
   const [expired, setExpired] = useState(0);
   const [authority, setAuthority] = useState("");
+
+  console.log(authority)
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -25,6 +28,7 @@ export function LoginProvider({ children }) {
     return Date.now() > expired * 1000;
   }
 
+
   function hasAccess(param) {
     return id == param;
   }
@@ -41,12 +45,17 @@ export function LoginProvider({ children }) {
     return authority.includes("USER");
   }
 
+
+
+
+
   function login(token) {
     localStorage.setItem("token", token);
     const payload = jwtDecode(token);
     setExpired(payload.exp);
     setId(payload.sub);
-    setNickname(payload.nickname); // board 게시판에서 접속한 사용자를 보기 위해서
+    setNickname(payload.nickname);
+    console.log(id);
     setAuthority(payload.scope.split(" "));
   }
   function logout() {
@@ -70,7 +79,14 @@ export function LoginProvider({ children }) {
     deleteAllCookies();
 
     sessionStorage.clear();
+
+
   }
+
+
+
+
+
 
   return (
     <LoginContext.Provider
@@ -81,11 +97,12 @@ export function LoginProvider({ children }) {
         login: login,
         logout: logout,
         isLoggedIn: isLoggedIn,
-        isLoggedOut: isLoggedOut,
+        isLoggedOut:isLoggedOut,
         hasAccess: hasAccess,
         isAdmin: isAdmin,
         isHost: isHost,
         isUser: isUser,
+
       }}
     >
       {children}
@@ -93,4 +110,4 @@ export function LoginProvider({ children }) {
   );
 }
 
-//아우
+

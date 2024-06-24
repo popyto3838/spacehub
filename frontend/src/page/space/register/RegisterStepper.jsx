@@ -10,7 +10,7 @@ import {
   Stepper,
   StepSeparator,
   StepStatus,
-  StepTitle,
+  StepTitle, Tooltip,
   useSteps,
   useToast,
 } from '@chakra-ui/react';
@@ -55,7 +55,7 @@ const StepContent = ({step, formData, setFormData}) => {
 };
 
 const RegisterStepper = () => {
-  const { memberId } = useContext(LoginContext); // LoginContext에서 memberId를 가져옵니다.
+  const account = useContext(LoginContext); // LoginContext에서 memberId를 가져옵니다.
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -70,7 +70,7 @@ const RegisterStepper = () => {
     const storedData = sessionStorage.getItem('formData');
     return storedData ? JSON.parse(storedData) : {
       // page별 데이터 구분 없이 저장
-      memberId: memberId,
+      id: account.id,
       type: null,
       title: '',
       subTitle: '',
@@ -109,9 +109,9 @@ const RegisterStepper = () => {
 
     // spaceDto 객체 생성
     const spaceDto = {
-      memberId: memberId, // LoginContext에서 가져온 memberId 사용
+      memberId: account.id, // LoginContext에서 가져온 memberId 사용
       space: {
-        typeId: formData.typeId,
+        typeListId: formData.typeListId,
         type: formData.type,
         title: formData.title,
         subTitle: formData.subTitle,
@@ -132,13 +132,16 @@ const RegisterStepper = () => {
       optionList: formData.options,
     };
 
-    formDataToSend.append('spaceDto', JSON.stringify(spaceDto));
+    formDataToSend.append('spaceDto', new Blob([JSON.stringify(spaceDto)], {type: 'application/json'}));
 
     // 파일 데이터 추가
     if (formData.files && formData.files.length > 0) {
       for (const file of formData.files) {
         formDataToSend.append('files', file);
       }
+    } else {
+      // 파일이 없을 때 처리
+      formDataToSend.append('files', new Blob([], {type: "application/octet-stream"}));
     }
 
     // 5. API 요청 보내기
@@ -187,10 +190,20 @@ const RegisterStepper = () => {
     };
 
     // 페이지가 변경될 때마다 세션 스토리지 초기화
+    if (location.pathname !== "/space/register") {
+      handleUnload();
+    }
     return () => {
       handleUnload();
     };
   }, [location]);
+
+  function isNextDisabled() {
+    const requiredFields = ['type'];
+    // 개발완성시 requiredFields 에 아래 항목들도 추가
+    // 'title', 'subTitle', 'zonecode', 'address', 'detailAddress', 'extraAddress', 'latitude', 'longitude', 'introduce', 'facility', 'notice', 'price', 'capacity', 'floor', 'parkingSpace'
+    return requiredFields.some(field => !formData[field]);
+  }
 
   return (
     <Box mt={4}>
@@ -225,13 +238,29 @@ const RegisterStepper = () => {
           Prev
         </Button>
         {activeStep === steps.length - 1 ? ( // 마지막 단계인 경우 Submit 버튼 표시
-          <Button onClick={handleSubmit} colorScheme="teal">
-            Submit
-          </Button>
+          <Tooltip
+            label="필수 사항을 전부 입력했는지 확인해주세요."
+            shouldWrapChildren
+            isDisabled={!isNextDisabled()}
+          >
+            <Button onClick={handleSubmit} colorScheme="teal" isDisabled={isNextDisabled()}>
+              Submit
+            </Button>
+          </Tooltip>
         ) : (
-          <Button onClick={handleNext} colorScheme="teal">
-            Next
-          </Button>
+          <Tooltip
+            label="필수 사항을 전부 입력했는지 확인해주세요."
+            shouldWrapChildren
+            isDisabled={!isNextDisabled()}
+          >
+            <Button
+              onClick={handleNext}
+              colorScheme="teal"
+              isDisabled={isNextDisabled()}
+            >
+              Next
+            </Button>
+          </Tooltip>
         )}
       </Box>
     </Box>

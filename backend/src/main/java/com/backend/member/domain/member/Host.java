@@ -10,6 +10,9 @@ public class Host {
     private Integer memberId;
     private String accountNumber;
     private String bankName;
+    private String businessNumber;
+    private String businessName;
+    private String RepName;
     private LocalDateTime inputDt;
     private LocalDateTime outputDt;
 

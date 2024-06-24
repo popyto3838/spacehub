@@ -12,6 +12,7 @@ export function SpaceOption() {
     <Heading>공간 옵션 CRUD 페이지</Heading>
     <Button
       onClick={() => setActiveView('list')}
+      m={3} ml={0}
     >
       공간 리스트
     </Button>

@@ -1,12 +1,13 @@
 import React, {useState} from 'react';
 import '/public/css/space/SpaceView.css';
-import DatePicker from "../../../component/DatePicker.jsx";
+import DatePicker from "../../component/DatePicker.jsx";
 import {useEffect} from "react";
 import axios from "axios";
 import {useNavigate, useParams} from "react-router-dom";
 import {useToast} from "@chakra-ui/react";
 import {Link} from 'react-scroll';
-import KakaoMap from "../../../component/KakaoMap.jsx";
+import KakaoMap from "../../component/KakaoMap.jsx";
+import ImageSlider from "../../component/ImageSlider.jsx";
 
 
 function SpaceView() {
@@ -34,7 +35,6 @@ function SpaceView() {
             .get(`/api/space/${spaceId}`)
             .then((res) => {
                 setSpace(res.data)
-                console.log("========================", res.data);
             })
             .catch((err) => {
                 if (err.response.status === 404) {
@@ -63,6 +63,15 @@ function SpaceView() {
         };
     }, []);
 
+    const images = [
+        '/public/img/에도시대시부야.jpg',
+        '/public/img/에도시대미녀.jpg',
+        '/public/img/bg1.jpg',
+        '/public/img/공간대여 사진.jpg',
+        '/public/img/space.png',
+        '/public/img/일본배경.jpg',
+    ];
+
     return (
         <div>
             <div className="titleArea">
@@ -73,7 +82,7 @@ function SpaceView() {
             <div className="parentArea">
                 <div className="spaceViewArea">
                     <div className="imgArea">
-                        <img src="/public/img/bg1.jpg" className="imgBox"/>
+                        <ImageSlider images={images}></ImageSlider>
                     </div>
                     <div className="introduceArea">
 
@@ -107,7 +116,7 @@ function SpaceView() {
                                         backgroundColor: activeSection === section.name ? '#463383' : '#6c5ce7',
                                         color: 'white',
                                         textDecoration: 'none',
-                                        fontSize: '1.5rem',
+                                        fontSize: '1rem',
                                         whiteSpace: 'nowrap',
                                     }}
                                     onClick={() => setActiveSection(section.name)}
@@ -152,7 +161,7 @@ function SpaceView() {
                 </div>
                 <div className="reservationArea">
                     <DatePicker price={space.price} spaceId={spaceId}></DatePicker>
-                    {/*<KakaoMap latitude={space.latitude} longitude={space.longitude}></KakaoMap>*/}
+                    <KakaoMap latitude={space.latitude} longitude={space.longitude}></KakaoMap>
                 </div>
             </div>
 

@@ -40,11 +40,7 @@ public interface MemberMapper {
     List<Member> list();
 
     @Select("""
-            SELECT  MEMBER_ID,
-                    EMAIL,
-                    NICKNAME,
-                    INPUT_DT,
-                    PASSWORD
+            SELECT*
             FROM MEMBER
             WHERE MEMBER_ID = #{memberId}
              """)
@@ -142,14 +138,66 @@ public interface MemberMapper {
     void insertAccount(Host host);
 
 
+
+
     @Update("""
             UPDATE MEMBER
-            SET MOBILE = #{mobile}
+            SET AUTH ='USER',
+                AUTH_NAME ='USER'
             WHERE MEMBER_ID = #{memberId}
             """)
-    void addPhone(Member member);
+    void switchUser(Member member);
 
-    @Insert("""
+    @Update("""
+           UPDATE HOST 
+           SET   BUSINESS_NUMBER=#{businessNumber}, 
+                 BUSINESS_NAME=#{businessName}, 
+                 REP_NAME=#{repName},
+                 MEMBER_ID= #{memberId},
+                 ACCOUNT_NUMBER= #{accountNumber},
+                 BANK_NAME= #{bankName}
+           WHERE MEMBER_ID = #{memberId}
+           """)
+    void addHostInfo(Host host);
+
+
+    @Select("""
+           SELECT NICKNAME
+           FROM MEMBER
+           WHERE MEMBER_ID = #{memberId}
+           """)
+    Object getNickNameByMemberId(Member member);
+
+    @Select("""
+            SELECT REP_NAME
+            FROM HOST
+            WHERE MEMBER_ID = #{memberId}
+            """)
+    Object checkHostRep(Host host);
+
+    @Select("""
+            SELECT BUSINESS_NUMBER
+            FROM HOST
+            WHERE MEMBER_ID = #{memberId}
+            """)
+    Object checkHostBusinessNumber(Host host);
+
+    @Select("""
+           SELECT BUSINESS_NAME
+           FROM HOST
+           WHERE MEMBER_ID = #{memberId}
+           """)
+    Object checkHostBusinessName(Host host);
+
+    @Select("""
+           SELECT EMAIL
+           FROM MEMBER
+           WHERE MOBILE=#{mobile}
+           """)
+    Member emailByMobile(String mobile);
+
+
+    @Select("""
             SELECT H.HOST_ID
             FROM MEMBER M JOIN HOST H ON M.MEMBER_ID = H.MEMBER_ID
             WHERE M.MEMBER_ID = #{memberId}

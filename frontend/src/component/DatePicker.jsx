@@ -1,11 +1,10 @@
 // eslint-disable-next-line no-unused-vars
-import React, {useContext, useState, useEffect} from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import '/public/css/component/DatePicker.css';
-import axios from "axios";
-import {LoginContext} from "./LoginProvider.jsx";
-import {Button, useToast} from "@chakra-ui/react";
-import {useNavigate} from "react-router-dom";
-
+import axios from 'axios';
+import { LoginContext } from './LoginProvider.jsx';
+import { Button, useToast } from '@chakra-ui/react';
+import { useNavigate } from 'react-router-dom';
 
 const Calendar = (props) => {
     const account = useContext(LoginContext);
@@ -16,21 +15,21 @@ const Calendar = (props) => {
     const [selectedDate, setSelectedDate] = useState(today);
     const [currentDate, setCurrentDate] = useState(today);
     const [reservations, setReservations] = useState([]);
+    const [selectedHours, setSelectedHours] = useState([]);
+
     useEffect(() => {
         fetchReservations();
-        console.log("gdgd")
-        console.log(reservations)
-        console.log("=============dddd=======d===", props.spaceId)
     }, []);
 
     const fetchReservations = async () => {
         try {
-            const response = await axios.get("/api/reservation/list");
+            const response = await axios.get('/api/reservation/list');
             setReservations(response.data);
         } catch (error) {
-            console.error("Failed to fetch reservations:", error);
+            console.error('Failed to fetch reservations:', error);
         }
     };
+
     const months = [
         '1월', '2월', '3월', '4월', '5월', '6월',
         '7월', '8월', '9월', '10월', '11월', '12월'
@@ -46,11 +45,11 @@ const Calendar = (props) => {
     };
 
     const handlePrevMonth = () => {
-        setCurrentDate(prevDate => new Date(prevDate.getFullYear(), prevDate.getMonth() - 1, 1));
+        setCurrentDate((prevDate) => new Date(prevDate.getFullYear(), prevDate.getMonth() - 1, 1));
     };
 
     const handleNextMonth = () => {
-        setCurrentDate(prevDate => new Date(prevDate.getFullYear(), prevDate.getMonth() + 1, 1));
+        setCurrentDate((prevDate) => new Date(prevDate.getFullYear(), prevDate.getMonth() + 1, 1));
     };
 
     const handleDateClick = (date) => {
@@ -109,36 +108,27 @@ const Calendar = (props) => {
         return calendarDays;
     };
 
-
-    const [selectedHours, setSelectedHours] = useState([]);
-
     const handleHourChange = (hour) => {
-        const isSelected = selectedHours.includes(hour);
-
-        if (isSelected) {
-            if (hour === selectedHours[0]) {
-                setSelectedHours([]);
-            } else {
-                const startHour = selectedHours[0];
-                const endHour = hour;
-                const newSelectedHours = [];
-
-                for (let i = startHour; i <= endHour; i++) {
-                    newSelectedHours.push(i);
-                }
-
-                setSelectedHours(newSelectedHours);
-            }
+        if (selectedHours.includes(hour)) {
+            setSelectedHours(selectedHours.filter((h) => h !== hour));
         } else {
-            const startHour = selectedHours.length > 0 ? selectedHours[0] : hour;
-            const endHour = hour;
-            const newSelectedHours = [];
-
-            for (let i = startHour; i <= endHour; i++) {
-                newSelectedHours.push(i);
+            if (selectedHours.length === 0) {
+                setSelectedHours([hour]);
+            } else {
+                const lastSelectedHour = selectedHours[selectedHours.length - 1];
+                if (Math.abs(lastSelectedHour - hour) === 1) {
+                    setSelectedHours((prev) => {
+                        return [...prev, hour];
+                    });
+                } else {
+                    toast({
+                        status: 'error',
+                        description: '연속된 시간을 선택하세요.',
+                        position: 'top',
+                        duration: 1000
+                    });
+                }
             }
-
-            setSelectedHours(newSelectedHours);
         }
     };
 
@@ -149,14 +139,14 @@ const Calendar = (props) => {
 
             return (
                 reservationDate.toDateString() === selectedDate.toDateString() &&
-                reservation.startTime.split(":")[0] <= hour &&
-                reservation.endTime.split(":")[0] > hour
+                reservation.startTime.split(':')[0] <= hour &&
+                reservation.endTime.split(':')[0] > hour
             );
         });
     };
 
     const renderHourCheckboxes = () => {
-        const hours = Array.from({length: 24}, (_, i) => i);
+        const hours = Array.from({ length: 24 }, (_, i) => i);
 
         return hours.map((hour) => {
             const isReserved = isTimeSlotReserved(selectedDate, hour);
@@ -164,9 +154,7 @@ const Calendar = (props) => {
             return (
                 <button
                     key={hour}
-                    className={`hour-button ${selectedHours.includes(hour) ? 'selected' : ''} ${
-                        isReserved ? 'reserved' : ''
-                    }`}
+                    className={`hour-button ${selectedHours.includes(hour) ? 'selected' : ''} ${isReserved ? 'reserved' : ''}`}
                     onClick={() => handleHourChange(hour)}
                     disabled={isReserved}
                 >
@@ -175,7 +163,6 @@ const Calendar = (props) => {
             );
         });
     };
-
 
     const handleReservation = () => {
         if (selectedDate && selectedHours.length > 0) {
@@ -190,34 +177,36 @@ const Calendar = (props) => {
             const endTime = `${endHour}:00`;
 
             axios
-                .post("/api/reservation/write", {
-                    "spaceId": props.spaceId,
-                    "memberId": account.id,
-                    "startDate": formattedDate,
-                    "endDate": formattedDate,
-                    "startTime": startTime,
-                    "endTime": endTime
+                .post('/api/reservation/write', {
+                    spaceId: props.spaceId,
+                    memberId: account.id,
+                    startDate: formattedDate,
+                    endDate: formattedDate,
+                    startTime: startTime,
+                    endTime: endTime
                 })
                 .then((res) => {
+                    console.log(res.data.reservationId);
                     toast({
-                        status: "success",
-                        description: "예약을 신청하였습니다.",
-                        position: "top",
-                        duration: 1000,
+                        status: 'success',
+                        description: '예약을 신청하였습니다.',
+                        position: 'top',
+                        duration: 1000
                     });
-                    navigate("/space/view");
+                    navigate('/paid/payment/' + res.data.reservationId);
                 })
-                .catch((res) => {
+                .catch((error) => {
                     toast({
-                        status: "error",
-                        description: "예약을 실패하였습니다.",
-                        position: "top",
-                        duration: 1000,
+                        status: 'error',
+                        description: '예약을 실패하였습니다.',
+                        position: 'top',
+                        duration: 1000
                     });
                 });
         }
     };
 
+    const totalPrice = props.price * selectedHours.length;
 
     return (
         <div>
@@ -235,7 +224,7 @@ const Calendar = (props) => {
                 </div>
                 <div className="calendar-body">
                     <div className="weekdays">
-                        {weekdays.map(day => (
+                        {weekdays.map((day) => (
                             <div key={day} className="weekday">
                                 {day}
                             </div>
@@ -244,14 +233,14 @@ const Calendar = (props) => {
                     <div className="calendar-days">{renderCalendar()}</div>
                 </div>
                 <div className="hour-button-container">{renderHourCheckboxes()}</div>
-
             </div>
             <div className="priceArea">
-                <p className="totalPrice">₩{props.price}</p>
+                <p className="totalPrice">₩{totalPrice}</p>
             </div>
             <div className="buttonArea">
-                <Button className="reservationBtn" colorScheme='purple' onClick={handleReservation}
-                        height="60px">예약하기</Button>
+                <Button className="reservationBtn" colorScheme="purple" onClick={handleReservation} height="60px">
+                    예약하기
+                </Button>
             </div>
         </div>
     );
