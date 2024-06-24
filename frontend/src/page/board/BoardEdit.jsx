@@ -122,12 +122,6 @@ export function BoardEdit() {
             <Input value={account.nickname} readOnly />
           </FormControl>
         </Box>
-        <Box>
-          <FormControl>
-            <FormLabel>작성일시</FormLabel>
-            <Input value={board.updateDateAndTime} readOnly />
-          </FormControl>
-        </Box>
 
         {/* 게시물에 첨부된 파일 */}
         <Box>

@@ -150,18 +150,19 @@ export function BoardView() {
         </Box>
         <Box>
           <FormControl>
+            {/* 수정되면 작성일시 수정한 시간으로 변함 */}
             <FormLabel>작성일시</FormLabel>
-            <Input value={board.inputDateAndTime} readOnly />
-            <Input value={board.updateDateAndTime} readOnly />
-
-            {/*            {board.updateDateAndTime ===
-            <Input value={board.inputDateAndTime} readOnly /> && (
+            {/*<Box>inputDt : {board.inputDateAndTime}</Box>*/}
+            {/*<Box>updateDt : {board.updateDateAndTime}</Box>*/}
+            {board.inputDt !== board.updateDt && (
+              <Flex>
+                <Input value={board.updateDateAndTime} readOnly />
+                <Box>(수정됨)</Box>
+              </Flex>
+            )}
+            {board.inputDt === board.updateDt && (
               <Input value={board.inputDateAndTime} readOnly />
             )}
-            {board.updateDateAndTime !==
-            <Input value={board.inputDt} readOnly /> && (
-              <Input value={board.updateDateAndTime} readOnly />
-            )}*/}
           </FormControl>
         </Box>
 
