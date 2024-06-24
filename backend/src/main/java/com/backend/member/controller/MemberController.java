@@ -5,6 +5,7 @@ import com.backend.member.domain.member.Host;
 import com.backend.member.domain.member.Member;
 import com.backend.member.service.MailService;
 import com.backend.member.service.MemberService;
+import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
@@ -80,12 +81,13 @@ public class MemberController {
 
 
     @GetMapping(value = "e1")
-    public Map<String, Object> e1(@RequestParam String mail) {
+    public Map<String, Object> e1(@RequestParam String mail) throws MessagingException {
 
 
         int number = mailService.sendMail(mail);
 
         long expirationTime = mailService.getExpirationTime();
+
         return Map.of("number", number, "expirationTime", expirationTime);
 
     }

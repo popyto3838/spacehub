@@ -57,6 +57,5 @@ public interface MemberService {
 
     Member emailByMobile(String mobile);
 
-
     Integer findHostIdByMemberId(int memberId);
 }

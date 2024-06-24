@@ -40,11 +40,7 @@ public interface MemberMapper {
     List<Member> list();
 
     @Select("""
-            SELECT  MEMBER_ID,
-                    EMAIL,
-                    NICKNAME,
-                    INPUT_DT,
-                    PASSWORD
+            SELECT*
             FROM MEMBER
             WHERE MEMBER_ID = #{memberId}
              """)

@@ -4,7 +4,7 @@ import {
   Divider,
   Flex,
   flexbox,
-  FormControl,
+  FormControl, FormHelperText,
   FormLabel,
   HStack,
   Input,
@@ -42,7 +42,9 @@ export function MemberLogin() {
   const [verificationCode, setVerificationCode] = useState("");
   const [expirationTime, setExpirationTime] = useState(null);
   const [inputCode, setInputCode] = useState("");
-  const [foundEmail, setFoundEmail] = useState()
+  const [foundEmail, setFoundEmail] = useState();
+  const [member, setMember] = useState({});
+  const [passwordCheck, setPasswordCheck] = useState()
 
   const toast = useToast();
   const navigate = useNavigate();
@@ -75,6 +77,13 @@ export function MemberLogin() {
         });
       });
   }
+
+
+
+
+
+
+
 
 
   useEffect(() => {
@@ -152,6 +161,13 @@ export function MemberLogin() {
     }
   };
 
+
+  function handleClickSave() {
+
+    axios
+      .put("api/member/modifyPassword", {password : password})
+
+  }
 
   return (
     <Box
@@ -296,13 +312,24 @@ export function MemberLogin() {
 
               <FormControl mt={4}>
                 <FormLabel>비밀번호를 재설정 해주세요</FormLabel>
-                <Input  placeholder={"새 비밀번호"} />
-                <Input mt={7} placeholder={"새 비밀번호 확인"} />
+                <Input
+                  onChange={(e) =>
+                    setPassword(e.target.value)
+                  }
+                  placeholder={"새 비밀번호"} />
+                 
+                <Input
+                  onChange={(e) => setPasswordCheck(e.target.value)}
+                  mt={7} placeholder={"새 비밀번호 확인"} />
+                {password === passwordCheck || (
+                  <FormHelperText>암호가 일치하지 않습니다.</FormHelperText>
+                )}
               </FormControl>
             </ModalBody>
             <ModalFooter>
-              <Button colorScheme="blue" mr={3} onClick={onSecondModalClose}>
-                닫기
+              <Button onClick={onSecondModalClose}>취소</Button>
+              <Button colorScheme="blue" mr={3} onClick={handleClickSave}>
+                저장
               </Button>
             </ModalFooter>
           </ModalContent>

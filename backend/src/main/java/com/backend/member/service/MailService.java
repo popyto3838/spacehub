@@ -21,11 +21,11 @@ public class MailService {
         expirationTime = System.currentTimeMillis() + 5 * 60 * 1000;
     }
 
-    public MimeMessage CreateMail(String mail) {
+    public MimeMessage CreateMail(String mail) throws MessagingException {
         createNumber();
         MimeMessage message = javaMailSender.createMimeMessage();
 
-        try {
+
             message.setFrom(senderEmail);
             message.setRecipients(MimeMessage.RecipientType.TO, mail);
             message.setSubject("이메일 인증");
@@ -34,14 +34,13 @@ public class MailService {
             body += "<h1>" + number + "</h1>";
             body += "<h3>" + "감사합니다." + "</h3>";
             message.setText(body, "UTF-8", "html");
-        } catch (MessagingException e) {
-            e.printStackTrace();
-        }
+
+
 
         return message;
     }
 
-    public int sendMail(String mail) {
+    public int sendMail(String mail) throws MessagingException {
 
         MimeMessage message = CreateMail(mail);
         System.out.println(mail);
