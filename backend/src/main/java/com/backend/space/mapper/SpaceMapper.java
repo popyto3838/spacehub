@@ -14,8 +14,7 @@ public interface SpaceMapper {
 
     @Insert("""
             INSERT INTO SPACE
-            (       HOST_ID
-            ,       MEMBER_ID
+            (       MEMBER_ID
             ,       TYPE_LIST_ID
             ,       TITLE
             ,       SUB_TITLE
@@ -33,8 +32,7 @@ public interface SpaceMapper {
             ,       FLOOR
             ,       PARKING_SPACE)
             VALUES
-            (       #{hostId}
-            ,       #{memberId}
+            (       #{memberId}
             ,       #{typeListId}
             ,       #{title}
             ,       #{subTitle}

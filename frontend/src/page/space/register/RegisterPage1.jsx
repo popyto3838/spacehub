@@ -12,8 +12,8 @@ const RegisterPage1 = ({formData, setFormData}) => {
     if (selectedType) { // selectedType가 존재할 때만 업데이트
       setFormData({
         ...formData,
+        typeListId: selectedType ? selectedType.itemId : 0, // typeId 값 업데이트
         type: selectedType ? selectedType.name : '', // type 값 업데이트
-        typeListId: selectedType ? selectedType.typeListId : 0, // typeId 값 업데이트
       });
     }
   };
@@ -31,7 +31,7 @@ const RegisterPage1 = ({formData, setFormData}) => {
           setFormData({
             ...formData,
             type: '', // 첫 번째 타입을 기본값으로 설정
-            typeId: '',
+            typeListId: 0,
           });
         }
       })
@@ -57,7 +57,7 @@ const RegisterPage1 = ({formData, setFormData}) => {
           placeholder="공간 유형을 선택하세요."
         >
           {typeLists.map((typeList) => (
-            <option key={typeList.typeListId} value={typeList.name}>
+            <option key={typeList.itemId} value={typeList.name}>
               {typeList.name}
             </option>
           ))}
