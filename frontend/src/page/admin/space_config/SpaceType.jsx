@@ -12,6 +12,7 @@ export function SpaceType() {
     <Heading>공간 유형 CRUD 페이지</Heading>
     <Button
       onClick={() => setActiveView('list')}
+      m={3} ml={0}
     >
       공간 유형 리스트
     </Button>

@@ -11,17 +11,21 @@ import {
   Thead,
   Tr,
   useToast,
+  Input,
+  Image,
+  Flex
 } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTrashCan } from "@fortawesome/free-solid-svg-icons";
+import { faTrashCan, faUpload } from "@fortawesome/free-solid-svg-icons";
 
 export function SpaceTypeList() {
   const [isLoading, setIsLoading] = useState(true);
   const [typeLists, setTypeLists] = useState([]);
   const [typeStates, setTypeStates] = useState(new Map());
   const toast = useToast();
+  const fileInputRefs = useRef({});
 
   useEffect(() => {
     axios
@@ -29,7 +33,7 @@ export function SpaceTypeList() {
       .then((res) => {
         const types = res.data;
         setTypeLists(types);
-        const newTypeStates = new Map(types.map((type) => [type.typeListId, type.active]));
+        const newTypeStates = new Map(types.map((type) => [type.itemId, type.active]));
         setTypeStates(newTypeStates);
       })
       .catch((err) => {
@@ -46,13 +50,13 @@ export function SpaceTypeList() {
       });
   }, [toast]);
 
-  const handleDeleteType = async (typeListId) => {
+  const handleDeleteType = async (itemId) => {
     try {
-      await axios.delete(`/api/space/type/${typeListId}`);
-      setTypeLists(typeLists.filter((type) => type.typeListId !== typeListId));
+      await axios.delete(`/api/space/type/${itemId}`);
+      setTypeLists(typeLists.filter((type) => type.itemId !== itemId));
       setTypeStates((prevState) => {
         const newState = new Map(prevState);
-        newState.delete(typeListId);
+        newState.delete(itemId);
         return newState;
       });
       toast({
@@ -72,18 +76,18 @@ export function SpaceTypeList() {
     }
   };
 
-  const handleSwitchChange = async (typeListId) => {
-    const updatedStatus = !typeStates.get(typeListId);
-    const typeToUpdate = typeLists.find((type) => type.typeListId === typeListId);
+  const handleSwitchChange = async (itemId) => {
+    const updatedStatus = !typeStates.get(itemId);
+    const typeToUpdate = typeLists.find((type) => type.itemId === itemId);
 
     if (typeToUpdate) {
       const updatedType = { ...typeToUpdate, active: updatedStatus };
 
       try {
-        await axios.put(`/api/space/type/${typeListId}`, updatedType); // 변경된 옵션만 업데이트
+        await axios.put(`/api/space/type/${itemId}`, updatedType);
         setTypeStates((prevTypeStates) => {
           const newTypeStates = new Map(prevTypeStates);
-          newTypeStates.set(typeListId, updatedStatus);
+          newTypeStates.set(itemId, updatedStatus);
           return newTypeStates;
         });
         toast({
@@ -104,26 +108,57 @@ export function SpaceTypeList() {
     }
   };
 
-  useEffect(() => {
-    for (const [typeListId, isActive] of typeStates) {
-      const typeToUpdate = typeLists.find((type) => type.typeListId === typeListId);
+  const handleIconUpload = async (e, itemId) => {
+    const file = e.target.files[0];
+    if (!file) return;
 
-      if (typeToUpdate) {
-        const updatedType = { ...typeToUpdate, active: isActive };
-        axios
-          .put(`/api/space/type/${typeListId}`, updatedType)
-          .then(() => {
-            toast({
-              title: "옵션 상태가 업데이트되었습니다.",
-              status: "success",
-              duration: 3000,
-              isClosable: true,
-            });
-          })
-          .catch(() => {});
-      }
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("parentId", itemId);
+    formData.append("division", "TYPE");
+
+    try {
+      await axios.post(`/api/file/upload/icon`, formData);
+      toast({
+        title: "아이콘이 업로드되었습니다.",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
+      const res = await axios.get(`/api/space/type/list`);
+      setTypeLists(res.data);
+    } catch (error) {
+      toast({
+        title: "아이콘 업로드에 실패했습니다.",
+        description: error.message,
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
     }
-  }, []);
+  };
+
+  const handleDeleteIcon = async (fileId) => {
+    try {
+      await axios.delete(`/api/file/icon/${fileId}`);
+      const res = await axios.get(`/api/space/type/list`);
+      setTypeLists(res.data);
+      toast({
+        title: "아이콘이 삭제되었습니다.",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
+    } catch (error) {
+      toast({
+        title: "아이콘 삭제에 실패했습니다.",
+        description: error.message,
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    }
+  };
 
   if (isLoading) {
     return <Spinner />;
@@ -136,32 +171,64 @@ export function SpaceTypeList() {
   return (
     <>
       <Box>
-        <Heading>type list Read Page</Heading>
+        <Heading>Type List</Heading>
       </Box>
       <Box>
         <Table>
           <Thead>
             <Tr>
-              <Th>#</Th>
-              <Th>옵션명</Th>
-              <Th>활성화</Th>
-              <Th>삭제</Th>
+              <Th width="10%">#</Th>
+              <Th width="50%" textAlign="center">옵션명</Th>
+              <Th width="10%">활성화</Th>
+              <Th width="20%">아이콘</Th>
+              <Th width="10%">유형삭제</Th>
             </Tr>
           </Thead>
           <Tbody>
             {typeLists.map((typeList) => (
-              <Tr key={typeList.typeListId} _hover={{ bgColor: "gray.200" }}>
-                <Td>{typeList.typeListId}</Td>
-                <Td>{typeList.name}</Td>
+              <Tr key={typeList.itemId} _hover={{ bgColor: "gray.200" }}>
+                <Td>{typeList.itemId}</Td>
+                <Td textAlign="center">{typeList.name}</Td>
                 <Td>
                   <Switch
                     size="md"
-                    isChecked={typeStates.get(typeList.typeListId)}
-                    onChange={() => handleSwitchChange(typeList.typeListId)}
+                    isChecked={typeStates.get(typeList.itemId)}
+                    onChange={() => handleSwitchChange(typeList.itemId)}
                   />
                 </Td>
                 <Td>
-                  <Button onClick={() => handleDeleteType(typeList.typeListId)}>
+                  {typeList.iconFile ? (
+                    <Flex align="center">
+                      <Image
+                        src={typeList.iconFile.fileName}
+                        alt={typeList.name}
+                        boxSize="50px"
+                        objectFit="cover"
+                        mr={2}
+                      />
+                      <Button colorScheme="red" onClick={() => handleDeleteIcon(typeList.iconFile.fileId)}>
+                        <FontAwesomeIcon icon={faTrashCan} />
+                      </Button>
+                    </Flex>
+                  ) : (
+                    <Flex align="center">
+                      <Input
+                        type="file"
+                        onChange={(e) => handleIconUpload(e, typeList.itemId)}
+                        display="none"
+                        ref={(el) => (fileInputRefs.current[typeList.itemId] = el)}
+                      />
+                      <Button
+                        leftIcon={<FontAwesomeIcon icon={faUpload} />}
+                        onClick={() => fileInputRefs.current[typeList.itemId].click()}
+                      >
+                        아이콘 업로드
+                      </Button>
+                    </Flex>
+                  )}
+                </Td>
+                <Td>
+                  <Button colorScheme="red" onClick={() => handleDeleteType(typeList.itemId)}>
                     <FontAwesomeIcon icon={faTrashCan} />
                   </Button>
                 </Td>
@@ -173,3 +240,5 @@ export function SpaceTypeList() {
     </>
   );
 }
+
+export default SpaceTypeList;
