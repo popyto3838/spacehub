@@ -35,8 +35,9 @@ public class BoardController {
     @GetMapping("list")
     public Map<String, Object> list(@RequestParam(defaultValue = "1") Integer page,
                                     @RequestParam(value = "type", required = false) String searchType,
-                                    @RequestParam(value = "keyword", defaultValue = "") String searchKeyword) {
-        return boardService.list(page, searchType, searchKeyword);
+                                    @RequestParam(value = "keyword", defaultValue = "") String searchKeyword,
+                                    @RequestParam(value = "category", defaultValue = "all") String categoryType) {
+        return boardService.list(page, searchType, searchKeyword, categoryType);
     }
 
     @GetMapping("{boardId}")
@@ -78,7 +79,9 @@ public class BoardController {
     // 조회수
     @PutMapping("{boardId}/views")
     public void views(@PathVariable Integer boardId, HttpServletRequest req, HttpServletResponse res) {
-        // 조회수 중복 불가 참고 : https://velog.io/@korea3611/Spring-Boot%EA%B2%8C%EC%8B%9C%EA%B8%80-%EC%A1%B0%ED%9A%8C%EC%88%98-%EC%A6%9D%EA%B0%80-%EC%A4%91%EB%B3%B5%EB%B0%A9%EC%A7%80-%EA%B8%B0%EB%8A%A5-%EB%A7%8C%EB%93%A4%EA%B8%B0
+        // 조회수 중복 불가 참고
+        // https://velog.io/@korea3611/Spring-Boot%EA%B2%8C%EC%8B%9C%EA%B8%80-%EC%A1%B0%ED%9A%8C%EC%88%98-%EC%A6%9D%EA%B0%80-%EC%A4%91%EB%B3%B5%EB%B0%A9%EC%A7%80-%EA%B8%B0%EB%8A%A5-%EB%A7%8C%EB%93%A4%EA%B8%B0
+        // https://velog.io/@kwg527/Spring-%EC%A1%B0%ED%9A%8C%EC%88%98-%EA%B8%B0%EB%8A%A5-%EA%B5%AC%ED%98%84-%EC%A1%B0%ED%9A%8C%EC%88%98-%EC%A4%91%EB%B3%B5-%EB%B0%A9%EC%A7%80
         Cookie oldCookie = null;
         Cookie[] cookies = req.getCookies();
         if (cookies != null) {
