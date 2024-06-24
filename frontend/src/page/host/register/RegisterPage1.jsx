@@ -12,8 +12,8 @@ const RegisterPage1 = ({formData, setFormData}) => {
     if (selectedType) { // selectedType가 존재할 때만 업데이트
       setFormData({
         ...formData,
-        type: selectedType.name, // type 값 업데이트
-        typeId: selectedType.typeListId, // typeId 값 업데이트
+        type: selectedType ? selectedType.name : '', // type 값 업데이트
+        typeListId: selectedType ? selectedType.typeListId : 0, // typeId 값 업데이트
       });
     }
   };
@@ -27,11 +27,11 @@ const RegisterPage1 = ({formData, setFormData}) => {
         setLoading(false); // 데이터 로딩 완료
 
         // typeLists 데이터가 로드된 후 formData 업데이트
-        if (res.data.length > 0) {
+        if (res.data.length > 0 && !formData.type) {
           setFormData({
             ...formData,
-            type: res.data[0].name, // 첫 번째 타입을 기본값으로 설정
-            typeId: res.data[0].typeListId,
+            type: '', // 첫 번째 타입을 기본값으로 설정
+            typeId: '',
           });
         }
       })
@@ -54,6 +54,7 @@ const RegisterPage1 = ({formData, setFormData}) => {
           id="space-type"
           value={formData.type || ''}
           onChange={handleTypeChange}
+          placeholder="공간 유형을 선택하세요."
         >
           {typeLists.map((typeList) => (
             <option key={typeList.typeListId} value={typeList.name}>
@@ -66,7 +67,7 @@ const RegisterPage1 = ({formData, setFormData}) => {
         <FormLabel htmlFor="space-title">공간 이름</FormLabel>
         <Input
           id="space-title"
-          value={(formData && formData.title) || ''} // formData.page1Data가 존재할 때만 title 값을 사용
+          value={(formData && formData.title) || ''}
           onChange={handleTitleChange}
         />
       </FormControl>
@@ -74,7 +75,7 @@ const RegisterPage1 = ({formData, setFormData}) => {
         <FormLabel htmlFor="space-subtitle">공간 한 줄 소개</FormLabel>
         <Input
           id="space-subtitle"
-          value={(formData && formData.subTitle) || ''} // formData.page1Data가 존재할 때만 subTitle 값을 사용
+          value={(formData && formData.subTitle) || ''}
           onChange={handleSubTitleChange}
         />
       </FormControl>
