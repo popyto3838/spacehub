@@ -1,8 +1,8 @@
 package com.backend.optionList.controller;
 
+import com.backend.dto.ItemListResponseDto;
 import com.backend.optionList.domain.OptionList;
 import com.backend.optionList.service.OptionListService;
-import com.backend.optionList.service.impl.OptionListServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,12 +14,12 @@ import java.util.List;
 @RequestMapping("/api/space/option")
 public class OptionListController {
 
-    private final OptionListService service;
+    private final OptionListService optionListService;
 
     @PostMapping("/write")
-    public ResponseEntity write(@RequestBody List<OptionList> optionLists) {
+    public ResponseEntity<String> write(@RequestBody List<OptionList> optionLists) {
         try {
-            service.insertOptionList(optionLists); // 서비스에 옵션 목록 전달
+            optionListService.insertOptionList(optionLists); // 서비스에 옵션 목록 전달
             return ResponseEntity.ok("옵션 저장 성공");
         } catch (Exception e) {
             e.printStackTrace();
@@ -28,14 +28,16 @@ public class OptionListController {
     }
 
     @GetMapping("/list")
-    public List<OptionList> list() {
-        return service.list();
+    public ResponseEntity<List<ItemListResponseDto>> getOptionLists() {
+        List<ItemListResponseDto> response = optionListService.selectAll();
+        System.out.println("response = " + response); // 추가된 디버그 로그
+        return ResponseEntity.ok(response);
     }
 
     @DeleteMapping("/{optionListId}")
-    public ResponseEntity delete(@PathVariable int optionListId) {
+    public ResponseEntity<String> delete(@PathVariable int optionListId) {
         try {
-            service.deleteSpaceOption(optionListId);
+            optionListService.deleteSpaceOption(optionListId);
             return ResponseEntity.ok("옵션이 삭제되었습니다.");
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("옵션 삭제에 실패했습니다: " + e.getMessage());
@@ -43,7 +45,12 @@ public class OptionListController {
     }
 
     @PutMapping("/{optionListId}")
-    public void update(@RequestBody OptionList optionList) {
-        service.update(optionList);
+    public ResponseEntity<String> update(@RequestBody OptionList optionList) {
+        try {
+            optionListService.update(optionList);
+            return ResponseEntity.ok("옵션이 업데이트되었습니다.");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("옵션 업데이트 실패: " + e.getMessage());
+        }
     }
 }

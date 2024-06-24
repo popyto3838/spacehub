@@ -6,7 +6,7 @@ import {MainPage} from "./page/MainPage.jsx";
 import {BoardList} from "./page/board/BoardList.jsx";
 import {BoardView} from "./page/board/BoardView.jsx";
 import {BoardEdit} from "./page/board/BoardEdit.jsx";
-import RegisterStepper from "./page/host/register/RegisterStepper.jsx";
+import RegisterStepper from "./page/space/register/RegisterStepper.jsx";
 import {SpaceOption} from "./page/admin/space_config/SpaceOption.jsx";
 import {MemberSignup} from "./page/member/MemberSignup.jsx";
 import NaverLogin from "./page/member/NaverLogin.jsx";
@@ -23,9 +23,10 @@ import {HostSignup} from "./page/member/HostSignup.jsx";
 import {MemberMy} from "./page/member/MemberMy.jsx";
 
 import axios from "axios";
-import SpaceView from "./page/admin/space_config/SpaceView.jsx";
+import SpaceView from "./page/space/SpaceView.jsx";
 import {HostDashboard} from "./page/dashboard/HostDashboard.jsx";
 import AdminDashboard from "./page/dashboard/AdminDashboard.jsx";
+import SpaceList from "./page/space/SpaceList.jsx";
 import {MemberHostInfo} from "./page/member/MemberHostInfo.jsx";
 import {MemberHostPage} from "./page/member/MemberHostPage.jsx";
 

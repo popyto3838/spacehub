@@ -1,6 +1,8 @@
 package com.backend.optionList.mapper;
 
+import com.backend.dto.ItemListResponseDto;
 import com.backend.optionList.domain.OptionList;
+import com.backend.typeList.domain.TypeList;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;
@@ -9,10 +11,9 @@ import java.util.List;
 public interface OptionListMapper {
 
     @Insert("""
-            INSERT INTO OPTION_LIST (name) VALUES (#{name})
+            INSERT INTO OPTION_LIST (NAME) VALUES (#{name})
             """)
     int insertOptionList(OptionList optionList);
-
 
     @Select("""
             SELECT *
