@@ -31,7 +31,6 @@ public class SpaceServiceImpl implements SpaceService {
 
     @Override
     public FindResponseSpaceJoinDTO view(Integer spaceId) {
-        log.info("space.getSpaceId() = " + spaceId);
         return spaceMapper.selectBySpaceId(spaceId);
     }
 }

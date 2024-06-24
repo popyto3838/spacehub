@@ -56,11 +56,13 @@ public class SpaceController {
 
     @GetMapping("/{spaceId}")
     public ResponseEntity view(@PathVariable Integer spaceId) {
-        FindResponseSpaceJoinDTO space = spaceService.view(spaceId);
-        if (space == null) {
+        FindResponseSpaceJoinDTO spaceDto = spaceService.view(spaceId);
+        spaceDto.setFile(fileService.getFileByDivisionAndParentId("SPACE", spaceId));
+
+        if (spaceDto == null) {
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok().body(space);
+        return ResponseEntity.ok().body(spaceDto);
     }
 
 }

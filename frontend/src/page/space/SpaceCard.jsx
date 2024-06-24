@@ -21,7 +21,7 @@ const SpaceCard = ({ space, file }) => {
       borderWidth='1px'
       borderRadius='lg'
       overflow='hidden'
-      height='500px'  // Increased height of the card
+      height='500px'
       position='relative'
       onClick={() => console.log("Card clicked")}
       transition="all 0.3s"
@@ -35,7 +35,7 @@ const SpaceCard = ({ space, file }) => {
         alt={space.title}
         objectFit="cover"
         width="100%"
-        height="300px"  // Increased height of the image
+        height="300px"
         transition="opacity 0.3s"
         _hover={{ opacity: 0.9 }}
       />

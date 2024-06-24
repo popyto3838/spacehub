@@ -56,16 +56,15 @@ public interface SpaceMapper {
     @Select("""
             SELECT *
             FROM SPACE
+            ORDER BY SPACE_ID DESC
             """)
     List<Space> selectAll();
 
     @Select("""
             SELECT  S.*
-            ,       H.*
             ,       T.*
             FROM SPACE S
-            JOIN HOST H ON S.HOST_ID = H.HOST_ID
-            JOIN TYPE_LIST t ON S.TYPE_LIST_ID = T.TYPE_LIST_ID
+            JOIN TYPE_LIST T ON S.TYPE_LIST_ID = T.TYPE_LIST_ID
             WHERE S.SPACE_ID = #{spaceId}
             """)
     FindResponseSpaceJoinDTO selectBySpaceId(Integer spaceId);

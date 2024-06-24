@@ -1,7 +1,6 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import '/public/css/space/SpaceView.css';
 import DatePicker from "../../component/DatePicker.jsx";
-import {useEffect} from "react";
 import axios from "axios";
 import {useNavigate, useParams} from "react-router-dom";
 import {useToast} from "@chakra-ui/react";
@@ -9,16 +8,15 @@ import {Link} from 'react-scroll';
 import KakaoMap from "../../component/KakaoMap.jsx";
 import ImageSlider from "../../component/ImageSlider.jsx";
 
-
 function SpaceView() {
     const [space, setSpace] = useState({});
+    const [images, setImages] = useState([]);
     const {spaceId} = useParams();
     const toast = useToast();
     const navigate = useNavigate();
 
     const [activeSection, setActiveSection] = useState('공간소개');
     const [sticky, setSticky] = useState(false);
-
 
     const sections = [
         {id: 'introduceArea', name: '공간소개'},
@@ -33,6 +31,10 @@ function SpaceView() {
             .get(`/api/space/${spaceId}`)
             .then((res) => {
                 setSpace(res.data)
+                if (res.data.file && Array.isArray(res.data.file)) {
+                    const fileNames = res.data.file.map(file => file.fileName);
+                    setImages(fileNames);
+                }
             })
             .catch((err) => {
                 if (err.response.status === 404) {
@@ -61,15 +63,6 @@ function SpaceView() {
         };
     }, []);
 
-    const images = [
-        '/public/img/에도시대시부야.jpg',
-        '/public/img/에도시대미녀.jpg',
-        '/public/img/bg1.jpg',
-        '/public/img/공간대여 사진.jpg',
-        '/public/img/space.png',
-        '/public/img/일본배경.jpg',
-    ];
-
     return (
         <div>
             <div className="titleArea">
@@ -80,10 +73,9 @@ function SpaceView() {
             <div className="parentArea">
                 <div className="spaceViewArea">
                     <div className="imgArea">
-                        <ImageSlider images={images}></ImageSlider>
+                        {images.length > 0 && <ImageSlider images={images}/>}
                     </div>
                     <div className="introduceArea">
-
                         <nav style={{
                             display: 'flex',
                             margin: '0 auto',
