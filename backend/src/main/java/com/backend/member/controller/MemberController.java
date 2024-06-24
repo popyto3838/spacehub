@@ -101,7 +101,6 @@ public class MemberController {
 
     @GetMapping("/{memberId}")
     public ResponseEntity get(@PathVariable Integer memberId) {
-        log.info("============memberIdmemberId===================",memberId);
         Member member = service.getById(memberId);
         if (member == null) {
             return ResponseEntity.notFound().build();
