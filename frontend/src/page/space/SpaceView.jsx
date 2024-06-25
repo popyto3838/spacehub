@@ -29,12 +29,13 @@ import {
   faHome,
   faQuestionCircle,
   faShare,
-  faStar
+  faStar, faWonSign
 } from '@fortawesome/free-solid-svg-icons';
 import '/public/css/space/SpaceView.css';
 
 function SpaceView() {
   const [space, setSpace] = useState({});
+  const [spaceDetails, setSpaceDetails] = useState({});
   const [spaceImages, setSpaceImages] = useState([]);
   const [optionImages, setOptionImages] = useState([]);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -60,13 +61,15 @@ function SpaceView() {
   useEffect(() => {
     axios.get(`/api/space/${spaceId}`)
       .then((res) => {
-        setSpace(res.data);
-        if (res.data.spaceImgFiles && Array.isArray(res.data.spaceImgFiles)) {
-          const fileNames = res.data.spaceImgFiles.map(file => file.fileName);
+        const data = res.data;
+        setSpace(data);
+        setSpaceDetails(data.space);
+        if (data.spaceImgFiles && Array.isArray(data.spaceImgFiles)) {
+          const fileNames = data.spaceImgFiles.map(file => file.fileName);
           setSpaceImages(fileNames);
         }
-        if (res.data.optionList && Array.isArray(res.data.optionList)) {
-          setOptionImages(res.data.optionList);
+        if (data.optionList && Array.isArray(data.optionList)) {
+          setOptionImages(data.optionList);
         }
       })
       .catch((err) => {
@@ -124,9 +127,9 @@ function SpaceView() {
       <Container maxW="full" py={10} px={4}>
         <VStack spacing={8} align="stretch">
           <Box>
-            <Heading as="h1" size="2xl" color="red.400" mb={2}>{space.title}</Heading>
+            <Heading as="h1" size="2xl" color="red.400" mb={2}>{spaceDetails.title}</Heading>
             <HStack justify="space-between" align="center">
-              <Text fontSize="xl" color="gray.500">{space.subTitle}</Text>
+              <Text fontSize="xl" color="gray.500">{spaceDetails.subTitle}</Text>
               <HStack>
                 <Button leftIcon={<FontAwesomeIcon icon={faShare} />} variant="outline">공유하기</Button>
                 <Button leftIcon={<FontAwesomeIcon icon={faHeart} />} variant="outline">저장</Button>
@@ -210,38 +213,38 @@ function SpaceView() {
               <VStack spacing={12} align="stretch">
                 <Box id="introduceArea">
                   <Heading as="h2" size="xl" mb={4}>공간소개</Heading>
-                  <Text fontSize="lg">{space.introduce}</Text>
+                  <Text fontSize="lg">{spaceDetails.introduce}</Text>
                   <Flex justifyContent="space-around" textAlign="center">
                     <Box m={4}>
                       <Image src="/public/img/층수.png" boxSize="60px" mx="auto" mb={2} />
                       <Text>층수</Text>
-                      <Box>{space.floor}</Box>
+                      <Box>{spaceDetails.floor}</Box>
                     </Box>
                     <Box m={4}>
                       <Image src="/public/img/인원.png" boxSize="60px" mx="auto" mb={2} />
                       <Text>수용 인원</Text>
-                      <Box>{space.capacity}</Box>
+                      <Box>{spaceDetails.capacity}</Box>
                     </Box>
                     <Box m={4}>
                       <Image src="/public/img/자동차.png" boxSize="60px" mx="auto" mb={2} />
                       <Text>주차 공간</Text>
-                      <Box>{space.parkingSpace}</Box>
+                      <Box>{spaceDetails.parkingSpace}</Box>
                     </Box>
                   </Flex>
                 </Box>
                 <Divider />
                 <Box id="facilityArea">
                   <Heading as="h2" size="xl" mb={4}>시설안내</Heading>
-                  <Text fontSize="lg" mb={4}>{space.facility}</Text>
-                  <Text fontSize="md" fontWeight="bold" mb={4}>주소: {space.address} {space.detailAddress}</Text>
+                  <Text fontSize="lg" mb={4}>{spaceDetails.facility}</Text>
+                  <Text fontSize="md" fontWeight="bold" mb={4}>주소: {spaceDetails.address} {spaceDetails.detailAddress}</Text>
                   <Heading as="h4" size="md" mb={4}>
                     제공 편의시설
                   </Heading>
                   <Flex>
                     {optionImages.map(option => (
                       <Box key={option.optionListId} textAlign="center" m={2}>
-                        <Image src={option.fileName} alt={option.name} boxSize="70px" mx="auto" mb={2} />
-                        <Text>{option.name}</Text>
+                        <Image src={option.fileName} alt={option.optionListName} boxSize="70px" mx="auto" mb={2} />
+                        <Text>{option.optionListName}</Text>
                       </Box>
                     ))}
                   </Flex>
@@ -249,13 +252,13 @@ function SpaceView() {
                     지도 안내
                   </Heading>
                   <Box height="400px" mb={4}>
-                    <KakaoMap address={space.address} latitude={space.latitude} longitude={space.longitude} />
+                    <KakaoMap address={spaceDetails.address} latitude={spaceDetails.latitude} longitude={spaceDetails.longitude} />
                   </Box>
                 </Box>
                 <Divider />
                 <Box id="noticeArea">
                   <Heading as="h2" size="xl" mb={4}>유의사항</Heading>
-                  <Text fontSize="lg">{space.notice}</Text>
+                  <Text fontSize="lg">{spaceDetails.notice}</Text>
                 </Box>
                 <Divider />
                 <Box id="QA">
@@ -282,13 +285,15 @@ function SpaceView() {
               >
                 <VStack spacing={6} align="stretch">
                   <HStack justify="space-between">
-                    <Heading size="lg" color="red.400">￦{space.price} / 시간</Heading>
+                    <Heading size="lg" color="red.400">
+                      <FontAwesomeIcon icon={faWonSign} /> {spaceDetails.price} / 시간
+                    </Heading>
                     <HStack>
                       <FontAwesomeIcon icon={faStar} color="#FFD700" />
-                      <Text fontWeight="bold">4.9</Text>
+                      <Text fontWeight="bold">{space.ratingAvg}</Text>
                     </HStack>
                   </HStack>
-                  <DatePicker price={space.price} spaceId={spaceId} />
+                  <DatePicker price={spaceDetails.price} spaceId={spaceId} />
                   <Button colorScheme="red" size="lg" width="100%">예약하기</Button>
                 </VStack>
               </Box>
