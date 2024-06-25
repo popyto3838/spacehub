@@ -1,5 +1,6 @@
 package com.backend.reservation.controller;
 
+import com.backend.reservation.domain.FindResponseReservationListDTO;
 import com.backend.reservation.domain.Reservation;
 import com.backend.reservation.service.ReservationService;
 import lombok.RequiredArgsConstructor;
@@ -20,9 +21,9 @@ import java.util.Map;
 public class ReservationController {
     private final ReservationService reservationService;
 
-    @GetMapping("/list")
-    public List<Reservation> list() {
-        return reservationService.list();
+    @GetMapping("/list/{memberId}")
+    public List<FindResponseReservationListDTO> list(@PathVariable Integer memberId) {
+        return reservationService.list(memberId);
     }
 
     @GetMapping("/{reservationId}")

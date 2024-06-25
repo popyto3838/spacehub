@@ -1,5 +1,6 @@
 package com.backend.reservation.mapper;
 
+import com.backend.reservation.domain.FindResponseReservationListDTO;
 import com.backend.reservation.domain.Reservation;
 import org.apache.ibatis.annotations.*;
 
@@ -34,10 +35,14 @@ public interface ReservationMapper {
 
 
     @Select("""
-            SELECT *
-            FROM RESERVATION
+            SELECT  R.*
+            ,       S.TITLE
+            ,       S.ADDRESS
+            FROM    RESERVATION R
+            LEFT JOIN SPACE S ON R.SPACE_ID = S.SPACE_ID
+            WHERE MEMBER_ID = #{memberId}
             """)
-    List<Reservation> selectAll();
+    List<FindResponseReservationListDTO> selectAll(Integer memberId);
 
 
     @Select("""
