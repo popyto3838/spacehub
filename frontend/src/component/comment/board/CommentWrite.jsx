@@ -9,7 +9,7 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import { useContext, useState } from "react";
-import { LoginContext } from "../LoginProvider.jsx";
+import { LoginContext } from "../../LoginProvider.jsx";
 import axios from "axios";
 
 export function CommentWrite({

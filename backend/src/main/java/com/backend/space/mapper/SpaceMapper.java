@@ -1,7 +1,7 @@
 package com.backend.space.mapper;
 
-import com.backend.space.domain.Space;
 import com.backend.space.domain.FindResponseSpaceJoinDTO;
+import com.backend.space.domain.Space;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Options;
@@ -65,7 +65,7 @@ public interface SpaceMapper {
             ,       T.*
             FROM SPACE S
             JOIN HOST H ON S.HOST_ID = H.HOST_ID
-            JOIN TYPE_LIST t ON S.TYPE_LIST_ID = T.TYPE_LIST_ID
+            JOIN TYPE_LIST T ON S.TYPE_LIST_ID = T.TYPE_LIST_ID
             WHERE S.SPACE_ID = #{spaceId}
             """)
     FindResponseSpaceJoinDTO selectBySpaceId(Integer spaceId);

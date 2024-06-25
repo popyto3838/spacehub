@@ -7,7 +7,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -49,4 +51,20 @@ public class CommentController {
             commentService.update(comment);
         }
     }
+
+    // space의 review
+    @PostMapping("writeReview")
+    public void writeReview(Comment comment,
+                            Authentication authentication,
+                            @RequestParam(value = "files[]", required = false) MultipartFile[] files) throws IOException {
+        commentService.insertReview(comment, authentication, files);
+    }
+
+    @GetMapping("listReview/{spaceId}")
+    public List<Comment> listReview(@PathVariable Integer spaceId) {
+        return commentService.listReview(spaceId);
+    }
+
+
+    // space의 qna
 }

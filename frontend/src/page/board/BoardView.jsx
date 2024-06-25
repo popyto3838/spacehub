@@ -24,7 +24,7 @@ import { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import { LoginContext } from "../../component/LoginProvider.jsx";
 import { useNavigate, useParams } from "react-router-dom";
-import { CommentComponent } from "../../component/comment/CommentComponent.jsx";
+import { CommentComponent } from "../../component/comment/board/CommentComponent.jsx";
 import { faHeart as emptyHeart } from "@fortawesome/free-regular-svg-icons";
 import { faHeart as fullHeart } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
