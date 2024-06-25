@@ -1,7 +1,9 @@
 package com.backend.reservation.service.impl;
 
+import com.backend.reservation.domain.FindResponseHostReservationList;
 import com.backend.reservation.domain.FindResponseReservationListDTO;
 import com.backend.reservation.domain.Reservation;
+import com.backend.reservation.domain.UpdateStatusRequestDTO;
 import com.backend.reservation.domain.status.ReservationStatus;
 import com.backend.reservation.mapper.ReservationMapper;
 import com.backend.reservation.service.ReservationService;
@@ -45,8 +47,17 @@ public class ReservationServiceImpl implements ReservationService {
     }
 
     @Override
+    public List<FindResponseHostReservationList> selectAllbyHostId(Integer spaceId) {
+        return reservationMapper.selectAllBySpaceId(spaceId);
+    }
+
+    @Override
     public Reservation view(Integer reservationId) {
         return reservationMapper.selectByReservationId(reservationId);
     }
 
+    @Override
+    public void updateStatus(UpdateStatusRequestDTO reservation) {
+        reservationMapper.updateStatus(reservation);
+    }
 }

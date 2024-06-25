@@ -1,5 +1,6 @@
 package com.backend.space.service.impl;
 
+import com.backend.space.domain.FindResponseSpaceHostIdDto;
 import com.backend.space.domain.FindResponseSpaceJoinDTO;
 import com.backend.space.domain.Space;
 import com.backend.space.mapper.SpaceMapper;
@@ -33,5 +34,10 @@ public class SpaceServiceImpl implements SpaceService {
     public FindResponseSpaceJoinDTO view(Integer spaceId) {
         log.info("space.getSpaceId() = " + spaceId);
         return spaceMapper.selectBySpaceId(spaceId);
+    }
+
+    @Override
+    public List<FindResponseSpaceHostIdDto> selectAllByHostId(Integer hostId) {
+        return spaceMapper.selectAllByHostId(hostId);
     }
 }
