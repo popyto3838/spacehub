@@ -193,17 +193,17 @@ function SpaceView() {
                   <Text fontSize="lg">{space.introduce}</Text>
                   <Flex justifyContent="space-around" textAlign="center">
                     <Box m={4}>
-                      <Image src="/img/층수.png" boxSize="60px" mx="auto" mb={2} />
+                      <Image src="/public/img/층수.png" boxSize="60px" mx="auto" mb={2} />
                       <Text>층수</Text>
                       <Box>{space.floor}</Box>
                     </Box>
                     <Box m={4}>
-                      <Image src="/img/인원.png" boxSize="60px" mx="auto" mb={2} />
+                      <Image src="/public/img/인원.png" boxSize="60px" mx="auto" mb={2} />
                       <Text>수용 인원</Text>
                       <Box>{space.capacity}</Box>
                     </Box>
                     <Box m={4}>
-                      <Image src="/img/자동차.png" boxSize="60px" mx="auto" mb={2} />
+                      <Image src="/public/img/자동차.png" boxSize="60px" mx="auto" mb={2} />
                       <Text>주차 공간</Text>
                       <Box>{space.parkingSpace}</Box>
                     </Box>
