@@ -1,7 +1,7 @@
 package com.backend.space.mapper;
 
-import com.backend.space.domain.FindResponseSpaceJoinDTO;
 import com.backend.space.domain.Space;
+import com.backend.space.domain.FindResponseSpaceJoinDTO;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Options;
@@ -69,4 +69,12 @@ public interface SpaceMapper {
             WHERE S.SPACE_ID = #{spaceId}
             """)
     FindResponseSpaceJoinDTO selectBySpaceId(Integer spaceId);
+
+
+    @Select("""
+            SELECT  *
+            FROM SPACE
+            WHERE HOST_ID = #{hostId}
+            """)
+    List<FindResponseSpaceHostIdDto> selectAllByHostId(Integer hostId);
 }

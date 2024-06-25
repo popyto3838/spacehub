@@ -1,6 +1,9 @@
 package com.backend.reservation.mapper;
 
+import com.backend.reservation.domain.FindResponseHostReservationList;
+import com.backend.reservation.domain.FindResponseReservationListDTO;
 import com.backend.reservation.domain.Reservation;
+import com.backend.reservation.domain.UpdateStatusRequestDTO;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;
@@ -34,10 +37,25 @@ public interface ReservationMapper {
 
 
     @Select("""
-            SELECT *
-            FROM RESERVATION
+            SELECT  R.*
+            ,       S.TITLE
+            ,       S.ADDRESS
+            FROM    RESERVATION R
+            LEFT JOIN SPACE S ON R.SPACE_ID = S.SPACE_ID
+            WHERE MEMBER_ID = #{memberId}
             """)
-    List<Reservation> selectAll();
+    List<FindResponseReservationListDTO> selectAll(Integer memberId);
+
+    @Select("""
+            SELECT  R.*
+            ,       S.TITLE
+            ,       M.NICKNAME
+            FROM    RESERVATION R
+            JOIN    MEMBER M ON M.MEMBER_ID = R.MEMBER_ID
+            JOIN    SPACE S ON S.SPACE_ID = R.SPACE_ID
+            WHERE   R.SPACE_ID = #{spaceId}
+            """)
+    List<FindResponseHostReservationList> selectAllBySpaceId(Integer spaceId);
 
 
     @Select("""
@@ -73,4 +91,14 @@ public interface ReservationMapper {
             WHERE   RESERVATION_ID  = #{reservationId}
             """)
     int completePament(Integer reservationId);
+
+
+    @Update("""
+            UPDATE RESERVATION 
+            SET     STATUS          = #{status}
+            ,       UPDATE_DT       = CURRENT_TIMESTAMP
+            WHERE   RESERVATION_ID  = #{reservationId}
+            """)
+    int updateStatus(UpdateStatusRequestDTO requestDTO);
+
 }
