@@ -52,9 +52,11 @@ export function Dashboard() {
           <GridItem>
             <Box p={5} shadow="md" borderWidth="1px">
               <Flex justify="space-between" align="center">
-                <Heading fontSize="xl">공간/리스트</Heading>
-                <IconButton aria-label="Space List"/>
-              </Flex>
+                <Heading fontSize="xl">등록 공간/리스트 관리</Heading>
+                <IconButton
+                  icon={<ChevronRightIcon />}
+                  aria-label="registered space list"
+                />              </Flex>
               <Divider my={4} />
               <VStack spacing={4} align="stretch">
                 {spaces.slice(0, 3).map(space => (
