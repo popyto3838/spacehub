@@ -3,6 +3,7 @@ package com.backend.space.controller;
 import com.backend.dto.FindResponseSpaceJoinDTO;
 import com.backend.file.service.FileService;
 import com.backend.member.service.MemberService;
+import com.backend.space.domain.FindResponseSpaceJoinDTO;
 import com.backend.space.domain.Space;
 import com.backend.dto.SpaceDTO;
 import com.backend.space.service.SpaceService;
@@ -61,12 +62,21 @@ public class SpaceController {
 
     @GetMapping("/{spaceId}")
     public ResponseEntity<FindResponseSpaceJoinDTO> view(@PathVariable Integer spaceId) {
-        System.out.println("spaceId =================== " + spaceId);
         FindResponseSpaceJoinDTO spaceDto = spaceService.view(spaceId);
         if (spaceDto == null) {
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok(spaceDto);
+    }
+
+    @GetMapping("/hostSpaceList/{hostId}")
+    public  ResponseEntity<List<FindResponseSpaceHostIdDto>> selectAllbyHostId(@PathVariable Integer hostId) {
+
+        List<FindResponseSpaceHostIdDto> spaceHostIdDtos = spaceService.selectAllByHostId(hostId);
+        if (spaceHostIdDtos == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(spaceHostIdDtos);
     }
 
 }

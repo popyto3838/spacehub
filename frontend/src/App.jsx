@@ -29,8 +29,10 @@ import SpaceList from "./page/space/SpaceList.jsx";
 import {MemberHostInfo} from "./page/member/MemberHostInfo.jsx";
 import {MemberHostPage} from "./page/member/MemberHostPage.jsx";
 import MyReservationList from "./page/member/MyReservationList.jsx";
-import HostDashboard from "./page/dashboard/HostDashboard.jsx";
 
+import HostDashboard from "./page/dashboard/HostDashboard.jsx";
+import HostSpaceList from "./page/member/HostSpaceList.jsx";
+import HostReservationList from "./page/member/HostReservationList.jsx";
 
 // axios interceptor 설정
 axios.interceptors.request.use((config) => {
@@ -77,6 +79,8 @@ function App() {
                 {path: "member/hostinfo/:accountId", element: <MemberHostInfo/>},
                 {path: "member/hostpage", element: <MemberHostPage/>},
                 {path: "member/myReservationList/:memberId", element: <MyReservationList/>},
+                {path: "member/hostSpaceList/:hostId", element: <HostSpaceList/>},
+                {path: "member/hostReservationList/:spaceId", element: <HostReservationList/>},
 
             ],
         },
