@@ -69,9 +69,9 @@ public interface SpaceMapper {
 
     @Insert("""
             INSERT INTO SPACE_CONFIG
-            (       SPACE_ID, OPTION_LIST_ID)
+            (SPACE_ID, OPTION_ID)
             VALUES 
-            (       #{spaceId}, #{optionId})
+            (#{spaceId}, #{optionId})
             """)
     int insertSpaceConfig(int spaceId, Integer optionId);
 
