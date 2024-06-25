@@ -68,4 +68,14 @@ public interface SpaceMapper {
             WHERE S.SPACE_ID = #{spaceId}
             """)
     FindResponseSpaceJoinDTO selectBySpaceId(Integer spaceId);
+
+    @Insert("""
+            INSERT INTO SPACE_CONFIG
+            (       SPACE_ID
+            ,       OPTION_ID)
+            VALUES 
+            (       #{spaceId}
+            ,       #{optionId})
+            """)
+    int insertSpaceConfig(int spaceId, Integer optionId);
 }

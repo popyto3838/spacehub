@@ -16,4 +16,5 @@ public interface SpaceService {
 
     List<SpaceWithThumbnailDTO> getAllSpacesWithThumnails();
 
+    void insertSpaceConfig(int spaceId, List<Integer> optionList);
 }

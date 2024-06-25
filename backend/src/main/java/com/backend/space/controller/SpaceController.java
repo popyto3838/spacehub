@@ -5,6 +5,7 @@ import com.backend.file.service.FileService;
 import com.backend.member.service.MemberService;
 import com.backend.space.domain.FindResponseSpaceJoinDTO;
 import com.backend.space.domain.Space;
+import com.backend.space.domain.SpaceConfig;
 import com.backend.space.domain.SpaceDTO;
 import com.backend.space.service.SpaceService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -30,7 +31,6 @@ public class SpaceController {
     public ResponseEntity<String> add(@RequestPart("spaceDto") String spaceDtoStr,
                                       @RequestPart(value = "files", required = false) List<MultipartFile> files) throws IOException {
         SpaceDTO spaceDto = objectMapper.readValue(spaceDtoStr, SpaceDTO.class);
-        System.out.println("===========spaceDto.toString() = " + spaceDto.toString());
         Space space = spaceDto.getSpace();
         int memberId = spaceDto.getMemberId();
 
@@ -38,6 +38,12 @@ public class SpaceController {
 
         // SPACE CREATE
         spaceService.insertSpace(space);
+
+        // 옵션 리스트 저장
+        List<Integer> optionList = spaceDto.getOptionList();
+        if (optionList != null) {
+            spaceService.insertSpaceConfig(space.getSpaceId(), optionList);
+        }
 
         // 이미지 파일 업로드
         if (files != null && !files.isEmpty()) {

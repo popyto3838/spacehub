@@ -58,4 +58,11 @@ public class SpaceServiceImpl implements SpaceService {
 
         return spaceWithThumnailList;
     }
+
+    @Override
+    public void insertSpaceConfig(int spaceId, List<Integer> optionList) {
+        for (Integer optionId : optionList) {
+            spaceMapper.insertSpaceConfig(spaceId, optionId);
+        }
+    }
 }
