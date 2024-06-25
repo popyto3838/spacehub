@@ -1,5 +1,6 @@
 package com.backend.space.service;
 
+import com.backend.dto.SpaceWithThumbnailDTO;
 import com.backend.space.domain.FindResponseSpaceJoinDTO;
 import com.backend.space.domain.Space;
 
@@ -12,4 +13,7 @@ public interface SpaceService {
     List<Space> selectAll();
 
     FindResponseSpaceJoinDTO view(Integer spaceId);
+
+    List<SpaceWithThumbnailDTO> getAllSpacesWithThumnails();
+
 }

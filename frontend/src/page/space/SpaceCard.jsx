@@ -1,14 +1,11 @@
-import React, { useState } from 'react';
-import { Box, Image, Badge, Flex, Heading, Text } from '@chakra-ui/react';
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faStar, faComment, faThumbsUp, faHeart as solidHeart } from "@fortawesome/free-solid-svg-icons";
-import { faHeart as regularHeart } from "@fortawesome/free-regular-svg-icons";
+import React, {useState} from 'react';
+import {Badge, Box, Flex, Heading, Image, Text} from '@chakra-ui/react';
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faHeart as solidHeart, faStar} from "@fortawesome/free-solid-svg-icons";
+import {faHeart as regularHeart} from "@fortawesome/free-regular-svg-icons";
 
-const SpaceCard = ({ space, file }) => {
+const SpaceCard = ({ space, thumbnailPath }) => {
   const [isFavorited, setIsFavorited] = useState(false);
-  const thumbnailPath = file && file.fileName
-    ? file.fileName
-    : 'http://via.placeholder.com/1000.jpg';
 
   const handleFavoriteClick = (e) => {
     e.stopPropagation();
@@ -31,7 +28,7 @@ const SpaceCard = ({ space, file }) => {
       }}
     >
       <Image
-        src={thumbnailPath}
+        src={thumbnailPath || 'http://via.placeholder.com/1000.jpg'}
         alt={space.title}
         objectFit="cover"
         width="100%"

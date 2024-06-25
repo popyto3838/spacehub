@@ -1,5 +1,6 @@
 package com.backend.space.controller;
 
+import com.backend.dto.SpaceWithThumbnailDTO;
 import com.backend.file.service.FileService;
 import com.backend.member.service.MemberService;
 import com.backend.space.domain.FindResponseSpaceJoinDTO;
@@ -49,8 +50,8 @@ public class SpaceController {
     }
 
     @GetMapping("list")
-    public ResponseEntity<List<Space>> selectAll() {
-        List<Space> spaces = spaceService.selectAll();
+    public ResponseEntity<List<SpaceWithThumbnailDTO>> getAllSpacesWithThumnails() {
+        List<SpaceWithThumbnailDTO> spaces = spaceService.getAllSpacesWithThumnails();
         return ResponseEntity.ok(spaces);
     }
 
