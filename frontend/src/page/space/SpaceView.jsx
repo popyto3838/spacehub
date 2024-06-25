@@ -1,16 +1,16 @@
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   Box, Container, Heading, Text, Flex, VStack, HStack, Divider, Button,
   useColorModeValue, Image, IconButton
 } from "@chakra-ui/react";
-import { ChevronLeftIcon, ChevronRightIcon } from '@chakra-ui/icons';
-import { Link } from 'react-scroll';
+import {ChevronLeftIcon, ChevronRightIcon} from '@chakra-ui/icons';
+import {Link} from 'react-scroll';
 import axios from "axios";
-import { useNavigate, useParams } from "react-router-dom";
-import { useToast } from "@chakra-ui/react";
+import {useNavigate, useParams} from "react-router-dom";
+import {useToast} from "@chakra-ui/react";
 import DatePicker from "../../component/DatePicker.jsx";
 import KakaoMap from "../../component/KakaoMap.jsx";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {
   faHome, faCog, faExclamationCircle, faQuestionCircle,
   faComments, faStar, faHeart, faShare, faMapMarkedAlt
@@ -21,7 +21,7 @@ function SpaceView() {
   const [images, setImages] = useState([]);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [startThumbnailIndex, setStartThumbnailIndex] = useState(0);
-  const { spaceId } = useParams();
+  const {spaceId} = useParams();
   const toast = useToast();
   const navigate = useNavigate();
   const [activeSection, setActiveSection] = useState('공간소개');
@@ -31,11 +31,11 @@ function SpaceView() {
   const borderColor = useColorModeValue("gray.200", "gray.600");
 
   const sections = [
-    { id: 'introduceArea', name: '공간소개', icon: faHome },
-    { id: 'facilityArea', name: '시설안내', icon: faCog },
-    { id: 'noticeArea', name: '유의사항', icon: faExclamationCircle },
-    { id: 'QA', name: 'Q&A', icon: faQuestionCircle },
-    { id: 'comment', name: '이용후기', icon: faComments }
+    {id: 'introduceArea', name: '공간소개', icon: faHome},
+    {id: 'facilityArea', name: '시설안내', icon: faCog},
+    {id: 'noticeArea', name: '유의사항', icon: faExclamationCircle},
+    {id: 'QA', name: 'Q&A', icon: faQuestionCircle},
+    {id: 'comment', name: '이용후기', icon: faComments}
   ];
 
   useEffect(() => {
@@ -92,18 +92,18 @@ function SpaceView() {
             <HStack justify="space-between" align="center">
               <Text fontSize="xl" color="gray.500">{space.subTitle}</Text>
               <HStack>
-                <Button leftIcon={<FontAwesomeIcon icon={faShare} />} variant="outline">공유하기</Button>
-                <Button leftIcon={<FontAwesomeIcon icon={faHeart} />} variant="outline">저장</Button>
+                <Button leftIcon={<FontAwesomeIcon icon={faShare}/>} variant="outline">공유하기</Button>
+                <Button leftIcon={<FontAwesomeIcon icon={faHeart}/>} variant="outline">저장</Button>
               </HStack>
             </HStack>
           </Box>
 
-          <Flex direction={{ base: "column", lg: "row" }} gap={8}>
+          <Flex direction={{base: "column", lg: "row"}} gap={8}>
             <Box flex={2}>
               <Box position="relative" mb={4}>
-                <Image src={images[currentImageIndex]} alt="Selected Space Image" w="100%" h="auto" />
+                <Image src={images[currentImageIndex]} alt="Selected Space Image" w="100%" h="auto"/>
                 <IconButton
-                  icon={<ChevronLeftIcon />}
+                  icon={<ChevronLeftIcon/>}
                   position="absolute"
                   left={2}
                   top="50%"
@@ -111,7 +111,7 @@ function SpaceView() {
                   onClick={goToPreviousImage}
                 />
                 <IconButton
-                  icon={<ChevronRightIcon />}
+                  icon={<ChevronRightIcon/>}
                   position="absolute"
                   right={2}
                   top="50%"
@@ -121,7 +121,7 @@ function SpaceView() {
               </Box>
               <Flex align="center" mb={8}>
                 <IconButton
-                  icon={<ChevronLeftIcon />}
+                  icon={<ChevronLeftIcon/>}
                   onClick={goToPreviousThumbnails}
                   isDisabled={startThumbnailIndex === 0}
                 />
@@ -142,7 +142,7 @@ function SpaceView() {
                   ))}
                 </Flex>
                 <IconButton
-                  icon={<ChevronRightIcon />}
+                  icon={<ChevronRightIcon/>}
                   onClick={goToNextThumbnails}
                   isDisabled={startThumbnailIndex >= images.length - 5}
                 />
@@ -162,7 +162,7 @@ function SpaceView() {
                       variant="ghost"
                       colorScheme={activeSection === section.name ? "red" : "gray"}
                       onClick={() => setActiveSection(section.name)}
-                      leftIcon={<FontAwesomeIcon icon={section.icon} />}
+                      leftIcon={<FontAwesomeIcon icon={section.icon}/>}
                     >
                       {section.name}
                     </Button>
@@ -174,31 +174,48 @@ function SpaceView() {
                 <Box id="introduceArea">
                   <Heading as="h2" size="xl" mb={4}>공간소개</Heading>
                   <Text fontSize="lg">{space.introduce}</Text>
+                  <Flex justifyContent="space-around" textAlign="center">
+                    <Box m={4}>
+                      <Image src="/public/img/층수.png" boxSize="60px" mx="auto" mb={2} />
+                      <Text>층수</Text>
+                      <Box>{space.floor}</Box>
+                    </Box>
+                    <Box m={4}>
+                      <Image src="/public/img/인원.png" boxSize="60px" mx="auto" mb={2} />
+                      <Text>수용 인원</Text>
+                      <Box>{space.capacity}</Box>
+                    </Box>
+                    <Box m={4}>
+                      <Image src="/public/img/자동차.png" boxSize="60px" mx="auto" mb={2} />
+                      <Text>주차 공간</Text>
+                      <Box>{space.parkingSpace}</Box>
+                    </Box>
+                  </Flex>
                 </Box>
-                <Divider />
+                <Divider/>
                 <Box id="facilityArea">
                   <Heading as="h2" size="xl" mb={4}>시설안내</Heading>
                   <Text fontSize="lg" mb={4}>{space.facility}</Text>
                   <Text fontSize="md" fontWeight="bold" mb={4}>주소: {space.address} {space.detailAddress}</Text>
 
                   <Heading as="h3" size="lg" mb={4}>
-                    <FontAwesomeIcon icon={faMapMarkedAlt} /> 지도 안내
+                    <FontAwesomeIcon icon={faMapMarkedAlt}/> 지도 안내
                   </Heading>
                   <Box height="400px" mb={4}>
-                    <KakaoMap latitude={space.latitude} longitude={space.longitude} />
+                    <KakaoMap latitude={space.latitude} longitude={space.longitude}/>
                   </Box>
                 </Box>
-                <Divider />
+                <Divider/>
                 <Box id="noticeArea">
                   <Heading as="h2" size="xl" mb={4}>유의사항</Heading>
                   <Text fontSize="lg">{space.notice}</Text>
                 </Box>
-                <Divider />
+                <Divider/>
                 <Box id="QA">
                   <Heading as="h2" size="xl" mb={4}>Q&A</Heading>
                   {/* Q&A 내용 */}
                 </Box>
-                <Divider />
+                <Divider/>
                 <Box id="comment">
                   <Heading as="h2" size="xl" mb={4}>이용후기</Heading>
                   {/* 이용후기 내용 */}
@@ -220,11 +237,11 @@ function SpaceView() {
                   <HStack justify="space-between">
                     <Heading size="lg" color="red.400">￦{space.price} / 시간</Heading>
                     <HStack>
-                      <FontAwesomeIcon icon={faStar} color="#FFD700" />
+                      <FontAwesomeIcon icon={faStar} color="#FFD700"/>
                       <Text fontWeight="bold">4.9</Text>
                     </HStack>
                   </HStack>
-                  <DatePicker price={space.price} spaceId={spaceId} />
+                  <DatePicker price={space.price} spaceId={spaceId}/>
                   <Button colorScheme="red" size="lg" width="100%">예약하기</Button>
                 </VStack>
               </Box>
