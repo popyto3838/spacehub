@@ -11,7 +11,7 @@ import java.util.Map;
 public interface BoardService {
     void insert(Board board, Authentication authentication, MultipartFile[] files) throws IOException;
 
-    Map<String, Object> list(Integer page, String searchType, String searchKeyword);
+    Map<String, Object> list(Integer page, String searchType, String searchKeyword, String categoryType);
 
     Map<String, Object> view(Integer boardId, Authentication authentication);
 

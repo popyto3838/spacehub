@@ -52,10 +52,10 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
-    public Map<String, Object> list(Integer page, String searchType, String searchKeyword) {
+    public Map<String, Object> list(Integer page, String searchType, String searchKeyword, String categoryType) {
 
         Map pageInfo = new HashMap();
-        Integer countAll = boardMapper.countAllWithSearch(searchType, searchKeyword);
+        Integer countAll = boardMapper.countAllWithSearch(searchType, searchKeyword, categoryType);
 
         Integer offset = (page - 1) * 10;
         Integer lastPageNumber = (countAll - 1) / 10 + 1;
@@ -78,8 +78,8 @@ public class BoardServiceImpl implements BoardService {
         pageInfo.put("leftPageNumber", leftPageNumber);
         pageInfo.put("rightPageNumber", rightPageNumber);
 
-        return Map.of("pageInfo", pageInfo, "boardList", boardMapper.selectAllPaging(offset, searchType, searchKeyword),
-                "categoryList", boardMapper.selectAllPagingForCategory(offset, searchType, searchKeyword));
+        return Map.of("pageInfo", pageInfo, "boardList", boardMapper.selectAllPaging(offset, searchType, searchKeyword, categoryType),
+                "categoryList", boardMapper.selectAllPagingForCategory(offset, searchType, searchKeyword, categoryType));
     }
 
     @Override
@@ -165,6 +165,7 @@ public class BoardServiceImpl implements BoardService {
 
     @Override
     public void updateViews(Integer boardId) {
+
         boardMapper.updateViews(boardId);
     }
 

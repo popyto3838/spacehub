@@ -1,5 +1,6 @@
 package com.backend.reservation.service.impl;
 
+import com.backend.reservation.domain.FindResponseReservationListDTO;
 import com.backend.reservation.domain.Reservation;
 import com.backend.reservation.domain.status.ReservationStatus;
 import com.backend.reservation.mapper.ReservationMapper;
@@ -39,8 +40,8 @@ public class ReservationServiceImpl implements ReservationService {
     }
 
     @Override
-    public List<Reservation> list() {
-        return reservationMapper.selectAll();
+    public List<FindResponseReservationListDTO> list(Integer memberId) {
+        return reservationMapper.selectAll(memberId);
     }
 
     @Override

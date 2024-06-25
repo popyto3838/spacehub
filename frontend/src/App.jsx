@@ -29,65 +29,67 @@ import AdminDashboard from "./page/dashboard/AdminDashboard.jsx";
 import SpaceList from "./page/space/SpaceList.jsx";
 import {MemberHostInfo} from "./page/member/MemberHostInfo.jsx";
 import {MemberHostPage} from "./page/member/MemberHostPage.jsx";
+import MyReservationList from "./page/member/MyReservationList.jsx";
 
 
 // axios interceptor 설정
 axios.interceptors.request.use((config) => {
-  // 토큰을 얻어서
-  const token = localStorage.getItem("token");
-  // 토큰이 있으면
-  if (token) {
-    // header에 authorization을 넣고
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-  // config를 리턴
-  return config;
+    // 토큰을 얻어서
+    const token = localStorage.getItem("token");
+    // 토큰이 있으면
+    if (token) {
+        // header에 authorization을 넣고
+        config.headers.Authorization = `Bearer ${token}`;
+    }
+    // config를 리턴
+    return config;
 });
 
 function App() {
-  const router = createBrowserRouter([
-    {
-      path: "/",
-      element: <Home/>,
-      children: [
-        {index: true, element: <MainPage/>},
-        {path: "board/write", element: <BoardWrite/>},
-        {path: "board/list", element: <BoardList/>},
-        {path: "board/:boardId", element: <BoardView/>},
-        {path: "board/:boardId/edit", element: <BoardEdit/>},
-        {path: "space/register", element: <RegisterStepper/>},
-        {path: "space/option", element: <SpaceOption/>},
-        {path: "space/:spaceId", element: <SpaceView/>},
-        {path: "space/type", element: <SpaceType/>},
-        {path: "member/signup", element: <MemberSignup/>},
-        {path: "member/naver", element: <NaverLogin/>},
-        {path: "member/list", element: <MemberList/>},
-        {path: "member/:memberId", element: <MemberInfo/>},
-        {path: "member/login", element: <MemberLogin/>},
-        {path: "member/edit/:memberId", element: <MemberEdit/>},
-        {path: "auth/naverlogin", element: <NaverLoginHandler/>},
-        {path: "paid/payment/:reservationId", element: <Payment/>},
-        {path: "member/naverlogin", element: <NaverLoginHandler/>},
-        {path: "member/host", element: <MemberHost/>},
-        {path: "host/signup", element: <HostSignup/>},
-        {path: "member/info/:accountId", element: <MemberMy/>},
-        { path: "dashboard/host", element: <HostDashboard /> },
-        { path: "dashboard/admin", element: <AdminDashboard /> },
-        {path: "member/hostinfo/:accountId", element: <MemberHostInfo/>},
-        {path: "member/hostpage", element: <MemberHostPage/>},
+    const router = createBrowserRouter([
+        {
+            path: "/",
+            element: <Home/>,
+            children: [
+                {index: true, element: <MainPage/>},
+                {path: "board/write", element: <BoardWrite/>},
+                {path: "board/list", element: <BoardList/>},
+                {path: "board/:boardId", element: <BoardView/>},
+                {path: "board/:boardId/edit", element: <BoardEdit/>},
+                {path: "space/register", element: <RegisterStepper/>},
+                {path: "space/option", element: <SpaceOption/>},
+                {path: "space/:spaceId", element: <SpaceView/>},
+                {path: "space/type", element: <SpaceType/>},
+                {path: "member/signup", element: <MemberSignup/>},
+                {path: "member/naver", element: <NaverLogin/>},
+                {path: "member/list", element: <MemberList/>},
+                {path: "member/:memberId", element: <MemberInfo/>},
+                {path: "member/login", element: <MemberLogin/>},
+                {path: "member/edit/:memberId", element: <MemberEdit/>},
+                {path: "auth/naverlogin", element: <NaverLoginHandler/>},
+                {path: "paid/payment/:reservationId", element: <Payment/>},
+                {path: "member/naverlogin", element: <NaverLoginHandler/>},
+                {path: "member/host", element: <MemberHost/>},
+                {path: "host/signup", element: <HostSignup/>},
+                {path: "member/info/:accountId", element: <MemberMy/>},
+                {path: "dashboard/host", element: <HostDashboard/>},
+                {path: "dashboard/admin", element: <AdminDashboard/>},
+                {path: "member/hostinfo/:accountId", element: <MemberHostInfo/>},
+                {path: "member/hostpage", element: <MemberHostPage/>},
+                {path: "member/myReservationList/:memberId", element: <MyReservationList/>},
 
-      ],
-    },
-  ]);
-  return (
-    <>
-      <LoginProvider>
-        <ChakraProvider>
-          <RouterProvider router={router}/>
-        </ChakraProvider>
-      </LoginProvider>
-    </>
-  );
+            ],
+        },
+    ]);
+    return (
+        <>
+            <LoginProvider>
+                <ChakraProvider>
+                    <RouterProvider router={router}/>
+                </ChakraProvider>
+            </LoginProvider>
+        </>
+    );
 }
 
 
