@@ -4,7 +4,7 @@ import {
   Button,
   Container,
   Divider,
-  Flex,
+  Flex, Grid,
   Heading,
   HStack,
   IconButton,
@@ -22,6 +22,7 @@ import DatePicker from "../../component/DatePicker.jsx";
 import KakaoMap from "../../component/KakaoMap.jsx";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
+  faBullhorn,
   faCog,
   faComments,
   faExclamationCircle,
@@ -124,41 +125,62 @@ function SpaceView() {
 
   return (
     <Box bg={bgColor} minHeight="100vh">
-      <Container maxW="full" py={10} px={4}>
-        <VStack spacing={8} align="stretch">
+      <Container maxW="1200px" py={10} px={4}>
+        <VStack spacing={12} align="stretch">
           <Box>
-            <Heading as="h1" size="2xl" color="red.400" mb={2}>{spaceDetails.title}</Heading>
+            <Heading as="h1" size="2xl" color="gray.800" mb={4} fontWeight="bold">{spaceDetails.title}</Heading>
             <HStack justify="space-between" align="center">
-              <Text fontSize="xl" color="gray.500">{spaceDetails.subTitle}</Text>
+              <Text fontSize="xl" color="gray.600">{spaceDetails.subTitle}</Text>
               <HStack>
-                <Button leftIcon={<FontAwesomeIcon icon={faShare} />} variant="outline">공유하기</Button>
-                <Button leftIcon={<FontAwesomeIcon icon={faHeart} />} variant="outline">저장</Button>
+                <Button leftIcon={<FontAwesomeIcon icon={faShare} />} variant="outline" colorScheme="gray">공유</Button>
+                <Button leftIcon={<FontAwesomeIcon icon={faBullhorn} />} variant="outline" colorScheme="gray">신고</Button>
+                <Button leftIcon={<FontAwesomeIcon icon={faHeart} />} variant="outline" colorScheme="red">저장</Button>
               </HStack>
             </HStack>
           </Box>
 
-          <Flex direction={{ base: "column", lg: "row" }} gap={8}>
+          <Flex direction={{ base: "column", lg: "row" }} gap={12}>
             <Box flex={2}>
-              <Box position="relative" mb={4} className="image-slider">
-                <Image src={spaceImages[currentImageIndex]} alt="Selected Space Image" w="100%" h="auto" className="fade-image"/>
+              <Box position="relative" mb={8} className="image-slider" overflow="hidden">
+                <Flex
+                  transition="transform 0.3s ease-in-out"
+                  transform={`translateX(-${currentImageIndex * 100}%)`}
+                >
+                  {spaceImages.map((img, index) => (
+                    <Image
+                      key={index}
+                      src={img}
+                      alt={`Space image ${index + 1}`}
+                      w="100%"
+                      h="500px"
+                      objectFit="cover"
+                      flexShrink={0}
+                    />
+                  ))}
+                </Flex>
                 <IconButton
                   icon={<ChevronLeftIcon />}
                   position="absolute"
-                  left={2}
+                  left={4}
                   top="50%"
                   transform="translateY(-50%)"
                   onClick={goToPreviousImage}
+                  bg="white"
+                  size="lg"
                 />
                 <IconButton
                   icon={<ChevronRightIcon />}
                   position="absolute"
-                  right={2}
+                  right={4}
                   top="50%"
                   transform="translateY(-50%)"
                   onClick={goToNextImage}
+                  bg="white"
+                  size="lg"
                 />
               </Box>
-              <Flex align="center" mb={8} id="thumbnail-container">
+
+              <Flex align="center" mb={12} id="thumbnail-container">
                 <IconButton
                   icon={<ChevronLeftIcon />}
                   onClick={goToPreviousThumbnails}
@@ -173,11 +195,13 @@ function SpaceView() {
                       cursor="pointer"
                       onClick={() => setCurrentImageIndex(startThumbnailIndex + index)}
                       border={startThumbnailIndex + index === currentImageIndex ? "2px solid" : "none"}
-                      borderColor={startThumbnailIndex + index === currentImageIndex ? "yellow.400" : "transparent"}
-                      boxSize="70px"
+                      borderColor={startThumbnailIndex + index === currentImageIndex ? "red.400" : "transparent"}
+                      boxSize="80px"
                       objectFit="cover"
                       m={1}
-                      style={{ filter: startThumbnailIndex + index === currentImageIndex ? 'none' : 'blur(1px)' }}
+                      opacity={startThumbnailIndex + index === currentImageIndex ? 1 : 0.6}
+                      transition="opacity 0.2s"
+                      _hover={{ opacity: 1 }}
                     />
                   ))}
                 </Flex>
@@ -188,7 +212,7 @@ function SpaceView() {
                 />
               </Flex>
 
-              <HStack justify="center" spacing={4} mb={8}>
+              <HStack justify="center" spacing={6} mb={12}>
                 {sections.map((section) => (
                   <Link
                     key={section.id}
@@ -203,6 +227,7 @@ function SpaceView() {
                       colorScheme={activeSection === section.name ? "red" : "gray"}
                       onClick={() => setActiveSection(section.name)}
                       leftIcon={<FontAwesomeIcon icon={section.icon} />}
+                      fontSize="lg"
                     >
                       {section.name}
                     </Button>
@@ -210,64 +235,64 @@ function SpaceView() {
                 ))}
               </HStack>
 
-              <VStack spacing={12} align="stretch">
-                <Box id="introduceArea">
-                  <Heading as="h2" size="xl" mb={4}>공간소개</Heading>
-                  <Text fontSize="lg">{spaceDetails.introduce}</Text>
-                  <Flex justifyContent="space-around" textAlign="center">
-                    <Box m={4}>
-                      <Image src="/public/img/층수.png" boxSize="60px" mx="auto" mb={2} />
-                      <Text>층수</Text>
-                      <Box>{spaceDetails.floor}</Box>
+              <VStack spacing={16} align="stretch">
+                <Box id="introduceArea" p={8} bg="gray.50" borderRadius="lg">
+                  <Heading as="h2" size="xl" mb={6} color="gray.700">공간소개</Heading>
+                  <Text fontSize="lg" mb={8} lineHeight="tall">{spaceDetails.introduce}</Text>
+                  <Grid templateColumns="repeat(3, 1fr)" gap={8} textAlign="center">
+                    <Box>
+                      <Image src="/public/img/층수.png" boxSize="80px" mx="auto" mb={4} />
+                      <Text fontSize="lg" fontWeight="bold">층수</Text>
+                      <Text fontSize="xl">{spaceDetails.floor}</Text>
                     </Box>
-                    <Box m={4}>
-                      <Image src="/public/img/인원.png" boxSize="60px" mx="auto" mb={2} />
-                      <Text>수용 인원</Text>
-                      <Box>{spaceDetails.capacity}</Box>
+                    <Box>
+                      <Image src="/public/img/인원.png" boxSize="80px" mx="auto" mb={4} />
+                      <Text fontSize="lg" fontWeight="bold">수용 인원</Text>
+                      <Text fontSize="xl">{spaceDetails.capacity}</Text>
                     </Box>
-                    <Box m={4}>
-                      <Image src="/public/img/자동차.png" boxSize="60px" mx="auto" mb={2} />
-                      <Text>주차 공간</Text>
-                      <Box>{spaceDetails.parkingSpace}</Box>
+                    <Box>
+                      <Image src="/public/img/자동차.png" boxSize="80px" mx="auto" mb={4} />
+                      <Text fontSize="lg" fontWeight="bold">주차 공간</Text>
+                      <Text fontSize="xl">{spaceDetails.parkingSpace}</Text>
                     </Box>
-                  </Flex>
+                  </Grid>
                 </Box>
                 <Divider />
-                <Box id="facilityArea">
-                  <Heading as="h2" size="xl" mb={4}>시설안내</Heading>
-                  <Text fontSize="lg" mb={4}>{spaceDetails.facility}</Text>
-                  <Text fontSize="md" fontWeight="bold" mb={4}>주소: {spaceDetails.address} {spaceDetails.detailAddress}</Text>
-                  <Heading as="h4" size="md" mb={4}>
+                <Box id="facilityArea" p={8}>
+                  <Heading as="h2" size="xl" mb={6} color="gray.700">시설안내</Heading>
+                  <Text fontSize="lg" mb={8} lineHeight="tall">{spaceDetails.facility}</Text>
+                  <Heading as="h3" size="lg" mb={6} color="gray.600">
                     제공 편의시설
                   </Heading>
-                  <Flex>
+                  <Grid templateColumns="repeat(auto-fit, minmax(100px, 1fr))" gap={6} mb={12}>
                     {optionImages.map(option => (
-                      <Box key={option.optionListId} textAlign="center" m={2}>
-                        <Image src={option.fileName} alt={option.optionListName} boxSize="70px" mx="auto" mb={2} />
-                        <Text>{option.optionListName}</Text>
+                      <Box key={option.optionListId} textAlign="center">
+                        <Image src={option.fileName} alt={option.optionListName} boxSize="60px" mx="auto" mb={2} />
+                        <Text fontSize="md">{option.optionListName}</Text>
                       </Box>
                     ))}
-                  </Flex>
-                  <Heading as="h4" size="md" mb={4}>
+                  </Grid>
+                  <Heading as="h3" size="lg" mb={6} color="gray.600">
                     지도 안내
                   </Heading>
                   <Box height="400px" mb={4}>
+                    <Text fontSize="lg" fontWeight="bold" mb={6}>주소: {spaceDetails.address} {spaceDetails.detailAddress}</Text>
                     <KakaoMap address={spaceDetails.address} latitude={spaceDetails.latitude} longitude={spaceDetails.longitude} />
                   </Box>
                 </Box>
                 <Divider />
-                <Box id="noticeArea">
-                  <Heading as="h2" size="xl" mb={4}>유의사항</Heading>
-                  <Text fontSize="lg">{spaceDetails.notice}</Text>
+                <Box id="noticeArea" p={8} bg="gray.50" borderRadius="lg">
+                  <Heading as="h2" size="xl" mb={6} color="gray.700">유의사항</Heading>
+                  <Text fontSize="lg" lineHeight="tall">{spaceDetails.notice}</Text>
                 </Box>
                 <Divider />
-                <Box id="QA">
-                  <Heading as="h2" size="xl" mb={4}>Q&A</Heading>
+                <Box id="QA" p={8}>
+                  <Heading as="h2" size="xl" mb={6} color="gray.700">Q&A</Heading>
                   {/* Q&A 내용 */}
                 </Box>
                 <Divider />
-                <Box id="comment">
-                  <Heading as="h2" size="xl" mb={4}>이용후기</Heading>
+                <Box id="comment" p={8} bg="gray.50" borderRadius="lg">
+                  <Heading as="h2" size="xl" mb={6} color="gray.700">이용후기</Heading>
                   {/* 이용후기 내용 */}
                 </Box>
               </VStack>
@@ -277,24 +302,25 @@ function SpaceView() {
               <Box
                 position="sticky"
                 top="100px"
-                p={6}
+                p={8}
                 borderWidth={1}
                 borderColor={borderColor}
                 borderRadius="lg"
-                boxShadow="md"
+                boxShadow="lg"
+                bg="white"
               >
-                <VStack spacing={6} align="stretch">
+                <VStack spacing={8} align="stretch">
                   <HStack justify="space-between">
-                    <Heading size="lg" color="red.400">
+                    <Heading size="xl" color="gray.800">
                       <FontAwesomeIcon icon={faWonSign} /> {spaceDetails.price} / 시간
                     </Heading>
                     <HStack>
                       <FontAwesomeIcon icon={faStar} color="#FFD700" />
-                      <Text fontWeight="bold">{space.ratingAvg}</Text>
+                      <Text fontWeight="bold" fontSize="xl">{space.ratingAvg || 4.9}</Text>
                     </HStack>
                   </HStack>
                   <DatePicker price={spaceDetails.price} spaceId={spaceId} />
-                  <Button colorScheme="red" size="lg" width="100%">예약하기</Button>
+                  <Button colorScheme="red" size="lg" width="100%" fontSize="xl">예약하기</Button>
                 </VStack>
               </Box>
             </Box>
