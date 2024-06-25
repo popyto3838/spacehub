@@ -1,25 +1,42 @@
 import React, { useEffect, useState } from 'react';
 import {
-  Box, Container, Heading, Text, Flex, VStack, HStack, Divider, Button,
-  useColorModeValue, Image, IconButton
+  Box,
+  Button,
+  Container,
+  Divider,
+  Flex,
+  Heading,
+  HStack,
+  IconButton,
+  Image,
+  Text,
+  useColorModeValue,
+  useToast,
+  VStack
 } from "@chakra-ui/react";
 import { ChevronLeftIcon, ChevronRightIcon } from '@chakra-ui/icons';
 import { Link } from 'react-scroll';
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
-import { useToast } from "@chakra-ui/react";
 import DatePicker from "../../component/DatePicker.jsx";
 import KakaoMap from "../../component/KakaoMap.jsx";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
-  faHome, faCog, faExclamationCircle, faQuestionCircle,
-  faComments, faStar, faHeart, faShare, faMapMarkedAlt
+  faCog,
+  faComments,
+  faExclamationCircle,
+  faHeart,
+  faHome,
+  faQuestionCircle,
+  faShare,
+  faStar
 } from '@fortawesome/free-solid-svg-icons';
 import '/public/css/space/SpaceView.css';
 
 function SpaceView() {
   const [space, setSpace] = useState({});
-  const [images, setImages] = useState([]);
+  const [spaceImages, setSpaceImages] = useState([]);
+  const [optionImages, setOptionImages] = useState([]);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [startThumbnailIndex, setStartThumbnailIndex] = useState(0);
   const [thumbnailCount, setThumbnailCount] = useState(5);
@@ -44,9 +61,12 @@ function SpaceView() {
     axios.get(`/api/space/${spaceId}`)
       .then((res) => {
         setSpace(res.data);
-        if (res.data.file && Array.isArray(res.data.file)) {
-          const fileNames = res.data.file.map(file => file.fileName);
-          setImages(fileNames);
+        if (res.data.spaceImgFiles && Array.isArray(res.data.spaceImgFiles)) {
+          const fileNames = res.data.spaceImgFiles.map(file => file.fileName);
+          setSpaceImages(fileNames);
+        }
+        if (res.data.optionList && Array.isArray(res.data.optionList)) {
+          setOptionImages(res.data.optionList);
         }
       })
       .catch((err) => {
@@ -77,13 +97,13 @@ function SpaceView() {
 
   const goToPreviousImage = () => {
     setCurrentImageIndex((prevIndex) =>
-      prevIndex === 0 ? images.length - 1 : prevIndex - 1
+      prevIndex === 0 ? spaceImages.length - 1 : prevIndex - 1
     );
   };
 
   const goToNextImage = () => {
     setCurrentImageIndex((prevIndex) =>
-      prevIndex === images.length - 1 ? 0 : prevIndex + 1
+      prevIndex === spaceImages.length - 1 ? 0 : prevIndex + 1
     );
   };
 
@@ -95,7 +115,7 @@ function SpaceView() {
 
   const goToNextThumbnails = () => {
     setStartThumbnailIndex((prevIndex) =>
-      Math.min(images.length - thumbnailCount, prevIndex + thumbnailCount)
+      Math.min(spaceImages.length - thumbnailCount, prevIndex + thumbnailCount)
     );
   };
 
@@ -117,7 +137,7 @@ function SpaceView() {
           <Flex direction={{ base: "column", lg: "row" }} gap={8}>
             <Box flex={2}>
               <Box position="relative" mb={4} className="image-slider">
-                <Image src={images[currentImageIndex]} alt="Selected Space Image" w="100%" h="auto" className="fade-image"/>
+                <Image src={spaceImages[currentImageIndex]} alt="Selected Space Image" w="100%" h="auto" className="fade-image"/>
                 <IconButton
                   icon={<ChevronLeftIcon />}
                   position="absolute"
@@ -142,7 +162,7 @@ function SpaceView() {
                   isDisabled={startThumbnailIndex === 0}
                 />
                 <Flex overflow="hidden" className="thumbnail-wrapper">
-                  {images.slice(startThumbnailIndex, startThumbnailIndex + thumbnailCount).map((img, index) => (
+                  {spaceImages.slice(startThumbnailIndex, startThumbnailIndex + thumbnailCount).map((img, index) => (
                     <Image
                       key={startThumbnailIndex + index}
                       src={img}
@@ -161,7 +181,7 @@ function SpaceView() {
                 <IconButton
                   icon={<ChevronRightIcon />}
                   onClick={goToNextThumbnails}
-                  isDisabled={startThumbnailIndex >= images.length - thumbnailCount}
+                  isDisabled={startThumbnailIndex >= spaceImages.length - thumbnailCount}
                 />
               </Flex>
 
@@ -214,9 +234,19 @@ function SpaceView() {
                   <Heading as="h2" size="xl" mb={4}>시설안내</Heading>
                   <Text fontSize="lg" mb={4}>{space.facility}</Text>
                   <Text fontSize="md" fontWeight="bold" mb={4}>주소: {space.address} {space.detailAddress}</Text>
-
-                  <Heading as="h3" size="lg" mb={4}>
-                    <FontAwesomeIcon icon={faMapMarkedAlt} /> 지도 안내
+                  <Heading as="h4" size="md" mb={4}>
+                    제공 편의시설
+                  </Heading>
+                  <Flex>
+                    {optionImages.map(option => (
+                      <Box key={option.optionListId} textAlign="center" m={2}>
+                        <Image src={option.fileName} alt={option.name} boxSize="70px" mx="auto" mb={2} />
+                        <Text>{option.name}</Text>
+                      </Box>
+                    ))}
+                  </Flex>
+                  <Heading as="h4" size="md" mb={4}>
+                    지도 안내
                   </Heading>
                   <Box height="400px" mb={4}>
                     <KakaoMap address={space.address} latitude={space.latitude} longitude={space.longitude} />

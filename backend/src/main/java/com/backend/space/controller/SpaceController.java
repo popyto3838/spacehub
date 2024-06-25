@@ -1,12 +1,10 @@
 package com.backend.space.controller;
 
-import com.backend.dto.SpaceWithThumbnailDTO;
+import com.backend.dto.FindResponseSpaceJoinDTO;
 import com.backend.file.service.FileService;
 import com.backend.member.service.MemberService;
-import com.backend.space.domain.FindResponseSpaceJoinDTO;
 import com.backend.space.domain.Space;
-import com.backend.space.domain.SpaceConfig;
-import com.backend.space.domain.SpaceDTO;
+import com.backend.dto.SpaceDTO;
 import com.backend.space.service.SpaceService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +17,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/space")
+@RequestMapping("api/space")
 public class SpaceController {
 
     private final SpaceService spaceService;
@@ -56,20 +54,19 @@ public class SpaceController {
     }
 
     @GetMapping("list")
-    public ResponseEntity<List<SpaceWithThumbnailDTO>> getAllSpacesWithThumnails() {
-        List<SpaceWithThumbnailDTO> spaces = spaceService.getAllSpacesWithThumnails();
+    public ResponseEntity<List<FindResponseSpaceJoinDTO>> getAllSpacesWithThumbnails() {
+        List<FindResponseSpaceJoinDTO> spaces = spaceService.getAllSpacesWithThumbnails();
         return ResponseEntity.ok(spaces);
     }
 
     @GetMapping("/{spaceId}")
-    public ResponseEntity view(@PathVariable Integer spaceId) {
+    public ResponseEntity<FindResponseSpaceJoinDTO> view(@PathVariable Integer spaceId) {
+        System.out.println("spaceId =================== " + spaceId);
         FindResponseSpaceJoinDTO spaceDto = spaceService.view(spaceId);
-        spaceDto.setFile(fileService.getFileByDivisionAndParentId("SPACE", spaceId));
-
         if (spaceDto == null) {
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok().body(spaceDto);
+        return ResponseEntity.ok(spaceDto);
     }
 
 }

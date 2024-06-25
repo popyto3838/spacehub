@@ -1,12 +1,13 @@
 package com.backend.space.service.impl;
 
-import com.backend.dto.SpaceWithThumbnailDTO;
+import com.backend.dto.FindResponseSpaceJoinDTO;
 import com.backend.file.domain.File;
 import com.backend.file.mapper.FileMapper;
-import com.backend.space.domain.FindResponseSpaceJoinDTO;
 import com.backend.space.domain.Space;
 import com.backend.space.mapper.SpaceMapper;
 import com.backend.space.service.SpaceService;
+import com.backend.dto.OptionListDTO;
+import edu.emory.mathcs.backport.java.util.Collections;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
@@ -36,21 +37,32 @@ public class SpaceServiceImpl implements SpaceService {
 
     @Override
     public FindResponseSpaceJoinDTO view(Integer spaceId) {
-        return spaceMapper.selectBySpaceId(spaceId);
+        FindResponseSpaceJoinDTO spaceDto = new FindResponseSpaceJoinDTO();
+        spaceDto.setSpace(spaceMapper.selectBySpaceId(spaceId));
+        if (spaceDto == null) {
+            return null;
+        }
+        List<File> files = fileMapper.selectFileByDivisionAndParentId("SPACE", spaceId);
+        if (files != null && !files.isEmpty()) {
+            spaceDto.setSpaceImgFiles(files); // 모든 이미지 파일 가져오기
+        }
+        List<OptionListDTO> options = spaceMapper.selectOptionListBySpaceId(spaceId);
+        spaceDto.setOptionList(options);
+        return spaceDto;
     }
 
     @Override
-    public List<SpaceWithThumbnailDTO> getAllSpacesWithThumnails() {
+    public List<FindResponseSpaceJoinDTO> getAllSpacesWithThumbnails() {
         List<Space> spaces = spaceMapper.selectAll();
-        List<SpaceWithThumbnailDTO> spaceWithThumnailList = new ArrayList<>();
+        List<FindResponseSpaceJoinDTO> spaceWithThumnailList = new ArrayList<>();
 
         for (Space space : spaces) {
-            SpaceWithThumbnailDTO dto = new SpaceWithThumbnailDTO();
+            FindResponseSpaceJoinDTO dto = new FindResponseSpaceJoinDTO();
             dto.setSpace(space);
 
             List<File> files = fileMapper.selectFileByDivisionAndParentId("SPACE", space.getSpaceId());
             if (!files.isEmpty()) {
-                dto.setThumbnailPath(files.getFirst().getFileName());
+                dto.setSpaceImgFiles(Collections.singletonList(files.get(0))); // 첫 번째 파일만 추가
             }
 
             spaceWithThumnailList.add(dto);
@@ -64,5 +76,10 @@ public class SpaceServiceImpl implements SpaceService {
         for (Integer optionId : optionList) {
             spaceMapper.insertSpaceConfig(spaceId, optionId);
         }
+    }
+
+    @Override
+    public List<OptionListDTO> getOptionListBySpaceId(Integer spaceId) {
+        return spaceMapper.selectOptionListBySpaceId(spaceId);
     }
 }

@@ -72,15 +72,13 @@ public interface FileMapper {
     void deleteFileById(int fileId);
 
     @Select("""
-            SELECT f.PARENT_ID, f.DIVISION, f.FILE_NAME
-                    FROM FILE f
-                    WHERE f.DIVISION = 'TYPE'
-                      AND f.FILE_ID = (
-                          SELECT MIN(f2.FILE_ID)
-                          FROM FILE f2
-                          WHERE f2.PARENT_ID = f.PARENT_ID
-                            AND f2.DIVISION = 'TYPE'
-                      )
+            SELECT O.OPTION_LIST_ID, O.NAME, F.FILE_NAME
+            FROM OPTION_LIST O
+            LEFT JOIN FILE F ON O.OPTION_LIST_ID = F.PARENT_ID AND F.DIVISION = 'OPTION'
+            WHERE O.OPTION_LIST_ID IN 
+                (SELECT OPTION_LIST_ID
+                FROM SPACE_CONFIG
+                WHERE SPACE_ID = #{spaceId})
             """)
     List<File> selectAllOfTypes();
 }
