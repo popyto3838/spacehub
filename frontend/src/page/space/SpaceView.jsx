@@ -202,7 +202,7 @@ function SpaceView() {
                     <FontAwesomeIcon icon={faMapMarkedAlt}/> 지도 안내
                   </Heading>
                   <Box height="400px" mb={4}>
-                    <KakaoMap latitude={space.latitude} longitude={space.longitude}/>
+                    <KakaoMap address={space.address} latitude={space.latitude} longitude={space.longitude}/>
                   </Box>
                 </Box>
                 <Divider/>
