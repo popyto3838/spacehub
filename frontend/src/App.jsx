@@ -24,12 +24,12 @@ import {MemberMy} from "./page/member/MemberMy.jsx";
 
 import axios from "axios";
 import SpaceView from "./page/space/SpaceView.jsx";
-import {HostDashboard} from "./page/dashboard/HostDashboard.jsx";
 import AdminDashboard from "./page/dashboard/AdminDashboard.jsx";
 import SpaceList from "./page/space/SpaceList.jsx";
 import {MemberHostInfo} from "./page/member/MemberHostInfo.jsx";
 import {MemberHostPage} from "./page/member/MemberHostPage.jsx";
 import MyReservationList from "./page/member/MyReservationList.jsx";
+import HostDashboard from "./page/dashboard/HostDashboard.jsx";
 
 
 // axios interceptor 설정
