@@ -35,6 +35,12 @@ public interface ReservationMapper {
     @Options(useGeneratedKeys = true, keyProperty = "reservationId")
     int insert(Reservation reservation);
 
+    @Select("""
+            SELECT  *
+            FROM    RESERVATION
+            """)
+    List<Reservation> selectAll();
+
 
     @Select("""
             SELECT  R.*
@@ -44,7 +50,7 @@ public interface ReservationMapper {
             LEFT JOIN SPACE S ON R.SPACE_ID = S.SPACE_ID
             WHERE MEMBER_ID = #{memberId}
             """)
-    List<FindResponseReservationListDTO> selectAll(Integer memberId);
+    List<FindResponseReservationListDTO> selectAllByMemberId(Integer memberId);
 
     @Select("""
             SELECT  R.*

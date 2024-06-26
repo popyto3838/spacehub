@@ -22,4 +22,6 @@ public interface ReservationService {
     void updateStatus(UpdateStatusRequestDTO reservation);
 
     List<FindResponseHostReservationList> selectAllbyHostId(Integer spaceId);
+
+    List<Reservation> selectAll();
 }

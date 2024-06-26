@@ -23,7 +23,7 @@ const Calendar = (props) => {
 
     const fetchReservations = async () => {
         try {
-            const response = await axios.get('/api/reservation/list');
+            const response = await axios.get('/api/reservation/listAll');
             setReservations(response.data);
         } catch (error) {
             console.error('Failed to fetch reservations:', error);
@@ -115,11 +115,10 @@ const Calendar = (props) => {
             if (selectedHours.length === 0) {
                 setSelectedHours([hour]);
             } else {
-                const lastSelectedHour = selectedHours[selectedHours.length - 1];
-                if (Math.abs(lastSelectedHour - hour) === 1) {
-                    setSelectedHours((prev) => {
-                        return [...prev, hour];
-                    });
+                const minHour = Math.min(...selectedHours);
+                const maxHour = Math.max(...selectedHours);
+                if (hour === minHour - 1 || hour === maxHour + 1) {
+                    setSelectedHours((prev) => [...prev, hour].sort((a, b) => a - b));
                 } else {
                     toast({
                         status: 'error',
@@ -131,6 +130,8 @@ const Calendar = (props) => {
             }
         }
     };
+
+
 
     const isTimeSlotReserved = (date, hour) => {
         return reservations.some((reservation) => {
@@ -156,7 +157,7 @@ const Calendar = (props) => {
                     key={hour}
                     className={`hour-button ${selectedHours.includes(hour) ? 'selected' : ''} ${isReserved ? 'reserved' : ''}`}
                     onClick={() => handleHourChange(hour)}
-                    disabled={isReserved}
+                    disabled={isReserved || selectedHours.length === 1}
                 >
                     {hour < 10 ? `0${hour}:00` : `${hour}:00`}
                 </button>
@@ -165,6 +166,16 @@ const Calendar = (props) => {
     };
 
     const handleReservation = () => {
+        if (selectedHours.length < 2) {
+            toast({
+                status: 'warning',
+                description: '최소 두 개의 시간을 선택해야 합니다.',
+                position: 'top',
+                duration: 3000
+            });
+            return;
+        }
+
         if (selectedDate && selectedHours.length > 0) {
             const year = selectedDate.getFullYear();
             const month = String(selectedDate.getMonth() + 1).padStart(2, '0');
