@@ -24,8 +24,18 @@ import java.util.Map;
 public class ReservationController {
     private final ReservationService reservationService;
 
+
+    @GetMapping("/listAll")
+    public ResponseEntity<List<Reservation>> listAll() {
+        List<Reservation> list = reservationService.selectAll();
+        if (list == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(list);
+    }
+
     @GetMapping("/list/{memberId}")
-    public ResponseEntity<List<FindResponseReservationListDTO>> list(@PathVariable Integer memberId) {
+    public ResponseEntity<List<FindResponseReservationListDTO>> listByMemberId(@PathVariable Integer memberId) {
         List<FindResponseReservationListDTO> list = reservationService.list(memberId);
         if (list == null) {
             return ResponseEntity.notFound().build();
