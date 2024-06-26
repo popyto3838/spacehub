@@ -1,16 +1,57 @@
-import React, {useState} from 'react';
-import {Badge, Box, Flex, Heading, Image, Text} from '@chakra-ui/react';
+import React, {useContext, useEffect, useState} from 'react';
+import {Badge, Box, Flex, Heading, Image, Text, useToast} from '@chakra-ui/react';
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faHeart as solidHeart, faStar} from "@fortawesome/free-solid-svg-icons";
 import {faHeart as regularHeart} from "@fortawesome/free-regular-svg-icons";
+import {LoginContext} from "../../component/LoginProvider.jsx";
+import axios from "axios";
+import {useNavigate} from "react-router-dom";
+
 
 const SpaceCard = ({ space, thumbnailPath }) => {
   const [isFavorited, setIsFavorited] = useState(false);
+  const member = useContext(LoginContext);
+  const navigate = useNavigate();
+  const toast = useToast();
+  const [isLoading, setIsLoading] = useState(false);
 
+  useEffect(() => {
+    axios.get("/api/favorites/list")
+        .then((res) => {
+          console.log("=================",res.data)
+        })
+    console.log("==========================",space.spaceId)
+    console.log("==========================",member.id)
+  }, []);
   const handleFavoriteClick = (e) => {
     e.stopPropagation();
     setIsFavorited(!isFavorited);
   };
+  const clickFavorite = () => {
+    axios.post("/api/favorites/insert", {
+      spaceId: space.spaceId,
+      memberId: member.id
+    })
+        .then((res) => {
+          toast({
+            status: "success",
+            description: "좋아요가 등록되었스빈다.",
+            position: "top",
+            duration: 1000,
+          });
+          setIsFavorited(true)
+          navigate("/");
+        })
+        .catch((err) => {
+          toast({
+            status: "error",
+            description: "게시물이 작성되지 않았습니다.",
+            position: "top",
+            duration: 1000,
+          });
+        })
+        .finally(setIsLoading(false));
+  }
 
   return (
     <Box
@@ -56,6 +97,7 @@ const SpaceCard = ({ space, thumbnailPath }) => {
           alignItems="center"
         >
           <FontAwesomeIcon
+            onClick={clickFavorite}
             icon={isFavorited ? solidHeart : regularHeart}
             color={isFavorited ? "red" : "gray.600"}
             style={{
