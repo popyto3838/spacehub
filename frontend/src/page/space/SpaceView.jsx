@@ -130,7 +130,7 @@ function SpaceView() {
 
   return (
     <Box bg={bgColor} minHeight="100vh">
-      <Container maxW="1200px" py={10} px={4}>
+      <Container maxW="1600px" py={10} px={4}>
         <VStack spacing={12} align="stretch">
           <Box>
             <Heading as="h1" size="2xl" color="gray.800" mb={4} fontWeight="bold">{spaceDetails.title}</Heading>
