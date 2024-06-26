@@ -30,7 +30,6 @@ public class OptionListController {
     @GetMapping("/list")
     public ResponseEntity<List<ItemListResponseDto>> getOptionLists() {
         List<ItemListResponseDto> response = optionListService.selectAll();
-        System.out.println("response = " + response); // 추가된 디버그 로그
         return ResponseEntity.ok(response);
     }
 
