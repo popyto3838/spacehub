@@ -4,7 +4,8 @@ import {
   Button,
   Container,
   Divider,
-  Flex, Grid,
+  Flex,
+  Grid,
   Heading,
   HStack,
   IconButton,
@@ -28,11 +29,12 @@ import {
   faExclamationCircle,
   faHeart,
   faHome,
-  faQuestionCircle,
-  faShare,
-  faStar, faWonSign
+  faQuestionCircle, faShare,
+  faStar,
+  faWonSign
 } from '@fortawesome/free-solid-svg-icons';
 import '/public/css/space/SpaceView.css';
+import KakaoShareButton from "./KakaoShareButton.jsx";
 
 function SpaceView() {
   const [space, setSpace] = useState({});
@@ -132,7 +134,9 @@ function SpaceView() {
             <HStack justify="space-between" align="center">
               <Text fontSize="xl" color="gray.600">{spaceDetails.subTitle}</Text>
               <HStack>
-                <Button leftIcon={<FontAwesomeIcon icon={faShare} />} variant="outline" colorScheme="gray">공유</Button>
+                <KakaoShareButton spaceDetails={spaceDetails} templateId={109470}>
+                  <Button leftIcon={<FontAwesomeIcon icon={faShare} />} variant="outline" colorScheme="gray">공유</Button>
+                </KakaoShareButton>
                 <Button leftIcon={<FontAwesomeIcon icon={faBullhorn} />} variant="outline" colorScheme="gray">신고</Button>
                 <Button leftIcon={<FontAwesomeIcon icon={faHeart} />} variant="outline" colorScheme="red">저장</Button>
               </HStack>
