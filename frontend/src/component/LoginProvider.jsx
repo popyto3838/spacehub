@@ -9,6 +9,8 @@ export function LoginProvider({ children }) {
   const [nickname, setNickname] = useState("");
   const [expired, setExpired] = useState(0);
   const [authority, setAuthority] = useState("");
+  const [mobile, setMobile] = useState("");
+  const [email, setEmail] = useState("");
 
   console.log(authority)
 
@@ -55,6 +57,8 @@ export function LoginProvider({ children }) {
     setExpired(payload.exp);
     setId(payload.sub);
     setNickname(payload.nickname);
+    setMobile(payload.mobile);
+    setEmail(payload.email);
     console.log(id);
     setAuthority(payload.scope.split(" "));
   }
@@ -63,6 +67,8 @@ export function LoginProvider({ children }) {
     localStorage.removeItem("com.naver.nid.oauth.state_token");
     setExpired(0);
     setId("");
+    setMobile("");
+    setEmail("");
     setNickname("");
     setAuthority([]);
 
@@ -94,6 +100,8 @@ export function LoginProvider({ children }) {
         id: id,
         nickname: nickname,
         authority: authority,
+        email : email,
+        mobile : mobile,
         login: login,
         logout: logout,
         isLoggedIn: isLoggedIn,

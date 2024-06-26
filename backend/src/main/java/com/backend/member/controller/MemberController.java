@@ -1,6 +1,7 @@
 package com.backend.member.controller;
 
 
+import com.backend.board.domain.Board;
 import com.backend.member.domain.member.Host;
 import com.backend.member.domain.member.Member;
 import com.backend.member.service.MailService;
@@ -18,7 +19,9 @@ import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -308,5 +311,40 @@ public class MemberController {
         return ResponseEntity.ok(email);
     }
 
+    @GetMapping("findPassword")
+    public ResponseEntity<String> findPassword(@RequestParam("mobile") String mobile) {
+        Member member = service.MemberIdByMobile(mobile);
+
+        String memberId= String.valueOf(member.getMemberId());
+
+        return ResponseEntity.ok(memberId);
+    }
+
+    @PutMapping("modifyPassword")
+    public ResponseEntity modifyPassword(@RequestBody Member member) {
+        System.out.println("member = " + member);
+
+        service.modifyPassword(member);
+        return ResponseEntity.ok().build();
+
+    }
+    
+    @PostMapping("profile")
+    public void modifyProfile(Member member, @RequestParam(value = "files[]", required = false) MultipartFile[] files) throws IOException {
+        System.out.println("member = " + member);
+        System.out.println("files = " + files);
+
+        service.modifyProfile(member, files);
+        
+    }
+
+
+    @GetMapping("gethost")
+    public ResponseEntity getHost(@RequestParam("memberId") String memberId) {
+
+        Host host = service.findHostByMemberId(memberId);
+
+        return ResponseEntity.ok(host);
+    }
 
 }

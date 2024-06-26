@@ -3,7 +3,9 @@ package com.backend.member.service;
 import com.backend.member.domain.member.Host;
 import com.backend.member.domain.member.Member;
 import org.springframework.security.core.Authentication;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -58,4 +60,12 @@ public interface MemberService {
     Member emailByMobile(String mobile);
 
     Integer findHostIdByMemberId(int memberId);
+
+    void modifyPassword(Member member);
+
+    Member MemberIdByMobile(String mobile);
+
+    void modifyProfile(Member member, MultipartFile[] files) throws IOException;
+
+    Host findHostByMemberId(String memberId);
 }

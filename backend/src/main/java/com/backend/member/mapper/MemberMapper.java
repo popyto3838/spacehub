@@ -131,14 +131,13 @@ public interface MemberMapper {
             """)
     void switchHost(Member member);
 
-    @Insert("""
-            INSERT INTO HOST (BANK_NAME, ACCOUNT_NUMBER , MEMBER_ID)
-            VALUES (#{bankName}, #{accountNumber}, #{memberId})
+    @Update("""
+            UPDATE HOST 
+            SET BANK_NAME =#{bankName},
+                ACCOUNT_NUMBER =#{accountNumber}
+            WHERE MEMBER_ID=#{memberId}
             """)
     void insertAccount(Host host);
-
-
-
 
     @Update("""
             UPDATE MEMBER
@@ -203,4 +202,47 @@ public interface MemberMapper {
             WHERE M.MEMBER_ID = #{memberId}
             """)
     int findHostIdByMemberId(int memberId);
+
+    @Select("""
+           SELECT MEMBER_ID
+           FROM MEMBER
+           WHERE MOBILE=#{mobile}
+           """)
+    Member memberIdByMobile(String mobile);
+
+    @Update("""
+            UPDATE MEMBER
+             SET PASSWORD = #{password}
+             WHERE MEMBER_ID = #{memberId}
+              """)
+    void modifyPassword(Member member);
+
+    @Select("""
+            SELECT EMAIL
+            FROM MEMBER
+            WHERE MEMBER_ID = #{memberId}
+            """)
+    Object getEmailBbyMemberId(Member member);
+
+    @Select("""
+           SELECT MOBILE
+           FROM MEMBER
+           WHERE MEMBER_ID = #{memberId}
+           """)
+    Object getMobileByMemberId(Member member);
+
+    @Update("""
+        UPDATE MEMBER
+        SET PROFILE_IMAGE = #{profileImage},
+            SRC= #{fullPath}
+        WHERE MEMBER_ID = #{memberId}
+        """)
+    void insertFileList(Integer memberId, String profileImage,String fullPath);
+
+    @Select("""
+            SELECT*
+            FROM HOST
+            WHERE MEMBER_ID = #{memberId}
+            """)
+    Host findHostByMemberId(String memberId);
 }
