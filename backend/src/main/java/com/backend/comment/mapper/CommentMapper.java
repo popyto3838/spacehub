@@ -63,7 +63,7 @@ public interface CommentMapper {
     int insertReview(Comment comment);
 
     @Insert("""
-            INSERT INTO FILE_LIST(PARENT_ID, DIVISION, FILE_NAME)
+            INSERT INTO FILE(PARENT_ID, DIVISION, FILE_NAME)
             VALUES (#{parentId}, 'REVIEW', #{fileName})
             """)
     int insertFileList(Integer parentId, String fileName);
@@ -76,6 +76,31 @@ public interface CommentMapper {
             ORDER BY COMMENT_ID
             """)
     List<Comment> selectAllBySpaceId(Integer spaceId);
+
+    @Delete("""
+            DELETE FROM COMMENT
+            WHERE COMMENT_ID = #{commentId}
+            """)
+    int deleteByCommentId(Comment comment);
+
+    @Select("""
+            SELECT S.*, CASE WHEN M.WITHDRAWN = 'Y' THEN '탈퇴한 회원입니다.' ELSE M.NICKNAME END
+            FROM SPACE S JOIN MEMBER M ON S.MEMBER_ID = M.MEMBER_ID
+            WHERE S.SPACE_ID = #{spaceId}
+            """)
+    Comment selectBySpaceId(Integer spaceId);
+
+    @Select("""
+            SELECT F.FILE_NAME, F.PARENT_ID, F.FILE_ID, S.SPACE_ID
+            FROM FILE F JOIN SPACE S ON F.PARENT_ID = S.SPACE_ID
+            WHERE PARENT_ID = #{parentId}
+            """)
+    List<String> selectByFileNameBySpaceId(Integer parentId);
+
+    @Update("""
+            UPDATE COMMENT
+            SET CONTENT = #{content}
+            WHERE COMMENT_ID = #{commentId}
+            """)
+    int updateByCommentId(Comment comment);
 }
-
-

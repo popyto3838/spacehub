@@ -130,6 +130,8 @@ function SpaceView() {
     );
   };
 
+  console.log(spaceDetails.spaceId);
+
   return (
     <Box bg={bgColor} minHeight="100vh">
       <Container maxW="1200px" py={10} px={4}>
@@ -417,8 +419,9 @@ function SpaceView() {
                     이용후기
                   </Heading>
                   {/* 이용후기 내용 */}
-                  {space.spaceId && (
-                    <ReviewCommentComponent spaceId={space.spaceId} />
+                  {spaceDetails.spaceId}
+                  {spaceDetails.spaceId && (
+                    <ReviewCommentComponent spaceId={spaceDetails.spaceId} />
                   )}
                 </Box>
               </VStack>

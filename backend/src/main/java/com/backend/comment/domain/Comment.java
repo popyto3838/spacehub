@@ -1,9 +1,11 @@
 package com.backend.comment.domain;
 
+import com.backend.file.domain.File;
 import lombok.Data;
 
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+import java.util.List;
 
 @Data
 public class Comment {
@@ -19,6 +21,8 @@ public class Comment {
     private Integer categoryId; // board의 categoryId를 받음
     private String nickname; // nickname을 받음
     private Integer spaceId; // space의 spaceId를 받음
+
+    private List<File> commentFilesLists;
 
     private static final SimpleDateFormat formatter = new SimpleDateFormat("yyyy년 MM월 dd일 HH시 mm분 ss초");
 

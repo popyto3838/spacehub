@@ -25,4 +25,8 @@ public interface CommentService {
     void insertReview(Comment comment, Authentication authentication, MultipartFile[] files) throws IOException;
 
     List<Comment> listReview(Integer spaceId);
+
+    void deleteReview(Comment comment);
+
+    void updateReview(Comment comment);
 }

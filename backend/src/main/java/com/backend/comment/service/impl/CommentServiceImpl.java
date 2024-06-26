@@ -101,6 +101,33 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public List<Comment> listReview(Integer spaceId) {
+//        List<Comment> comments = new ArrayList<>();
+//
+//        // 하나의 게시물 조회
+//        List<Comment> comment = commentMapper.selectAllBySpaceId(spaceId);
+//        // fileNames에서 파일 이름 조회
+//        List<String> fileNames = commentMapper.selectByFileNameBySpaceId(spaceId);
+//        // 파일 경로 저장
+//        List<com.backend.file.domain.File> files = fileNames.stream()
+//                .map(fileName -> {
+//                    var fl = new com.backend.file.domain.File();
+//                    fl.setFileName(fileName);
+//                    fl.setSrc(STR."http://172.27.128.1:8888/\{spaceId}/\{fileName}");
+//                    return fl;
+//                })
+//                .toList();
+//        comments.add((Comment) comment);
+
         return commentMapper.selectAllBySpaceId(spaceId);
+    }
+
+    @Override
+    public void deleteReview(Comment comment) {
+        commentMapper.deleteByCommentId(comment);
+    }
+
+    @Override
+    public void updateReview(Comment comment) {
+        commentMapper.updateByCommentId(comment);
     }
 }

@@ -65,6 +65,25 @@ public class CommentController {
         return commentService.listReview(spaceId);
     }
 
+    @DeleteMapping("deleteReview")
+    @PreAuthorize("isAuthenticated()")
+    public void deleteReview(@RequestBody Comment comment,
+                             Authentication authentication) {
+        if (commentService.hasAccess(comment, authentication)) {
+            commentService.deleteReview(comment);
+        }
+
+    }
+
+    @PutMapping("editReview")
+    @PreAuthorize("isAuthenticated()")
+    public void editReview(@RequestBody Comment comment,
+                           Authentication authentication) {
+        if (commentService.hasAccess(comment, authentication)) {
+            commentService.updateReview(comment);
+        }
+    }
+
 
     // space의 qna
 }
