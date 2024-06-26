@@ -27,8 +27,8 @@ public class FileServiceImpl implements FileService {
     private final TypeListMapper typeListMapper;
     private final OptionListMapper optionListMapper;
 
-//    private final String baseDir = "/Users/santa/Desktop/study/BackEnd/project/prj3/frontend/public/img/";
-    private final String baseDir = "/Users/leedongyoung/중앙정보/prj3/frontend/public/img/";
+    //    private final String baseDir = "/Users/santa/Desktop/study/BackEnd/project/prj3/frontend/public/img/";
+    private final String baseDir = "/Users/happyhome/IdeaProjects/prj3/frontend/public/img";
 
     @Override
     public void addOrUpdateFile(String division, int parentId, MultipartFile file) throws IOException {
@@ -113,7 +113,8 @@ public class FileServiceImpl implements FileService {
             dto.setIconFile(iconFiles.get(0)); // 여러 개의 파일 중 첫 번째 파일을 설정
 
             return dto;
-        }).collect(Collectors.toList());    }
+        }).collect(Collectors.toList());
+    }
 
     @Override
     public List<ItemListResponseDto> getOptionLists() {

@@ -1,21 +1,15 @@
 package com.backend.member.service.impl;
 
 
-import java.io.File;
-import java.io.IOException;
-import java.util.HashMap;
-
-import net.nurigo.java_sdk.api.Message;
-import net.nurigo.java_sdk.exceptions.CoolsmsException;
-import org.json.simple.JSONObject;
-
+import com.backend.board.mapper.BoardMapper;
 import com.backend.member.domain.member.Host;
 import com.backend.member.domain.member.Member;
 import com.backend.member.mapper.MemberMapper;
 import com.backend.member.service.MemberService;
-import com.backend.board.mapper.BoardMapper;
-
 import lombok.RequiredArgsConstructor;
+import net.nurigo.java_sdk.api.Message;
+import net.nurigo.java_sdk.exceptions.CoolsmsException;
+import org.json.simple.JSONObject;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -26,6 +20,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.List;
@@ -431,14 +427,14 @@ public class MemberServiceImpl implements MemberService {
                 mapper.insertFileList(member.getMemberId(), profileImage, fileName);
 
                 //실제 파일 저장
-                String dir = STR."/Users/leedongyoung/중앙정보/prj3/frontend/public/img/profile/\{member.getMemberId()}"; // 부모 디렉토리(폴더)
+                String dir = STR."/Users/happyhome/IdeaProjects/prj3/frontend/public/img/\{member.getMemberId()}"; // 부모 디렉토리(폴더)
                 File dirFile = new File(dir);
                 if (!dirFile.exists()) {
                     dirFile.mkdirs();
                 }
                 //파일경로
 
-                String path = STR."/Users/leedongyoung/중앙정보/prj3/frontend/public/img/profile/\{member.getMemberId()}/\{file.getOriginalFilename()}";
+                String path = STR."/Users/happyhome/IdeaProjects/prj3/frontend/public/img/\{member.getMemberId()}/\{file.getOriginalFilename()}";
                 //저장 위치 명시
                 member.setProfileImage(profileImage);
 

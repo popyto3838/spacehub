@@ -3,7 +3,6 @@ package com.backend.board.service.impl;
 import com.backend.board.domain.Board;
 import com.backend.board.mapper.BoardMapper;
 import com.backend.board.service.BoardService;
-import com.backend.fileList.domain.FileList;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
@@ -91,11 +90,11 @@ public class BoardServiceImpl implements BoardService {
         // fileNames에서 파일 이름 조회
         List<String> fileNames = boardMapper.selectByFileNameByBoardId(boardId);
         // 파일 경로 저장
-        List<FileList> files = fileNames.stream()
+        List<com.backend.file.domain.File> files = fileNames.stream()
                 .map(fileName -> {
-                    var fl = new FileList();
+                    var fl = new com.backend.file.domain.File();
                     fl.setFileName(fileName);
-                    fl.setSrc(STR."http://172.27.160.1:8888/\{boardId}/\{fileName}");
+                    fl.setSrc(STR."http://172.27.128.1:8888/\{boardId}/\{fileName}");
                     return fl;
                 })
                 .toList();
