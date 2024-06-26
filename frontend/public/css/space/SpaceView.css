@@ -1,164 +1,37 @@
-@font-face {
-    font-family: 'TTLaundryGothicB';
-    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/2403-2@1.0/TTLaundryGothicB.woff2') format('woff2');
-    font-weight: 700;
-    font-style: normal;
-}
-
-@font-face {
-    font-family: 'MangoDdobak-B';
-    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/2405-3@1.1/MangoDdobak-B.woff2') format('woff2');
-    font-weight: 700;
-    font-style: normal;
-}
-
-@font-face {
-    font-family: 'TTLaundryGothicB';
-    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/2403-2@1.0/TTLaundryGothicB.woff2') format('woff2');
-    font-weight: 700;
-    font-style: normal;
-}
-
-@font-face {
-    font-family: 'CookieRun-Regular';
-    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/CookieRun-Regular.woff') format('woff');
-    font-weight: normal;
-    font-style: normal;
-}
-
-* {
-    margin: 0;
-}
-
-.titleArea {
-    font-family: TTLaundryGothicB;
-    display: flex;
-    justify-content: left;
-    flex-direction: column;
-    margin-top: 10%;
-    margin-bottom: 0;
-    margin-left: 4%;
+.image-slider {
+    position: relative;
     width: 100%;
-    height: 10vh;
+    overflow: hidden;
 }
 
-.title {
-    color: #6c5ce7;
-    font-size: 4rem;
-}
-
-.subTitle {
-    font-size: 1rem;
-    color: #727272;
-}
-
-.parentArea {
+.image-slider img {
     width: 100%;
-    height: 300vh;
+    height: auto;
+    transition: transform 0.5s ease;
+}
+
+.thumbnail-wrapper {
     display: flex;
     justify-content: center;
     align-items: center;
+    overflow-x: hidden;
 }
 
-.spaceViewArea {
-    /*border: 1px solid red;*/
-    width: 70%;
-    height: 100%;
+.thumbnail-wrapper img {
+    margin: 0 5px;
+    cursor: pointer;
+    transition: transform 0.3s ease, filter 0.3s ease;
+    width: 60px; /* 기본 썸네일 너비 */
+    height: 60px; /* 기본 썸네일 높이 */
+    object-fit: cover;
 }
 
-.reservationArea {
-    width: 30%;
-    height: 95%;
+.thumbnail-wrapper img.active {
+    transform: scale(1.1);
+    filter: none;
+    border: 2px solid yellow;
 }
 
-.buttonArea {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.reservationBtn {
-    width: 80%;
-    height: 20%;
-}
-
-.priceArea {
-    margin-top: 5%;
-    width: 100%;
-    height: 10vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.totalPrice {
-    font-family: CookieRun-Regular;
-    font-size: 2rem;
-    color: #6c5ce7;
-}
-
-.imgArea {
-    width: 80%;
-    height: 20%;
-    margin-top: 10%;
-    margin-left: 5%;
-}
-
-.imgBox {
-    width: 100%;
-    height: 100%;
-    border-radius: 10px;
-}
-
-.introduceArea {
-    /*border: 1px solid black; */
-    width: 85%;
-    height: 30%;
-    margin-top: 5%;
-}
-
-.introduceTitle {
-    color: #595959;
-    font-family: TTLaundryGothicB;
-    font-size: 3rem;
-}
-
-/*.sectionArea {*/
-/*    border: 1px solid black;*/
-/*}*/
-section {
-    padding: 5%;
-    border-top: 1px solid #919191;
-}
-
-section h2 {
-    font-size: 2rem;
-    font-family: CookieRun-Regular;
-    color: #727272;
-}
-
-#introduceArea {
-    margin-top: 2%;
-    width: 100%;
-    height: 40vh;
-}
-
-#facilityArea {
-    width: 100%;
-    height: 40vh;
-}
-
-#noticeArea {
-    width: 100%;
-    height: 40vh;
-}
-
-#QA {
-    width: 100%;
-    height: 40vh;
-}
-
-#comment {
-    width: 100%;
-    height: 60vh;
+.thumbnail-wrapper img.inactive {
+    filter: blur(2px);
 }

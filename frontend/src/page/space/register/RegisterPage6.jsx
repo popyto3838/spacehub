@@ -43,9 +43,9 @@ const RegisterPage6 = ({ formData, setFormData }) => {
       <Grid templateColumns="repeat(auto-fit, minmax(150px, 1fr))" gap={4}>
         {optionLists.map(option => (
           <Button
-            key={option.optionListId}
-            colorScheme={formData.options.includes(option.optionListId) ? 'teal' : 'gray'}
-            onClick={() => handleOptionClick(option.optionListId)}
+            key={option.itemId}
+            colorScheme={formData.options.includes(option.itemId) ? 'teal' : 'gray'}
+            onClick={() => handleOptionClick(option.itemId)}
           >
             {option.name}
           </Button>

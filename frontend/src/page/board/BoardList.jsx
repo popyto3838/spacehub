@@ -5,7 +5,10 @@ import {
   Center,
   Flex,
   Input,
+  Radio,
+  RadioGroup,
   Select,
+  Stack,
   Table,
   Tbody,
   Td,
@@ -21,11 +24,11 @@ import { LoginContext } from "../../component/LoginProvider.jsx";
 export function BoardList() {
   const [boardList, setBoardList] = useState([]);
   const [categoryList, setCategoryList] = useState([]);
-  const [categoryId, setCategoryId] = useState("");
   const [pageInfo, setPageInfo] = useState({});
   const [searchType, setSearchType] = useState("titleContent");
   const [searchKeyword, setSearchKeyword] = useState("");
   const [searchParams] = useSearchParams();
+  const [categoryType, setCategoryType] = useState("all");
 
   const navigate = useNavigate();
 
@@ -40,22 +43,26 @@ export function BoardList() {
     });
     setSearchType("titleContent");
     setSearchKeyword("");
+    setCategoryType("all");
 
     const searchTypeParam = searchParams.get("type");
     const searchKeywordParam = searchParams.get("keyword");
+    const categoryTypeParam = searchParams.get("category");
     if (searchTypeParam) {
       setSearchType(searchTypeParam);
     }
     if (searchKeywordParam) {
       setSearchKeyword(searchKeywordParam);
     }
+    if (categoryTypeParam) {
+      setCategoryType(categoryTypeParam);
+    }
   }, [searchParams]);
 
-  // todo: 게시물 클릭하면 클릭한 시간으로 작성일시 바뀌는거 수정
   const handleClickBoardAndCountViews = (board) => {
     axios
       .put(`/api/board/${board.boardId}/views`, {
-        views: board.views + 1,
+        views: board.views,
       })
       .then(() => {
         navigate(`/board/${board.boardId}`);
@@ -68,12 +75,20 @@ export function BoardList() {
   }
 
   function handleClickSearch() {
-    navigate(`/board/list/?type=${searchType}&keyword=${searchKeyword}`);
+    navigate(
+      `/board/list/?type=${searchType}&keyword=${searchKeyword}&category=${categoryType}`,
+    );
   }
 
   function handleClickPageButton(pageNumber) {
     searchParams.set("page", pageNumber);
     navigate(`/board/list/?${searchParams}`);
+  }
+
+  function handleClickCategoryType() {
+    navigate(
+      `/board/list/?type=${searchType}&keyword=${searchKeyword}&category=${categoryType}`,
+    );
   }
 
   return (
@@ -109,32 +124,24 @@ export function BoardList() {
       </Flex>
 
       {/* 카테고리 */}
-      <Flex>
-        <Button>ALL</Button>
-        {categoryList.map((category) => (
-          <Button key={category.categoryId}>{category.categoryName}</Button>
-        ))}
-      </Flex>
-
-      <Flex>
-        <Box>
-          <Button
-            value={"category"}
-            onClick={() => {
-              setCategoryId("all");
-              categoryId === "all" && navigate("/board/list/?type='all'");
-            }}
-          >
-            전체글
-          </Button>
-          <Button value={"category"} onClick={() => setCategoryId("notice")}>
+      <RadioGroup
+        border={"1px solid black"}
+        value={categoryType}
+        onClick={(e) => setCategoryType(e.target.value)}
+      >
+        <Stack direction={"row"}>
+          <Radio onClick={handleClickCategoryType} value={"all"}>
+            전체
+          </Radio>
+          <Radio onClick={handleClickCategoryType} value={"notice"}>
             공지사항
-          </Button>
-          <Button value={"category"} onClick={() => setCategoryId("faq")}>
+          </Radio>
+          <Radio onClick={handleClickCategoryType} value={"faq"}>
             FAQ
-          </Button>
-        </Box>
-      </Flex>
+          </Radio>
+        </Stack>
+      </RadioGroup>
+      {/* 카테고리 작업중 */}
 
       <Box>
         <Button onClick={() => navigate("/board/write")}>글쓰기</Button>

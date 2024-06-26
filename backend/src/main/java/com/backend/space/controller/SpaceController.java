@@ -1,10 +1,11 @@
 package com.backend.space.controller;
 
+import com.backend.dto.FindResponseSpaceJoinDTO;
+import com.backend.dto.SpaceDTO;
 import com.backend.file.service.FileService;
 import com.backend.member.service.MemberService;
-import com.backend.space.domain.FindResponseSpaceJoinDTO;
+import com.backend.space.domain.FindResponseSpaceHostIdDto;
 import com.backend.space.domain.Space;
-import com.backend.space.domain.SpaceDTO;
 import com.backend.space.service.SpaceService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +18,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/space")
+@RequestMapping("api/space")
 public class SpaceController {
 
     private final SpaceService spaceService;
@@ -32,16 +33,16 @@ public class SpaceController {
         Space space = spaceDto.getSpace();
         int memberId = spaceDto.getMemberId();
 
-        // memberId로 hostId 조회
-        Integer hostId = memberService.findHostIdByMemberId(memberId);
-        if (hostId == null) {
-            return ResponseEntity.badRequest().body("Invalid memberId, hostId not found");
-        }
-        space.setMemberId(memberId); // memberId 설정
-        space.setHostId(hostId); // hostId 설정
+        space.setMemberId(memberId);
 
         // SPACE CREATE
         spaceService.insertSpace(space);
+
+        // 옵션 리스트 저장
+        List<Integer> optionList = spaceDto.getOptionList();
+        if (optionList != null) {
+            spaceService.insertSpaceConfig(space.getSpaceId(), optionList);
+        }
 
         // 이미지 파일 업로드
         if (files != null && !files.isEmpty()) {
@@ -50,31 +51,32 @@ public class SpaceController {
             }
         }
 
-        return ResponseEntity.ok("Space created successfully");
+        return ResponseEntity.ok("공간 등록이 성공적으로 처리되었습니다.");
     }
 
     @GetMapping("list")
-    public ResponseEntity<List<Space>> selectAll() {
-        List<Space> spaces = spaceService.selectAll();
-//        List<File> files = fileService.selectAllOfSpaces();
-//        for (Space space : spaces) {
-//            for (File file : files) {
-//                if (space.getSpaceId() == file.getParentId()) {
-//                    space.setThumbnailPath(file.getFilePath());
-//                    break;
-//                }
-//            }
-//        }
+    public ResponseEntity<List<FindResponseSpaceJoinDTO>> getAllSpacesWithThumbnails() {
+        List<FindResponseSpaceJoinDTO> spaces = spaceService.getAllSpacesWithThumbnails();
         return ResponseEntity.ok(spaces);
     }
 
     @GetMapping("/{spaceId}")
-    public ResponseEntity view(@PathVariable Integer spaceId) {
-        FindResponseSpaceJoinDTO space = spaceService.view(spaceId);
-        if (space == null) {
+    public ResponseEntity<FindResponseSpaceJoinDTO> view(@PathVariable Integer spaceId) {
+        FindResponseSpaceJoinDTO spaceDto = spaceService.view(spaceId);
+        if (spaceDto == null) {
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok().body(space);
+        return ResponseEntity.ok(spaceDto);
+    }
+
+    @GetMapping("/hostSpaceList/{hostId}")
+    public  ResponseEntity<List<FindResponseSpaceHostIdDto>> selectAllbyHostId(@PathVariable Integer hostId) {
+
+        List<FindResponseSpaceHostIdDto> spaceHostIdDtos = spaceService.selectAllByHostId(hostId);
+        if (spaceHostIdDtos == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(spaceHostIdDtos);
     }
 
 }

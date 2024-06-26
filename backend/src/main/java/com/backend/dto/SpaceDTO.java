@@ -1,7 +1,7 @@
-package com.backend.space.domain;
+package com.backend.dto;
 
+import com.backend.space.domain.Space;
 import lombok.Data;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 

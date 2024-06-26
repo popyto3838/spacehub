@@ -6,10 +6,11 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Data
-public class Space {
+public class FindResponseSpaceHostIdDto {
 
     private int spaceId; // SPACE(PK)
     private int memberId;
+    private int hostId; // HOST(FK)
     private int typeListId; // TYPE_LIST(FK)
 
     private String title;
@@ -34,6 +35,5 @@ public class Space {
     private LocalDateTime inputDt;
     private LocalDateTime updateDt;
 
-    private String thumbnailPath; // frontend 썸네일 출력용 경로
 
 }

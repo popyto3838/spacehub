@@ -7,7 +7,6 @@ import SpaceCard from "./SpaceCard.jsx";
 export function SpaceList() {
   const [spaceTypes, setSpaceTypes] = useState([]);
   const [spaces, setSpaces] = useState([]);
-  const [spaceFiles, setSpaceFiles] = useState([]);
   const [visibleSpaces, setVisibleSpaces] = useState(10); // 초기 표시할 공간 수
   const [visibleTypes, setVisibleTypes] = useState(10); // 초기 표시할 공간 유형 수
   const [showMoreSpaces, setShowMoreSpaces] = useState(false);
@@ -38,13 +37,6 @@ export function SpaceList() {
         console.error('공간 데이터를 불러오는데 실패하였습니다:', error);
       });
 
-    axios.get('/api/file/space/list')
-      .then(response => {
-        setSpaceFiles(response.data);
-      })
-      .catch(error => {
-        console.error('공간 이미지를 불러오는데 실패하였습니다:', error);
-      });
   }, [visibleSpaces, visibleTypes]);
 
   const handleShowMoreSpaces = () => {
@@ -106,22 +98,22 @@ export function SpaceList() {
       <Box py={10} px={5}>
         <Heading as="h2" size="lg" mb={6}>공간 목록</Heading>
         <Grid templateColumns="repeat(auto-fill, minmax(250px, 1fr))" gap={6}>
-          {spaces.slice(0, visibleSpaces).map(space => {
-            const file = spaceFiles.find(f => f.parentId === space.spaceId && f.division === 'SPACE');
-            return (
-              <GridItem
-                cursor="pointer"
-                key={space.spaceId}
-                onClick={() => {
-                  handleCardClick(space.spaceId)
-                }}
-                transition="transform 0.2s"
-                _hover={{ transform: 'scale(1.05)' }}
-              >
-                <SpaceCard space={space} file={file} />
-              </GridItem>
-            );
-          })}
+          {spaces.slice(0, visibleSpaces).map(({ space, spaceImgFiles }) => (
+            <GridItem
+              cursor="pointer"
+              key={space.spaceId}
+              onClick={() => {
+                handleCardClick(space.spaceId)
+              }}
+              transition="transform 0.2s"
+              _hover={{ transform: 'scale(1.05)' }}
+            >
+              <SpaceCard
+                space={space}
+                thumbnailPath={spaceImgFiles && spaceImgFiles.length > 0 ? spaceImgFiles[0].fileName : null}
+              />
+            </GridItem>
+          ))}
         </Grid>
         {showMoreSpaces && visibleSpaces < spaces.length && (
           <Box display="flex" justifyContent="center" mt={6}>
