@@ -267,8 +267,8 @@ function SpaceView() {
                   <Grid templateColumns="repeat(auto-fit, minmax(100px, 1fr))" gap={6} mb={12}>
                     {optionImages.map(option => (
                       <Box key={option.optionListId} textAlign="center">
-                        <Image src={option.fileName} alt={option.optionListName} boxSize="60px" mx="auto" mb={2} />
-                        <Text fontSize="md">{option.optionListName}</Text>
+                        <Image src={option.fileName} alt={option.name} boxSize="60px" mx="auto" mb={2} />
+                        <Text fontSize="md">{option.name}</Text>
                       </Box>
                     ))}
                   </Grid>
