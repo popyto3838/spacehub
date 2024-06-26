@@ -82,4 +82,9 @@ public class SpaceServiceImpl implements SpaceService {
     public List<OptionListDTO> getOptionListBySpaceId(Integer spaceId) {
         return spaceMapper.selectOptionListBySpaceId(spaceId);
     }
+
+    @Override
+    public List<FindResponseSpaceHostIdDto> selectAllByHostId(Integer hostId) {
+        return spaceMapper.selectAllByHostId(hostId);
+    }
 }

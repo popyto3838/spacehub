@@ -20,3 +20,4 @@ public interface SpaceService {
 
     List<OptionListDTO> getOptionListBySpaceId(Integer spaceId);
 }
+

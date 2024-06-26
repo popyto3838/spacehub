@@ -1,8 +1,11 @@
 package com.backend.reservation.controller;
 
+import com.backend.reservation.domain.FindResponseHostReservationList;
 import com.backend.reservation.domain.FindResponseReservationListDTO;
 import com.backend.reservation.domain.Reservation;
+import com.backend.reservation.domain.UpdateStatusRequestDTO;
 import com.backend.reservation.service.ReservationService;
+import com.backend.space.domain.FindResponseSpaceHostIdDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.apache.ibatis.annotations.Delete;
@@ -22,8 +25,21 @@ public class ReservationController {
     private final ReservationService reservationService;
 
     @GetMapping("/list/{memberId}")
-    public List<FindResponseReservationListDTO> list(@PathVariable Integer memberId) {
-        return reservationService.list(memberId);
+    public ResponseEntity<List<FindResponseReservationListDTO>> list(@PathVariable Integer memberId) {
+        List<FindResponseReservationListDTO> list = reservationService.list(memberId);
+        if (list == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(list);
+    }
+
+    @GetMapping("/hostReservationList/{spaceId}")
+    public ResponseEntity<List<FindResponseHostReservationList>> selectAllbyHostId(@PathVariable Integer spaceId) {
+        List<FindResponseHostReservationList> list = reservationService.selectAllbyHostId(spaceId);
+        if (list == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(list);
     }
 
     @GetMapping("/{reservationId}")
@@ -52,6 +68,11 @@ public class ReservationController {
     @DeleteMapping("/delete/{reservationId}")
     public void delete(@PathVariable Integer reservationId) {
         reservationService.delete(reservationId);
+    }
+
+    @PutMapping("/updateStatus")
+    public void updateStatus(@RequestBody UpdateStatusRequestDTO reservation) {
+        reservationService.updateStatus(reservation);
     }
 
 }
