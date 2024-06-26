@@ -29,7 +29,7 @@
     /*border: 1px solid white;*/
     position: absolute;
     right: 1px;
-    top: 2%;
+    top: 0.8%;
 }
 .css-1aw81lb {
     display: flex;
@@ -49,6 +49,7 @@
     cursor: pointer;
 }
 .userBtn {
+    height: 10vh;
 }
 .header {
     color: #8fffa2;

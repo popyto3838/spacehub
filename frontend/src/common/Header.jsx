@@ -121,7 +121,7 @@ const Header = () => {
                                     )}
                                     {account.isHost() && (
                                         <Center mb={4}>
-                                            <Button onClick={SwitchUser} colorScheme={"pink"} className="userBtn">
+                                            <Button onClick={SwitchUser} colorScheme={"pink"}>
                                                 유저로 전환하기
                                             </Button>
                                         </Center>
