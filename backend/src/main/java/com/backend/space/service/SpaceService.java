@@ -1,6 +1,7 @@
 package com.backend.space.service;
 
 import com.backend.dto.FindResponseSpaceJoinDTO;
+import com.backend.space.domain.FindResponseSpaceHostIdDto;
 import com.backend.space.domain.Space;
 import com.backend.dto.OptionListDTO;
 
@@ -19,5 +20,8 @@ public interface SpaceService {
     void insertSpaceConfig(int spaceId, List<Integer> optionList);
 
     List<OptionListDTO> getOptionListBySpaceId(Integer spaceId);
+
+    List<FindResponseSpaceHostIdDto> selectAllByHostId(Integer hostId);
+
 }
 
