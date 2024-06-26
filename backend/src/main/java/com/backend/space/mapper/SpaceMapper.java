@@ -77,7 +77,7 @@ public interface SpaceMapper {
     int insertSpaceConfig(int spaceId, Integer optionId);
 
     @Select("""
-            SELECT O.OPTION_LIST_ID, O.NAME, F.FILE_NAME
+            SELECT O.OPTION_LIST_ID, O.NAME, O.IS_ACTIVE, F.FILE_NAME
                     FROM OPTION_LIST O
                     LEFT JOIN FILE F ON O.OPTION_LIST_ID = F.PARENT_ID AND F.DIVISION = 'OPTION'
                     WHERE O.OPTION_LIST_ID IN (

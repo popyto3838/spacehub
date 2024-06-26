@@ -1,9 +1,3 @@
-CREATE DATABASE spaceHub;
-use spaceHub;
-
-DROP TABLE MEMBER;
-SET FOREIGN_KEY_CHECKS = 0;
-
 -- MEMBER 테이블
 CREATE TABLE MEMBER
 (
@@ -13,11 +7,11 @@ CREATE TABLE MEMBER
     NICKNAME      VARCHAR(50)                           NOT NULL,
     MOBILE        VARCHAR(20)                           NULL,
     AUTH          VARCHAR(20)                           NULL,
+    AUTH_NAME     ENUM ('ADMIN', 'HOST', 'USER')        NULL,
     PROVIDER      VARCHAR(20)                           NULL,
     PROVIDER_ID   VARCHAR(50)                           NULL,
     INPUT_DT      TIMESTAMP DEFAULT CURRENT_TIMESTAMP() NULL,
     UPDATE_DT     TIMESTAMP DEFAULT CURRENT_TIMESTAMP() NULL ON UPDATE CURRENT_TIMESTAMP(),
-    AUTH_NAME     ENUM ('ADMIN', 'HOST', 'USER')        NULL,
     WITHDRAWN     CHAR      DEFAULT 'N'                 NULL,
     NAVER_ID      VARCHAR(300)                          NULL,
     PROFILE_IMAGE VARCHAR(100)                          NULL,
@@ -202,4 +196,6 @@ CREATE TABLE LIKES
     FOREIGN KEY (MEMBER_ID) REFERENCES MEMBER (MEMBER_ID)
 );
 
-SELECT * FROM MEMBER;
+# FK 제약 설정/해제
+# SET FOREIGN_KEY_CHECKS = 0;
+# SET FOREIGN_KEY_CHECKS = 1;

@@ -42,7 +42,6 @@ public class TypeListController {
     @GetMapping("/list")
     public ResponseEntity<List<ItemListResponseDto>> getTypeLists() {
         List<ItemListResponseDto> response = typeListService.selectAll();
-        System.out.println("response = " + response);
         return ResponseEntity.ok(response);
     }
 
