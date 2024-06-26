@@ -24,6 +24,7 @@ import {MemberMy} from "./page/member/MemberMy.jsx";
 
 import axios from "axios";
 import SpaceView from "./page/space/SpaceView.jsx";
+import {HostDashboard} from "./page/dashboard/HostDashboard.jsx";
 import AdminDashboard from "./page/dashboard/AdminDashboard.jsx";
 import SpaceList from "./page/space/SpaceList.jsx";
 import {MemberHostInfo} from "./page/member/MemberHostInfo.jsx";

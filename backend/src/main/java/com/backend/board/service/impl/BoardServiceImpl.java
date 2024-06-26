@@ -95,7 +95,7 @@ public class BoardServiceImpl implements BoardService {
                 .map(fileName -> {
                     var fl = new FileList();
                     fl.setFileName(fileName);
-                    fl.setSrc(STR."http://172.27.128.1:8888/\{boardId}/\{fileName}");
+                    fl.setSrc(STR."http://172.27.160.1:8888/\{boardId}/\{fileName}");
                     return fl;
                 })
                 .toList();

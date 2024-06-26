@@ -1,6 +1,8 @@
 package com.backend.member.service.impl;
 
 
+import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 
 import net.nurigo.java_sdk.api.Message;
@@ -22,6 +24,7 @@ import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.Instant;
 import java.util.HashMap;
@@ -146,6 +149,8 @@ public class MemberServiceImpl implements MemberService {
                             .subject(db.getMemberId().toString())
                             .claim("scope", authorityString) // 권한
                             .claim("nickname", db.getNickname())
+                            .claim("email",db.getEmail())
+                            .claim("mobile",db.getMobile())
                             .build();
 
                     token = jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
@@ -268,6 +273,8 @@ public class MemberServiceImpl implements MemberService {
                 .subject(member.getMemberId().toString())
                 .claim("scope", authorityString) // 권한
                 .claim("nickname", mapper.getNickNameByMemberId(member))
+                .claim("email",mapper.getEmailBbyMemberId(member))
+                .claim("mobile",mapper.getMobileByMemberId(member))
                 .build();
 
         token = jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
@@ -301,6 +308,8 @@ public class MemberServiceImpl implements MemberService {
                 .subject(member.getMemberId().toString())
                 .claim("scope", authorityString) // 권한
                 .claim("nickname", mapper.getNickNameByMemberId(member))
+                .claim("email",mapper.getEmailBbyMemberId(member))
+                .claim("mobile",mapper.getMobileByMemberId(member))
                 .build();
 
         token = jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
@@ -378,7 +387,66 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
+    public Member MemberIdByMobile(String mobile){
+        return mapper.memberIdByMobile(mobile);
+    };
+
+    @Override
     public Integer findHostIdByMemberId(int memberId) {
         return mapper.findHostIdByMemberId(memberId);
     }
+
+    @Override
+    public void modifyPassword(Member member){
+        if (member.getPassword() != null && member.getPassword().length() > 0) {
+
+            member.setPassword(passwordEncoder.encode(member.getPassword()));
+        } else {
+            Member dbMember = mapper.selectById(member.getMemberId());
+            member.setPassword(dbMember.getPassword());
+        }
+            mapper.modifyPassword(member);
+    };
+
+    @Override
+    public void modifyProfile(Member member, MultipartFile[] files) throws IOException {
+
+        if(files != null){
+            for (MultipartFile file : files) {
+                String memberId = String.valueOf(member.getMemberId());
+                String fileName = file.getOriginalFilename();
+                String profileImage = "http://172.27.160.1:8888/"+memberId+ "/" +fileName;
+                // db에 파일 저장
+                mapper.insertFileList(member.getMemberId(),profileImage, fileName);
+
+                //실제 파일 저장
+                String dir = STR."C:/Temp/prj4/\{member.getMemberId()}"; // 부모 디렉토리(폴더)
+                File dirFile = new File(dir);
+                if (!dirFile.exists()) {
+                    dirFile.mkdirs();
+                }
+
+                //파일경로
+                String path = STR."C:/Temp/prj4/\{member.getMemberId()}/\{file.getOriginalFilename()}";
+                //저장 위치 명시
+
+
+
+
+                member.setProfileImage(profileImage);
+
+                File destination = new File(path);
+                //transferTo : 인풋스트림, 아웃풋스트림을 꺼내서 하드디스크에 저장
+                file.transferTo(destination);
+
+            }
+
+        }
+
+    }
+
+   @Override
+   public Host findHostByMemberId(String memberId){
+       return mapper.findHostByMemberId(memberId);
+   };
 }

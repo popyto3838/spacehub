@@ -9,10 +9,18 @@ import {
   Switch,
   VStack,
   useToast,
-  InputGroup, InputRightElement
+  InputGroup,
+  InputRightElement,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalCloseButton,
+  ModalBody,
+  FormHelperText,
+  ModalFooter, Modal, useDisclosure
 } from "@chakra-ui/react";
 
-import {useContext, useEffect, useState} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import axios from "axios";
 import {LoginContext} from "../../component/LoginProvider.jsx";
 import {useNavigate} from "react-router-dom";
@@ -22,30 +30,46 @@ export function MemberMy() {
   const [accountNumber, setAccountNumber] = useState();
   const [bankName, setBankName] = useState()
   const [mobile, setMobile] = useState()
+  const [files, setFiles] = useState([]);
+  const [businessName, setBusinessName] = useState();
+  const [businessNumber, setBusinessNumber] = useState();
+  const [repName, setRepName] = useState();
 
   const [member, setMember] = useState({});
+  const [host, setHost] = useState({});
   const [oldNickName, setOldNickName] = useState('');
   const [verificationCode, setVerificationCode] = useState("");
   const [inputCode, setInputCode] = useState("");
   const [expirationTime, setExpirationTime] = useState(null);
   const [isCodeSent, setIsCodeSent] = useState(false);
 
+  const{isOpen, onOpen, onClose}=useDisclosure()
+
   const account = useContext(LoginContext);
   const toast = useToast();
   const navigate = useNavigate();
 
 
+  const imageUrl = ""
 
 
   useEffect(() => {
-    axios
-      .get(`/api/member/${account.id}`)
-      .then((res) => {
-        const member1 = res.data;
+    // 두 개의 API 호출을 병렬로 수행
+    const fetchMember = axios.get(`/api/member/${account.id}`);
+    const fetchHost = axios.get('/api/member/gethost', { params: { memberId: account.id } });
+
+    Promise.all([fetchMember, fetchHost])
+      .then(([memberRes, hostRes]) => {
+        const member1 = memberRes.data;
         setMember({ ...member1, password: "" });
         setOldNickName(member1.nickname);
 
-        console.log(member);
+        const host1 = hostRes.data;
+        setHost(host1);
+
+        console.log(member1.src);
+        console.log(member1);
+        console.log(host1);
       })
       .catch(() => {
         toast({
@@ -55,9 +79,8 @@ export function MemberMy() {
         });
         navigate("/");
       });
+  }, [account.id, navigate, toast]);
 
-
-  }, []);
 
 
   function handleAccount() {
@@ -72,6 +95,12 @@ export function MemberMy() {
         description : "계좌등록이 완료되었습니다.",
         position : "top"
       })
+
+
+
+
+
+
     })
       .catch((err) => {
         if (err.response.status === 400) {
@@ -123,42 +152,143 @@ export function MemberMy() {
     }
   };
 
+
+
+  function handleProfile() {
+    axios
+    .postForm('/api/member/profile',{
+      memberId : account.id,
+      files: files,
+    })
+    .then((res) => {
+      toast({
+        status: "success",
+        description :"프로필이 수정되었습니다",
+        position: "top",
+      })
+      onClose();
+    })
+
+
+  }
+
+  function submitHostInfo() {
+    axios.post("/api/member/hostInfo" , {
+      businessName : businessName,
+      businessNumber : businessNumber,
+      repName : repName,
+      memberId : account.id,
+      accountNumber: accountNumber,
+      bankName: bankName,
+    })
+      .then(e=>{
+        toast({
+          status: "success",
+          description : "호스트정보등록완료",
+          position: "top"
+        })
+
+        return axios.put("/api/member/host",{
+          memberId: account.id,
+        })
+      })
+      .then((res)=>{
+        account.login(res.data.token);
+        console.log(res.data.token);
+      })
+      .then(() => {
+        // 성공적으로 업데이트한 후 데이터를 다시 가져옵니다.
+        return axios.get('/api/member/gethost', { params: { memberId: account.id } });
+      })
+      .then((res) => {
+        setHost(res.data);
+      })
+      .catch((err) => {
+        toast({
+          status: "error",
+          description: "호스트 정보 업데이트 중 문제가 발생하였습니다.",
+          position: "top",
+        });
+      })
+      .finally(() => {
+        navigate(`/member/info/${account.id}`);
+      });
+
+  }
+
+
+
+
   return (
     <Box maxWidth="800px" margin="auto" padding={5}>
       <Text fontSize="2xl" fontWeight="bold" mb={5}>프로필 관리</Text>
 
       <HStack alignItems="flex-start" spacing={10}>
-        <VStack>
+        <VStack >
+          <img
 
-          <Button size="sm">프로필 사진 변경</Button>
+            src={`${member.profileImage}`}
+            alt="User Profile Image"
+            style={{
+              width: '150px',
+              height: '150px',
+              borderRadius: '50%', // 원형 모양으로 보이게 하기 위한 스타일
+              objectFit: 'cover', // 이미지가 잘리지 않고 채워지도록 함
+            }}
+          />
+          <Button
+            onClick={onOpen}
+            size="sm">프로필 사진 수정</Button>
         </VStack>
 
         <VStack align="stretch" spacing={5} flex={1}>
-          <Box bg="purple.500" color="white" p={3} borderRadius="md">
+          {account.isHost()&&<Box bg="purple.700" color="white" p={3} borderRadius="md">
+            <FormControl>
+              <FormLabel>사업자명</FormLabel>
+              <Input placeholder={host.businessName}
+                     onChange={(e) => {
+                       setBusinessName(e.target.value);
+                     }}
+              />
+              <FormLabel>사업자번호</FormLabel>
+              <Input placeholder={host.businessNumber}
+                     onChange={(e) => {
+                       setBusinessNumber(e.target.value);
+                     }}
+              />
+              <FormLabel>대표자명</FormLabel>
+              <Input placeholder={host.repName}
+                     onChange={(e) => {
+                       setRepName(e.target.value);
+                     }}
+              />
+              <Button onClick={submitHostInfo} size="sm" >수정하기</Button>
+            </FormControl>
+          </Box>}
+          {account.isHost()&&<Box bg="purple.700" color="white" p={3} borderRadius="md">
             <Text>은행명</Text>
             <Input
-                   onChange={(e) => {
-                     setBankName(e.target.value);
+              placeholder={host.bankName}
+              onChange={(e) => {
+                setBankName(e.target.value);
                      setIsCheckedMobile(false);
                    }}
             />
             <Text>내 계좌번호</Text>
-            <InputGroup>
-              <InputRightElement w="75px" mr={1}>
-              <Input placeholder={member.mobile}
+            <Input placeholder={member.mobile}
                      onChange={(e) => {
                        setAccountNumber(e.target.value);
                        setIsCheckedMobile(false);
                      }}
               />
-              </InputRightElement>
-            </InputGroup>
             <Button
               onClick={handleAccount}
-              size="sm" colorScheme="whiteAlpha">등록하기</Button>
-          </Box>
-          <Text>호스트님의 계좌 정보를 등록해주세요 :)</Text>
-          <Box bg="purple.500" color="white" p={3} borderRadius="md">
+              size="sm" colorScheme="whiteAlpha">수정하기</Button>
+          </Box>}
+
+          <Box bg={account.isHost() ?"purple.700" : "pink.600"}
+               color="white"
+               p={3} borderRadius="md">
             <FormControl>
               <FormLabel>연락처</FormLabel>
               <Input placeholder={member.mobile}
@@ -187,7 +317,7 @@ export function MemberMy() {
 
             </FormControl>
           </Box>
-          <Text>호스트님의 연락처 정보를 등록해주세요 :)</Text>
+
           <FormControl>
             <FormLabel>닉네임</FormLabel>
             <Input value={member.nickname} isReadOnly />
@@ -198,7 +328,6 @@ export function MemberMy() {
             <Input value={member.email} isReadOnly />
 
           </FormControl>
-
 
 
           <FormControl>
@@ -233,8 +362,31 @@ export function MemberMy() {
               </HStack>
             </VStack>
           </FormControl>
+          <Modal isOpen={isOpen} onClose={onClose}>
+            <ModalOverlay />
+            <ModalContent>
+              <ModalHeader>프로필사진 등록</ModalHeader>
+              <ModalCloseButton />
+              <ModalBody>
+                <FormControl>
+                  <FormLabel>파일을 선택해주세요</FormLabel>
+                  <Input
+                    type={"file"}
+                    onChange={(e) => setFiles(e.target.files)}
+                  />
+                </FormControl>
+              </ModalBody>
+              <ModalFooter>
+                <Button onClick={onClose}>취소</Button>
+                <Button colorScheme="blue" mr={3} onClick={handleProfile}>
+                  저장
+                </Button>
+              </ModalFooter>
+            </ModalContent>
+          </Modal>
         </VStack>
       </HStack>
+
     </Box>
   );
 }

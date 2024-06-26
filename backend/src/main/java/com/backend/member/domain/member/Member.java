@@ -1,6 +1,7 @@
 package com.backend.member.domain.member;
 
 import lombok.Data;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -19,6 +20,7 @@ public class Member {
     private String naverId;
     private String mobile;
     private String profileImage;
+    private String src;
 
     public String getSignupDateAndTime() {
         DateTimeFormatter formatter
