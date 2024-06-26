@@ -1,11 +1,11 @@
 package com.backend.space.controller;
 
 import com.backend.dto.FindResponseSpaceJoinDTO;
+import com.backend.dto.SpaceDTO;
 import com.backend.file.service.FileService;
 import com.backend.member.service.MemberService;
-import com.backend.space.domain.FindResponseSpaceJoinDTO;
+import com.backend.space.domain.FindResponseSpaceHostIdDto;
 import com.backend.space.domain.Space;
-import com.backend.dto.SpaceDTO;
 import com.backend.space.service.SpaceService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
