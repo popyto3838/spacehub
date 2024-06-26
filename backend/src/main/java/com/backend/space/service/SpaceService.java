@@ -1,19 +1,23 @@
 package com.backend.space.service;
 
-import com.backend.space.domain.FindResponseSpaceHostIdDto;
-import com.backend.space.domain.FindResponseSpaceJoinDTO;
+import com.backend.dto.FindResponseSpaceJoinDTO;
 import com.backend.space.domain.Space;
+import com.backend.dto.OptionListDTO;
 
 import java.util.List;
 
 public interface SpaceService {
-    
+
     void insertSpace(Space space);
 
     List<Space> selectAll();
 
     FindResponseSpaceJoinDTO view(Integer spaceId);
 
-    List<FindResponseSpaceHostIdDto> selectAllByHostId(Integer hostId);
+    List<FindResponseSpaceJoinDTO> getAllSpacesWithThumbnails();
+
+    void insertSpaceConfig(int spaceId, List<Integer> optionList);
+
+    List<OptionListDTO> getOptionListBySpaceId(Integer spaceId);
 }
 

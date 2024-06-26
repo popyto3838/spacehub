@@ -9,6 +9,4 @@ public class File {
     private String division;
     private String fileName;
 
-    private String filePath; // 파일 경로 추가
-
 }

@@ -1,11 +1,11 @@
 package com.backend.space.controller;
 
+import com.backend.dto.FindResponseSpaceJoinDTO;
 import com.backend.file.service.FileService;
 import com.backend.member.service.MemberService;
-import com.backend.space.domain.FindResponseSpaceHostIdDto;
 import com.backend.space.domain.FindResponseSpaceJoinDTO;
 import com.backend.space.domain.Space;
-import com.backend.space.domain.SpaceDTO;
+import com.backend.dto.SpaceDTO;
 import com.backend.space.service.SpaceService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +18,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/space")
+@RequestMapping("api/space")
 public class SpaceController {
 
     private final SpaceService spaceService;
@@ -30,7 +30,6 @@ public class SpaceController {
     public ResponseEntity<String> add(@RequestPart("spaceDto") String spaceDtoStr,
                                       @RequestPart(value = "files", required = false) List<MultipartFile> files) throws IOException {
         SpaceDTO spaceDto = objectMapper.readValue(spaceDtoStr, SpaceDTO.class);
-        System.out.println("===========spaceDto.toString() = " + spaceDto.toString());
         Space space = spaceDto.getSpace();
         int memberId = spaceDto.getMemberId();
 
@@ -38,6 +37,12 @@ public class SpaceController {
 
         // SPACE CREATE
         spaceService.insertSpace(space);
+
+        // 옵션 리스트 저장
+        List<Integer> optionList = spaceDto.getOptionList();
+        if (optionList != null) {
+            spaceService.insertSpaceConfig(space.getSpaceId(), optionList);
+        }
 
         // 이미지 파일 업로드
         if (files != null && !files.isEmpty()) {
@@ -50,18 +55,18 @@ public class SpaceController {
     }
 
     @GetMapping("list")
-    public ResponseEntity<List<Space>> selectAll() {
-        List<Space> spaces = spaceService.selectAll();
+    public ResponseEntity<List<FindResponseSpaceJoinDTO>> getAllSpacesWithThumbnails() {
+        List<FindResponseSpaceJoinDTO> spaces = spaceService.getAllSpacesWithThumbnails();
         return ResponseEntity.ok(spaces);
     }
 
     @GetMapping("/{spaceId}")
-    public ResponseEntity view(@PathVariable Integer spaceId) {
-        FindResponseSpaceJoinDTO space = spaceService.view(spaceId);
-        if (space == null) {
+    public ResponseEntity<FindResponseSpaceJoinDTO> view(@PathVariable Integer spaceId) {
+        FindResponseSpaceJoinDTO spaceDto = spaceService.view(spaceId);
+        if (spaceDto == null) {
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok().body(space);
+        return ResponseEntity.ok(spaceDto);
     }
 
     @GetMapping("/hostSpaceList/{hostId}")
