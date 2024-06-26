@@ -1,84 +1,75 @@
-import {Box, Button, Center, useToast} from "@chakra-ui/react";
+import {Box, Text, Center, useToast, VStack, Button} from "@chakra-ui/react";
 import {useNavigate} from "react-router-dom";
-import {useContext} from "react";
+import {useContext, useEffect, useState} from "react";
 import {LoginContext} from "../../component/LoginProvider.jsx";
 import axios from "axios";
 
 export function MemberHost() {
+  const [member, setMember] = useState({});
+
   const navigate = useNavigate();
   const account = useContext(LoginContext);
   const toast = useToast();
 
-  function SwitchHost() {
-    axios.post("/api/member/nullcheck", {
-      memberId: account.id
-    })
-      .then(res => {
-        const data = res.data;
-        const { key1, key2, key3 } = data;
-        console.log(key1, key2, key3);
 
-        if (key1 === null || key2 === null || key3 === null) {
-          navigate(`/member/hostinfo/:accountId`);
-        } else {
-          axios.put("/api/member/host",{
-            memberId: account.id,
-          })
-            .then((res) => {
-
-              account.login(res.data.token);
-              navigate("/space/register");
-            })
-        }
-      })
-
-  }
-
-  function SwitchUser() {
-    axios
-      .put("/api/member/user", { memberId: account.id })
-      .then((res) => {
-        toast({
-          status: "success",
-          description:"유저로 전환되었습니다.",
-          position :"top"
+  useEffect(() => {
+    if(account.id) {
+      axios
+        .get(`/api/member/${account.id}`)
+        .then((res) => {
+          setMember(res.data);
         })
+        .catch(() => {
+          toast({
+            status: "warning",
+            description: "회원 정보 조회 중 문제가 발생하였습니다.",
+            position: "top",
+          });
+          navigate("/");
+        });
+    }  }, [account]);
 
-        account.login(res.data.token);
-        navigate("/")
-      })
 
-  }
+
+
+
+
 
   return (
-<>
-    <Center border={"1px dashed black"} borderRadius={"50px"}>
-      <Box>zz</Box>
-      <Box>zz</Box>
-    </Center>
-    <Box>
-      {account.isLoggedOut() &&<Center>
+    <VStack spacing={0} align="stretch" minHeight="90vh" marginBottom="10">
+      {/* 상단 부분 */}
+      <Box flex="0.5" bg="white" p={4}>
+        <Box>
+          <Text fontSize="3xl" fontFamily="heading">
+            {member.nickname} 님 안녕하세요!
+          </Text>
+        </Box>
+        <Box mt={5} fontSize="xl"> 지금 바로 공간 설정을 마쳐보세요</Box>
         <Button
-          onClick={() => navigate(`/host/signup`)}
-          colorScheme={"purple"} >호스트 회원가입 하러 가기</Button>
-      </Center>}
-      {account.isUser() ? (<Center>
-        <Button
-          onClick={SwitchHost}
-          colorScheme={"purple"} >호스트로 전환하기</Button>
-      </Center>) :(
-      <Center>
-        <Button
-          onClick={SwitchUser}
-          colorScheme={"pink"} >유저로 전환하기</Button>
-      </Center>)}
-      <Box>
-      <Center>여러분의 공간을 등록해보세요</Center>
+          mt={6}
+          colorScheme="purple"
+          onClick={()=>navigate('/space/register')}
+        >공간등록하러가기</Button>
+
       </Box>
-      <Box>
-        <Center>호스트센터를 이용하시려면 별도의 호스트 회원가입이 필요합니다</Center>
+
+      {/* 하단 부분 (배경 이미지 포함) */}
+      <Box
+        flex="1.5"
+        backgroundImage="url('https://img.hourplace.co.kr/place/user/83453/2024/06/10/373dc851-16f9-4902-a8be-73e18baeb76a?s=2000x2000&t=inside&q=80')"
+        backgroundSize="cover"
+        backgroundPosition="center"
+        p={4}
+        height="100%" // 추가: 높이 100%
+        width="100%" // 추가: 너비 100%
+      >
+        <Box bg="rgba(255, 255, 255, 0.8)" p={4} borderRadius="md">
+
+          <Box mb={2}>
+            <Center>여러분의 공간을 등록해보세요</Center>
+          </Box>
+        </Box>
       </Box>
-    </Box>
-</>
+    </VStack>
   );
 }

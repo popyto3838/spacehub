@@ -31,10 +31,12 @@ public class FileController {
             @RequestParam("file") MultipartFile file,
             @RequestParam("parentId") int parentId,
             @RequestParam("division") String division) {
+        System.out.println("========/upload/ic/upload/ic=========================");
         try {
             fileService.addOrUpdateFile(division, parentId, file);
             return ResponseEntity.ok("파일을 정상적으로 업로드하였습니다.");
         } catch (Exception e) {
+            e.printStackTrace();
             return ResponseEntity.status(500).body("파일 업로드에 실패했습니다.");
         }
     }

@@ -31,6 +31,7 @@ import TimerComponent from "./TimerComponent.jsx";
 export function MemberLogin() {
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
+  const [memberId, setMemberId] = useState();
   const [qrUuid, setQrUuid] = useState('');
   const [time, setTime] = useState(300);
   const [minutes, setMinutes] = useState('');
@@ -159,13 +160,48 @@ export function MemberLogin() {
     }
   };
 
+  function confirmNumberMobilePassword() {
+    if (inputCode == verificationCode) {
+      alert("인증되었습니다.");
+      setIsCodeSent(false);
+      axios
+        .get("/api/member/findPassword",{
+          params: {
+            mobile: mobile,
+          }
+        })
+        .then((res) => {
+          setMemberId(res.data);
+        })
+
+
+    } else {
+      alert("인증에 실패했습니다");
+    }
+
+  }
+
 
   function handleClickSave() {
 
     axios
-      .put("api/member/modifyPassword", {password : password})
+      .put("/api/member/modifyPassword", {password : password,
+                                         memberId : memberId})
+      .then(res=>{
+        toast({
+          status: "success",
+          description :"비밀번호가 수정되었습니다",
+          position : "top"
+        })
+        navigate('/member/login')
+      })
+      .finally(()=>{
+        onSecondModalClose();
+      })
 
   }
+
+
 
   return (
     <Box
@@ -300,7 +336,7 @@ export function MemberLogin() {
                         }}
                       />
                       <InputRightElement w="75px" mr={1}>
-                        <Button onClick={confirmNumberMobile}>핸드폰 인증</Button>
+                        <Button onClick={confirmNumberMobilePassword}>핸드폰 인증</Button>
                       </InputRightElement>
                     </InputGroup>
                     {expirationTime && <TimerComponent expirationTime={expirationTime} />}
@@ -311,12 +347,14 @@ export function MemberLogin() {
               <FormControl mt={4}>
                 <FormLabel>비밀번호를 재설정 해주세요</FormLabel>
                 <Input
+                  type={"password"}
                   onChange={(e) =>
                     setPassword(e.target.value)
                   }
                   placeholder={"새 비밀번호"} />
                  
                 <Input
+                  type={"password"}
                   onChange={(e) => setPasswordCheck(e.target.value)}
                   mt={7} placeholder={"새 비밀번호 확인"} />
                 {password === passwordCheck || (
@@ -336,24 +374,6 @@ export function MemberLogin() {
       </Box>
       </Box>
       <Box>
-
-     {/* <div className="qr-box">*/}
-
-     {/*   <div display={flexbox} className="qr-code">*/}
-     {/*     <QRCode value={qrUuid} size={150}/>*/}
-     {/*   </div>*/}
-
-     {/*   <div className="desc">*/}
-     {/*     <div className="title">*/}
-     {/*       남는 시간:*/}
-     {/*       <span id="timeCheck" className="time">*/}
-     {/*               {`${minutes} : ${seconds}`}*/}
-     {/*             </span>*/}
-     {/*     </div>*/}
-     {/*     <div id="resetBtn" className="ico-reset" onClick={handleResetClick}></div>*/}
-     {/*   </div>*/}
-
-     {/*</div>*/}
       </Box>
       </Flex>
 </Box>

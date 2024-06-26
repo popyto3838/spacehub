@@ -22,7 +22,7 @@ public interface BoardMapper {
     // 게시물 파일 첨부(게시물의 categoryId를 참고해서 division 삽입, parentId? boardId?)
     @Insert("""
             <script>
-            INSERT INTO FILE_LIST(PARENT_ID, DIVISION, FILE_NAME)
+            INSERT INTO FILE(PARENT_ID, DIVISION, FILE_NAME)
             VALUES (#{parentId},
                     <choose>
                         <when test="categoryId == 1"> 'NOTICE' </when>
@@ -44,7 +44,7 @@ public interface BoardMapper {
                    COUNT(DISTINCT L.MEMBER_ID) number_of_likes
             FROM BOARD B LEFT JOIN MEMBER M ON B.MEMBER_ID = M.MEMBER_ID
                          LEFT JOIN CATEGORY C ON B.CATEGORY_ID = C.CATEGORY_ID
-                         LEFT JOIN (SELECT PARENT_ID, FILE_NAME FROM FILE_LIST) AS SUBQUERY_TABLE ON B.BOARD_ID = SUBQUERY_TABLE.PARENT_ID
+                         LEFT JOIN (SELECT PARENT_ID, FILE_NAME FROM FILE) AS SUBQUERY_TABLE ON B.BOARD_ID = SUBQUERY_TABLE.PARENT_ID
                          LEFT JOIN (SELECT COMMENT_ID, PARENT_ID FROM COMMENT) AS D ON B.BOARD_ID = D.PARENT_ID
                          LEFT JOIN LIKES L ON B.BOARD_ID = L.BOARD_ID
                 <trim prefix="WHERE" prefixOverrides="AND">
@@ -103,16 +103,16 @@ public interface BoardMapper {
 
     // 하나의 게시물에서 파일 이름 조회(2개 테스트)
     @Select("""
-            SELECT F.FILE_NAME, F.PARENT_ID, F.FILE_LIST_ID, B.BOARD_ID
-            FROM FILE_LIST F
+            SELECT F.FILE_NAME, F.PARENT_ID, F.FILE_ID, B.BOARD_ID
+            FROM FILE F
             JOIN BOARD B ON F.PARENT_ID = B.BOARD_ID
             WHERE PARENT_ID = #{parentId}
             """)
     List<String> selectByFileNameByBoardId(Integer parentId);
 
     /*@Select("""
-            SELECT F.FILE_NAME, F.PARENT_ID, F.FILE_LIST_ID, F.DIVISION, B.BOARD_ID, B.CATEGORY_ID
-            FROM FILE_LIST F
+            SELECT F.FILE_NAME, F.PARENT_ID, F.FILE_ID, F.DIVISION, B.BOARD_ID, B.CATEGORY_ID
+            FROM FILE F
             JOIN (SELECT BOARD_ID, CATEGORY_ID FROM BOARD) AS B ON F.PARENT_ID = B.BOARD_ID
             WHERE PARENT_ID = #{parentId}
             """)
@@ -120,8 +120,8 @@ public interface BoardMapper {
 
     // 게시물 파일 이름 조회2
     @Select("""
-            SELECT F.FILE_NAME, F.PARENT_ID, F.FILE_LIST_ID, F.DIVISION, B.BOARD_ID
-            FROM FILE_LIST F
+            SELECT F.FILE_NAME, F.PARENT_ID, F.FILE_ID, F.DIVISION, B.BOARD_ID
+            FROM FILE F
             JOIN BOARD B ON F.PARENT_ID = B.BOARD_ID
             WHERE B.BOARD_ID = #{boardId}
                         """)
@@ -140,7 +140,7 @@ public interface BoardMapper {
 
     // 게시물 수정시 첨부된 파일 삭제(#{}에 parentId, boardId)
     @Delete("""
-            DELETE FROM FILE_LIST
+            DELETE FROM FILE
             WHERE PARENT_ID = #{parentId}
               AND FILE_NAME = #{fileName}
             """)
@@ -154,7 +154,7 @@ public interface BoardMapper {
     int deleteByBoardId(Integer boardId);
 
     @Delete("""
-            DELETE FROM FILE_LIST
+            DELETE FROM FILE
             WHERE PARENT_ID = #{parentId}
             """)
     int deleteFileByBoardId(Integer parentId);

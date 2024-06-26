@@ -1,7 +1,8 @@
 package com.backend.space.mapper;
 
+import com.backend.space.domain.FindResponseSpaceHostIdDto;
 import com.backend.space.domain.Space;
-import com.backend.space.domain.FindResponseSpaceJoinDTO;
+import com.backend.dto.OptionListDTO;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Options;
@@ -56,20 +57,36 @@ public interface SpaceMapper {
     @Select("""
             SELECT *
             FROM SPACE
+            ORDER BY SPACE_ID DESC
             """)
     List<Space> selectAll();
 
     @Select("""
-            SELECT  S.*
-            ,       H.*
-            ,       T.*
-            FROM SPACE S
-            JOIN HOST H ON S.HOST_ID = H.HOST_ID
-            JOIN TYPE_LIST T ON S.TYPE_LIST_ID = T.TYPE_LIST_ID
-            WHERE S.SPACE_ID = #{spaceId}
+            SELECT * 
+            FROM SPACE 
+            WHERE SPACE_ID = #{spaceId}
             """)
-    FindResponseSpaceJoinDTO selectBySpaceId(Integer spaceId);
+    Space selectBySpaceId(Integer spaceId);
 
+    @Insert("""
+            INSERT INTO SPACE_CONFIG
+            (SPACE_ID, OPTION_ID)
+            VALUES 
+            (#{spaceId}, #{optionId})
+            """)
+    int insertSpaceConfig(int spaceId, Integer optionId);
+
+    @Select("""
+            SELECT O.OPTION_LIST_ID, O.NAME, F.FILE_NAME
+                    FROM OPTION_LIST O
+                    LEFT JOIN FILE F ON O.OPTION_LIST_ID = F.PARENT_ID AND F.DIVISION = 'OPTION'
+                    WHERE O.OPTION_LIST_ID IN (
+                        SELECT OPTION_LIST_ID
+                        FROM SPACE_CONFIG
+                        WHERE SPACE_ID = #{spaceId}
+                    )
+            """)
+    List<OptionListDTO> selectOptionListBySpaceId(Integer spaceId);
 
     @Select("""
             SELECT  *

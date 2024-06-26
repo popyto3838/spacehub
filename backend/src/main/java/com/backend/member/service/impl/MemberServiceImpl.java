@@ -1,6 +1,8 @@
 package com.backend.member.service.impl;
 
 
+import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 
 import net.nurigo.java_sdk.api.Message;
@@ -22,6 +24,7 @@ import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.Instant;
 import java.util.HashMap;
@@ -146,6 +149,8 @@ public class MemberServiceImpl implements MemberService {
                             .subject(db.getMemberId().toString())
                             .claim("scope", authorityString) // 권한
                             .claim("nickname", db.getNickname())
+                            .claim("email", db.getEmail())
+//                            .claim("mobile", db.getMobile())
                             .build();
 
                     token = jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
@@ -239,12 +244,12 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public Integer selectbyEmail2(Member member){
-       return mapper.selectByEmail2(member);
+    public Integer selectbyEmail2(Member member) {
+        return mapper.selectByEmail2(member);
     }
 
     @Override
-    public Map<String, Object> switchHost(Member member){
+    public Map<String, Object> switchHost(Member member) {
 
         mapper.switchHost(member);
 
@@ -268,6 +273,8 @@ public class MemberServiceImpl implements MemberService {
                 .subject(member.getMemberId().toString())
                 .claim("scope", authorityString) // 권한
                 .claim("nickname", mapper.getNickNameByMemberId(member))
+                .claim("email", mapper.getEmailBbyMemberId(member))
+                .claim("mobile", mapper.getMobileByMemberId(member))
                 .build();
 
         token = jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
@@ -275,10 +282,12 @@ public class MemberServiceImpl implements MemberService {
         result.put("token", token);
 
         return result;
-    };
+    }
+
+    ;
 
     @Override
-    public Map<String,Object> switchUser(Member member){
+    public Map<String, Object> switchUser(Member member) {
         mapper.switchUser(member);
 
         Map<String, Object> result = new HashMap<>();
@@ -301,6 +310,8 @@ public class MemberServiceImpl implements MemberService {
                 .subject(member.getMemberId().toString())
                 .claim("scope", authorityString) // 권한
                 .claim("nickname", mapper.getNickNameByMemberId(member))
+                .claim("email", mapper.getEmailBbyMemberId(member))
+                .claim("mobile", mapper.getMobileByMemberId(member))
                 .build();
 
         token = jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
@@ -308,10 +319,12 @@ public class MemberServiceImpl implements MemberService {
         result.put("token", token);
 
         return result;
-    };
+    }
+
+    ;
 
     @Override
-    public boolean validateAccount(Host host){
+    public boolean validateAccount(Host host) {
         if (host.getBankName() == null || host.getBankName().isBlank()) {
             return false;
         }
@@ -323,62 +336,126 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public void addAccountinfo(Host host){
+    public void addAccountinfo(Host host) {
 
         mapper.insertAccount(host);
     }
 
-   @Override
-    public void certifiedPhoneNumber(String mobile, String verificationCode){
-       String api_key = "NCSTIPYRXIFUD7GF";
-       String api_secret = "HKLXCD3ZJMT8KJ5UV38WBEOLTQ7U01YA";
+    @Override
+    public void certifiedPhoneNumber(String mobile, String verificationCode) {
+        String api_key = "NCSTIPYRXIFUD7GF";
+        String api_secret = "HKLXCD3ZJMT8KJ5UV38WBEOLTQ7U01YA";
 
-       Message coolsms = new Message(api_key, api_secret);
-       HashMap<String, String> params = new HashMap<String, String>();
-       params.put("to", mobile); // 수신전화번호
-       params.put("from", "010-6679-1273"); // 발신전화번호. 테스트시에는 발신,수신 둘다 본인 번호로 하면 됨
-       params.put("type", "SMS");
-       params.put("text", "[BitMovie] 문자 본인인증 서비스 : 인증번호는 " + "[" + verificationCode + "]" + " 입니다.");
-       params.put("SpaceHub", "test app 1.2"); // application name and version
+        Message coolsms = new Message(api_key, api_secret);
+        HashMap<String, String> params = new HashMap<String, String>();
+        params.put("to", mobile); // 수신전화번호
+        params.put("from", "010-6679-1273"); // 발신전화번호. 테스트시에는 발신,수신 둘다 본인 번호로 하면 됨
+        params.put("type", "SMS");
+        params.put("text", "[BitMovie] 문자 본인인증 서비스 : 인증번호는 " + "[" + verificationCode + "]" + " 입니다.");
+        params.put("SpaceHub", "test app 1.2"); // application name and version
 
-       try {
-           JSONObject obj = (JSONObject) coolsms.send(params);
-           System.out.println(obj.toString());
-       } catch (CoolsmsException e) {
-           System.out.println(e.getMessage());
-           System.out.println(e.getCode());
-       }
-
-
-
-   };
+        try {
+            JSONObject obj = (JSONObject) coolsms.send(params);
+            System.out.println(obj.toString());
+        } catch (CoolsmsException e) {
+            System.out.println(e.getMessage());
+            System.out.println(e.getCode());
+        }
 
 
+    }
+
+    ;
 
 
     @Override
-    public void addhostInfo(Host host){
+    public void addhostInfo(Host host) {
         mapper.addHostInfo(host);
-    };
+    }
+
+    ;
 
     @Override
-    public Map<String, Object> checkHostInfo(Host host){
+    public Map<String, Object> checkHostInfo(Host host) {
         Map<String, Object> result = new HashMap<>();
 
-        result.put("key1",mapper.checkHostRep(host));
-        result.put("key2",mapper.checkHostBusinessNumber(host));
-        result.put("key3",mapper.checkHostBusinessName(host));
+        result.put("key1", mapper.checkHostRep(host));
+        result.put("key2", mapper.checkHostBusinessNumber(host));
+        result.put("key3", mapper.checkHostBusinessName(host));
 
         return result;
-    };
+    }
+
+    ;
 
     @Override
-    public Member emailByMobile(String mobile){
+    public Member emailByMobile(String mobile) {
         return mapper.emailByMobile(mobile);
     }
+
+    @Override
+    public Member MemberIdByMobile(String mobile) {
+        return mapper.memberIdByMobile(mobile);
+    }
+
+    ;
 
     @Override
     public Integer findHostIdByMemberId(int memberId) {
         return mapper.findHostIdByMemberId(memberId);
     }
+
+    @Override
+    public void modifyPassword(Member member) {
+        if (member.getPassword() != null && member.getPassword().length() > 0) {
+
+            member.setPassword(passwordEncoder.encode(member.getPassword()));
+        } else {
+            Member dbMember = mapper.selectById(member.getMemberId());
+            member.setPassword(dbMember.getPassword());
+        }
+        mapper.modifyPassword(member);
+    }
+
+    ;
+
+    @Override
+    public void modifyProfile(Member member, MultipartFile[] files) throws IOException {
+
+        if (files != null) {
+            for (MultipartFile file : files) {
+                String memberId = String.valueOf(member.getMemberId());
+                String fileName = file.getOriginalFilename();
+                String profileImage = "/public/img/profile/" + memberId + "/" + fileName;
+                // db에 파일 저장
+                mapper.insertFileList(member.getMemberId(), profileImage, fileName);
+
+                //실제 파일 저장
+                String dir = STR."/Users/leedongyoung/중앙정보/prj3/frontend/public/img/profile/\{member.getMemberId()}"; // 부모 디렉토리(폴더)
+                File dirFile = new File(dir);
+                if (!dirFile.exists()) {
+                    dirFile.mkdirs();
+                }
+                //파일경로
+
+                String path = STR."/Users/leedongyoung/중앙정보/prj3/frontend/public/img/profile/\{member.getMemberId()}/\{file.getOriginalFilename()}";
+                //저장 위치 명시
+                member.setProfileImage(profileImage);
+
+                File destination = new File(path);
+                //transferTo : 인풋스트림, 아웃풋스트림을 꺼내서 하드디스크에 저장
+                file.transferTo(destination);
+
+            }
+
+        }
+
+    }
+
+    @Override
+    public Host findHostByMemberId(String memberId) {
+        return mapper.findHostByMemberId(memberId);
+    }
+
+    ;
 }
