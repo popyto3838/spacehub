@@ -25,6 +25,7 @@ const Header = () => {
     const account = useContext(LoginContext);
     const toast = useToast();
 
+    const imageUrl = `${member.profileImage}`;
     const MotionMenuList = motion(MenuList);
 
     const toggleMenu = () => {
@@ -123,12 +124,14 @@ const Header = () => {
                       </Button>
                     </Center>}
 
-                  <MenuButton
-                    as={Button}
-                    rightIcon={<ChevronDownIcon />}
-                    variant="ghost"
-                    color="gray.600"
-                  >
+                  <MenuButton as={Box} cursor="pointer">
+                    <Image
+                      src={imageUrl}
+                      alt="Profile"
+                      borderRadius="full"
+                      boxSize="40px"
+
+                    />
                   </MenuButton>
                   <AnimatePresence>
                     {isOpen && (
@@ -176,6 +179,7 @@ const Header = () => {
             <header className="header">
                 <div className="hamburgerArea" onClick={toggleMenu}>
                     <div className="hamburger">
+
                         <div className={isOpen ? 'bar open' : 'bar'}></div>
                         <div className={isOpen ? 'bar open' : 'bar'}></div>
                         <div className={isOpen ? 'bar open' : 'bar'}></div>
@@ -185,7 +189,7 @@ const Header = () => {
                   <ul>
                     <img
 
-                      src={`http://172.27.160.1:8888/${member.memberId}/${member.profileImage}`}
+                      src={`${member.profileImage}`}
                       alt="User Profile Image"
                       style={{
                         width: '70px',

@@ -1,4 +1,4 @@
-import {Box, Button, Center, useToast, VStack} from "@chakra-ui/react";
+import {Box, Text, Center, useToast, VStack, Button} from "@chakra-ui/react";
 import {useNavigate} from "react-router-dom";
 import {useContext, useEffect, useState} from "react";
 import {LoginContext} from "../../component/LoginProvider.jsx";
@@ -36,18 +36,28 @@ export function MemberHost() {
 
 
   return (
-    <VStack spacing={0} align="stretch" minHeight="100vh">
+    <VStack spacing={0} align="stretch" minHeight="90vh" marginBottom="10">
       {/* 상단 부분 */}
-      <Box flex="1" bg="white" p={4}>
-        <Box> {member.nickname} 님 안녕하세요!</Box>
-        <Box> 지금 바로 공간 설정을 마쳐보세요</Box>
+      <Box flex="0.5" bg="white" p={4}>
+        <Box>
+          <Text fontSize="3xl" fontFamily="heading">
+            {member.nickname} 님 안녕하세요!
+          </Text>
+        </Box>
+        <Box mt={5} fontSize="xl"> 지금 바로 공간 설정을 마쳐보세요</Box>
+        <Button
+          mt={6}
+          colorScheme="purple"
+          onClick={()=>navigate('/space/register')}
+        >공간등록하러가기</Button>
+
       </Box>
 
       {/* 하단 부분 (배경 이미지 포함) */}
       <Box
-        flex="1"
-        backgroundImage="url('https://a0.muscache.com/im/pictures/miso/Hosting-31202365/original/702a8b4d-f58d-4b9f-a892-294c80c5daac.jpeg?im_w=1200')"
-        backgroundSize="contain"
+        flex="1.5"
+        backgroundImage="url('https://img.hourplace.co.kr/place/user/83453/2024/06/10/373dc851-16f9-4902-a8be-73e18baeb76a?s=2000x2000&t=inside&q=80')"
+        backgroundSize="cover"
         backgroundPosition="center"
         p={4}
         height="100%" // 추가: 높이 100%
@@ -57,9 +67,6 @@ export function MemberHost() {
 
           <Box mb={2}>
             <Center>여러분의 공간을 등록해보세요</Center>
-          </Box>
-          <Box>
-            <Center>호스트센터를 이용하시려면 별도의 호스트 회원가입이 필요합니다</Center>
           </Box>
         </Box>
       </Box>

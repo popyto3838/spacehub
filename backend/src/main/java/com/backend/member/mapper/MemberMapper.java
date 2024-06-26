@@ -234,10 +234,10 @@ public interface MemberMapper {
     @Update("""
         UPDATE MEMBER
         SET PROFILE_IMAGE = #{profileImage},
-            SRC= #{fullPath}
+            PROFILE_NAME= #{filename}
         WHERE MEMBER_ID = #{memberId}
         """)
-    void insertFileList(Integer memberId, String profileImage,String fullPath);
+    void insertFileList(Integer memberId, String profileImage,String filename);
 
     @Select("""
             SELECT*

@@ -95,6 +95,12 @@ export function MemberMy() {
         description : "계좌등록이 완료되었습니다.",
         position : "top"
       })
+
+
+
+
+
+
     })
       .catch((err) => {
         if (err.response.status === 400) {
@@ -221,7 +227,7 @@ export function MemberMy() {
         <VStack >
           <img
 
-            src={`${member.src}`}
+            src={`${member.profileImage}`}
             alt="User Profile Image"
             style={{
               width: '150px',

@@ -415,9 +415,9 @@ public class MemberServiceImpl implements MemberService {
             for (MultipartFile file : files) {
                 String memberId = String.valueOf(member.getMemberId());
                 String fileName = file.getOriginalFilename();
-                String fullPath = "http://172.27.160.1:8888/"+memberId+ "/" +fileName;
+                String profileImage = "http://172.27.160.1:8888/"+memberId+ "/" +fileName;
                 // db에 파일 저장
-                mapper.insertFileList(member.getMemberId(), file.getOriginalFilename(),fullPath);
+                mapper.insertFileList(member.getMemberId(),profileImage, fileName);
 
                 //실제 파일 저장
                 String dir = STR."C:/Temp/prj4/\{member.getMemberId()}"; // 부모 디렉토리(폴더)
@@ -433,7 +433,7 @@ public class MemberServiceImpl implements MemberService {
 
 
 
-                member.setSrc(fullPath);
+                member.setProfileImage(profileImage);
 
                 File destination = new File(path);
                 //transferTo : 인풋스트림, 아웃풋스트림을 꺼내서 하드디스크에 저장
