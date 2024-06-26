@@ -52,6 +52,7 @@ export function BoardEdit() {
         id: board.boardId,
         title: board.title,
         content: board.content,
+        categoryId: board.categoryId,
         removeFileList,
         addFileList,
       })
@@ -120,12 +121,6 @@ export function BoardEdit() {
           <FormControl>
             <FormLabel>작성자</FormLabel>
             <Input value={account.nickname} readOnly />
-          </FormControl>
-        </Box>
-        <Box>
-          <FormControl>
-            <FormLabel>작성일시</FormLabel>
-            <Input value={board.updateDateAndTime} readOnly />
           </FormControl>
         </Box>
 

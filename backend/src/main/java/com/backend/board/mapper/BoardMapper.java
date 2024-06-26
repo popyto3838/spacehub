@@ -47,37 +47,49 @@ public interface BoardMapper {
                          LEFT JOIN (SELECT PARENT_ID, FILE_NAME FROM FILE_LIST) AS SUBQUERY_TABLE ON B.BOARD_ID = SUBQUERY_TABLE.PARENT_ID
                          LEFT JOIN (SELECT COMMENT_ID, PARENT_ID FROM COMMENT) AS D ON B.BOARD_ID = D.PARENT_ID
                          LEFT JOIN LIKES L ON B.BOARD_ID = L.BOARD_ID
-                <trim prefix="WHERE" prefixOverrides="OR">
-                    <if test="searchType != null">
-                        <bind name="pattern" value="'%' + searchKeyword + '%'" />
-                        <if test="searchType == 'titleContent'">
-                            OR TITLE LIKE #{pattern}
-                            OR CONTENT LIKE #{pattern}
+                <trim prefix="WHERE" prefixOverrides="AND">
+                    <trim prefix="(" suffix=")" prefixOverrides="OR">
+                        <if test="searchType != null">
+                            <bind name="pattern" value="'%' + searchKeyword + '%'" />
+                            <if test="searchType == 'titleContent'">
+                                OR TITLE LIKE #{pattern}
+                                OR CONTENT LIKE #{pattern}
+                            </if>
+                            <if test="searchType == 'title'">
+                                OR TITLE LIKE #{pattern}
+                            </if>
+                            <if test="searchType == 'content'">
+                                OR CONTENT LIKE #{pattern}
+                            </if>
+                            <if test="searchType == 'nickname'">
+                                OR M.NICKNAME LIKE #{pattern}
+                            </if>
                         </if>
-                        <if test="searchType == 'title'">
-                            OR TITLE LIKE #{pattern}
+                    </trim>
+                    <trim>
+                    <if test="categoryType != null">
+                        <if test="categoryType =='notice' ">
+                            AND C.CATEGORY_NAME LIKE 'NOTICE'
                         </if>
-                        <if test="searchType == 'content'">
-                            OR CONTENT LIKE #{pattern}
-                        </if>
-                        <if test="searchType == 'nickname'">
-                            OR M.NICKNAME LIKE #{pattern}
+                        <if test="categoryType == 'faq'">
+                            AND C.CATEGORY_NAME LIKE 'FAQ'
                         </if>
                     </if>
+                    </trim>
                 </trim>
             GROUP BY B.BOARD_ID
             ORDER BY BOARD_ID DESC
             LIMIT #{offset}, 10
             </script>
             """)
-    List<Board> selectAllPaging(Integer offset, String searchType, String searchKeyword);
+    List<Board> selectAllPaging(Integer offset, String searchType, String searchKeyword, String categoryType);
 
     // 게시물 목록 카테고리 조회
     @Select("""
             SELECT *
             FROM CATEGORY
             """)
-    List<Category> selectAllPagingForCategory(Integer offset, String searchType, String searchKeyword);
+    List<Category> selectAllPagingForCategory(Integer offset, String searchType, String searchKeyword, String categoryType);
 
     // 하나의 게시물 조회(M.MEBER_ID -> B.MEMBER_ID, WHERE에 B.BOARD_ID)
     @Select("""
@@ -158,29 +170,42 @@ public interface BoardMapper {
     // 게시물 목록에서 총 게시물 개수 조회
     @Select("""
             <script>
-            SELECT COUNT(BOARD_ID), M.NICKNAME
+            SELECT COUNT(BOARD_ID), M.NICKNAME, C.CATEGORY_ID, C.CATEGORY_NAME
             FROM BOARD B LEFT JOIN MEMBER M ON B.MEMBER_ID = M.MEMBER_ID
-                <trim prefix="WHERE" prefixOverrides="OR">
-                    <if test="searchType != null">
-                        <bind name="pattern" value="'%' + searchKeyword + '%'" />
-                        <if test="searchType == 'titleContent'">
-                            OR TITLE LIKE #{pattern}
-                            OR CONTENT LIKE #{pattern}
+                         LEFT JOIN CATEGORY C ON B.CATEGORY_ID = C.CATEGORY_ID
+                <trim prefix="WHERE" prefixOverrides="AND">
+                    <trim prefix="(" suffix=")" prefixOverrides="OR">
+                        <if test="searchType != null">
+                            <bind name="pattern" value="'%' + searchKeyword + '%'" />
+                            <if test="searchType == 'titleContent'">
+                                OR TITLE LIKE #{pattern}
+                                OR CONTENT LIKE #{pattern}
+                            </if>
+                            <if test="searchType == 'title'">
+                                OR TITLE LIKE #{pattern}
+                            </if>
+                            <if test="searchType == 'content'">
+                                OR CONTENT LIKE #{pattern}
+                            </if>
+                            <if test="searchType == 'nickname'">
+                                OR M.NICKNAME LIKE #{pattern}
+                            </if>
                         </if>
-                        <if test="searchType == 'title'">
-                            OR TITLE LIKE #{pattern}
+                    </trim>
+                    <trim>
+                    <if test="categoryType != null">
+                        <if test="categoryType =='notice' ">
+                            AND C.CATEGORY_NAME LIKE 'NOTICE'
                         </if>
-                        <if test="searchType == 'content'">
-                            OR CONTENT LIKE #{pattern}
-                        </if>
-                        <if test="searchType == 'nickname'">
-                            OR M.NICKNAME LIKE #{pattern}
+                        <if test="categoryType == 'faq'">
+                            AND C.CATEGORY_NAME LIKE 'FAQ'
                         </if>
                     </if>
+                    </trim>
                 </trim>
             </script>
             """)
-    Integer countAllWithSearch(String searchType, String searchKeyword);
+    Integer countAllWithSearch(String searchType, String searchKeyword, String categoryType);
 
 
     @Select("""
