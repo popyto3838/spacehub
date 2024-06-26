@@ -126,8 +126,8 @@ const Header = () => {
 
                   <MenuButton as={Box} cursor="pointer">
                     <Image
-                      src={imageUrl}
-                      alt="Profile"
+                        src={`${member.profileImage}`}
+                        alt="Profile"
                       borderRadius="full"
                       boxSize="40px"
 
@@ -190,6 +190,7 @@ const Header = () => {
                     <img
 
                       src={`${member.profileImage}`}
+                      // src="/img/profile/1/일본배경.jpg"
                       alt="User Profile Image"
                       style={{
                         width: '70px',
