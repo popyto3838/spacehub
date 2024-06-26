@@ -55,6 +55,8 @@ export function MemberMy() {
 
   useEffect(() => {
     // 두 개의 API 호출을 병렬로 수행
+    if(account.id) {
+
     const fetchMember = axios.get(`/api/member/${account.id}`);
     const fetchHost = axios.get('/api/member/gethost', { params: { memberId: account.id } });
 
@@ -79,6 +81,8 @@ export function MemberMy() {
         });
         navigate("/");
       });
+    }
+
   }, [account.id, navigate, toast]);
 
 
