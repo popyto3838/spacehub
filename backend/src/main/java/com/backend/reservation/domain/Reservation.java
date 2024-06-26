@@ -11,6 +11,7 @@ public class Reservation {
     private Integer reservationId;
     private Integer spaceId;
     private Integer memberId;
+    private Integer totalPrice;
     private String  startDate;
     private String  endDate;
     private String  startTime;
@@ -18,5 +19,4 @@ public class Reservation {
     private ReservationStatus status;
     private Timestamp inputDt;
     private Timestamp updateDt;
-    private Integer totalPrice;
 }

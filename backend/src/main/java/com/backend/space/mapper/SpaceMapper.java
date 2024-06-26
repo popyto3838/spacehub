@@ -87,4 +87,11 @@ public interface SpaceMapper {
                     )
             """)
     List<OptionListDTO> selectOptionListBySpaceId(Integer spaceId);
+
+    @Select("""
+            SELECT  *
+            FROM SPACE
+            WHERE HOST_ID = #{hostId}
+            """)
+    List<FindResponseSpaceHostIdDto> selectAllByHostId(Integer hostId);
 }

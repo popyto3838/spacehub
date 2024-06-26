@@ -3,6 +3,7 @@ package com.backend.space.service.impl;
 import com.backend.dto.FindResponseSpaceJoinDTO;
 import com.backend.file.domain.File;
 import com.backend.file.mapper.FileMapper;
+import com.backend.space.domain.FindResponseSpaceHostIdDto;
 import com.backend.space.domain.Space;
 import com.backend.space.mapper.SpaceMapper;
 import com.backend.space.service.SpaceService;
