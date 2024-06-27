@@ -128,4 +128,12 @@ public interface CommentMapper {
             WHERE PARENT_ID = #{parentId}
             """)
     int deleteByCommentIdForFile(Integer parentId);
+
+    // 코멘트 수정 페이지에서 첨부된 파일 삭제
+    @Delete("""
+            DELETE FROM FILE
+            WHERE PARENT_ID = #{parentId}
+              AND FILE_NAME = #{fileName}
+            """)
+    int deleteByCommentIdAndName(Integer parentId, String fileName);
 }

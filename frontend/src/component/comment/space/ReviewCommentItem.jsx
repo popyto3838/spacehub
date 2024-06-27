@@ -23,7 +23,12 @@ import { LoginContext } from "../../LoginProvider.jsx";
 import { ReviewCommentEdit } from "./ReviewCommentEdit.jsx";
 import axios from "axios";
 
-export function ReviewCommentItem({ comment, isProcessing, setIsProcessing }) {
+export function ReviewCommentItem({
+  comment,
+  isProcessing,
+  setIsProcessing,
+  spaceId,
+}) {
   const [isEditing, setIsEditing] = useState(false);
 
   // 좋아요
@@ -130,6 +135,7 @@ export function ReviewCommentItem({ comment, isProcessing, setIsProcessing }) {
           isProcessing={isProcessing}
           setIsProcessing={setIsProcessing}
           setIsEditing={setIsEditing}
+          spaceId={spaceId}
         />
       )}
 

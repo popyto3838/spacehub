@@ -77,10 +77,14 @@ public class CommentController {
 
     @PutMapping("editReview")
     @PreAuthorize("isAuthenticated()")
-    public void editReview(@RequestBody Comment comment,
-                           Authentication authentication) {
+    public void editReview(Comment comment,
+                           @RequestParam(value = "removeFileList[]", required = false)
+                           List<String> removeFileList,
+                           @RequestParam(value = "addFileList[]", required = false)
+                           MultipartFile[] addFileList,
+                           Authentication authentication) throws IOException {
         if (commentService.hasAccess(comment, authentication)) {
-            commentService.updateReview(comment);
+            commentService.updateReview(comment, removeFileList, addFileList);
         }
     }
 

@@ -26,6 +26,7 @@ export function ReviewCommentList({ spaceId, isProcessing, setIsProcessing }) {
           setIsProcessing={setIsProcessing}
           comment={comment}
           key={comment.commentId}
+          spaceId={spaceId}
         />
       ))}
     </Box>

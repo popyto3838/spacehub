@@ -148,7 +148,42 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public void updateReview(Comment comment) {
+    public void updateReview(Comment comment, List<String> removeFileList, MultipartFile[] addFileList) throws IOException {
+        // 첨부된 파일 삭제
+        if (removeFileList != null && removeFileList.size() > 0) {
+            for (String fileName : removeFileList) {
+                String path = STR."C:/Temp/prj3p/\{comment.getCommentId()}/\{fileName}";
+                File file = new File(path);
+                file.delete();
+                commentMapper.deleteByCommentIdAndName(comment.getCommentId(), fileName);
+            }
+        }
+
+        // 코멘트에 새 파일 첨부
+        if (addFileList != null && addFileList.length > 0) {
+            // 중복 확인을 위해 파일 목록 얻어옴
+            List<String> fileNameList = commentMapper.selectByFileNameByCommentId(comment.getCommentId());
+            // 탐색
+            for (MultipartFile file : addFileList) {
+                // 파일명을 얻어서 덮어씀
+                String fileName = file.getOriginalFilename();
+                if (!fileNameList.contains(fileName)) {
+                    // 중복되지 않은 파일만 db에 추가
+                    commentMapper.insertFileList(comment.getCommentId(), file.getOriginalFilename());
+                }
+                // disk에 쓰기
+                // 파일이 원래 없는 경우 부모 경로 생성
+                File dir = new File(STR."C:/Temp/prj3p/\{comment.getCommentId()}");
+                if (!dir.exists()) {
+                    // 디렉토리 생성
+                    dir.mkdirs();
+                }
+                String path = STR."C:/Temp/prj3p/\{comment.getCommentId()}/\{fileName}";
+                File destination = new File(path);
+                file.transferTo(destination);
+            }
+        }
+
         commentMapper.updateByCommentId(comment);
     }
 

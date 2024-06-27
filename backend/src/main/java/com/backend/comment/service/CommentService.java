@@ -28,7 +28,7 @@ public interface CommentService {
 
     void deleteReview(Comment comment);
 
-    void updateReview(Comment comment);
+    void updateReview(Comment comment, List<String> removeFileList, MultipartFile[] addFileList) throws IOException;
 
     // space의 qna
     void insertQna(Comment comment, Authentication authentication);
