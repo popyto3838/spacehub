@@ -44,7 +44,7 @@ const SpaceCard = ({space, thumbnailPath}) => {
                 .then((res) => {
                     toast({
                         status: "success",
-                        description: "좋아요가 등록되었스빈다.",
+                        description: "좋아요가 등록되었습니다.",
                         position: "top",
                         duration: 1000,
                     });
@@ -70,7 +70,7 @@ const SpaceCard = ({space, thumbnailPath}) => {
                 .then( (res) => {
                     toast({
                         status: "success",
-                        description: "좋아요가 취소되었습니다..",
+                        description: "좋아요가 취소되었습니다.",
                         position: "top",
                         duration: 1000,
                     });
