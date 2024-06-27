@@ -11,9 +11,6 @@ function HostReservationList() {
     const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
     useEffect(() => {
-        console.log("==========");
-        console.log(spaceId);
-        console.log("==========");
         axios.get("/api/reservation/hostReservationList/" + spaceId)
             .then((res) => {
                 console.log(res.data);
@@ -89,6 +86,7 @@ function HostReservationList() {
                                         >
                                             <option value="APPLY">신청</option>
                                             <option value="ACCEPT">수락</option>
+                                            <option value="CANCEL">취소</option>
                                             <option value="COMPLETE_PAYMENT">결제완료</option>
                                         </Select>
                                     </Td>

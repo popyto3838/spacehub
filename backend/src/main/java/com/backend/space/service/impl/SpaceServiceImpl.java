@@ -3,7 +3,7 @@ package com.backend.space.service.impl;
 import com.backend.dto.FindResponseSpaceJoinDTO;
 import com.backend.file.domain.File;
 import com.backend.file.mapper.FileMapper;
-import com.backend.space.domain.FindResponseSpaceHostIdDto;
+import com.backend.space.domain.FindResponseSpaceMemberIdDto;
 import com.backend.space.domain.Space;
 import com.backend.space.mapper.SpaceMapper;
 import com.backend.space.service.SpaceService;
@@ -11,11 +11,14 @@ import com.backend.dto.OptionListDTO;
 import edu.emory.mathcs.backport.java.util.Collections;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import software.amazon.awssdk.services.s3.S3Client;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -25,6 +28,13 @@ public class SpaceServiceImpl implements SpaceService {
 
     private final SpaceMapper spaceMapper;
     private final FileMapper fileMapper;
+    private final S3Client s3Client;
+
+    @Value("${aws.s3.bucket.name}")
+    String bucketName;
+
+    @Value("${image.src.prefix}")
+    String srcPrefix;
 
     @Override
     public List<Space> selectAll() {
@@ -45,10 +55,26 @@ public class SpaceServiceImpl implements SpaceService {
         }
         List<File> files = fileMapper.selectFileByDivisionAndParentId("SPACE", spaceId);
         if (files != null && !files.isEmpty()) {
-            spaceDto.setSpaceImgFiles(files); // 모든 이미지 파일 가져오기
+            // 모든 이미지 파일 가져오기
+            List<File> filesWithUrls = files.stream().map(file -> {
+                String fileUrl = s3Client.utilities().getUrl(builder ->
+                        builder.bucket(bucketName).key(file.getFileName())).toExternalForm();
+                file.setFileName(fileUrl); // 파일 이름 대신 url 설정
+                return file;
+            }).collect(Collectors.toList());
+            spaceDto.setSpaceImgFiles(filesWithUrls);
         }
-        List<OptionListDTO> options = spaceMapper.selectOptionListBySpaceId(spaceId);
+        List<OptionListDTO> options = spaceMapper.selectOptionListBySpaceId(spaceId).stream().map(option -> {
+            String fileName = option.getFileName();
+            if (fileName != null && !fileName.isEmpty()) {
+                String fileUrl = s3Client.utilities().getUrl(builder ->
+                        builder.bucket(bucketName).key(fileName)).toExternalForm();
+                option.setFileName(fileUrl);
+            }
+            return option;
+        }).collect(Collectors.toList());
         spaceDto.setOptionList(options);
+
         return spaceDto;
     }
 
@@ -63,7 +89,13 @@ public class SpaceServiceImpl implements SpaceService {
 
             List<File> files = fileMapper.selectFileByDivisionAndParentId("SPACE", space.getSpaceId());
             if (!files.isEmpty()) {
-                dto.setSpaceImgFiles(Collections.singletonList(files.get(0))); // 첫 번째 파일만 추가
+                // S3에서 파일 URL 가져오기
+                File firstFile = files.get(0);
+                String fileUrl = s3Client.utilities()
+                        .getUrl(builder ->
+                        builder.bucket(bucketName).key(firstFile.getFileName())).toExternalForm();
+                firstFile.setFileName(fileUrl); // 파일 이름 대신 URL 설정
+                dto.setSpaceImgFiles(Collections.singletonList(firstFile)); // 첫 번째 파일만 추가
             }
 
             spaceWithThumnailList.add(dto);
@@ -85,7 +117,7 @@ public class SpaceServiceImpl implements SpaceService {
     }
 
     @Override
-    public List<FindResponseSpaceHostIdDto> selectAllByHostId(Integer hostId) {
-        return spaceMapper.selectAllByHostId(hostId);
+    public List<FindResponseSpaceMemberIdDto> selectAllByMemberId(Integer memberId) {
+        return spaceMapper.selectAllByMemberId(memberId);
     }
 }

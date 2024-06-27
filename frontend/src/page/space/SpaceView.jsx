@@ -12,6 +12,7 @@ import {
   Image,
   Text,
   useColorModeValue,
+  useDisclosure,
   useToast,
   VStack,
 } from "@chakra-ui/react";
@@ -35,6 +36,8 @@ import {
   faWonSign,
 } from "@fortawesome/free-solid-svg-icons";
 import "/public/css/space/SpaceView.css";
+import KakaoShareButton from "./KakaoShareButton.jsx";
+import ReportModal from "../../component/ReportModal.jsx";
 import { QnaCommentComponent } from "../../component/comment/space/QnaCommentComponent.jsx";
 import { ReviewCommentComponent } from "../../component/comment/space/ReviewCommentComponent.jsx";
 
@@ -46,10 +49,12 @@ function SpaceView() {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [startThumbnailIndex, setStartThumbnailIndex] = useState(0);
   const [thumbnailCount, setThumbnailCount] = useState(5);
+  const [activeSection, setActiveSection] = useState("공간소개");
+
   const { spaceId } = useParams();
   const toast = useToast();
   const navigate = useNavigate();
-  const [activeSection, setActiveSection] = useState("공간소개");
+  const { isOpen, onClose, onOpen } = useDisclosure();
 
   const bgColor = useColorModeValue("white", "gray.800");
   const textColor = useColorModeValue("gray.700", "gray.200");
@@ -130,11 +135,9 @@ function SpaceView() {
     );
   };
 
-  console.log(spaceDetails.spaceId);
-
   return (
     <Box bg={bgColor} minHeight="100vh">
-      <Container maxW="1200px" py={10} px={4}>
+      <Container maxW="1600px" py={10} px={4}>
         <VStack spacing={12} align="stretch">
           <Box>
             <Heading
@@ -151,17 +154,23 @@ function SpaceView() {
                 {spaceDetails.subTitle}
               </Text>
               <HStack>
-                <Button
-                  leftIcon={<FontAwesomeIcon icon={faShare} />}
-                  variant="outline"
-                  colorScheme="gray"
+                <KakaoShareButton
+                  spaceDetails={spaceDetails}
+                  templateId={109470}
                 >
-                  공유
-                </Button>
+                  <Button
+                    leftIcon={<FontAwesomeIcon icon={faShare} />}
+                    variant="outline"
+                    colorScheme="gray"
+                  >
+                    공유
+                  </Button>
+                </KakaoShareButton>
                 <Button
                   leftIcon={<FontAwesomeIcon icon={faBullhorn} />}
                   variant="outline"
                   colorScheme="gray"
+                  onClick={onOpen}
                 >
                   신고
                 </Button>
@@ -172,6 +181,11 @@ function SpaceView() {
                 >
                   저장
                 </Button>
+                <ReportModal
+                  isOpen={isOpen}
+                  onClose={onClose}
+                  spaceId={spaceId}
+                />
               </HStack>
             </HStack>
           </Box>
@@ -371,12 +385,12 @@ function SpaceView() {
                       <Box key={option.optionListId} textAlign="center">
                         <Image
                           src={option.fileName}
-                          alt={option.optionListName}
+                          alt={option.name}
                           boxSize="60px"
                           mx="auto"
                           mb={2}
                         />
-                        <Text fontSize="md">{option.optionListName}</Text>
+                        <Text fontSize="md">{option.name}</Text>
                       </Box>
                     ))}
                   </Grid>

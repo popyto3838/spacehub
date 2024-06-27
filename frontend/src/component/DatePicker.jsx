@@ -1,10 +1,10 @@
 // eslint-disable-next-line no-unused-vars
-import React, { useContext, useState, useEffect } from 'react';
+import React, {useContext, useState, useEffect} from 'react';
 import '/public/css/component/DatePicker.css';
 import axios from 'axios';
-import { LoginContext } from './LoginProvider.jsx';
-import { Button, useToast } from '@chakra-ui/react';
-import { useNavigate } from 'react-router-dom';
+import {LoginContext} from './LoginProvider.jsx';
+import {Button, useToast} from '@chakra-ui/react';
+import {useNavigate} from 'react-router-dom';
 
 const Calendar = (props) => {
     const account = useContext(LoginContext);
@@ -23,8 +23,16 @@ const Calendar = (props) => {
 
     const fetchReservations = async () => {
         try {
-            const response = await axios.get('/api/reservation/list');
-            setReservations(response.data);
+            const response = await axios.get('/api/reservation/listAll');
+            console.log(response.data);
+            const formattedReservations = response.data.map(reservation => ({
+                ...reservation,
+                startDate: new Date(reservation.startDate),
+                endDate: new Date(reservation.endDate),
+                startTime: reservation.startTime.substring(0, 5),  // "HH:MM" 형식으로 변경
+                endTime: reservation.endTime.substring(0, 5)  // "HH:MM" 형식으로 변경
+            }));
+            setReservations(formattedReservations);
         } catch (error) {
             console.error('Failed to fetch reservations:', error);
         }
@@ -71,12 +79,10 @@ const Calendar = (props) => {
 
         const calendarDays = [];
 
-        // 이전 달의 날짜 채우기
         for (let i = 0; i < firstDay; i++) {
             calendarDays.push(<div key={`prev-${i}`} className="calendar-day empty"></div>);
         }
 
-        // 현재 달의 날짜 채우기
         for (let i = 1; i <= daysInMonth; i++) {
             const isSelected = selectedDate
                 ? i === selectedDate.getDate() && month === selectedDate.getMonth() && year === selectedDate.getFullYear()
@@ -99,7 +105,6 @@ const Calendar = (props) => {
             );
         }
 
-        // 다음 달의 날짜 채우기
         const remainingDays = 42 - (firstDay + daysInMonth);
         for (let i = 1; i <= remainingDays; i++) {
             calendarDays.push(<div key={`next-${i}`} className="calendar-day empty"></div>);
@@ -110,43 +115,60 @@ const Calendar = (props) => {
 
     const handleHourChange = (hour) => {
         if (selectedHours.includes(hour)) {
-            setSelectedHours(selectedHours.filter((h) => h !== hour));
-        } else {
-            if (selectedHours.length === 0) {
-                setSelectedHours([hour]);
+            const newSelectedHours = selectedHours.filter(h => h !== hour);
+            if (newSelectedHours.length === 0 || areHoursContinuous(newSelectedHours)) {
+                setSelectedHours(newSelectedHours);
             } else {
-                const lastSelectedHour = selectedHours[selectedHours.length - 1];
-                if (Math.abs(lastSelectedHour - hour) === 1) {
-                    setSelectedHours((prev) => {
-                        return [...prev, hour];
-                    });
-                } else {
-                    toast({
-                        status: 'error',
-                        description: '연속된 시간을 선택하세요.',
-                        position: 'top',
-                        duration: 1000
-                    });
-                }
+                toast({
+                    status: 'error',
+                    description: '연속된 시간만 선택 가능합니다.',
+                    position: 'top',
+                    duration: 1000
+                });
+            }
+        } else {
+            const newSelectedHours = [...selectedHours, hour].sort((a, b) => a - b);
+            if (areHoursContinuous(newSelectedHours)) {
+                setSelectedHours(newSelectedHours);
+            } else {
+                toast({
+                    status: 'error',
+                    description: '연속된 시간만 선택 가능합니다.',
+                    position: 'top',
+                    duration: 1000
+                });
             }
         }
     };
 
+    const areHoursContinuous = (hours) => {
+        if (hours.length <= 1) return true;
+        hours.sort((a, b) => a - b);
+        for (let i = 1; i < hours.length; i++) {
+            if (hours[i] - hours[i - 1] !== 1) return false;
+        }
+        return true;
+    };
     const isTimeSlotReserved = (date, hour) => {
         return reservations.some((reservation) => {
-            const reservationDate = new Date(reservation.startDate);
+            const reservationStartDate = new Date(reservation.startDate);
             const selectedDate = new Date(date);
 
-            return (
-                reservationDate.toDateString() === selectedDate.toDateString() &&
-                reservation.startTime.split(':')[0] <= hour &&
-                reservation.endTime.split(':')[0] > hour
-            );
+            const isSameDate =
+                selectedDate.getFullYear() === reservationStartDate.getFullYear() &&
+                selectedDate.getMonth() === reservationStartDate.getMonth() &&
+                selectedDate.getDate() === reservationStartDate.getDate()
+
+            if (!isSameDate) return false;
+
+            const reservationStartHour = parseInt(reservation.startTime.split(':')[0]);
+            const reservationEndHour = parseInt(reservation.endTime.split(':')[0]);
+            return hour >= reservationStartHour && hour <= reservationEndHour;
         });
     };
 
     const renderHourCheckboxes = () => {
-        const hours = Array.from({ length: 24 }, (_, i) => i);
+        const hours = Array.from({length: 24}, (_, i) => i);
 
         return hours.map((hour) => {
             const isReserved = isTimeSlotReserved(selectedDate, hour);
@@ -165,7 +187,7 @@ const Calendar = (props) => {
     };
 
     const handleReservation = () => {
-        if (selectedDate && selectedHours.length > 0) {
+        if (selectedDate && selectedHours.length >= 2) {
             const year = selectedDate.getFullYear();
             const month = String(selectedDate.getMonth() + 1).padStart(2, '0');
             const day = String(selectedDate.getDate()).padStart(2, '0');
@@ -194,7 +216,7 @@ const Calendar = (props) => {
                         position: 'top',
                         duration: 1000
                     });
-                    navigate('/paid/payment/' + res.data.reservationId);
+                    navigate('/member/myReservationList/' +account.id);
                 })
                 .catch((error) => {
                     toast({
@@ -204,6 +226,13 @@ const Calendar = (props) => {
                         duration: 1000
                     });
                 });
+        } else {
+            toast({
+                status: 'error',
+                description: '최소 2시간 이상 선택해야 합니다.',
+                position: 'top',
+                duration: 1000
+            });
         }
     };
 

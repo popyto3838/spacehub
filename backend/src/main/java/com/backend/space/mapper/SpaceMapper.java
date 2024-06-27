@@ -1,6 +1,6 @@
 package com.backend.space.mapper;
 
-import com.backend.space.domain.FindResponseSpaceHostIdDto;
+import com.backend.space.domain.FindResponseSpaceMemberIdDto;
 import com.backend.space.domain.Space;
 import com.backend.dto.OptionListDTO;
 import org.apache.ibatis.annotations.Insert;
@@ -77,7 +77,7 @@ public interface SpaceMapper {
     int insertSpaceConfig(int spaceId, Integer optionId);
 
     @Select("""
-            SELECT O.OPTION_LIST_ID, O.NAME, F.FILE_NAME
+            SELECT O.OPTION_LIST_ID, O.NAME, O.IS_ACTIVE, F.FILE_NAME
                     FROM OPTION_LIST O
                     LEFT JOIN FILE F ON O.OPTION_LIST_ID = F.PARENT_ID AND F.DIVISION = 'OPTION'
                     WHERE O.OPTION_LIST_ID IN (
@@ -91,7 +91,7 @@ public interface SpaceMapper {
     @Select("""
             SELECT  *
             FROM SPACE
-            WHERE HOST_ID = #{hostId}
+            WHERE MEMBER_ID = #{memberId}
             """)
-    List<FindResponseSpaceHostIdDto> selectAllByHostId(Integer hostId);
+    List<FindResponseSpaceMemberIdDto> selectAllByMemberId(Integer memberId);
 }

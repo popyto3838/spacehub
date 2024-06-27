@@ -6,7 +6,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Data
-public class FindResponseSpaceHostIdDto {
+public class FindResponseSpaceMemberIdDto {
 
     private int spaceId; // SPACE(PK)
     private int memberId;
