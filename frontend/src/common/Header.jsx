@@ -141,6 +141,7 @@ const Header = () => {
                         exit={{ opacity: 0, y: -20 }}
                         transition={{ duration: 0.1 }}
                         mt={2}
+                        minWidth={"100px"}
                         border="none"
                         boxShadow="md"
                       >

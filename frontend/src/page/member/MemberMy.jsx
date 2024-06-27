@@ -43,6 +43,7 @@ export function MemberMy() {
   const [expirationTime, setExpirationTime] = useState(null);
   const [isCodeSent, setIsCodeSent] = useState(false);
 
+
   const{isOpen, onOpen, onClose}=useDisclosure()
 
   const account = useContext(LoginContext);
@@ -53,38 +54,47 @@ export function MemberMy() {
   const imageUrl = ""
 
 
-  useEffect(() => {
+  const fetchMemberData = () => {
     // 두 개의 API 호출을 병렬로 수행
-    const fetchMember = axios.get(`/api/member/${account.id}`);
-    const fetchHost = axios.get('/api/member/gethost', { params: { memberId: account.id } });
 
-    Promise.all([fetchMember, fetchHost])
-      .then(([memberRes, hostRes]) => {
-        const member1 = memberRes.data;
-        setMember({ ...member1, password: "" });
-        setOldNickName(member1.nickname);
+    if(account.id) {
+      const fetchMember = axios.get(`/api/member/${account.id}`);
+      const fetchHost = axios.get('/api/member/gethost', {params: {memberId: account.id}});
 
-        const host1 = hostRes.data;
-        setHost(host1);
+      Promise.all([fetchMember, fetchHost])
+        .then(([memberRes, hostRes]) => {
+          const member1 = memberRes.data;
+          setMember({...member1, password: ""});
+          setOldNickName(member1.nickname);
 
-        console.log(member1.src);
-        console.log(member1);
-        console.log(host1);
-      })
-      .catch(() => {
-        toast({
-          status: "warning",
-          description: "회원 정보 조회 중 문제가 발생하였습니다.",
-          position: "top",
+          const host1 = hostRes.data;
+          setHost(host1);
+
+          console.log(member1.src);
+          console.log(member1);
+          console.log(host1);
+        })
+        .catch(() => {
+          toast({
+            status: "warning",
+            description: "회원 정보 조회 중 문제가 발생하였습니다.",
+            position: "top",
+          });
+          navigate("/");
         });
-        navigate("/");
-      });
+    }
+  }
+
+
+
+  useEffect(() => {
+    fetchMemberData();
   }, [account.id, navigate, toast]);
 
 
 
   function handleAccount() {
-    axios.post("/api/member/account",{
+    axios.post("/api/member/accountEdit",{
       memberId: account.id,
       accountNumber: accountNumber,
       bankName: bankName,
@@ -166,6 +176,7 @@ export function MemberMy() {
         description :"프로필이 수정되었습니다",
         position: "top",
       })
+      fetchMemberData();
       onClose();
     })
 
@@ -173,46 +184,22 @@ export function MemberMy() {
   }
 
   function submitHostInfo() {
-    axios.post("/api/member/hostInfo" , {
+
+    axios.post("/api/member/hostInfoEdit" , {
       businessName : businessName,
       businessNumber : businessNumber,
       repName : repName,
       memberId : account.id,
-      accountNumber: accountNumber,
-      bankName: bankName,
+
     })
       .then(e=>{
         toast({
           status: "success",
-          description : "호스트정보등록완료",
+          description : "수정완료",
           position: "top"
         })
-
-        return axios.put("/api/member/host",{
-          memberId: account.id,
-        })
+        fetchMemberData();
       })
-      .then((res)=>{
-        account.login(res.data.token);
-        console.log(res.data.token);
-      })
-      .then(() => {
-        // 성공적으로 업데이트한 후 데이터를 다시 가져옵니다.
-        return axios.get('/api/member/gethost', { params: { memberId: account.id } });
-      })
-      .then((res) => {
-        setHost(res.data);
-      })
-      .catch((err) => {
-        toast({
-          status: "error",
-          description: "호스트 정보 업데이트 중 문제가 발생하였습니다.",
-          position: "top",
-        });
-      })
-      .finally(() => {
-        navigate(`/member/info/${account.id}`);
-      });
 
   }
 

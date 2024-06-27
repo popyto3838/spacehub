@@ -137,7 +137,6 @@ export function MemberHostInfo(){
           placeholder="계좌번호를 입력하세요"
                onChange={(e) => {
                  setAccountNumber(e.target.value);
-                 setIsCheckedMobile(false);
                }}
         />
         <InputRightElement w={"75px"} mr={1}>

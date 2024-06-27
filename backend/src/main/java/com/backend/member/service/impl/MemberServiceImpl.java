@@ -431,14 +431,18 @@ public class MemberServiceImpl implements MemberService {
                 mapper.insertFileList(member.getMemberId(), profileImage, fileName);
 
                 //실제 파일 저장
-                String dir = STR."/Users/leedongyoung/중앙정보/prj3/frontend/public/img/profile/\{member.getMemberId()}"; // 부모 디렉토리(폴더)
+
+                String dir ="C:/Users/admin/IdeaProjects/prj3/frontend/public/img/profile/" + memberId; // 부모 디렉토리(폴더)
                 File dirFile = new File(dir);
+
+
+
+
                 if (!dirFile.exists()) {
                     dirFile.mkdirs();
                 }
                 //파일경로
-
-                String path = STR."/Users/leedongyoung/중앙정보/prj3/frontend/public/img/profile/\{member.getMemberId()}/\{file.getOriginalFilename()}";
+                String path = dir + "/" + fileName;
                 //저장 위치 명시
                 member.setProfileImage(profileImage);
 
@@ -457,5 +461,16 @@ public class MemberServiceImpl implements MemberService {
         return mapper.findHostByMemberId(memberId);
     }
 
-    ;
+    @Override
+    public void EdithostInfo(Host host){
+        mapper.EditHostInfo(host);
+    }
+
+    @Override
+    public void EditAccountinfo(Host host){
+
+        mapper.EditAccount(host);
+
+    }
+
 }

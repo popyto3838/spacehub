@@ -251,6 +251,19 @@ public class MemberController {
         }
     }
 
+    @PostMapping("accountEdit")
+    public ResponseEntity accountEdit(@RequestBody Host host) {
+        System.out.println("host = " + host);
+        if (service.validateAccount(host)) {
+
+            service.EditAccountinfo(host);
+
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
 
     @GetMapping(value = "p1")
     public Map<String, Object> p1(@RequestParam String mobile) {
@@ -276,8 +289,15 @@ public class MemberController {
 
     @PostMapping("hostInfo")
     public ResponseEntity hostInfo(@RequestBody Host host){
-        System.out.println("host = " + host);
         service.addhostInfo(host);
+
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("hostInfoEdit")
+    public ResponseEntity hostInfoEdit(@RequestBody Host host){
+        System.out.println("host = " + host);
+        service.EdithostInfo(host);
 
         return ResponseEntity.ok().build();
     }

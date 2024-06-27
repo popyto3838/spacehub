@@ -28,7 +28,7 @@ public class FileServiceImpl implements FileService {
     private final OptionListMapper optionListMapper;
 
 //    private final String baseDir = "/Users/santa/Desktop/study/BackEnd/project/prj3/frontend/public/img/";
-    private final String baseDir = "/Users/leedongyoung/중앙정보/prj3/frontend/public/img/";
+    private final String baseDir = "/Users/admin/IdeaProjects/prj3/frontend/public/img/";
 
     @Override
     public void addOrUpdateFile(String division, int parentId, MultipartFile file) throws IOException {
