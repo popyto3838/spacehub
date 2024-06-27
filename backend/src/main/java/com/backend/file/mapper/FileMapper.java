@@ -2,7 +2,6 @@ package com.backend.file.mapper;
 
 import com.backend.file.domain.File;
 import org.apache.ibatis.annotations.*;
-import retrofit2.http.DELETE;
 
 import java.util.List;
 

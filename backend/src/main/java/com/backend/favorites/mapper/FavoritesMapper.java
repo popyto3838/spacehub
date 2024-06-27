@@ -21,31 +21,19 @@ public interface FavoritesMapper {
     @Options(useGeneratedKeys = true, keyProperty = "favoritesId")
     int insert(Favorites favorites);
 
-    @Select("""
-            SELECT  *
-            FROM    FAVORITES
-            WHERE   FAVORITES_ID = #{favoritesId}
-            """)
-    Favorites selectByFavoritesId(Integer favoritesId);
 
     @Select("""
             SELECT  *
             FROM    FAVORITES
+            WHERE   MEMBER_ID = #{memberId}   
+            AND     SPACE_ID = #{spaceId}
             """)
-    List<Favorites> selectAll();
-
-    @Update("""
-            UPDATE  FAVORITES
-            SET     MEMBER_ID       = #{memberId}
-            ,       SPACE_ID        = #{spaceId}
-            ,       UPDATE_DT       = CURRENT_TIMESTAMP
-            WHERE   FAVORITES_ID    = #{favoritesId}
-            """)
-    int update(Favorites favorites);
+    Favorites selectByMemberIdAndSpaceID(Favorites favorites);
 
     @Delete("""
             DELETE  FROM FAVORITES
-            WHERE   FAVORITES_ID = #{favoritesId}
+            WHERE   MEMBER_ID = #{memberId}   
+            AND     SPACE_ID = #{spaceId}
             """)
-    int deleteByFavoritesId(Integer favoritesId);
+    int delete(Favorites favorites);
 }

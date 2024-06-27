@@ -7,8 +7,10 @@ import com.backend.typeList.domain.TypeList;
 import com.backend.typeList.mapper.TypeListMapper;
 import com.backend.typeList.service.TypeListService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import software.amazon.awssdk.services.s3.S3Client;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -20,6 +22,13 @@ public class TypeListServiceImpl implements TypeListService {
 
     private final TypeListMapper typeListMapper;
     private final FileMapper fileMapper;
+    private final S3Client s3Client;
+
+    @Value("${aws.s3.bucket.name}")
+    String bucketName;
+
+    @Value("${image.src.prefix}")
+    String srcPrefix;
 
     @Override
     public void insertTypeList(List<TypeList> typeLists) {
@@ -38,11 +47,16 @@ public class TypeListServiceImpl implements TypeListService {
             dto.setName(typeList.getName());
             dto.setActive(typeList.isActive());
 
-            List<File> iconFiles = fileMapper.selectFileByDivisionAndParentId("TYPE", typeList.getTypeListId());
-            if (iconFiles != null && !iconFiles.isEmpty()) {
-                dto.setIconFile(iconFiles.get(0)); // 여러 개의 파일 중 첫 번째 파일을 설정
+            List<File> iconFile = fileMapper.selectFileByDivisionAndParentId("TYPE", typeList.getTypeListId());
+            if (iconFile != null && !iconFile.isEmpty()) {
+                // 파일명을 S3 URL로 변환하여 DTO에 추가
+                File fileWithUrl = iconFile.get(0); // 첫 번째 파일만 사용
+                String fileUrl = s3Client.utilities().getUrl(builder ->
+                        builder.bucket(bucketName).key(fileWithUrl.getFileName())).toExternalForm();
+                fileWithUrl.setFileName(fileUrl);
+                dto.setIconFile(fileWithUrl);
             } else {
-                dto.setIconFile(null); // 파일이 없을 경우 null로 설정
+                dto.setIconFile(null);
             }
 
             return dto;

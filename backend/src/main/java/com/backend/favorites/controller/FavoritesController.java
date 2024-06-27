@@ -25,36 +25,17 @@ public class FavoritesController {
         return ResponseEntity.ok(favorites);
     }
 
-    @GetMapping("/{favoritesId}")
-    public ResponseEntity<Favorites> getFavoriteById(@PathVariable Integer favoritesId) {
-        Favorites favorite = favoritesService.selectByFavoritesId(favoritesId);
-        if (favorite != null) {
-            return ResponseEntity.ok(favorite);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
-    }
 
-    @GetMapping("/list")
-    public ResponseEntity<List<Favorites>> getAllFavorites() {
-        List<Favorites> favorites = favoritesService.selectAll();
+    @GetMapping("/get")
+    public ResponseEntity<Favorites> getFavorites(Favorites favoritesDTO) {
+        Favorites favorites = favoritesService.selectByMemberIdAndSpaceID(favoritesDTO);
         return ResponseEntity.ok(favorites);
     }
 
-    @PutMapping("update/{favoritesId}")
-    public ResponseEntity<Favorites> updateFavorite(@PathVariable Integer favoritesId, @RequestBody Favorites favorites) {
-        favorites.setFavoritesId(favoritesId);
-        int updateCount = favoritesService.update(favorites);
-        if (updateCount > 0) {
-            return ResponseEntity.ok(favorites);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
-    }
 
-    @DeleteMapping("delete/{favoritesId}")
-    public ResponseEntity<Void> deleteFavorite(@PathVariable Integer favoritesId) {
-        int deleteCount = favoritesService.deleteByFavoritesId(favoritesId);
+    @DeleteMapping("/delete")
+    public ResponseEntity<Void> deleteFavorite(Favorites favorites) {
+        int deleteCount = favoritesService.delete(favorites);
         if (deleteCount > 0) {
             return ResponseEntity.noContent().build();
         } else {

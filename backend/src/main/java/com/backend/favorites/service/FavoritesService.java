@@ -7,11 +7,7 @@ import java.util.List;
 public interface FavoritesService {
     void insert(Favorites favorites);
 
-    Favorites selectByFavoritesId(Integer favoritesId);
+    Favorites selectByMemberIdAndSpaceID(Favorites favorites);
 
-    List<Favorites> selectAll();
-
-    int update(Favorites favorites);
-
-    int deleteByFavoritesId(Integer favoritesId);
+    int delete(Favorites favorites);
 }

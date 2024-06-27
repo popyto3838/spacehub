@@ -24,22 +24,12 @@ public class FavoritesServiceImpl implements FavoritesService {
     }
 
     @Override
-    public Favorites selectByFavoritesId(Integer favoritesId) {
-        return favoritesMapper.selectByFavoritesId(favoritesId);
+    public Favorites selectByMemberIdAndSpaceID(Favorites favorites) {
+        return favoritesMapper.selectByMemberIdAndSpaceID(favorites);
     }
 
     @Override
-    public List<Favorites> selectAll() {
-        return favoritesMapper.selectAll();
-    }
-
-    @Override
-    public int update(Favorites favorites) {
-        return favoritesMapper.update(favorites);
-    }
-
-    @Override
-    public int deleteByFavoritesId(Integer favoritesId) {
-        return favoritesMapper.deleteByFavoritesId(favoritesId);
+    public int delete(Favorites favorites) {
+        return favoritesMapper.delete(favorites);
     }
 }
