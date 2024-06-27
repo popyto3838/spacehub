@@ -14,7 +14,7 @@ import {
 } from "@chakra-ui/react";
 import axios from "axios";
 import { useContext, useState } from "react";
-import { LoginContext } from "../LoginProvider.jsx";
+import { LoginContext } from "../../LoginProvider.jsx";
 import { CommentEdit } from "./CommentEdit.jsx";
 
 export function CommentItem({ comment, isProcessing, setIsProcessing }) {

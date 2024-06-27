@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Button,
@@ -11,17 +11,18 @@ import {
   IconButton,
   Image,
   Text,
-  useColorModeValue, useDisclosure,
+  useColorModeValue,
+  useDisclosure,
   useToast,
-  VStack
+  VStack,
 } from "@chakra-ui/react";
-import {ChevronLeftIcon, ChevronRightIcon} from '@chakra-ui/icons';
-import {Link} from 'react-scroll';
+import { ChevronLeftIcon, ChevronRightIcon } from "@chakra-ui/icons";
+import { Link } from "react-scroll";
 import axios from "axios";
-import {useNavigate, useParams} from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import DatePicker from "../../component/DatePicker.jsx";
 import KakaoMap from "../../component/KakaoMap.jsx";
-import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faBullhorn,
   faCog,
@@ -29,13 +30,16 @@ import {
   faExclamationCircle,
   faHeart,
   faHome,
-  faQuestionCircle, faShare,
+  faQuestionCircle,
+  faShare,
   faStar,
-  faWonSign
-} from '@fortawesome/free-solid-svg-icons';
-import '/public/css/space/SpaceView.css';
+  faWonSign,
+} from "@fortawesome/free-solid-svg-icons";
+import "/public/css/space/SpaceView.css";
 import KakaoShareButton from "./KakaoShareButton.jsx";
 import ReportModal from "../../component/ReportModal.jsx";
+import { QnaCommentComponent } from "../../component/comment/space/QnaCommentComponent.jsx";
+import { ReviewCommentComponent } from "../../component/comment/space/ReviewCommentComponent.jsx";
 
 function SpaceView() {
   const [space, setSpace] = useState({});
@@ -45,33 +49,34 @@ function SpaceView() {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [startThumbnailIndex, setStartThumbnailIndex] = useState(0);
   const [thumbnailCount, setThumbnailCount] = useState(5);
-  const [activeSection, setActiveSection] = useState('공간소개');
+  const [activeSection, setActiveSection] = useState("공간소개");
 
-  const {spaceId} = useParams();
+  const { spaceId } = useParams();
   const toast = useToast();
   const navigate = useNavigate();
-  const {isOpen, onClose, onOpen} = useDisclosure();
+  const { isOpen, onClose, onOpen } = useDisclosure();
 
   const bgColor = useColorModeValue("white", "gray.800");
   const textColor = useColorModeValue("gray.700", "gray.200");
   const borderColor = useColorModeValue("gray.200", "gray.600");
 
   const sections = [
-    {id: 'introduceArea', name: '공간소개', icon: faHome},
-    {id: 'facilityArea', name: '시설안내', icon: faCog},
-    {id: 'noticeArea', name: '유의사항', icon: faExclamationCircle},
-    {id: 'QA', name: 'Q&A', icon: faQuestionCircle},
-    {id: 'comment', name: '이용후기', icon: faComments}
+    { id: "introduceArea", name: "공간소개", icon: faHome },
+    { id: "facilityArea", name: "시설안내", icon: faCog },
+    { id: "noticeArea", name: "유의사항", icon: faExclamationCircle },
+    { id: "QA", name: "Q&A", icon: faQuestionCircle },
+    { id: "comment", name: "이용후기", icon: faComments },
   ];
 
   useEffect(() => {
-    axios.get(`/api/space/${spaceId}`)
+    axios
+      .get(`/api/space/${spaceId}`)
       .then((res) => {
         const data = res.data;
         setSpace(data);
         setSpaceDetails(data.space);
         if (data.spaceImgFiles && Array.isArray(data.spaceImgFiles)) {
-          const fileNames = data.spaceImgFiles.map(file => file.fileName);
+          const fileNames = data.spaceImgFiles.map((file) => file.fileName);
           setSpaceImages(fileNames);
         }
         if (data.optionList && Array.isArray(data.optionList)) {
@@ -90,41 +95,43 @@ function SpaceView() {
       });
 
     const handleResize = () => {
-      const containerWidth = document.getElementById('thumbnail-container').offsetWidth;
+      const containerWidth = document.getElementById(
+        "thumbnail-container",
+      ).offsetWidth;
       const thumbnailWidth = 70; // 썸네일 이미지 너비
       const newThumbnailCount = Math.floor(containerWidth / thumbnailWidth);
       setThumbnailCount(newThumbnailCount);
     };
 
     handleResize();
-    window.addEventListener('resize', handleResize);
+    window.addEventListener("resize", handleResize);
 
     return () => {
-      window.removeEventListener('resize', handleResize);
+      window.removeEventListener("resize", handleResize);
     };
   }, [spaceId, toast, navigate]);
 
   const goToPreviousImage = () => {
     setCurrentImageIndex((prevIndex) =>
-      prevIndex === 0 ? spaceImages.length - 1 : prevIndex - 1
+      prevIndex === 0 ? spaceImages.length - 1 : prevIndex - 1,
     );
   };
 
   const goToNextImage = () => {
     setCurrentImageIndex((prevIndex) =>
-      prevIndex === spaceImages.length - 1 ? 0 : prevIndex + 1
+      prevIndex === spaceImages.length - 1 ? 0 : prevIndex + 1,
     );
   };
 
   const goToPreviousThumbnails = () => {
     setStartThumbnailIndex((prevIndex) =>
-      Math.max(0, prevIndex - thumbnailCount)
+      Math.max(0, prevIndex - thumbnailCount),
     );
   };
 
   const goToNextThumbnails = () => {
     setStartThumbnailIndex((prevIndex) =>
-      Math.min(spaceImages.length - thumbnailCount, prevIndex + thumbnailCount)
+      Math.min(spaceImages.length - thumbnailCount, prevIndex + thumbnailCount),
     );
   };
 
@@ -133,28 +140,64 @@ function SpaceView() {
       <Container maxW="1600px" py={10} px={4}>
         <VStack spacing={12} align="stretch">
           <Box>
-            <Heading as="h1" size="2xl" color="gray.800" mb={4} fontWeight="bold">{spaceDetails.title}</Heading>
+            <Heading
+              as="h1"
+              size="2xl"
+              color="gray.800"
+              mb={4}
+              fontWeight="bold"
+            >
+              {spaceDetails.title}
+            </Heading>
             <HStack justify="space-between" align="center">
-              <Text fontSize="xl" color="gray.600">{spaceDetails.subTitle}</Text>
+              <Text fontSize="xl" color="gray.600">
+                {spaceDetails.subTitle}
+              </Text>
               <HStack>
-                <KakaoShareButton spaceDetails={spaceDetails} templateId={109470}>
-                  <Button leftIcon={<FontAwesomeIcon icon={faShare}/>} variant="outline" colorScheme="gray">공유</Button>
+                <KakaoShareButton
+                  spaceDetails={spaceDetails}
+                  templateId={109470}
+                >
+                  <Button
+                    leftIcon={<FontAwesomeIcon icon={faShare} />}
+                    variant="outline"
+                    colorScheme="gray"
+                  >
+                    공유
+                  </Button>
                 </KakaoShareButton>
                 <Button
-                  leftIcon={<FontAwesomeIcon icon={faBullhorn}/>}
+                  leftIcon={<FontAwesomeIcon icon={faBullhorn} />}
                   variant="outline"
                   colorScheme="gray"
                   onClick={onOpen}
-                >신고</Button>
-                <Button leftIcon={<FontAwesomeIcon icon={faHeart}/>} variant="outline" colorScheme="red">저장</Button>
-                <ReportModal isOpen={isOpen} onClose={onClose} spaceId={spaceId}/>
+                >
+                  신고
+                </Button>
+                <Button
+                  leftIcon={<FontAwesomeIcon icon={faHeart} />}
+                  variant="outline"
+                  colorScheme="red"
+                >
+                  저장
+                </Button>
+                <ReportModal
+                  isOpen={isOpen}
+                  onClose={onClose}
+                  spaceId={spaceId}
+                />
               </HStack>
             </HStack>
           </Box>
 
-          <Flex direction={{base: "column", lg: "row"}} gap={12}>
+          <Flex direction={{ base: "column", lg: "row" }} gap={12}>
             <Box flex={2}>
-              <Box position="relative" mb={8} className="image-slider" overflow="hidden">
+              <Box
+                position="relative"
+                mb={8}
+                className="image-slider"
+                overflow="hidden"
+              >
                 <Flex
                   transition="transform 0.3s ease-in-out"
                   transform={`translateX(-${currentImageIndex * 100}%)`}
@@ -172,7 +215,7 @@ function SpaceView() {
                   ))}
                 </Flex>
                 <IconButton
-                  icon={<ChevronLeftIcon/>}
+                  icon={<ChevronLeftIcon />}
                   position="absolute"
                   left={4}
                   top="50%"
@@ -182,7 +225,7 @@ function SpaceView() {
                   size="lg"
                 />
                 <IconButton
-                  icon={<ChevronRightIcon/>}
+                  icon={<ChevronRightIcon />}
                   position="absolute"
                   right={4}
                   top="50%"
@@ -195,33 +238,54 @@ function SpaceView() {
 
               <Flex align="center" mb={12} id="thumbnail-container">
                 <IconButton
-                  icon={<ChevronLeftIcon/>}
+                  icon={<ChevronLeftIcon />}
                   onClick={goToPreviousThumbnails}
                   isDisabled={startThumbnailIndex === 0}
                 />
                 <Flex overflow="hidden" className="thumbnail-wrapper">
-                  {spaceImages.slice(startThumbnailIndex, startThumbnailIndex + thumbnailCount).map((img, index) => (
-                    <Image
-                      key={startThumbnailIndex + index}
-                      src={img}
-                      alt={`Space image ${startThumbnailIndex + index + 1}`}
-                      cursor="pointer"
-                      onClick={() => setCurrentImageIndex(startThumbnailIndex + index)}
-                      border={startThumbnailIndex + index === currentImageIndex ? "2px solid" : "none"}
-                      borderColor={startThumbnailIndex + index === currentImageIndex ? "red.400" : "transparent"}
-                      boxSize="80px"
-                      objectFit="cover"
-                      m={1}
-                      opacity={startThumbnailIndex + index === currentImageIndex ? 1 : 0.6}
-                      transition="opacity 0.2s"
-                      _hover={{opacity: 1}}
-                    />
-                  ))}
+                  {spaceImages
+                    .slice(
+                      startThumbnailIndex,
+                      startThumbnailIndex + thumbnailCount,
+                    )
+                    .map((img, index) => (
+                      <Image
+                        key={startThumbnailIndex + index}
+                        src={img}
+                        alt={`Space image ${startThumbnailIndex + index + 1}`}
+                        cursor="pointer"
+                        onClick={() =>
+                          setCurrentImageIndex(startThumbnailIndex + index)
+                        }
+                        border={
+                          startThumbnailIndex + index === currentImageIndex
+                            ? "2px solid"
+                            : "none"
+                        }
+                        borderColor={
+                          startThumbnailIndex + index === currentImageIndex
+                            ? "red.400"
+                            : "transparent"
+                        }
+                        boxSize="80px"
+                        objectFit="cover"
+                        m={1}
+                        opacity={
+                          startThumbnailIndex + index === currentImageIndex
+                            ? 1
+                            : 0.6
+                        }
+                        transition="opacity 0.2s"
+                        _hover={{ opacity: 1 }}
+                      />
+                    ))}
                 </Flex>
                 <IconButton
-                  icon={<ChevronRightIcon/>}
+                  icon={<ChevronRightIcon />}
                   onClick={goToNextThumbnails}
-                  isDisabled={startThumbnailIndex >= spaceImages.length - thumbnailCount}
+                  isDisabled={
+                    startThumbnailIndex >= spaceImages.length - thumbnailCount
+                  }
                 />
               </Flex>
 
@@ -237,9 +301,11 @@ function SpaceView() {
                   >
                     <Button
                       variant="ghost"
-                      colorScheme={activeSection === section.name ? "red" : "gray"}
+                      colorScheme={
+                        activeSection === section.name ? "red" : "gray"
+                      }
                       onClick={() => setActiveSection(section.name)}
-                      leftIcon={<FontAwesomeIcon icon={section.icon}/>}
+                      leftIcon={<FontAwesomeIcon icon={section.icon} />}
                       fontSize="lg"
                     >
                       {section.name}
@@ -250,37 +316,80 @@ function SpaceView() {
 
               <VStack spacing={16} align="stretch">
                 <Box id="introduceArea" p={8} bg="gray.50" borderRadius="lg">
-                  <Heading as="h2" size="xl" mb={6} color="gray.700">공간소개</Heading>
-                  <Text fontSize="lg" mb={8} lineHeight="tall">{spaceDetails.introduce}</Text>
-                  <Grid templateColumns="repeat(3, 1fr)" gap={8} textAlign="center">
+                  <Heading as="h2" size="xl" mb={6} color="gray.700">
+                    공간소개
+                  </Heading>
+                  <Text fontSize="lg" mb={8} lineHeight="tall">
+                    {spaceDetails.introduce}
+                  </Text>
+                  <Grid
+                    templateColumns="repeat(3, 1fr)"
+                    gap={8}
+                    textAlign="center"
+                  >
                     <Box>
-                      <Image src="/public/img/층수.png" boxSize="80px" mx="auto" mb={4}/>
-                      <Text fontSize="lg" fontWeight="bold">층수</Text>
+                      <Image
+                        src="/public/img/층수.png"
+                        boxSize="80px"
+                        mx="auto"
+                        mb={4}
+                      />
+                      <Text fontSize="lg" fontWeight="bold">
+                        층수
+                      </Text>
                       <Text fontSize="xl">{spaceDetails.floor}</Text>
                     </Box>
                     <Box>
-                      <Image src="/public/img/인원.png" boxSize="80px" mx="auto" mb={4}/>
-                      <Text fontSize="lg" fontWeight="bold">수용 인원</Text>
+                      <Image
+                        src="/public/img/인원.png"
+                        boxSize="80px"
+                        mx="auto"
+                        mb={4}
+                      />
+                      <Text fontSize="lg" fontWeight="bold">
+                        수용 인원
+                      </Text>
                       <Text fontSize="xl">{spaceDetails.capacity}</Text>
                     </Box>
                     <Box>
-                      <Image src="/public/img/자동차.png" boxSize="80px" mx="auto" mb={4}/>
-                      <Text fontSize="lg" fontWeight="bold">주차 공간</Text>
+                      <Image
+                        src="/public/img/자동차.png"
+                        boxSize="80px"
+                        mx="auto"
+                        mb={4}
+                      />
+                      <Text fontSize="lg" fontWeight="bold">
+                        주차 공간
+                      </Text>
                       <Text fontSize="xl">{spaceDetails.parkingSpace}</Text>
                     </Box>
                   </Grid>
                 </Box>
-                <Divider/>
+                <Divider />
                 <Box id="facilityArea" p={8}>
-                  <Heading as="h2" size="xl" mb={6} color="gray.700">시설안내</Heading>
-                  <Text fontSize="lg" mb={8} lineHeight="tall">{spaceDetails.facility}</Text>
+                  <Heading as="h2" size="xl" mb={6} color="gray.700">
+                    시설안내
+                  </Heading>
+                  <Text fontSize="lg" mb={8} lineHeight="tall">
+                    {spaceDetails.facility}
+                  </Text>
                   <Heading as="h3" size="lg" mb={6} color="gray.600">
                     제공 편의시설
                   </Heading>
-                  <Grid templateColumns="repeat(auto-fit, minmax(100px, 1fr))" gap={6} mb={12}>
-                    {optionImages.map(option => (
+                  <Grid
+                    templateColumns="repeat(auto-fit, minmax(100px, 1fr))"
+                    gap={6}
+                    mb={12}
+                  >
+                    {optionImages.map((option) => (
                       <Box key={option.optionListId} textAlign="center">
-                        <Image src={option.fileName} alt={option.name} boxSize="60px" mx="auto" mb={2}/>
+                        <Image
+                          src={option.fileName}
+                          alt={option.name}
+                          boxSize="60px"
+                          mx="auto"
+                          mb={2}
+                        />
                         <Text fontSize="md">{option.name}</Text>
                       </Box>
                     ))}
@@ -289,26 +398,44 @@ function SpaceView() {
                     지도 안내
                   </Heading>
                   <Box height="400px" mb={4}>
-                    <Text fontSize="lg" fontWeight="bold"
-                          mb={6}>주소: {spaceDetails.address} {spaceDetails.detailAddress}</Text>
-                    <KakaoMap address={spaceDetails.address} latitude={spaceDetails.latitude}
-                              longitude={spaceDetails.longitude}/>
+                    <Text fontSize="lg" fontWeight="bold" mb={6}>
+                      주소: {spaceDetails.address} {spaceDetails.detailAddress}
+                    </Text>
+                    <KakaoMap
+                      address={spaceDetails.address}
+                      latitude={spaceDetails.latitude}
+                      longitude={spaceDetails.longitude}
+                    />
                   </Box>
                 </Box>
-                <Divider/>
+                <Divider />
                 <Box id="noticeArea" p={8} bg="gray.50" borderRadius="lg">
-                  <Heading as="h2" size="xl" mb={6} color="gray.700">유의사항</Heading>
-                  <Text fontSize="lg" lineHeight="tall">{spaceDetails.notice}</Text>
+                  <Heading as="h2" size="xl" mb={6} color="gray.700">
+                    유의사항
+                  </Heading>
+                  <Text fontSize="lg" lineHeight="tall">
+                    {spaceDetails.notice}
+                  </Text>
                 </Box>
-                <Divider/>
+                <Divider />
                 <Box id="QA" p={8}>
-                  <Heading as="h2" size="xl" mb={6} color="gray.700">Q&A</Heading>
+                  <Heading as="h2" size="xl" mb={6} color="gray.700">
+                    Q&A
+                  </Heading>
                   {/* Q&A 내용 */}
+                  {spaceDetails.spaceId && (
+                    <QnaCommentComponent spaceId={spaceDetails.spaceId} />
+                  )}
                 </Box>
-                <Divider/>
+                <Divider />
                 <Box id="comment" p={8} bg="gray.50" borderRadius="lg">
-                  <Heading as="h2" size="xl" mb={6} color="gray.700">이용후기</Heading>
+                  <Heading as="h2" size="xl" mb={6} color="gray.700">
+                    이용후기
+                  </Heading>
                   {/* 이용후기 내용 */}
+                  {spaceDetails.spaceId && (
+                    <ReviewCommentComponent spaceId={spaceDetails.spaceId} />
+                  )}
                 </Box>
               </VStack>
             </Box>
@@ -327,15 +454,25 @@ function SpaceView() {
                 <VStack spacing={8} align="stretch">
                   <HStack justify="space-between">
                     <Heading size="xl" color="gray.800">
-                      <FontAwesomeIcon icon={faWonSign}/> {spaceDetails.price} / 시간
+                      <FontAwesomeIcon icon={faWonSign} /> {spaceDetails.price}{" "}
+                      / 시간
                     </Heading>
                     <HStack>
-                      <FontAwesomeIcon icon={faStar} color="#FFD700"/>
-                      <Text fontWeight="bold" fontSize="xl">{space.ratingAvg || 4.9}</Text>
+                      <FontAwesomeIcon icon={faStar} color="#FFD700" />
+                      <Text fontWeight="bold" fontSize="xl">
+                        {space.ratingAvg || 4.9}
+                      </Text>
                     </HStack>
                   </HStack>
-                  <DatePicker price={spaceDetails.price} spaceId={spaceId}/>
-                  <Button colorScheme="red" size="lg" width="100%" fontSize="xl">예약하기</Button>
+                  <DatePicker price={spaceDetails.price} spaceId={spaceId} />
+                  <Button
+                    colorScheme="red"
+                    size="lg"
+                    width="100%"
+                    fontSize="xl"
+                  >
+                    예약하기
+                  </Button>
                 </VStack>
               </Box>
             </Box>
