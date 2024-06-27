@@ -6,7 +6,7 @@ import com.backend.reservation.domain.Reservation;
 import java.util.List;
 
 public interface PaidService {
-    List<Paid> list();
+    List<Paid> selectAllByMemberId(Integer memberId);
 
     Paid view(Integer PaidId);
 

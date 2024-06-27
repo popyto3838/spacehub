@@ -154,7 +154,11 @@ const Header = () => {
                                                     fontSize="sm">공지사항 </Text>
                                             </MenuItem>
                                             <MenuItem color="black">
-                                                <Text fontSize="sm">공간리스트 </Text>
+                                                <Text
+                                                    onClick={() => {
+                                                        navigate(`member/hostSpaceList/${account.id}`)
+                                                    }}
+                                                    fontSize="sm">나의 공간리스트 </Text>
                                             </MenuItem>
                                             <MenuItem color="black">
                                                 <Text
@@ -162,6 +166,13 @@ const Header = () => {
                                                         navigate(`member/myReservationList/${account.id}`)
                                                     }}
                                                     fontSize="sm" >예약리스트</Text>
+                                            </MenuItem>
+                                            <MenuItem color="black">
+                                                <Text
+                                                    onClick={() => {
+                                                        navigate(`paid/myPaymentList`)
+                                                    }}
+                                                    fontSize="sm" >결제내역</Text>
                                             </MenuItem>
                                             <MenuItem color="black">
                                                 <Text

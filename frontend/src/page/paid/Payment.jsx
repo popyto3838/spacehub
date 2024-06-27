@@ -79,7 +79,6 @@ const Payment = () => {
         }, async (rsp) => {
             console.log(rsp);
             if (rsp.success == true) {
-                alert("결제성공");
                 axios
                     .post("/api/paid/write", {
                         "spaceId": spaceIdResult,
@@ -94,7 +93,7 @@ const Payment = () => {
                             position: "top",
                             duration: 1000,
                         });
-                        navigate("/paid/payment");
+                        navigate("/paid/myPaymentList")
                     })
                     .catch((err) => {
                         toast({
