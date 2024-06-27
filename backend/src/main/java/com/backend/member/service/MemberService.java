@@ -68,4 +68,8 @@ public interface MemberService {
     void modifyProfile(Member member, MultipartFile[] files) throws IOException;
 
     Host findHostByMemberId(String memberId);
+
+    void EdithostInfo(Host host);
+
+    void EditAccountinfo(Host host);
 }

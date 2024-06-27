@@ -1,6 +1,6 @@
 import {
   Box,
-  Button,
+  Button, Checkbox,
   Flex,
   FormControl,
   FormHelperText,
@@ -29,13 +29,11 @@ import NaverLogin from "./NaverLogin.jsx";
 import TimerComponent from "./TimerComponent.jsx";
 
 export function MemberLogin() {
-  const [email, setEmail] = useState();
-  const [password, setPassword] = useState();
+  const [email, setEmail] = useState(localStorage.getItem('email') || '');
+  const [password, setPassword] = useState(localStorage.getItem('password') || '');
   const [memberId, setMemberId] = useState();
-  const [qrUuid, setQrUuid] = useState('');
-  const [time, setTime] = useState(300);
-  const [minutes, setMinutes] = useState('');
-  const [seconds, setSeconds] = useState('');
+
+  const [rememberMe, setRememberMe] = useState(localStorage.getItem('rememberMe') === 'true');
   const [mobile, setMobile] = useState()
   const [isCodeSent, setIsCodeSent] = useState(false);
   const [verificationCode, setVerificationCode] = useState("");
@@ -52,12 +50,32 @@ export function MemberLogin() {
   const { isOpen: isFirstModalOpen, onOpen: onFirstModalOpen, onClose: onFirstModalClose } = useDisclosure();
   const { isOpen: isSecondModalOpen, onOpen: onSecondModalOpen, onClose: onSecondModalClose } = useDisclosure();
 
+
+
+  useEffect(() => {
+    const savedEmail = localStorage.getItem('email');
+    const savedPassword = localStorage.getItem('password');
+    const savedRememberMe = localStorage.getItem('rememberMe') === 'true';
+
+    if (savedEmail) setEmail(savedEmail);
+    if (savedPassword) setPassword(savedPassword);
+    setRememberMe(savedRememberMe);
+  }, []);
+
   function handleLogin() {
     axios
       .post("/api/member/token", { email, password })
       .then((res) => {
         account.login(res.data.token);
-        console.log(res.data.token);
+        if (rememberMe) {
+          localStorage.setItem('email', email);
+          localStorage.setItem('password', password);
+          localStorage.setItem('rememberMe', 'true');
+        } else {
+          localStorage.removeItem('email');
+          localStorage.removeItem('password');
+          localStorage.removeItem('rememberMe');
+        }
 
         toast({
           status: "success",
@@ -68,6 +86,8 @@ export function MemberLogin() {
       })
       .catch((err) => {
         account.logout();
+        localStorage.removeItem('email');
+        localStorage.removeItem('password');
 
         toast({
           status: "warning",
@@ -79,52 +99,6 @@ export function MemberLogin() {
 
 
 
-
-
-
-
-
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setMinutes(String(Math.floor(time / 60)).padStart(2, '0'));
-      setSeconds(String(time % 60).padStart(2, '0'));
-      setTime(time - 1);
-
-      if (time < 1) {
-        refreshQr();
-      }
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, [time]);
-
-  useEffect(() => {
-    const requestIpAddress = '${requestIpAddress}';
-    const serverPort = '${serverPort}';
-
-
-    setTime(300);
-
-    return () => {
-
-    };
-  }, []);
-
-  const refreshQr = () => {
-    // QR 코드 및 타이머 새로고침 로직 구현
-    setTime(300);
-  };
-
-  const handleResetClick = () => {
-    refreshQr();
-  };
-
-  const handleInfoAnotherClick = () => {
-    closeSocket();
-    // 일반 로그인 페이지로 이동
-    window.location.href = '/SYJ_Mall/login.action';
-  };
 
   const sendNumberMobile = () => {
     axios
@@ -223,16 +197,27 @@ export function MemberLogin() {
         <Box mt={4}>
           <FormControl>
             <FormLabel>이메일</FormLabel>
-            <Input onChange={(e) => setEmail(e.target.value)}/>
+            <Input
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}/>
           </FormControl>
         </Box>
         <Box mt={4}>
           <FormControl>
             <FormLabel>패스워드</FormLabel>
             <Input
+              value={password}
               type="password"
               onChange={(e) => setPassword(e.target.value)}/>
           </FormControl>
+        </Box>
+        <Box mt={4}>
+          <Checkbox
+            isChecked={rememberMe}
+            onChange={(e) => setRememberMe(e.target.checked)}
+          >
+            아이디와 패스워드 저장
+          </Checkbox>
         </Box>
         <Box mt={6} w={370}>
           <Button w="370px" onClick={handleLogin} colorScheme={"blue"}>
