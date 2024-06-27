@@ -3,6 +3,7 @@ import { Box, Grid, GridItem, Text, Button, VStack, Image, Heading, Flex } from 
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import SpaceCard from "./SpaceCard.jsx";
+// import {useContext} from ".";
 
 export function SpaceList() {
   const [spaceTypes, setSpaceTypes] = useState([]);
