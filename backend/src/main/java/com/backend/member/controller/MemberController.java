@@ -44,8 +44,6 @@ public class MemberController {
     private JwtEncoder jwtEncoder;
 
 
-
-
     @PostMapping("hostsignup")
     public ResponseEntity hostsignup(@RequestBody Member member) {
 
@@ -179,6 +177,7 @@ public class MemberController {
         // 사용자 정보 추출 후 Member 객체 생성
         Member member = new Member();
         member.setEmail(extractedEmail);
+        System.out.println("extractedEmail = " + extractedEmail);
         member.setPassword(""); // 비밀번호는 네이버 로그인의 경우 사용하지 않음
         member.setNickname(extractedNickname);
         member.setNaverId(extractedNaverId);
@@ -188,16 +187,20 @@ public class MemberController {
         member.setAuth("USER"); // 기본 권한 설정
 
 
-
         // 데이터베이스에 사용자 정보 저장
-        if(service.findByEmail(member.getEmail())==null){
+        if (service.findByEmail(member.getEmail()) == null) {
             System.out.println("member = " + member);
             service.insertMember(member);
+
+            System.out.println("member.getMemberId() = " + member.getMemberId());
             member.setMemberId(service.selectbyEmail2(member));
 
-
         }
+
         member.setMemberId(service.selectbyEmail2(member));
+
+        System.out.println("member.getMemberId()= " + member.getMemberId());
+
         // JWT 토큰 생성
         Instant now = Instant.now();
 
@@ -268,7 +271,7 @@ public class MemberController {
     @GetMapping(value = "p1")
     public Map<String, Object> p1(@RequestParam String mobile) {
         long expirationTime;
-        Random rnd  = new Random();
+        Random rnd = new Random();
         StringBuilder buffer = new StringBuilder();
         for (int i = 0; i < 4; i++) {
             buffer.append(rnd.nextInt(10));
@@ -277,7 +280,7 @@ public class MemberController {
 
         String verificationCode = buffer.toString();
 
-        service.certifiedPhoneNumber(mobile,verificationCode);
+        service.certifiedPhoneNumber(mobile, verificationCode);
 
         Map<String, Object> response = new HashMap<>();
         response.put("verificationCode", verificationCode);
@@ -288,14 +291,14 @@ public class MemberController {
 
 
     @PostMapping("hostInfo")
-    public ResponseEntity hostInfo(@RequestBody Host host){
+    public ResponseEntity hostInfo(@RequestBody Host host) {
         service.addhostInfo(host);
 
         return ResponseEntity.ok().build();
     }
 
     @PostMapping("hostInfoEdit")
-    public ResponseEntity hostInfoEdit(@RequestBody Host host){
+    public ResponseEntity hostInfoEdit(@RequestBody Host host) {
         System.out.println("host = " + host);
         service.EdithostInfo(host);
 
@@ -320,14 +323,14 @@ public class MemberController {
         System.out.println("host = " + host);
         System.out.println("host = " + host);
         Map<String, Object> map = service.checkHostInfo(host);
-      return ResponseEntity.ok(map);
+        return ResponseEntity.ok(map);
     }
 
     @GetMapping("findemail")
     public ResponseEntity<String> findemail(@RequestParam("mobile") String mobile) {
         Member member = service.emailByMobile(mobile);
 
-        String email= member.getEmail();
+        String email = member.getEmail();
 
         return ResponseEntity.ok(email);
     }
@@ -336,7 +339,7 @@ public class MemberController {
     public ResponseEntity<String> findPassword(@RequestParam("mobile") String mobile) {
         Member member = service.MemberIdByMobile(mobile);
 
-        String memberId= String.valueOf(member.getMemberId());
+        String memberId = String.valueOf(member.getMemberId());
 
         return ResponseEntity.ok(memberId);
     }
@@ -349,14 +352,15 @@ public class MemberController {
         return ResponseEntity.ok().build();
 
     }
-    
+
     @PostMapping("profile")
     public void modifyProfile(Member member, @RequestParam(value = "files[]", required = false) MultipartFile[] files) throws IOException {
+        System.out.println("member.getMemberId() = " + member.getMemberId());
         System.out.println("member = " + member);
         System.out.println("files = " + files);
 
         service.modifyProfile(member, files);
-        
+
     }
 
 

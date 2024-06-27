@@ -3,7 +3,7 @@ package com.backend.member.service.impl;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
+import java.util.*;
 
 import net.nurigo.java_sdk.api.Message;
 import net.nurigo.java_sdk.exceptions.CoolsmsException;
@@ -16,6 +16,7 @@ import com.backend.member.service.MemberService;
 import com.backend.board.mapper.BoardMapper;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -25,11 +26,13 @@ import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import software.amazon.awssdk.core.sync.RequestBody;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.ObjectCannedACL;
+import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
 import java.time.Instant;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -41,7 +44,13 @@ public class MemberServiceImpl implements MemberService {
     private final BCryptPasswordEncoder passwordEncoder;
     private final JwtEncoder jwtEncoder;
     private final BoardMapper boardMapper;
+    private final S3Client s3Client;
 
+    @Value("${aws.s3.bucket.name}")
+    String bucketName;
+
+    @Value("${image.src.prefix}")
+    String srcPrefix;
 
     @Override
     public Member checkByEmail(String email) {
@@ -125,6 +134,8 @@ public class MemberServiceImpl implements MemberService {
 
         Member db = mapper.selectByEmail(member.getEmail());
 
+        System.out.println("db = " + db);
+
         if (db != null) {
             System.out.println("db = " + db.getWithdrawn());
             if (!db.getWithdrawn().toString().equals("Y")) {
@@ -140,6 +151,8 @@ public class MemberServiceImpl implements MemberService {
                             .collect(Collectors.joining(" "));
 
                     System.out.println(authorityString);
+
+                    System.out.println(db.getMemberId());
 
                     // https://github.com/spring-projects/spring-security-samples/blob/main/servlet/spring-boot/java/jwt/login/src/main/java/example/web/TokenController.java
                     JwtClaimsSet claims = JwtClaimsSet.builder()
@@ -421,34 +434,29 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public void modifyProfile(Member member, MultipartFile[] files) throws IOException {
-
+        System.out.println("member = " + member);
         if (files != null) {
             for (MultipartFile file : files) {
-                String memberId = String.valueOf(member.getMemberId());
-                String fileName = file.getOriginalFilename();
-                String profileImage = "/public/img/profile/" + memberId + "/" + fileName;
-                // db에 파일 저장
-                mapper.insertFileList(member.getMemberId(), profileImage, fileName);
+                int memberId = member.getMemberId();
+                System.out.println("memberId ================================ " + memberId);
+                String fileName = "profile" + memberId;
 
                 //실제 파일 저장
 
-                String dir ="C:/Users/admin/IdeaProjects/prj3/frontend/public/img/profile/" + memberId; // 부모 디렉토리(폴더)
-                File dirFile = new File(dir);
+                PutObjectRequest objectRequest = PutObjectRequest.builder()
+                                                 .bucket(bucketName)
+                                                 .key(fileName)
+                                                 .acl(ObjectCannedACL.PUBLIC_READ)
+                                                 .build();
 
+                s3Client.putObject(objectRequest, RequestBody.fromInputStream(file.getInputStream(),file.getSize()));
 
+                String profileImage = s3Client.utilities().getUrl(builder ->
+                        builder.bucket(bucketName).key(file.getOriginalFilename())).toExternalForm();
+                System.out.println("profileImage = " + profileImage);
+                // db에 파일 저장
+                mapper.insertFileList(member.getMemberId(), profileImage, fileName);
 
-
-                if (!dirFile.exists()) {
-                    dirFile.mkdirs();
-                }
-                //파일경로
-                String path = dir + "/" + fileName;
-                //저장 위치 명시
-                member.setProfileImage(profileImage);
-
-                File destination = new File(path);
-                //transferTo : 인풋스트림, 아웃풋스트림을 꺼내서 하드디스크에 저장
-                file.transferTo(destination);
 
             }
 

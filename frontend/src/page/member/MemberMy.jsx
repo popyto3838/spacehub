@@ -56,11 +56,6 @@ export function MemberMy() {
   const fetchMemberData = () => {
     // 두 개의 API 호출을 병렬로 수행
     if(account.id) {
-
-    const fetchMember = axios.get(`/api/member/${account.id}`);
-    const fetchHost = axios.get('/api/member/gethost', { params: { memberId: account.id } });
-
-    if(account.id) {
       const fetchMember = axios.get(`/api/member/${account.id}`);
       const fetchHost = axios.get('/api/member/gethost', {params: {memberId: account.id}});
 
@@ -87,19 +82,7 @@ export function MemberMy() {
       });
     }
 
-          console.log(member1.src);
-          console.log(member1);
-          console.log(host1);
-        })
-        .catch(() => {
-          toast({
-            status: "warning",
-            description: "회원 정보 조회 중 문제가 발생하였습니다.",
-            position: "top",
-          });
-          navigate("/");
-        });
-    }
+
   }
 
 
