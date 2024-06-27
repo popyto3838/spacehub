@@ -101,24 +101,36 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public List<Comment> listReview(Integer spaceId) {
-//        List<Comment> comments = new ArrayList<>();
-//
-//        // 하나의 게시물 조회
-//        List<Comment> comment = commentMapper.selectAllBySpaceId(spaceId);
-//        // fileNames에서 파일 이름 조회
-//        List<String> fileNames = commentMapper.selectByFileNameBySpaceId(spaceId);
-//        // 파일 경로 저장
-//        List<com.backend.file.domain.File> files = fileNames.stream()
-//                .map(fileName -> {
-//                    var fl = new com.backend.file.domain.File();
-//                    fl.setFileName(fileName);
-//                    fl.setSrc(STR."http://172.27.128.1:8888/\{spaceId}/\{fileName}");
-//                    return fl;
-//                })
-//                .toList();
-//        comments.add((Comment) comment);
+        // 코멘트들 조회
+        List<Comment> comments = commentMapper.selectAllBySpaceId(spaceId);
+        for (Comment comment : comments) {
+            // fileNames에서 파일 이름 조회
+            List<String> fileNames = commentMapper.selectByFileNameByCommentId(comment.getCommentId());
+            // 파일 경로 저장
+            List<com.backend.file.domain.File> files = fileNames.stream()
+                    .map(fileName -> {
+                        var fl = new com.backend.file.domain.File();
+                        fl.setFileName(fileName);
+                        fl.setSrc(STR." http://172.30.1.93:8888/\{comment.getCommentId()}/\{fileName}");
+                        return fl;
+                    })
+                    .toList();
 
-        return commentMapper.selectAllBySpaceId(spaceId);
+            // 댓글에 첨부 파일 목록 저장
+            comment.setCommentFilesLists(files);
+        }
+
+        System.out.println("comments = " + comments);
+        /*
+        com.backend.file.domain.File file = new com.backend.file.domain.File();
+        file.setFileName(fileName);
+        file.setSrc(STR."http://172.27.128.1:8888/\{spaceId}/\{fileName}");
+        return file;
+        */
+
+
+        return comments;
+        // commentMapper.selectAllBySpaceId(spaceId);
     }
 
     @Override

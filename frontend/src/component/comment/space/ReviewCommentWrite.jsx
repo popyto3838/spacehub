@@ -2,6 +2,8 @@ import {
   Box,
   Button,
   Flex,
+  FormControl,
+  FormHelperText,
   Heading,
   Image,
   Input,
@@ -16,8 +18,8 @@ import axios from "axios";
 
 export function ReviewCommentWrite({ spaceId, isProcessing, setIsProcessing }) {
   const [content, setContent] = useState("");
-  const [files, setFiles] = useState([]);
   const [isWriting, setIsWriting] = useState(false);
+  const [files, setFiles] = useState([]);
 
   const [member, setMember] = useState({});
   const [commentList, setCommentList] = useState([]);
@@ -77,6 +79,8 @@ export function ReviewCommentWrite({ spaceId, isProcessing, setIsProcessing }) {
   for (let i = 0; i < files.length; i++) {
     fileNameList.push(<li>{files[i].name}</li>);
   }
+  const fileImageList = [];
+  for (let i = 0; i < files.length; i++) {}
 
   return (
     <Box border={"1px solid black"}>
@@ -120,6 +124,7 @@ export function ReviewCommentWrite({ spaceId, isProcessing, setIsProcessing }) {
           </Box>
           <Flex>
             <Box>
+              <Box border={"1px solid green"}>{fileNameList}</Box>
               <Textarea
                 h={"80px"}
                 w={"450px"}
@@ -130,18 +135,24 @@ export function ReviewCommentWrite({ spaceId, isProcessing, setIsProcessing }) {
                 onChange={(e) => setContent(e.target.value)}
               />
               {/* 파일 첨부 */}
-              <Flex>
-                <Input
-                  p={1}
-                  w={"90px"}
-                  h={"35px"}
-                  multiple={true}
-                  type={"file"}
-                  accept={"image/*"}
-                  onChange={(e) => setFiles(e.target.files)}
-                />
-                <Box>{fileNameList}</Box>
-              </Flex>
+              <FormControl>
+                <Flex>
+                  <Input
+                    p={1}
+                    w={"90px"}
+                    h={"35px"}
+                    multiple={true}
+                    type={"file"}
+                    accept={"image/*"}
+                    onChange={(e) => setFiles(e.target.files)}
+                  />
+                  <Box>{fileNameList}</Box>
+                </Flex>
+                <FormHelperText>
+                  첨부 파일의 총 용량은 10MB, 한 파일은 1MB를 초과할 수
+                  없습니다.
+                </FormHelperText>
+              </FormControl>
             </Box>
 
             <Button

@@ -52,6 +52,7 @@ public interface CommentMapper {
             """)
     int update(Comment comment);
 
+
     // space의 review
     @Insert("""
             INSERT INTO COMMENT(MEMBER_ID, PARENT_ID, DIVISION, CONTENT)
@@ -70,10 +71,12 @@ public interface CommentMapper {
             SELECT C.COMMENT_ID, C.CONTENT, C.INPUT_DT, C.UPDATE_DT, C.PARENT_ID, C.MEMBER_ID,
                    CASE WHEN M.WITHDRAWN = 'Y' THEN '탈퇴한 회원입니다.' ELSE M.NICKNAME END AS NICKNAME
             FROM COMMENT C JOIN MEMBER M ON C.MEMBER_ID = M.MEMBER_ID
-            WHERE PARENT_ID = #{boardId}
+            WHERE C.PARENT_ID = #{parentId}
             ORDER BY COMMENT_ID
             """)
-    List<Comment> selectAllBySpaceId(Integer spaceId);
+    List<Comment> selectAllBySpaceId(Integer parentId);
+    /*F.FILE_NAME, F.PARENT_ID*/
+    /*LEFT JOIN (SELECT FILE_NAME, PARENT_ID FROM FILE) AS F ON C.PARENT_ID = F.PARENT_ID*/
 
     @Delete("""
             DELETE FROM COMMENT
@@ -102,6 +105,7 @@ public interface CommentMapper {
             """)
     int updateByCommentId(Comment comment);
 
+
     // space의 qna
     @Insert("""
             INSERT INTO COMMENT(MEMBER_ID, PARENT_ID, DIVISION, CONTENT)
@@ -110,4 +114,11 @@ public interface CommentMapper {
             """)
     @Options(useGeneratedKeys = true, keyProperty = "commentId")
     int insertQna(Comment comment);
+
+    @Select("""
+            SELECT FILE_NAME, PARENT_ID
+            FROM FILE
+            WHERE PARENT_ID = #{parentId}
+            """)
+    List<String> selectByFileNameByCommentId(Integer parentId);
 }
