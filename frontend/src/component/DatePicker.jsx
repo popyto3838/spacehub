@@ -25,7 +25,6 @@ const Calendar = (props) => {
         try {
             const response = await axios.get('/api/reservation/listAll');
             console.log(response.data);
-            // 날짜와 시간 정보를 정리하여 저장
             const formattedReservations = response.data.map(reservation => ({
                 ...reservation,
                 startDate: new Date(reservation.startDate),
@@ -80,12 +79,10 @@ const Calendar = (props) => {
 
         const calendarDays = [];
 
-        // 이전 달의 날짜 채우기
         for (let i = 0; i < firstDay; i++) {
             calendarDays.push(<div key={`prev-${i}`} className="calendar-day empty"></div>);
         }
 
-        // 현재 달의 날짜 채우기
         for (let i = 1; i <= daysInMonth; i++) {
             const isSelected = selectedDate
                 ? i === selectedDate.getDate() && month === selectedDate.getMonth() && year === selectedDate.getFullYear()
@@ -108,7 +105,6 @@ const Calendar = (props) => {
             );
         }
 
-        // 다음 달의 날짜 채우기
         const remainingDays = 42 - (firstDay + daysInMonth);
         for (let i = 1; i <= remainingDays; i++) {
             calendarDays.push(<div key={`next-${i}`} className="calendar-day empty"></div>);
@@ -119,7 +115,6 @@ const Calendar = (props) => {
 
     const handleHourChange = (hour) => {
         if (selectedHours.includes(hour)) {
-            // 선택 해제 시 연속성 유지
             const newSelectedHours = selectedHours.filter(h => h !== hour);
             if (newSelectedHours.length === 0 || areHoursContinuous(newSelectedHours)) {
                 setSelectedHours(newSelectedHours);
@@ -132,7 +127,6 @@ const Calendar = (props) => {
                 });
             }
         } else {
-            // 새로운 시간 선택 시 연속성 확인
             const newSelectedHours = [...selectedHours, hour].sort((a, b) => a - b);
             if (areHoursContinuous(newSelectedHours)) {
                 setSelectedHours(newSelectedHours);
@@ -160,7 +154,6 @@ const Calendar = (props) => {
             const reservationStartDate = new Date(reservation.startDate);
             const selectedDate = new Date(date);
 
-            // 날짜를 년, 월, 일로만 비교
             const isSameDate =
                 selectedDate.getFullYear() === reservationStartDate.getFullYear() &&
                 selectedDate.getMonth() === reservationStartDate.getMonth() &&
@@ -223,7 +216,7 @@ const Calendar = (props) => {
                         position: 'top',
                         duration: 1000
                     });
-                    navigate('/paid/payment/' + res.data.reservationId);
+                    navigate('/member/myReservationList/' +account.id);
                 })
                 .catch((error) => {
                     toast({

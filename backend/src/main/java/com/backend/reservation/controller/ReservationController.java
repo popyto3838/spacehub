@@ -5,11 +5,8 @@ import com.backend.reservation.domain.FindResponseReservationListDTO;
 import com.backend.reservation.domain.Reservation;
 import com.backend.reservation.domain.UpdateStatusRequestDTO;
 import com.backend.reservation.service.ReservationService;
-import com.backend.space.domain.FindResponseSpaceHostIdDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.apache.ibatis.annotations.Delete;
-import org.apache.ibatis.annotations.Update;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

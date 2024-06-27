@@ -1,7 +1,7 @@
 package com.backend.space.service;
 
 import com.backend.dto.FindResponseSpaceJoinDTO;
-import com.backend.space.domain.FindResponseSpaceHostIdDto;
+import com.backend.space.domain.FindResponseSpaceMemberIdDto;
 import com.backend.space.domain.Space;
 import com.backend.dto.OptionListDTO;
 
@@ -21,7 +21,7 @@ public interface SpaceService {
 
     List<OptionListDTO> getOptionListBySpaceId(Integer spaceId);
 
-    List<FindResponseSpaceHostIdDto> selectAllByHostId(Integer hostId);
+    List<FindResponseSpaceMemberIdDto> selectAllByMemberId(Integer memberId);
 
 }
 
