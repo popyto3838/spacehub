@@ -25,7 +25,7 @@ function HostSpaceList() {
     }, [hostId]);
 
     const formatDate = (dateString) => {
-        const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
+        const options = {year: 'numeric', month: '2-digit', day: '2-digit'};
         return new Date(dateString).toLocaleDateString('ko-KR', options).replace(/\.$/, '');
     };
     const myPaymentPageFunc = (param) => {
@@ -50,8 +50,10 @@ function HostSpaceList() {
                                 <Tr key={list.spaceId}>
                                     <Td>{list.spaceId}</Td>
                                     <Td
-                                        onClick={() => { myPaymentPageFunc(list.spaceId); }}
-                                        _hover={{ cursor: 'pointer', color: 'blue.500' }}
+                                        onClick={() => {
+                                            myPaymentPageFunc(list.spaceId);
+                                        }}
+                                        _hover={{cursor: 'pointer', color: 'blue.500'}}
                                     >
                                         {list.title}
                                     </Td>

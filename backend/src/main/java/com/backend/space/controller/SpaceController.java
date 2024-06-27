@@ -4,7 +4,7 @@ import com.backend.dto.FindResponseSpaceJoinDTO;
 import com.backend.dto.SpaceDTO;
 import com.backend.file.service.FileService;
 import com.backend.member.service.MemberService;
-import com.backend.space.domain.FindResponseSpaceHostIdDto;
+import com.backend.space.domain.FindResponseSpaceMemberIdDto;
 import com.backend.space.domain.Space;
 import com.backend.space.service.SpaceService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -69,10 +69,10 @@ public class SpaceController {
         return ResponseEntity.ok(spaceDto);
     }
 
-    @GetMapping("/hostSpaceList/{hostId}")
-    public  ResponseEntity<List<FindResponseSpaceHostIdDto>> selectAllbyHostId(@PathVariable Integer hostId) {
+    @GetMapping("/hostSpaceList/{memberId}")
+    public  ResponseEntity<List<FindResponseSpaceMemberIdDto>> selectAllbyMemberId(@PathVariable Integer memberId) {
 
-        List<FindResponseSpaceHostIdDto> spaceHostIdDtos = spaceService.selectAllByHostId(hostId);
+        List<FindResponseSpaceMemberIdDto> spaceHostIdDtos = spaceService.selectAllByMemberId(memberId);
         if (spaceHostIdDtos == null) {
             return ResponseEntity.notFound().build();
         }

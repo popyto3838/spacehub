@@ -7,7 +7,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 @Service
@@ -64,5 +67,91 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public void update(Comment comment) {
         commentMapper.update(comment);
+    }
+
+    // space의 review
+
+    @Override
+    public void insertReview(Comment comment, Authentication authentication, MultipartFile[] files) throws IOException {
+        comment.setMemberId(Integer.valueOf(authentication.getName()));
+        comment.setParentId(comment.getParentId());
+
+        commentMapper.insertReview(comment);
+
+        // 코멘트 파일 첨부
+        if (files != null) {
+            for (MultipartFile file : files) {
+                // db에 파일 저장
+                commentMapper.insertFileList(comment.getCommentId(), file.getOriginalFilename());
+                // 실제 파일 저장
+                String dir = STR."C:/Temp/prj3p/\{comment.getCommentId()}"; // 부모 디렉토리(폴더)
+                File dirFile = new File(dir);
+                if (!dirFile.exists()) {
+                    dirFile.mkdirs();
+                }
+                // 파일 경로
+                String path = STR."C:/Temp/prj3p/\{comment.getCommentId()}/\{file.getOriginalFilename()}";
+                // 저장 위치 명시
+                File destination = new File(path);
+                // transferTo : 인풋스트림, 아웃풋스트림을 꺼내서 하드디스크에 저장
+                file.transferTo(destination); // checked exception 처리
+            }
+        }
+    }
+
+    @Override
+    public List<Comment> listReview(Integer spaceId) {
+//        List<Comment> comments = new ArrayList<>();
+//
+//        // 하나의 게시물 조회
+//        List<Comment> comment = commentMapper.selectAllBySpaceId(spaceId);
+//        // fileNames에서 파일 이름 조회
+//        List<String> fileNames = commentMapper.selectByFileNameBySpaceId(spaceId);
+//        // 파일 경로 저장
+//        List<com.backend.file.domain.File> files = fileNames.stream()
+//                .map(fileName -> {
+//                    var fl = new com.backend.file.domain.File();
+//                    fl.setFileName(fileName);
+//                    fl.setSrc(STR."http://172.27.128.1:8888/\{spaceId}/\{fileName}");
+//                    return fl;
+//                })
+//                .toList();
+//        comments.add((Comment) comment);
+
+        return commentMapper.selectAllBySpaceId(spaceId);
+    }
+
+    @Override
+    public void deleteReview(Comment comment) {
+        commentMapper.deleteByCommentId(comment);
+    }
+
+    @Override
+    public void updateReview(Comment comment) {
+        commentMapper.updateByCommentId(comment);
+    }
+
+    // space의 qna
+    @Override
+    public void insertQna(Comment comment, Authentication authentication) {
+        comment.setMemberId(Integer.valueOf(authentication.getName()));
+        comment.setParentId(comment.getParentId());
+
+        commentMapper.insertQna(comment);
+    }
+
+    @Override
+    public List<Comment> listQna(Integer spaceId) {
+        return commentMapper.selectAllBySpaceId(spaceId);
+    }
+
+    @Override
+    public void deleteQna(Comment comment) {
+        commentMapper.deleteByCommentId(comment);
+    }
+
+    @Override
+    public void updateQna(Comment comment) {
+        commentMapper.updateByCommentId(comment);
     }
 }

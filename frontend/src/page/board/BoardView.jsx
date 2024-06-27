@@ -24,7 +24,7 @@ import { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import { LoginContext } from "../../component/LoginProvider.jsx";
 import { useNavigate, useParams } from "react-router-dom";
-import { CommentComponent } from "../../component/comment/CommentComponent.jsx";
+import { CommentComponent } from "../../component/comment/board/CommentComponent.jsx";
 import { faHeart as emptyHeart } from "@fortawesome/free-regular-svg-icons";
 import { faHeart as fullHeart } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -184,7 +184,7 @@ export function BoardView() {
             </Button>
           </Box>
         )}
-        <Button onClick={() => navigate("/board/list")}>목록</Button>
+        <Button onClick={() => navigate(-1)}>목록</Button>
       </Box>
 
       {/* comment component -> boardId가 있을때만 넘겨줌(undefined 해결) */}

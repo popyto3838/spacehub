@@ -1,3 +1,4 @@
+import axios from "axios";
 import {createBrowserRouter, RouterProvider} from "react-router-dom";
 import {ChakraProvider} from "@chakra-ui/react";
 import {Home} from "./page/Home.jsx";
@@ -21,7 +22,6 @@ import Payment from "./page/paid/Payment.jsx";
 import {MemberHost} from "./page/host/MemberHost.jsx";
 import {HostSignup} from "./page/member/HostSignup.jsx";
 import {MemberMy} from "./page/member/MemberMy.jsx";
-import axios from "axios";
 import SpaceView from "./page/space/SpaceView.jsx";
 import AdminDashboard from "./page/dashboard/AdminDashboard.jsx";
 import {MemberHostInfo} from "./page/member/MemberHostInfo.jsx";
@@ -31,6 +31,8 @@ import MyReservationList from "./page/member/MyReservationList.jsx";
 import HostDashboard from "./page/dashboard/HostDashboard.jsx";
 import HostSpaceList from "./page/member/HostSpaceList.jsx";
 import HostReservationList from "./page/member/HostReservationList.jsx";
+import MyFavoritesList from "./page/member/MyFavoritesList.jsx";
+import MyPaymentList from "./page/paid/MyPaymentList.jsx";
 
 // axios interceptor 설정
 axios.interceptors.request.use((config) => {
@@ -68,6 +70,7 @@ function App() {
                 {path: "member/edit/:memberId", element: <MemberEdit/>},
                 {path: "auth/naverlogin", element: <NaverLoginHandler/>},
                 {path: "paid/payment/:reservationId", element: <Payment/>},
+                {path: "paid/myPaymentList", element: <MyPaymentList/>},
                 {path: "member/naverlogin", element: <NaverLoginHandler/>},
                 {path: "member/host", element: <MemberHost/>},
                 {path: "host/signup", element: <HostSignup/>},
@@ -79,6 +82,7 @@ function App() {
                 {path: "member/myReservationList/:memberId", element: <MyReservationList/>},
                 {path: "member/hostSpaceList/:hostId", element: <HostSpaceList/>},
                 {path: "member/hostReservationList/:spaceId", element: <HostReservationList/>},
+                {path: "member/MyFavoritesList/:memberId", element: <MyFavoritesList/>},
 
             ],
         },

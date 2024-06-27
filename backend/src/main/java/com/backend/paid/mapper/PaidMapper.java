@@ -25,10 +25,14 @@ public interface PaidMapper {
     int insert(Paid paid);
 
     @Select("""
-                SELECT *
-                FROM PAID
+                SELECT  P.*
+                ,       S.TITLE
+                FROM PAID P
+                LEFT JOIN SPACE S ON S.SPACE_ID = P.SPACE_ID
+                WHERE P.MEMBER_ID = #{memberId}
+        
         """)
-    List<Paid> selectAll();
+    List<Paid> selectAllByMemberId(Integer memberId);
 
     @Select("""
                 SELECT *

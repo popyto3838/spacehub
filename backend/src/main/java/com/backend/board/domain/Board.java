@@ -1,6 +1,6 @@
 package com.backend.board.domain;
 
-import com.backend.fileList.domain.FileList;
+import com.backend.file.domain.File;
 import lombok.Data;
 
 import java.sql.Timestamp;
@@ -34,7 +34,7 @@ public class Board {
     // 첨부된 이미지 개수 출력
     private Integer numberOfImages;
     // 이미지 경로 + 파일명
-    private List<FileList> filesLists;
+    private List<File> filesLists;
     // 댓글 갯수
     private Integer numberOfComments;
     // 좋아요 갯수
