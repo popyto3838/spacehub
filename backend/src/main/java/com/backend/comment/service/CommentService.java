@@ -29,4 +29,13 @@ public interface CommentService {
     void deleteReview(Comment comment);
 
     void updateReview(Comment comment);
+
+    // space의 qna
+    void insertQna(Comment comment, Authentication authentication);
+
+    List<Comment> listQna(Integer spaceId);
+
+    void deleteQna(Comment comment);
+
+    void updateQna(Comment comment);
 }

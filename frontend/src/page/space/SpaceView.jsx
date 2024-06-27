@@ -409,8 +409,8 @@ function SpaceView() {
                     Q&A
                   </Heading>
                   {/* Q&A 내용 */}
-                  {space.spaceId && (
-                    <QnaCommentComponent spaceId={space.spaceId} />
+                  {spaceDetails.spaceId && (
+                    <QnaCommentComponent spaceId={spaceDetails.spaceId} />
                   )}
                 </Box>
                 <Divider />
@@ -419,7 +419,6 @@ function SpaceView() {
                     이용후기
                   </Heading>
                   {/* 이용후기 내용 */}
-                  {spaceDetails.spaceId}
                   {spaceDetails.spaceId && (
                     <ReviewCommentComponent spaceId={spaceDetails.spaceId} />
                   )}

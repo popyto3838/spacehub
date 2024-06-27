@@ -1,4 +1,3 @@
-import { useContext, useState } from "react";
 import {
   Box,
   Button,
@@ -13,33 +12,34 @@ import {
   useDisclosure,
   useToast,
 } from "@chakra-ui/react";
+import { useContext, useState } from "react";
 import { LoginContext } from "../../LoginProvider.jsx";
 import axios from "axios";
 
-export function ReviewCommentEdit({
+export function QnaCommentEdit({
   comment,
-  setIsEditing,
   isProcessing,
   setIsProcessing,
+  setIsEditing,
 }) {
   const [commentText, setCommentText] = useState(comment.content);
-  const account = useContext(LoginContext);
 
+  const account = useContext(LoginContext);
   const toast = useToast();
   const { isOpen, onClose, onOpen } = useDisclosure();
 
-  function handleClickUpdateReviewContent() {
+  function handleClickEditCommentQna() {
     setIsProcessing(true);
 
     axios
-      .put("/api/comment/editReview", {
+      .put("/api/comment/editQna", {
         commentId: comment.commentId,
         content: commentText,
       })
       .then((res) => {
         toast({
           status: "info",
-          description: "REVIEW가 수정되었습니다.",
+          description: "QNA가 수정되었습니다.",
           position: "top",
           duration: 700,
         });
@@ -54,16 +54,12 @@ export function ReviewCommentEdit({
   return (
     <Box>
       <Box>
-        <Box border={"1px solid black"} m={1}>
-          별점
-        </Box>
         <Flex>
           <Textarea
             h={"80px"}
             value={commentText}
             onChange={(e) => setCommentText(e.target.value)}
-            placeholder={"플레이스 홀더~"}
-            isDisabled={!account.isLoggedIn()}
+            placeholder={"QNA를 작성해보세요."}
           />
 
           <Button mt={10} h={"40px"} onClick={() => setIsEditing(false)}>
@@ -78,11 +74,11 @@ export function ReviewCommentEdit({
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>리뷰 수정</ModalHeader>
-          <ModalBody>작성하신 리뷰를 수정하시겠습니까?</ModalBody>
+          <ModalHeader>QNA 수정</ModalHeader>
+          <ModalBody>작성하신 QNA를 수정하시겠습니까?</ModalBody>
           <ModalFooter>
             <Button onClick={onClose}>취소</Button>
-            <Button onClick={handleClickUpdateReviewContent}>수정</Button>
+            <Button onClick={handleClickEditCommentQna}>확인</Button>
           </ModalFooter>
         </ModalContent>
       </Modal>

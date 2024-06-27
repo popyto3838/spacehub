@@ -19,36 +19,30 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import { useContext, useEffect, useState } from "react";
-import { LoginContext } from "../../LoginProvider.jsx";
-import { ReviewCommentEdit } from "./ReviewCommentEdit.jsx";
 import axios from "axios";
+import { LoginContext } from "../../LoginProvider.jsx";
+import { QnaCommentEdit } from "./QnaCommentEdit.jsx";
 
-export function ReviewCommentItem({ comment, isProcessing, setIsProcessing }) {
+export function QnaCommentItem({ comment, isProcessing, setIsProcessing }) {
   const [isEditing, setIsEditing] = useState(false);
 
-  // 좋아요
-  const [like, setLike] = useState({
-    like: false,
-    count: 0,
-  });
-  const [isLikeProcessing, setIsLikeProcessing] = useState(false);
-
   const [member, setMember] = useState({});
+
   const account = useContext(LoginContext);
   const toast = useToast();
   const { isOpen, onClose, onOpen } = useDisclosure();
 
-  function handleClickDeleteReviewComment() {
+  function handleClickRemoveQnaComment() {
     setIsProcessing(true);
 
     axios
-      .delete("/api/comment/deleteReview", {
+      .delete("/api/comment/deleteQna", {
         data: { commentId: comment.commentId },
       })
       .then((res) => {
         toast({
           status: "info",
-          description: "REVIEW가 삭제되었습니다.",
+          description: "QNA가 삭제되었습니다.",
           position: "top",
           duration: 700,
         });
@@ -82,44 +76,33 @@ export function ReviewCommentItem({ comment, isProcessing, setIsProcessing }) {
           w={"50px"}
           src={member.profileImage}
         />
-        <Box fontSize={"2xl"}>{member.nickname}</Box>
+        <Box fontSize={"2xl"}>{comment.nickname}</Box>
         <Spacer />
-        <Box>좋아요</Box>
+        {account.hasAccess(comment.memberId) && !isEditing && (
+          <Menu>
+            <MenuButton m={1} fontSize={"2xl"}>
+              ...
+            </MenuButton>
+            <MenuList minWidth={"50px"}>
+              <MenuItem onClick={() => setIsEditing(!isEditing)}>수정</MenuItem>
+              <MenuItem onClick={onOpen}>삭제</MenuItem>
+            </MenuList>
+          </Menu>
+        )}
       </Flex>
 
       {/* 텍스트박스, 등록 버튼 */}
       {isEditing || (
         <Box>
-          <Flex border={"1px solid black"} m={1}>
-            <Box>별점</Box>
-            <Spacer />
-            <Menu>
-              <MenuButton m={1} fontSize={"2xl"}>
-                ...
-              </MenuButton>
-              <MenuList minWidth={"50px"}>
-                <MenuItem onClick={() => setIsEditing(!isEditing)}>
-                  수정
-                </MenuItem>
-                <MenuItem onClick={onOpen}>삭제</MenuItem>
-              </MenuList>
-            </Menu>
-          </Flex>
           <Flex>
-            <Textarea
-              h={"80px"}
-              readOnly={true}
-              value={comment.content}
-              placeholder={"플레이스 홀더~"}
-              isDisabled={!account.isLoggedIn()}
-            />
+            <Textarea h={"80px"} readOnly={true} value={comment.content} />
           </Flex>
           <Box>{comment.inputDt}</Box>
         </Box>
       )}
 
       {isEditing && (
-        <ReviewCommentEdit
+        <QnaCommentEdit
           comment={comment}
           isProcessing={isProcessing}
           setIsProcessing={setIsProcessing}
@@ -128,19 +111,14 @@ export function ReviewCommentItem({ comment, isProcessing, setIsProcessing }) {
       )}
 
       {account.hasAccess(comment.memberId) && (
-        <Modal isOpen={isOpen} onClose={onClose}>
+        <Modal isOpen={isOpen} onClose={onclose}>
           <ModalOverlay />
           <ModalContent>
-            <ModalHeader>리뷰 삭제</ModalHeader>
-            <ModalBody>작성하신 리뷰를 삭제하시겠습니까?</ModalBody>
+            <ModalHeader>QNA 삭제</ModalHeader>
+            <ModalBody>작성하신 QNA를 삭제하시겠습니까?</ModalBody>
             <ModalFooter>
               <Button onClick={onClose}>취소</Button>
-              <Button
-                isLoading={isProcessing}
-                onClick={handleClickDeleteReviewComment}
-              >
-                확인
-              </Button>
+              <Button onClick={handleClickRemoveQnaComment}>확인</Button>
             </ModalFooter>
           </ModalContent>
         </Modal>

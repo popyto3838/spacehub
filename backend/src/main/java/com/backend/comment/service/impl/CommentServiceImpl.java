@@ -130,4 +130,28 @@ public class CommentServiceImpl implements CommentService {
     public void updateReview(Comment comment) {
         commentMapper.updateByCommentId(comment);
     }
+
+    // space의 qna
+    @Override
+    public void insertQna(Comment comment, Authentication authentication) {
+        comment.setMemberId(Integer.valueOf(authentication.getName()));
+        comment.setParentId(comment.getParentId());
+
+        commentMapper.insertQna(comment);
+    }
+
+    @Override
+    public List<Comment> listQna(Integer spaceId) {
+        return commentMapper.selectAllBySpaceId(spaceId);
+    }
+
+    @Override
+    public void deleteQna(Comment comment) {
+        commentMapper.deleteByCommentId(comment);
+    }
+
+    @Override
+    public void updateQna(Comment comment) {
+        commentMapper.updateByCommentId(comment);
+    }
 }

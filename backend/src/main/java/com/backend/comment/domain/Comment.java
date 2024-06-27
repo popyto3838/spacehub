@@ -22,6 +22,8 @@ public class Comment {
     private String nickname; // nickname을 받음
     private Integer spaceId; // space의 spaceId를 받음
 
+    private Integer commentCount; // comment의 갯수
+
     private List<File> commentFilesLists;
 
     private static final SimpleDateFormat formatter = new SimpleDateFormat("yyyy년 MM월 dd일 HH시 mm분 ss초");

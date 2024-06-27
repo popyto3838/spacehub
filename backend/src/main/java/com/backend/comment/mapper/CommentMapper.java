@@ -54,10 +54,8 @@ public interface CommentMapper {
 
     // space의 review
     @Insert("""
-            <script>
             INSERT INTO COMMENT(MEMBER_ID, PARENT_ID, DIVISION, CONTENT)
             VALUES (#{memberId}, #{spaceId},'REVIEW', #{content})
-            </script>
             """)
     @Options(useGeneratedKeys = true, keyProperty = "commentId")
     int insertReview(Comment comment);
@@ -103,4 +101,13 @@ public interface CommentMapper {
             WHERE COMMENT_ID = #{commentId}
             """)
     int updateByCommentId(Comment comment);
+
+    // space의 qna
+    @Insert("""
+            INSERT INTO COMMENT(MEMBER_ID, PARENT_ID, DIVISION, CONTENT)
+            VALUES (#{memberId}, #{spaceId},'QNA', #{content})
+
+            """)
+    @Options(useGeneratedKeys = true, keyProperty = "commentId")
+    int insertQna(Comment comment);
 }

@@ -86,4 +86,31 @@ public class CommentController {
 
 
     // space의 qna
+    @PostMapping("writeQna")
+    @PreAuthorize("isAuthenticated()")
+    public void writeQna(@RequestBody Comment comment, Authentication authentication) {
+        commentService.insertQna(comment, authentication);
+
+    }
+
+    @GetMapping("listQna/{spaceId}")
+    public List<Comment> listQna(@PathVariable Integer spaceId) {
+        return commentService.listQna(spaceId);
+    }
+
+    @DeleteMapping("deleteQna")
+    @PreAuthorize("isAuthenticated()")
+    public void deleteQna(@RequestBody Comment comment, Authentication authentication) {
+        if (commentService.hasAccess(comment, authentication)) {
+            commentService.deleteQna(comment);
+        }
+    }
+
+    @PutMapping("editQna")
+    @PreAuthorize("isAuthenticated()")
+    public void editQna(@RequestBody Comment comment, Authentication authentication) {
+        if (commentService.hasAccess(comment, authentication)) {
+            commentService.update(comment);
+        }
+    }
 }
