@@ -74,15 +74,15 @@ export function SpaceList() {
                   display="flex"
                   alignItems="center"
                   justifyContent="center"
-                  borderRadius="full"
+                  borderRadius="30%"
                   boxShadow="inner"
                 >
                   <Image
                     src={type.iconFile?.fileName || 'http://via.placeholder.com/1000.jpg'}
                     alt={type.name}
                     objectFit="cover"
-                    borderRadius="full"
-                    boxSize="80%"
+                    borderRadius=""
+                    boxSize="100%"
                   />
                 </Box>
                 <Text fontWeight="semibold" mt={3} color="gray.700">{type.name}</Text>
