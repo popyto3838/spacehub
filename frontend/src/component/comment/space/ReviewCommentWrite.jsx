@@ -124,7 +124,9 @@ export function ReviewCommentWrite({ spaceId, isProcessing, setIsProcessing }) {
           </Box>
           <Flex>
             <Box>
-              <Box border={"1px solid green"}>{fileNameList}</Box>
+              <Box border={"1px solid green"}>
+                {fileNameList}(수정) 첨부한 파일이 보임
+              </Box>
               <Textarea
                 h={"80px"}
                 w={"450px"}

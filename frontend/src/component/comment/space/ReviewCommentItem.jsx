@@ -110,12 +110,14 @@ export function ReviewCommentItem({ comment, isProcessing, setIsProcessing }) {
           </Flex>
           <Box>
             {/* 수정중이 아닐때는 첨부한 이미지 파일이 보임*/}
-            {comment.commentFilesLists &&
-              comment.commentFilesLists.map((file) => (
-                <Flex border={"1px solid green"} key={file.fileName}>
-                  <Image src={file.src} />
-                </Flex>
-              ))}
+            <Flex>
+              {comment.commentFilesLists &&
+                comment.commentFilesLists.map((file) => (
+                  <Flex border={"1px solid green"} key={file.fileName}>
+                    <Image w={150} src={file.src} />
+                  </Flex>
+                ))}
+            </Flex>
             <Textarea h={"80px"} readOnly={true} value={comment.content} />
           </Box>
           <Box>{comment.inputDt}</Box>

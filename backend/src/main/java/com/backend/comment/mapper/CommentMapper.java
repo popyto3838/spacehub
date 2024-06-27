@@ -121,4 +121,11 @@ public interface CommentMapper {
             WHERE PARENT_ID = #{parentId}
             """)
     List<String> selectByFileNameByCommentId(Integer parentId);
+
+    // 코멘트의 file 삭제
+    @Delete("""
+            DELETE FROM FILE
+            WHERE PARENT_ID = #{parentId}
+            """)
+    int deleteByCommentIdForFile(Integer parentId);
 }

@@ -119,15 +119,7 @@ public class CommentServiceImpl implements CommentService {
             // 댓글에 첨부 파일 목록 저장
             comment.setCommentFilesLists(files);
         }
-
         System.out.println("comments = " + comments);
-        /*
-        com.backend.file.domain.File file = new com.backend.file.domain.File();
-        file.setFileName(fileName);
-        file.setSrc(STR."http://172.27.128.1:8888/\{spaceId}/\{fileName}");
-        return file;
-        */
-
 
         return comments;
         // commentMapper.selectAllBySpaceId(spaceId);
@@ -135,6 +127,23 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public void deleteReview(Comment comment) {
+        // file명 조회
+        List<String> fileNames = commentMapper.selectByFileNameByCommentId(comment.getCommentId());
+        // disk에 있는 file 삭제
+        String dir = STR."C:/Temp/prj3p/\{comment.getCommentId()}";
+        for (String fileName : fileNames) {
+            File file = new File(dir + fileName);
+            file.delete();
+        }
+        // 필요없는 부모 디렉토리 삭제
+        File dirFile = new File(dir);
+        if (dirFile.exists()) {
+            dirFile.delete();
+        }
+
+        // file 테이블 지움
+        commentMapper.deleteByCommentIdForFile(comment.getCommentId());
+
         commentMapper.deleteByCommentId(comment);
     }
 
