@@ -32,6 +32,7 @@ import HostDashboard from "./page/dashboard/HostDashboard.jsx";
 import HostSpaceList from "./page/member/HostSpaceList.jsx";
 import HostReservationList from "./page/member/HostReservationList.jsx";
 import MyFavoritesList from "./page/member/MyFavoritesList.jsx";
+import MyPaymentList from "./page/paid/MyPaymentList.jsx";
 
 // axios interceptor 설정
 axios.interceptors.request.use((config) => {
@@ -69,6 +70,7 @@ function App() {
                 {path: "member/edit/:memberId", element: <MemberEdit/>},
                 {path: "auth/naverlogin", element: <NaverLoginHandler/>},
                 {path: "paid/payment/:reservationId", element: <Payment/>},
+                {path: "paid/myPaymentList", element: <MyPaymentList/>},
                 {path: "member/naverlogin", element: <NaverLoginHandler/>},
                 {path: "member/host", element: <MemberHost/>},
                 {path: "host/signup", element: <HostSignup/>},

@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import software.amazon.awssdk.services.s3.endpoints.internal.Value;
 
 import java.util.List;
 
@@ -17,9 +18,9 @@ import java.util.List;
 public class PaidController {
     private final PaidService paidService;
 
-    @GetMapping("/list")
-    public List<Paid> list() {
-        return paidService.list();
+    @GetMapping("/list/{memberId}")
+    public List<Paid> list(@PathVariable Integer memberId) {
+        return paidService.selectAllByMemberId(memberId);
     }
 
     @GetMapping("/{paidId}")

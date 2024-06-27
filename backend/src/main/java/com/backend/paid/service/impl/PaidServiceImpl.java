@@ -20,8 +20,8 @@ public class PaidServiceImpl implements PaidService {
     private final ReservationMapper reservationMapper;
 
     @Override
-    public List<Paid> list() {
-        return paidMapper.selectAll();
+    public List<Paid> selectAllByMemberId(Integer memberId) {
+        return paidMapper.selectAllByMemberId(memberId);
     }
 
     @Override
