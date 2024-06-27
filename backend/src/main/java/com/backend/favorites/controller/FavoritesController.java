@@ -20,7 +20,6 @@ public class FavoritesController {
 
     @PostMapping("/insert")
     public ResponseEntity<Favorites> createFavorite(@RequestBody Favorites favorites) {
-        log.info("===============Create favorites{}",favorites);
         favoritesService.insert(favorites);
         return ResponseEntity.ok(favorites);
     }
