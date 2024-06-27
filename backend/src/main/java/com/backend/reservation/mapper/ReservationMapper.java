@@ -48,7 +48,7 @@ public interface ReservationMapper {
             ,       S.ADDRESS
             FROM    RESERVATION R
             LEFT JOIN SPACE S ON R.SPACE_ID = S.SPACE_ID
-            WHERE MEMBER_ID = #{memberId}
+            WHERE   R.MEMBER_ID = #{memberId}
             """)
     List<FindResponseReservationListDTO> selectAllByMemberId(Integer memberId);
 
