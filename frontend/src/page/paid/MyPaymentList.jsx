@@ -1,9 +1,9 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import axios from "axios";
-import { LoginContext } from "../../component/LoginProvider.jsx";
+import {LoginContext} from "../../component/LoginProvider.jsx";
 import '/public/css/paid/MyPaymentListArea.css';
 
-import { Table, Thead, Tbody, Tr, Th, Td, Box, Heading, Text } from "@chakra-ui/react";
+import {Table, Thead, Tbody, Tr, Th, Td, Box, Heading, Text} from "@chakra-ui/react";
 
 function MyPaymentList() {
     const member = useContext(LoginContext);
@@ -49,7 +49,7 @@ function MyPaymentList() {
                         {payments.map((payment) => (
                             <Tr key={payment.paidId}>
                                 <Td>{payment.paidId}</Td>
-                                <Td >{payment.title}</Td>
+                                <Td>{payment.title}</Td>
                                 <Td>{payment.totalPrice.toLocaleString()} 원</Td>
                                 <Td>{new Date(payment.inputDt).toLocaleString()}</Td>
                             </Tr>
