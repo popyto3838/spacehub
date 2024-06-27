@@ -34,6 +34,7 @@ export function ReviewCommentItem({ comment, isProcessing, setIsProcessing }) {
   const [isLikeProcessing, setIsLikeProcessing] = useState(false);
 
   const [member, setMember] = useState({});
+
   const account = useContext(LoginContext);
   const toast = useToast();
   const { isOpen, onClose, onOpen } = useDisclosure();
@@ -82,37 +83,33 @@ export function ReviewCommentItem({ comment, isProcessing, setIsProcessing }) {
           w={"50px"}
           src={member.profileImage}
         />
-        <Box fontSize={"2xl"}>{member.nickname}</Box>
+        <Box fontSize={"2xl"}>{comment.nickname}</Box>
         <Spacer />
         <Box>좋아요</Box>
       </Flex>
 
-      {/* 텍스트박스, 등록 버튼 */}
+      {/* 별점, 텍스트박스, 등록 버튼 */}
       {isEditing || (
         <Box>
           <Flex border={"1px solid black"} m={1}>
             <Box>별점</Box>
             <Spacer />
-            <Menu>
-              <MenuButton m={1} fontSize={"2xl"}>
-                ...
-              </MenuButton>
-              <MenuList minWidth={"50px"}>
-                <MenuItem onClick={() => setIsEditing(!isEditing)}>
-                  수정
-                </MenuItem>
-                <MenuItem onClick={onOpen}>삭제</MenuItem>
-              </MenuList>
-            </Menu>
+            {account.hasAccess(comment.memberId) && (
+              <Menu>
+                <MenuButton m={1} fontSize={"2xl"}>
+                  ...
+                </MenuButton>
+                <MenuList minWidth={"50px"}>
+                  <MenuItem onClick={() => setIsEditing(!isEditing)}>
+                    수정
+                  </MenuItem>
+                  <MenuItem onClick={onOpen}>삭제</MenuItem>
+                </MenuList>
+              </Menu>
+            )}
           </Flex>
           <Flex>
-            <Textarea
-              h={"80px"}
-              readOnly={true}
-              value={comment.content}
-              placeholder={"플레이스 홀더~"}
-              isDisabled={!account.isLoggedIn()}
-            />
+            <Textarea h={"80px"} readOnly={true} value={comment.content} />
           </Flex>
           <Box>{comment.inputDt}</Box>
         </Box>

@@ -115,6 +115,7 @@ export function QnaCommentWrite({ spaceId, isProcessing, setIsProcessing }) {
             />
             <Button
               h={"80px"}
+              isLoading={isProcessing}
               isDisabled={content.trim().length === 0}
               onClick={handleClickWriteQNA}
             >

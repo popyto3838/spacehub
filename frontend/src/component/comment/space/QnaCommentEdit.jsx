@@ -65,7 +65,13 @@ export function QnaCommentEdit({
           <Button mt={10} h={"40px"} onClick={() => setIsEditing(false)}>
             취소
           </Button>
-          <Button mt={10} h={"40px"} isLoading={isProcessing} onClick={onOpen}>
+          <Button
+            mt={10}
+            h={"40px"}
+            isDisabled={commentText.length === 0}
+            isLoading={isProcessing}
+            onClick={onOpen}
+          >
             등록
           </Button>
         </Flex>
@@ -78,7 +84,12 @@ export function QnaCommentEdit({
           <ModalBody>작성하신 QNA를 수정하시겠습니까?</ModalBody>
           <ModalFooter>
             <Button onClick={onClose}>취소</Button>
-            <Button onClick={handleClickEditCommentQna}>확인</Button>
+            <Button
+              isLoading={isProcessing}
+              onClick={handleClickEditCommentQna}
+            >
+              확인
+            </Button>
           </ModalFooter>
         </ModalContent>
       </Modal>

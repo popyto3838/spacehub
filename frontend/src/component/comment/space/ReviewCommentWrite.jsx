@@ -17,12 +17,13 @@ import axios from "axios";
 export function ReviewCommentWrite({ spaceId, isProcessing, setIsProcessing }) {
   const [content, setContent] = useState("");
   const [files, setFiles] = useState([]);
-  const [member, setMember] = useState({});
   const [isWriting, setIsWriting] = useState(false);
+
+  const [member, setMember] = useState({});
   const [commentList, setCommentList] = useState([]);
 
-  const toast = useToast();
   const account = useContext(LoginContext);
+  const toast = useToast();
 
   function handleClickWriteReview() {
     setIsProcessing(true);
@@ -46,6 +47,7 @@ export function ReviewCommentWrite({ spaceId, isProcessing, setIsProcessing }) {
       });
   }
 
+  // commentList 정보를 가져옴
   useEffect(() => {
     if (!isProcessing) {
       axios
@@ -58,6 +60,7 @@ export function ReviewCommentWrite({ spaceId, isProcessing, setIsProcessing }) {
     }
   }, [isProcessing]);
 
+  // member 정보를 가져옴
   useEffect(() => {
     if (account.id) {
       axios
@@ -68,8 +71,6 @@ export function ReviewCommentWrite({ spaceId, isProcessing, setIsProcessing }) {
         .catch(() => {});
     }
   }, [account]);
-
-  console.log(member.profileImage);
 
   // files 목록 작성
   const fileNameList = [];
@@ -85,9 +86,18 @@ export function ReviewCommentWrite({ spaceId, isProcessing, setIsProcessing }) {
           REVIEW {commentList.length} 개
         </Heading>
         <Spacer />
-        <Button onClick={() => setIsWriting(!isWriting)}>
-          REVIEW 작성하기
-        </Button>
+        <Tooltip
+          label={"로그인 하세요"}
+          isDisabled={account.isLoggedIn()}
+          placement={"top"}
+        >
+          <Button
+            isDisabled={!account.isLoggedIn()}
+            onClick={() => setIsWriting(!isWriting)}
+          >
+            REVIEW 작성하기
+          </Button>
+        </Tooltip>
       </Flex>
 
       {/* 멤버이미지, 아이디, 수정/삭제 드롭다운
@@ -116,7 +126,6 @@ export function ReviewCommentWrite({ spaceId, isProcessing, setIsProcessing }) {
                 placeholder={
                   "사실과 관계없는 내용을 작성시 관계 법령에 따라 처벌받을 수 있습니다."
                 }
-                isDisabled={!account.isLoggedIn()}
                 value={content}
                 onChange={(e) => setContent(e.target.value)}
               />
@@ -134,19 +143,15 @@ export function ReviewCommentWrite({ spaceId, isProcessing, setIsProcessing }) {
                 <Box>{fileNameList}</Box>
               </Flex>
             </Box>
-            <Tooltip
-              label={"로그인 하세요"}
-              isDisabled={account.isLoggedIn()}
-              placement={"top"}
+
+            <Button
+              h={"80px"}
+              isLoading={isProcessing}
+              isDisabled={content.trim().length === 0}
+              onClick={handleClickWriteReview}
             >
-              <Button
-                h={"80px"}
-                isDisabled={content.trim().length === 0}
-                onClick={handleClickWriteReview}
-              >
-                등록
-              </Button>
-            </Tooltip>
+              등록
+            </Button>
           </Flex>
         </Box>
       )}

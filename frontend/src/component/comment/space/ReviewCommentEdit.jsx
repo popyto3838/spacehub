@@ -23,8 +23,8 @@ export function ReviewCommentEdit({
   setIsProcessing,
 }) {
   const [commentText, setCommentText] = useState(comment.content);
-  const account = useContext(LoginContext);
 
+  const account = useContext(LoginContext);
   const toast = useToast();
   const { isOpen, onClose, onOpen } = useDisclosure();
 
@@ -62,14 +62,19 @@ export function ReviewCommentEdit({
             h={"80px"}
             value={commentText}
             onChange={(e) => setCommentText(e.target.value)}
-            placeholder={"플레이스 홀더~"}
-            isDisabled={!account.isLoggedIn()}
+            placeholder={"REVIEW를 작성해보세요."}
           />
 
           <Button mt={10} h={"40px"} onClick={() => setIsEditing(false)}>
             취소
           </Button>
-          <Button mt={10} h={"40px"} isLoading={isProcessing} onClick={onOpen}>
+          <Button
+            mt={10}
+            h={"40px"}
+            isLoading={isProcessing}
+            isDisabled={commentText.length === 0}
+            onClick={onOpen}
+          >
             등록
           </Button>
         </Flex>
@@ -82,7 +87,12 @@ export function ReviewCommentEdit({
           <ModalBody>작성하신 리뷰를 수정하시겠습니까?</ModalBody>
           <ModalFooter>
             <Button onClick={onClose}>취소</Button>
-            <Button onClick={handleClickUpdateReviewContent}>수정</Button>
+            <Button
+              isLoading={isProcessing}
+              onClick={handleClickUpdateReviewContent}
+            >
+              수정
+            </Button>
           </ModalFooter>
         </ModalContent>
       </Modal>

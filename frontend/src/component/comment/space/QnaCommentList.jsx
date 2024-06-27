@@ -6,9 +6,6 @@ import { Box } from "@chakra-ui/react";
 export function QnaCommentList({ spaceId, isProcessing, setIsProcessing }) {
   const [commentList, setCommentList] = useState([]);
 
-  // const [member, setMember] = useState({});
-  // const account = useContext(LoginContext);
-
   useEffect(() => {
     if (!isProcessing) {
       axios
