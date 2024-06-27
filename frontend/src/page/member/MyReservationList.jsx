@@ -10,9 +10,6 @@ function MyReservationList() {
     const myPaymentPage = useNavigate();
 
     useEffect(() => {
-        console.log("==========");
-        console.log(memberId);
-        console.log("==========");
         axios.get("/api/reservation/list/" + memberId)
             .then((res) => {
                 console.log(res.data);
@@ -33,6 +30,8 @@ function MyReservationList() {
                 return '신청';
             case 'ACCEPT':
                 return '수락';
+            case 'CANCEL':
+                return '취소';
             case 'COMPLETE_PAYMENT':
                 return '결제완료';
             default:

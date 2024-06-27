@@ -20,12 +20,9 @@ import {motion, AnimatePresence} from 'framer-motion';
 const Header = () => {
     const [isOpen, setIsOpen] = useState(false);
     const [member, setMember] = useState({});
-
     const navigate = useNavigate();
     const account = useContext(LoginContext);
     const toast = useToast();
-
-    const imageUrl = `${member.profileImage}`;
     const MotionMenuList = motion(MenuList);
 
     const toggleMenu = () => {
@@ -102,82 +99,88 @@ const Header = () => {
                     <Menu>
                         {({isOpen}) => (
                             <>
-                                    {account.isLoggedOut() && (
-                                        <Center mb={4}>
-                                            <Button
-                                                onClick={() => navigate(`/host/signup`)}
-                                                colorScheme={"purple"}
-                                            >
-                                                호스트 회원가입 하러 가기
-                                            </Button>
-                                        </Center>
+                                {account.isLoggedOut() && (
+                                    <Center mb={4}>
+                                        <Button
+                                            onClick={() => navigate(`/host/signup`)}
+                                            colorScheme={"purple"}
+                                        >
+                                            호스트 회원가입 하러 가기
+                                        </Button>
+                                    </Center>
+                                )}
+                                {account.isUser() && (
+                                    <Center mb={4}>
+                                        <Button onClick={SwitchHost} colorScheme={"purple"}>
+                                            호스트로 전환하기
+                                        </Button>
+                                    </Center>
+                                )}
+                                {account.isHost() && (
+                                    <Center mb={4}>
+                                        <Button onClick={SwitchUser} colorScheme={"pink"}>
+                                            유저로 전환하기
+                                        </Button>
+                                    </Center>
+                                )}
+                                <MenuButton as={Box} cursor="pointer">
+                                    <Image
+                                        src={`${member.profileImage}`}
+                                        alt="Profile"
+                                        borderRadius="full"
+                                        boxSize="40px"
+                                        style={{
+                                            width: '50px',
+                                            height: '50px'
+                                        }}
+                                    />
+                                </MenuButton>
+                                <AnimatePresence>
+                                    {isOpen && (
+                                        <MotionMenuList
+                                            initial={{opacity: 0, y: -20}}
+                                            animate={{opacity: 1, y: 0}}
+                                            exit={{opacity: 0, y: -20}}
+                                            transition={{duration: 0.1}}
+                                            mt={2}
+                                            border="none"
+                                            boxShadow="md"
+                                        >
+                                            <MenuItem color="black">
+                                                <Text
+                                                    onClick={() => {
+                                                        navigate("/board/list")
+                                                    }}
+                                                    fontSize="sm">공지사항 </Text>
+                                            </MenuItem>
+                                            <MenuItem color="black">
+                                                <Text fontSize="sm">공간리스트 </Text>
+                                            </MenuItem>
+                                            <MenuItem color="black">
+                                                <Text
+                                                    onClick={() => {
+                                                        navigate(`member/myReservationList/${account.id}`)
+                                                    }}
+                                                    fontSize="sm" >예약리스트</Text>
+                                            </MenuItem>
+                                            <MenuItem color="black">
+                                                <Text
+                                                    onClick={() => {
+                                                        navigate(`member/info/${account.id}`)
+                                                    }}
+                                                    fontSize="sm">마이페이지</Text>
+                                            </MenuItem>
+                                            <MenuItem color="black">
+                                                <Text
+                                                    onClick={() => {
+                                                        account.logout();
+                                                        navigate("/");
+                                                    }}
+                                                    fontSize="sm">로그아웃</Text>
+                                            </MenuItem>
+                                        </MotionMenuList>
                                     )}
-                                    {account.isUser() && (
-                                        <Center mb={4}>
-                                            <Button onClick={SwitchHost} colorScheme={"purple"}>
-                                                호스트로 전환하기
-                                            </Button>
-                                        </Center>
-                                    )}
-                                    {account.isHost() && (
-                                        <Center mb={4}>
-                                            <Button onClick={SwitchUser} colorScheme={"pink"}>
-                                                유저로 전환하기
-                                            </Button>
-                                        </Center>
-                                    )}
-                                    <MenuButton as={Box} cursor="pointer">
-                                        <Image
-                                            src={`${member.profileImage}`}
-                                            alt="Profile"
-                                            borderRadius="full"
-                                            boxSize="40px"
-                                            style={{width: '50px',
-                                                height: '50px'}}
-                                        />
-                                    </MenuButton>
-                                    <AnimatePresence>
-                                        {isOpen && (
-                                            <MotionMenuList
-                                                initial={{opacity: 0, y: -20}}
-                                                animate={{opacity: 1, y: 0}}
-                                                exit={{opacity: 0, y: -20}}
-                                                transition={{duration: 0.1}}
-                                                mt={2}
-                                                border="none"
-                                                boxShadow="md"
-                                            >
-                                                <MenuItem color="black">
-                                                    <Text
-                                                        onClick={() => {
-                                                            navigate("/board/list")
-                                                        }}
-                                                        fontSize="sm">공지사항 </Text>
-                                                </MenuItem>
-                                                <MenuItem color="black">
-                                                    <Text fontSize="sm">공간리스트 </Text>
-                                                </MenuItem>
-                                                <MenuItem color="black">
-                                                    <Text fontSize="sm">예약리스트</Text>
-                                                </MenuItem>
-                                                <MenuItem color="black">
-                                                    <Text
-                                                        onClick={() => {
-                                                            navigate("member/info/:accountId)")
-                                                        }}
-                                                        fontSize="sm">마이페이지</Text>
-                                                </MenuItem>
-                                                <MenuItem color="black">
-                                                    <Text
-                                                        onClick={() => {
-                                                            account.logout();
-                                                            navigate("/");
-                                                        }}
-                                                        fontSize="sm">로그아웃</Text>
-                                                </MenuItem>
-                                            </MotionMenuList>
-                                        )}
-                                    </AnimatePresence>
+                                </AnimatePresence>
                             </>
                         )}
                     </Menu>
