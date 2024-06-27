@@ -163,6 +163,13 @@ const Header = () => {
                                             <MenuItem color="black">
                                                 <Text
                                                     onClick={() => {
+                                                        navigate(`member/myFavoritesList`)
+                                                    }}
+                                                    fontSize="sm" >즐겨찾기</Text>
+                                            </MenuItem>
+                                            <MenuItem color="black">
+                                                <Text
+                                                    onClick={() => {
                                                         navigate(`member/myReservationList/${account.id}`)
                                                     }}
                                                     fontSize="sm" >예약리스트</Text>

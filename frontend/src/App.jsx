@@ -82,7 +82,7 @@ function App() {
                 {path: "member/myReservationList/:memberId", element: <MyReservationList/>},
                 {path: "member/hostSpaceList/:hostId", element: <HostSpaceList/>},
                 {path: "member/hostReservationList/:spaceId", element: <HostReservationList/>},
-                {path: "member/MyFavoritesList/:memberId", element: <MyFavoritesList/>},
+                {path: "member/MyFavoritesList", element: <MyFavoritesList/>},
 
             ],
         },
