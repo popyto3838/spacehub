@@ -15,10 +15,13 @@
 * {
     margin: 0;
 }
+
 .titleName {
     font-family: TTLaundryGothicB;
 }
-.myPaymentListArea  {
-    margin-top: 10%; margin-bottom: 10%;
+
+.myPaymentListArea {
+    margin-top: 10%;
+    margin-bottom: 10%;
     width: 70%;
 }
