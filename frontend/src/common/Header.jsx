@@ -65,7 +65,7 @@ const Header = () => {
             .then((res) => {
 
               account.login(res.data.token);
-              navigate("/space/register");
+              navigate("/host/dashboard");
             })
         }
       })
@@ -78,7 +78,7 @@ const Header = () => {
       .then((res) => {
         toast({
           status: "success",
-          description: "유저로 전환되었습니다.",
+          description: "유저 페이지로 이동되었습니다.",
           position: "top"
         })
 
@@ -112,14 +112,14 @@ const Header = () => {
                 {account.isUser() && (
                   <Center mb={4}>
                     <Button onClick={SwitchHost} colorScheme={"purple"}>
-                      호스트로 전환하기
+                      호스트페이지 이동하기
                     </Button>
                   </Center>
                 )}
                 {account.isHost() && (
                   <Center mb={4}>
                     <Button onClick={SwitchUser} colorScheme={"pink"}>
-                      유저로 전환하기
+                      유저페이지로 이동하기
                     </Button>
                   </Center>
                 )}
@@ -225,14 +225,12 @@ const Header = () => {
             <li>
               <a href="/">Home</a>
             </li>
-            {account.isLoggedOut() &&
-              <li>
-                <a href="/member/login">로그인</a>
-              </li>}
-            {account.isLoggedOut() &&
-              <li>
-                <a href="/member/signup">회원가입</a>
-              </li>}
+            {account.isLoggedOut() && <li>
+              <a href="/member/login">로그인</a>
+            </li>}
+            {account.isLoggedOut() && <li>
+              <a href="/member/signup">회원가입</a>
+            </li>}
             <li>
               <a href="/board/list">게시판</a>
             </li>
@@ -249,22 +247,18 @@ const Header = () => {
               <a href="/paid/payment">결제상태</a>
             </li>
             <li>
-              <a href="/dashboard/host">호스트 페이지</a>
-            </li>
-            <li>
               <a href="/dashboard/admin">관리자 페이지</a>
             </li>
-            {account.isLoggedIn() &&
-              <li>
-                <Button onClick={() => navigate(`/member/info/${account.id}`)}
-                        style={account.isHost() ? {
-                          color: 'white',
-                          backgroundColor: 'mediumblue'
-                        } : {color: 'white', backgroundColor: 'pink'}}>마이페이지
-                </Button>
-              </li>}
             {account.isLoggedIn() && <li>
-              <a href="/member/host" style={{color: 'white', backgroundColor: 'mediumblue'}}>호스트센터로
+              <Button onClick={() => navigate(`/member/info/${account.id}`)}
+                      style={account.isHost() ? {
+                        color: 'white',
+                        backgroundColor: 'mediumblue'
+                      } : {color: 'white', backgroundColor: 'pink'}}>마이페이지
+              </Button>
+            </li>}
+            {account.isLoggedIn() && <li>
+              <a href="/host/dashboard" style={{color: 'white', backgroundColor: 'mediumblue'}}>호스트센터로
                 이동하기
               </a>
             </li>}

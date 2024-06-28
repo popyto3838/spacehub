@@ -8,45 +8,57 @@ import {
   Grid,
   GridItem,
   Heading,
-  IconButton, space,
+  IconButton,
   Text,
   VStack
 } from "@chakra-ui/react";
 import {ChevronRightIcon} from '@chakra-ui/icons';
 import axios from 'axios';
-import {useNavigate, useParams} from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 
-export function Dashboard() {
+export function HostDashboard({memberId}) {
   const [spaces, setSpaces] = useState([]);
   const [reservations, setReservations] = useState([]);
   const [reviews, setReviews] = useState([]);
   const [inquiries, setInquiries] = useState([]);
 
   const navigate = useNavigate();
-  const {memberId} = useParams();
 
   useEffect(() => {
-    // API 호출하여 데이터 가져오기
-    axios.get('/api/host/spaces')
-      .then(response => setSpaces(response.data))
-      .catch(error => console.error('Failed to fetch spaces:', error));
+    if (memberId) {
+      // API 호출하여 데이터 가져오기
+      axios.get(`/api/host/spaces?memberId=${memberId}`)
+        .then(response => setSpaces(response.data))
+        .catch(error => console.error('Failed to fetch spaces:', error));
 
-    axios.get('/api/host/reservations')
-      .then(response => setReservations(response.data))
-      .catch(error => console.error('Failed to fetch reservations:', error));
+      axios.get(`/api/host/reservations?memberId=${memberId}`)
+        .then(response => setReservations(response.data))
+        .catch(error => console.error('Failed to fetch reservations:', error));
 
-    axios.get('/api/host/reviews')
-      .then(response => setReviews(response.data))
-      .catch(error => console.error('Failed to fetch reviews:', error));
+      axios.get(`/api/host/reviews?memberId=${memberId}`)
+        .then(response => setReviews(response.data))
+        .catch(error => console.error('Failed to fetch reviews:', error));
 
-    axios.get('/api/host/inquiries')
-      .then(response => setInquiries(response.data))
-      .catch(error => console.error('Failed to fetch inquiries:', error));
-  }, []);
+      axios.get(`/api/host/inquiries?memberId=${memberId}`)
+        .then(response => setInquiries(response.data))
+        .catch(error => console.error('Failed to fetch inquiries:', error));
+    }
+  }, [memberId]);
 
   const handleNavigateToHostSpaceList = () => {
-    console.log(memberId)
-    navigate(`/member/hostSpaceList/${memberId}`)
+    navigate(`/member/hostSpaceList/${memberId}`);
+  }
+
+  const handleNavigateToReservations = () => {
+    navigate(`/member/myReservationList/${memberId}`);
+  }
+
+  const handleNavigateToReviews = () => {
+    navigate(`/member/reviews/${memberId}`);
+  }
+
+  const handleNavigateToInquiries = () => {
+    navigate(`/member/inquiries/${memberId}`);
   }
 
   return (
@@ -54,7 +66,6 @@ export function Dashboard() {
       <VStack spacing={10} align="stretch">
         <Flex justify="space-between" align="center">
           <Heading>대시보드</Heading>
-          <p>{spaces.memberId}</p>
           <Button>설정</Button>
         </Flex>
 
@@ -88,6 +99,7 @@ export function Dashboard() {
                 <IconButton
                   icon={<ChevronRightIcon/>}
                   aria-label="View all reservations"
+                  onClick={handleNavigateToReservations}
                 />
               </Flex>
               <Divider my={4}/>
@@ -109,6 +121,7 @@ export function Dashboard() {
                 <IconButton
                   icon={<ChevronRightIcon/>}
                   aria-label="View all reviews"
+                  onClick={handleNavigateToReviews}
                 />
               </Flex>
               <Divider my={4}/>
@@ -130,6 +143,7 @@ export function Dashboard() {
                 <IconButton
                   icon={<ChevronRightIcon/>}
                   aria-label="View all inquiries"
+                  onClick={handleNavigateToInquiries}
                 />
               </Flex>
               <Divider my={4}/>
@@ -149,4 +163,4 @@ export function Dashboard() {
   );
 }
 
-export default Dashboard;
+export default HostDashboard;
