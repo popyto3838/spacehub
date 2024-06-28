@@ -1,35 +1,32 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   Box,
-  Table,
-  Thead,
-  Tbody,
-  Tr,
-  Th,
-  Td,
   Button,
-  Heading,
   Container,
-  useColorModeValue,
-  Text,
   Flex,
+  Heading,
   Input,
   InputGroup,
   InputLeftElement,
-  Badge
+  Table,
+  Tbody,
+  Td,
+  Text,
+  Th,
+  Thead,
+  Tr,
+  useColorModeValue
 } from "@chakra-ui/react";
-import { SearchIcon } from "@chakra-ui/icons";
+import {SearchIcon} from "@chakra-ui/icons";
 import {useNavigate, useParams} from 'react-router-dom';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEdit, faHome } from '@fortawesome/free-solid-svg-icons';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {faEdit, faHome} from '@fortawesome/free-solid-svg-icons';
 import axios from 'axios';
-import {LoginContext} from "../../component/LoginProvider.jsx";
 
-function HostSpaceManagement() {
+function HostCenterSpaceList() {
   const [spaces, setSpaces] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const navigate = useNavigate();
-
   const {memberId} = useParams();
 
   const bgColor = useColorModeValue("white", "gray.800");
@@ -37,10 +34,10 @@ function HostSpaceManagement() {
   const borderColor = useColorModeValue("gray.200", "gray.700");
 
   useEffect(() => {
-    axios.get('/api/space/hostSpaceList/' + memberId)
+    axios.get(`/api/space/hostSpaceList/${memberId}`)
       .then(response => setSpaces(response.data))
       .catch(error => console.error('공간 목록을 불러오는데 실패했습니다:', error));
-  }, []);
+  }, [memberId]);
 
   const handleEdit = (spaceId) => {
     navigate(`/space/edit/${spaceId}`);
@@ -54,12 +51,12 @@ function HostSpaceManagement() {
     <Container maxW="container.xl" py={10}>
       <Flex justify="space-between" align="center" mb={8}>
         <Heading size="lg" color={textColor}>
-          <FontAwesomeIcon icon={faHome} style={{ marginRight: '10px' }} />
+          <FontAwesomeIcon icon={faHome} style={{marginRight: '10px'}}/>
           내 공간 관리
         </Heading>
         <InputGroup maxW="300px">
           <InputLeftElement pointerEvents="none">
-            <SearchIcon color="gray.300" />
+            <SearchIcon color="gray.300"/>
           </InputLeftElement>
           <Input
             type="text"
@@ -83,18 +80,18 @@ function HostSpaceManagement() {
           </Thead>
           <Tbody>
             {filteredSpaces.map((space) => (
-              <Tr key={space.id}>
+              <Tr key={space.spaceId}>
                 <Td>{space.spaceId}</Td>
                 <Td fontWeight="bold">{space.title}</Td>
                 <Td>{space.address}</Td>
                 <Td>₩{space.price.toLocaleString()}</Td>
                 <Td>
                   <Button
-                    leftIcon={<FontAwesomeIcon icon={faEdit} />}
+                    leftIcon={<FontAwesomeIcon icon={faEdit}/>}
                     colorScheme="blue"
                     variant="outline"
                     size="sm"
-                    onClick={() => handleEdit(space.id)}
+                    onClick={() => handleEdit(space.spaceId)}
                   >
                     수정
                   </Button>
@@ -114,4 +111,4 @@ function HostSpaceManagement() {
   );
 }
 
-export default HostSpaceManagement;
+export default HostCenterSpaceList;
