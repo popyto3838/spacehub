@@ -43,7 +43,7 @@ function HostSpaceManagement() {
   }, []);
 
   const handleEdit = (spaceId) => {
-    navigate(`/host/space/edit/${spaceId}`);
+    navigate(`/space/edit/${spaceId}`);
   };
 
   const filteredSpaces = spaces.filter(space =>

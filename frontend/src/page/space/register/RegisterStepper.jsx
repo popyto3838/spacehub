@@ -10,7 +10,8 @@ import {
   Stepper,
   StepSeparator,
   StepStatus,
-  StepTitle, Tooltip,
+  StepTitle,
+  Tooltip,
   useSteps,
   useToast,
 } from '@chakra-ui/react';
@@ -22,7 +23,6 @@ import RegisterPage5 from "./RegisterPage5.jsx";
 import RegisterPage6 from "./RegisterPage6.jsx";
 import {useLocation, useNavigate} from "react-router-dom";
 import axios from "axios";
-import {jwtDecode} from "jwt-decode";
 import {LoginContext} from "../../../component/LoginProvider.jsx";
 
 // Stepper steps definition

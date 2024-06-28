@@ -58,6 +58,7 @@ function App() {
         {path: "board/:boardId", element: <BoardView/>},
         {path: "board/:boardId/edit", element: <BoardEdit/>},
         {path: "space/register", element: <RegisterStepper/>},
+        {path: "space/edit/:spaceId", element: <RegisterStepper/>},
         {path: "space/option", element: <SpaceOption/>},
         {path: "space/:spaceId", element: <SpaceView/>},
         {path: "space/type", element: <SpaceType/>},
