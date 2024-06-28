@@ -54,7 +54,7 @@ const RegisterPage4 = ({formData, setFormData}) => {
             flex="1"
             value={priceInput}
             min={0}
-            max={1000000}
+            max={300000}
             step={1000}
             onChange={handlePriceChange}
             onFocus={(e) => e.target.select()}
@@ -88,7 +88,7 @@ const RegisterPage4 = ({formData, setFormData}) => {
             flex="1"
             value={capacityInput}
             min={1}
-            max={1000}
+            max={30}
             step={1}
             onChange={handleCapacityChange}
             focusThumbOnChange={false}
@@ -121,7 +121,7 @@ const RegisterPage4 = ({formData, setFormData}) => {
             flex="1"
             value={floorInput}
             min={-10}
-            max={123}
+            max={30}
             step={1}
             onChange={handleFloorChange}
             focusThumbOnChange={false}
@@ -154,7 +154,7 @@ const RegisterPage4 = ({formData, setFormData}) => {
             flex="1"
             value={parkingSpaceInput}
             min={0}
-            max={50}
+            max={5}
             step={1}
             onChange={handleParkingSpaceChange}
             focusThumbOnChange={false}
