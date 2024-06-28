@@ -3,9 +3,9 @@ import {Box, Button, Text, useToast, VStack} from "@chakra-ui/react";
 import {useNavigate} from "react-router-dom";
 import {LoginContext} from "../../component/LoginProvider.jsx";
 import axios from "axios";
-import HostDashboard from "../dashboard/HostDashboard.jsx";
+import HostDashboard from "./HostDashboard.jsx";
 
-export function MemberHost() {
+export function HostCenter() {
   const [member, setMember] = useState({});
   const navigate = useNavigate();
   const account = useContext(LoginContext);
@@ -30,7 +30,7 @@ export function MemberHost() {
   }, [account, navigate, toast]);
 
   return (
-    <VStack spacing={0} align="stretch" minHeight="90vh" marginBottom="10">
+    <VStack spacing={0} align="stretch" minHeight="60vh" marginBottom="10">
       {/* 상단 부분 */}
       <Box flex="0.5" bg="white" p={4}>
         <Box>
@@ -52,4 +52,4 @@ export function MemberHost() {
   );
 }
 
-export default MemberHost;
+export default HostCenter;

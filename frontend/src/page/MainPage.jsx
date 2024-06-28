@@ -1,13 +1,13 @@
 import React from 'react';
 import {Box} from "@chakra-ui/react";
-import SpaceList from "./space/SpaceList.jsx";
+import MainSpaceList from "./space/MainSpaceList.jsx";
 
 export function MainPage() {
 
   return (
     <>
       <Box>
-        <SpaceList/>
+        <MainSpaceList/>
       </Box>
     </>
   );

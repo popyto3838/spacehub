@@ -19,20 +19,19 @@ import {NaverLoginHandler} from "./page/member/NaverLoginHandler.jsx";
 import {LoginProvider} from "./component/LoginProvider.jsx";
 import {SpaceType} from "./page/admin/space_config/SpaceType.jsx";
 import Payment from "./page/paid/Payment.jsx";
-import {MemberHost} from "./page/host/MemberHost.jsx";
+import {HostCenter} from "./page/host/HostCenter.jsx";
 import {HostSignup} from "./page/member/HostSignup.jsx";
 import {MemberMy} from "./page/member/MemberMy.jsx";
 import SpaceView from "./page/space/SpaceView.jsx";
-import AdminDashboard from "./page/dashboard/AdminDashboard.jsx";
+import AdminDashboard from "./page/admin/AdminDashboard.jsx";
 import {MemberHostInfo} from "./page/member/MemberHostInfo.jsx";
 import {MemberHostPage} from "./page/member/MemberHostPage.jsx";
 import MyReservationList from "./page/member/MyReservationList.jsx";
-
-import HostDashboard from "./page/dashboard/HostDashboard.jsx";
 import HostSpaceList from "./page/member/HostSpaceList.jsx";
 import HostReservationList from "./page/member/HostReservationList.jsx";
 import MyFavoritesList from "./page/member/MyFavoritesList.jsx";
 import MyPaymentList from "./page/paid/MyPaymentList.jsx";
+import HostCenterSpaceList from "./page/host/HostCenterSpaceList.jsx";
 
 // axios interceptor 설정
 axios.interceptors.request.use((config) => {
@@ -72,7 +71,7 @@ function App() {
         {path: "paid/payment/:reservationId", element: <Payment/>},
         {path: "paid/myPaymentList", element: <MyPaymentList/>},
         {path: "member/naverlogin", element: <NaverLoginHandler/>},
-        {path: "host/dashboard", element: <MemberHost/>},
+        {path: "host/dashboard", element: <HostCenter/>},
         {path: "host/signup", element: <HostSignup/>},
         {path: "member/info/:accountId", element: <MemberMy/>},
         {path: "dashboard/admin", element: <AdminDashboard/>},
@@ -82,7 +81,7 @@ function App() {
         {path: "member/hostSpaceList/:hostId", element: <HostSpaceList/>},
         {path: "member/hostReservationList/:spaceId", element: <HostReservationList/>},
         {path: "member/MyFavoritesList/:memberId", element: <MyFavoritesList/>},
-
+        {path: "host/spaceList/:memberId", element: <HostCenterSpaceList/>}
       ],
     },
   ]);

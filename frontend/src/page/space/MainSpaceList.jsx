@@ -6,7 +6,7 @@ import SpaceCard from "./SpaceCard.jsx";
 
 // import {useContext} from ".";
 
-export function SpaceList() {
+export function MainSpaceList() {
   const [visibleSpaces, setVisibleSpaces] = useState(10); // 초기 표시할 공간 수
   const [visibleTypes, setVisibleTypes] = useState(10); // 초기 표시할 공간 유형 수
   const [showMoreSpaces, setShowMoreSpaces] = useState(false);
@@ -152,4 +152,4 @@ export function SpaceList() {
   );
 }
 
-export default SpaceList;
+export default MainSpaceList;

@@ -46,11 +46,11 @@ export function HostDashboard({memberId}) {
   }, [memberId]);
 
   const handleNavigateToHostSpaceList = () => {
-    navigate(`/member/hostSpaceList/${memberId}`);
+    navigate(`/host/spaceList/${memberId}`);
   }
 
   const handleNavigateToReservations = () => {
-    navigate(`/member/myReservationList/${memberId}`);
+    navigate(`/member/hostSpaceList/${memberId}`);
   }
 
   const handleNavigateToReviews = () => {
