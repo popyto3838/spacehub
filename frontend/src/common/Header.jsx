@@ -1,39 +1,33 @@
-import React, {useContext, useEffect, useState} from 'react';
-import spaceImage from '/img/space.png';
-import '/public/css/common/Header.css';
-import {Box, Button, Center, Image, Menu, MenuButton, MenuItem, MenuList, Text, useToast,} from "@chakra-ui/react";
-import {useNavigate} from "react-router-dom";
-import {LoginContext} from "../component/LoginProvider.jsx";
+import React, { useContext, useEffect, useState } from 'react';
+import {
+  Box, Flex, Image, Text, Button, Menu, MenuButton, MenuList, MenuItem,
+  useDisclosure, Drawer, DrawerBody, DrawerHeader, DrawerOverlay, DrawerContent,
+  useToast, VStack, HStack, IconButton, Divider
+} from "@chakra-ui/react";
+import { HamburgerIcon, CloseIcon } from '@chakra-ui/icons';
+import { useNavigate } from "react-router-dom";
+import { LoginContext } from "../component/LoginProvider.jsx";
 import axios from "axios";
-import {AnimatePresence, motion} from 'framer-motion';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+  faHome, faSignInAlt, faUserPlus, faCog, faList, faMapMarkerAlt,
+  faDollarSign, faChartBar, faUser, faSignOutAlt, faExchangeAlt, faStar, faCalendarAlt
+} from '@fortawesome/free-solid-svg-icons';
+import spaceImage from '/img/space.png';
 
 const Header = () => {
-  const [isOpen, setIsOpen] = useState(false);
+  const { isOpen, onOpen, onClose } = useDisclosure();
   const [member, setMember] = useState({});
-  const [imageVersion, setImageVersion] = useState(0);
   const [timestamp, setTimestamp] = useState(Date.now());
 
   const navigate = useNavigate();
   const account = useContext(LoginContext);
   const toast = useToast();
-  const MotionMenuList = motion(MenuList);
-
-  const toggleMenu = () => {
-    setIsOpen(!isOpen);
-
-  };
-  const homeLink = () => {
-    navigate("/");
-
-  }
 
   useEffect(() => {
     if (account.id) {
-      axios
-        .get(`/api/member/${account.id}`)
+      axios.get(`/api/member/${account.id}`)
         .then((res) => {
-          setImageVersion(prev => prev + 1);
-
           setMember(res.data);
         })
         .catch(() => {
@@ -42,10 +36,7 @@ const Header = () => {
     }
   }, [account, navigate]);
 
-
-  const updateImage = () => {
-    setTimestamp(Date.now()); // 현재 타임스탬프 갱신
-  };
+  const updateImage = () => setTimestamp(Date.now());
 
   function SwitchHost() {
     axios.post("/api/member/nullcheck", {
@@ -88,200 +79,139 @@ const Header = () => {
 
   }
 
+  const handleMenuClick = (path) => {
+    navigate(path);
+    onClose();
+  };
 
   return (
-    <div className="header">
-      <img src={spaceImage} alt="Space Image" className="headerImg" onClick={homeLink}/>
-      <span onClick={homeLink}> <p className="headerTitle title1">Space</p></span>
-      <span onClick={homeLink}> <p className="headerTitle title2">hub</p></span>
-      <div className="profileArea">
-        <Box top={4} right={4}>
+    <Box>
+      <Flex
+        as="header"
+        align="center"
+        justify="space-between"
+        wrap="wrap"
+        padding="1rem"
+        bg="black"
+        color="white"
+        height="12vh"
+      >
+        <IconButton
+          icon={<HamburgerIcon />}
+          onClick={onOpen}
+          variant="outline"
+          color="yellow.400"
+          aria-label="Open Menu"
+        />
+
+        <Flex align="center" justify="center" flex={1}>
+          <Image src={spaceImage} alt="Space Image" height="8vh" mr={2} onClick={() => navigate("/")} cursor="pointer" />
+          <Text
+            fontFamily="TTLaundryGothicB"
+            fontSize="1.5rem"
+            fontWeight="bold"
+            onClick={() => navigate("/")}
+            cursor="pointer"
+          >
+            Space<Text as="span" color="yellow.400">hub</Text>
+          </Text>
+        </Flex>
+
+        <Flex align="center">
+          {account.isLoggedOut() && (
+            <Button colorScheme="yellow" variant="outline" mr={4} onClick={() => navigate(`/host/signup`)}>
+              호스트 회원가입
+            </Button>
+          )}
+          {account.isUser() && (
+            <Button colorScheme="yellow" variant="outline" mr={4} onClick={SwitchHost}>
+              호스트로 전환
+            </Button>
+          )}
+          {account.isHost() && (
+            <Button colorScheme="yellow" variant="outline" mr={4} onClick={SwitchUser}>
+              유저로 전환
+            </Button>
+          )}
           <Menu>
-            {({isOpen}) => (
-              <>
-                {account.isLoggedOut() && (
-                  <Center mb={4}>
-                    <Button
-                      onClick={() => navigate(`/host/signup`)}
-                      colorScheme={"purple"}
-                    >
-                      호스트 회원가입 하러 가기
-                    </Button>
-                  </Center>
-                )}
-                {account.isUser() && (
-                  <Center mb={4}>
-                    <Button onClick={SwitchHost} colorScheme={"purple"}>
-                      호스트로 전환하기
-                    </Button>
-                  </Center>
-                )}
-                {account.isHost() && (
-                  <Center mb={4}>
-                    <Button onClick={SwitchUser} colorScheme={"pink"}>
-                      유저로 전환하기
-                    </Button>
-                  </Center>
-                )}
-                <MenuButton as={Box} cursor="pointer">
-                  <Image
-                    src={`${member.profileImage}?t=${timestamp}`}
-                    alt="Profile"
-                    borderRadius="full"
-                    boxSize="40px"
-                    style={{
-                      width: '50px',
-                      height: '50px'
-                    }}
-                  />
-                </MenuButton>
-                <AnimatePresence>
-                  {isOpen && (
-                    <MotionMenuList
-                      initial={{opacity: 0, y: -20}}
-                      animate={{opacity: 1, y: 0}}
-                      exit={{opacity: 0, y: -20}}
-                      transition={{duration: 0.1}}
-                      mt={2}
-                      border="none"
-                      boxShadow="md"
-                    >
-                      <MenuItem color="black">
-                        <Text
-                          onClick={() => {
-                            navigate("/board/list")
-                          }}
-                          fontSize="sm">공지사항 </Text>
-                      </MenuItem>
-                      <MenuItem color="black">
-                        <Text
-                          onClick={() => {
-                            navigate(`member/hostSpaceList/${account.id}`)
-                          }}
-                          fontSize="sm">나의 공간리스트 </Text>
-                      </MenuItem>
-                      <MenuItem color="black">
-                        <Text
-                          onClick={() => {
-                            navigate(`member/myFavoritesList`)
-                          }}
-                          fontSize="sm">즐겨찾기</Text>
-                      </MenuItem>
-                      <MenuItem color="black">
-                        <Text
-                          onClick={() => {
-                            navigate(`member/myReservationList/${account.id}`)
-                          }}
-                          fontSize="sm">예약리스트</Text>
-                      </MenuItem>
-                      <MenuItem color="black">
-                        <Text
-                          onClick={() => {
-                            navigate(`paid/myPaymentList`)
-                          }}
-                          fontSize="sm">결제내역</Text>
-                      </MenuItem>
-                      <MenuItem color="black">
-                        <Text
-                          onClick={() => {
-                            navigate(`member/info/${account.id}`)
-                          }}
-                          fontSize="sm">마이페이지</Text>
-                      </MenuItem>
-                      <MenuItem color="black">
-                        <Text
-                          onClick={() => {
-                            account.logout();
-                            navigate("/");
-                          }}
-                          fontSize="sm">로그아웃</Text>
-                      </MenuItem>
-                    </MotionMenuList>
-                  )}
-                </AnimatePresence>
-              </>
-            )}
+            <MenuButton as={Button} rounded="full" variant="link" cursor="pointer" minW={0}>
+              <Image
+                src={`${member.profileImage}?t=${timestamp}`}
+                alt="Profile"
+                borderRadius="full"
+                boxSize="40px"
+              />
+            </MenuButton>
+            <MenuList bg="white" borderColor="yellow.400">
+              <MenuItem icon={<FontAwesomeIcon icon={faList} />} onClick={() => navigate("/board/list")}>공지사항</MenuItem>
+              <MenuItem icon={<FontAwesomeIcon icon={faMapMarkerAlt} />} onClick={() => navigate(`member/hostSpaceList/${account.id}`)}>나의 공간리스트</MenuItem>
+              <MenuItem icon={<FontAwesomeIcon icon={faStar} />} onClick={() => navigate(`member/myFavoritesList`)}>즐겨찾기</MenuItem>
+              <MenuItem icon={<FontAwesomeIcon icon={faCalendarAlt} />} onClick={() => navigate(`member/myReservationList/${account.id}`)}>예약리스트</MenuItem>
+              <MenuItem icon={<FontAwesomeIcon icon={faDollarSign} />} onClick={() => navigate(`paid/myPaymentList`)}>결제내역</MenuItem>
+              <MenuItem icon={<FontAwesomeIcon icon={faUser} />} onClick={() => navigate(`member/info/${account.id}`)}>마이페이지</MenuItem>
+              <MenuItem icon={<FontAwesomeIcon icon={faSignOutAlt} />} onClick={() => { account.logout(); navigate("/"); }}>로그아웃</MenuItem>
+            </MenuList>
           </Menu>
-        </Box>
-      </div>
+        </Flex>
+      </Flex>
 
-      <header className="header">
-        <div className="hamburgerArea" onClick={toggleMenu}>
-          <div className="hamburger">
-
-            <div className={isOpen ? 'bar open' : 'bar'}></div>
-            <div className={isOpen ? 'bar open' : 'bar'}></div>
-            <div className={isOpen ? 'bar open' : 'bar'}></div>
-          </div>
-        </div>
-        <nav className={isOpen ? 'menu open' : 'menu'}>
-          <ul>
-            {account.isLoggedIn() && <img
-              src={`${member.profileImage}?t=${timestamp}`}
-              // src="/img/profile/1/일본배경.jpg"
-              alt=""
-              style={{
-                width: '70px',
-                height: '60px',
-                borderRadius: '50%', // 원형 모양으로 보이게 하기 위한 스타일
-                objectFit: 'cover', // 이미지가 잘리지 않고 채워지도록 함
-              }}
-            />}
-            <li>{account.nickname}</li>
-            <li>
-              <a href="/">Home</a>
-            </li>
-            {account.isLoggedOut() && <li>
-              <a href="/member/login">로그인</a>
-            </li>}
-            {account.isLoggedOut() && <li>
-              <a href="/member/signup">회원가입</a>
-            </li>}
-            <li>
-              <a href="/board/list">게시판</a>
-            </li>
-            <li>
-              <a href="/space/register">공간등록</a>
-            </li>
-            <li>
-              <a href="/space/type">공간유형</a>
-            </li>
-            <li>
-              <a href="/space/option">공간옵션</a>
-            </li>
-            <li>
-              <a href="/paid/payment">결제상태</a>
-            </li>
-            <li>
-              <a href="/dashboard/admin">관리자 페이지</a>
-            </li>
-            {account.isLoggedIn() && <li>
-              <Button onClick={() => navigate(`/member/info/${account.id}`)}
-                      style={account.isHost() ? {
-                        color: 'white',
-                        backgroundColor: 'mediumblue'
-                      } : {color: 'white', backgroundColor: 'pink'}}>마이페이지
-              </Button>
-            </li>}
-            {account.isLoggedIn() && <li>
-              <a href="/host/dashboard" style={{color: 'white', backgroundColor: 'mediumblue'}}>호스트센터로
-                이동하기
-              </a>
-            </li>}
-            {account.isLoggedIn() && <li>
-              <Button
-
-                onClick={() => {
-                  account.logout();
-                  navigate("/");
-                }}
-              >로그아웃</Button>
-            </li>}
-          </ul>
-        </nav>
-      </header>
-    </div>
-
+      <Drawer placement="left" onClose={onClose} isOpen={isOpen}>
+        <DrawerOverlay />
+        <DrawerContent bg="white">
+          <DrawerHeader borderBottomWidth="1px" borderColor="gray.200">
+            <Flex justify="space-between" align="center">
+              <Text color="black" fontWeight="bold">메뉴</Text>
+              <IconButton
+                icon={<CloseIcon />}
+                onClick={onClose}
+                variant="ghost"
+                color="black"
+                aria-label="Close Menu"
+              />
+            </Flex>
+          </DrawerHeader>
+          <DrawerBody>
+            <VStack spacing={6} align="stretch">
+              {account.isLoggedIn() && (
+                <Box py={4} bg="gray.100" borderRadius="md">
+                  <VStack>
+                    <Image
+                      src={`${member.profileImage}?t=${timestamp}`}
+                      alt="Profile"
+                      borderRadius="full"
+                      boxSize="100px"
+                    />
+                    <Text fontWeight="bold" fontSize="xl" color="black">{account.nickname}</Text>
+                  </VStack>
+                </Box>
+              )}
+              <Divider />
+              <Button leftIcon={<FontAwesomeIcon icon={faHome} />} variant="ghost" justifyContent="flex-start" onClick={() => handleMenuClick("/")} color="black">홈</Button>
+              {account.isLoggedOut() && (
+                <>
+                  <Button leftIcon={<FontAwesomeIcon icon={faSignInAlt} />} variant="ghost" justifyContent="flex-start" onClick={() => handleMenuClick("/member/login")} color="black">로그인</Button>
+                  <Button leftIcon={<FontAwesomeIcon icon={faUserPlus} />} variant="ghost" justifyContent="flex-start" onClick={() => handleMenuClick("/member/signup")} color="black">회원가입</Button>
+                </>
+              )}
+              <Button leftIcon={<FontAwesomeIcon icon={faList} />} variant="ghost" justifyContent="flex-start" onClick={() => handleMenuClick("/board/list")} color="black">게시판</Button>
+              <Button leftIcon={<FontAwesomeIcon icon={faMapMarkerAlt} />} variant="ghost" justifyContent="flex-start" onClick={() => handleMenuClick("/space/register")} color="black">공간등록</Button>
+              <Button leftIcon={<FontAwesomeIcon icon={faCog} />} variant="ghost" justifyContent="flex-start" onClick={() => handleMenuClick("/space/type")} color="black">공간유형</Button>
+              <Button leftIcon={<FontAwesomeIcon icon={faCog} />} variant="ghost" justifyContent="flex-start" onClick={() => handleMenuClick("/space/option")} color="black">공간옵션</Button>
+              <Button leftIcon={<FontAwesomeIcon icon={faDollarSign} />} variant="ghost" justifyContent="flex-start" onClick={() => handleMenuClick("/paid/payment")} color="black">결제상태</Button>
+              <Button leftIcon={<FontAwesomeIcon icon={faChartBar} />} variant="ghost" justifyContent="flex-start" onClick={() => handleMenuClick("/dashboard/admin")} color="black">관리자 페이지</Button>
+              {account.isLoggedIn() && (
+                <>
+                  <Divider />
+                  <Button leftIcon={<FontAwesomeIcon icon={faUser} />} variant="ghost" justifyContent="flex-start" onClick={() => handleMenuClick(`/member/info/${account.id}`)} color="black">마이페이지</Button>
+                  <Button leftIcon={<FontAwesomeIcon icon={faExchangeAlt} />} variant="ghost" justifyContent="flex-start" onClick={() => handleMenuClick("/host/dashboard")} color="black">호스트센터</Button>
+                  <Button leftIcon={<FontAwesomeIcon icon={faSignOutAlt} />} variant="ghost" justifyContent="flex-start" onClick={() => { account.logout(); handleMenuClick("/"); }} color="black">로그아웃</Button>
+                </>
+              )}
+            </VStack>
+          </DrawerBody>
+        </DrawerContent>
+      </Drawer>
+    </Box>
   )
 }
 export default Header;
