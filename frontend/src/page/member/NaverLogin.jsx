@@ -15,7 +15,7 @@ export const NaverLogin = () => {
     loginButton: {
       color: "green", // green, white
       type: 3, // 1: 작은버튼, 2: 중간버튼, 3: 큰 버튼
-      height: 444, // 크기는 높이로 결정한다.
+      height: 222, // 크기는 높이로 결정한다.
     },
   });
 

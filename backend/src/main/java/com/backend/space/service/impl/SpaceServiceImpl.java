@@ -61,6 +61,7 @@ public class SpaceServiceImpl implements SpaceService {
                         builder.bucket(bucketName).key(file.getFileName())).toExternalForm();
                 file.setFileName(fileUrl); // 파일 이름 대신 url 설정
                 return file;
+
             }).collect(Collectors.toList());
             spaceDto.setSpaceImgFiles(filesWithUrls);
         }

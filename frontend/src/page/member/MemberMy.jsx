@@ -34,6 +34,7 @@ export function MemberMy() {
   const [businessName, setBusinessName] = useState();
   const [businessNumber, setBusinessNumber] = useState();
   const [repName, setRepName] = useState();
+  const [imageVersion, setImageVersion] = useState(0);
 
   const [member, setMember] = useState({});
   const [host, setHost] = useState({});
@@ -67,10 +68,6 @@ export function MemberMy() {
 
           const host1 = hostRes.data;
           setHost(host1);
-
-        console.log(member1.src);
-        console.log(member1);
-        console.log(host1);
       })
       .catch(() => {
         toast({
@@ -176,6 +173,8 @@ export function MemberMy() {
         description :"프로필이 수정되었습니다",
         position: "top",
       })
+      setImageVersion(prev => prev + 1);
+      fetchMemberData();
       onClose();
     })
 
@@ -212,8 +211,8 @@ export function MemberMy() {
       <HStack alignItems="flex-start" spacing={10}>
         <VStack >
           <img
-
-            src={`${member.profileImage}`}
+            key={imageVersion} // 캐시 무효화를 위해 key에 imageVersion 사용
+            src={`${member.profileImage}?v=${imageVersion}`}
             alt="User Profile Image"
             style={{
               width: '150px',
