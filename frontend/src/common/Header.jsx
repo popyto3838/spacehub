@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import {
   Box, Flex, Image, Text, Button, Menu, MenuButton, MenuList, MenuItem,
   useDisclosure, Drawer, DrawerBody, DrawerHeader, DrawerOverlay, DrawerContent,
-  useToast, VStack, HStack, IconButton, Divider
+  useToast, VStack, HStack, IconButton, Divider, useColorModeValue
 } from "@chakra-ui/react";
 import { HamburgerIcon, CloseIcon } from '@chakra-ui/icons';
 import { useNavigate } from "react-router-dom";
@@ -23,6 +23,12 @@ const Header = () => {
   const navigate = useNavigate();
   const account = useContext(LoginContext);
   const toast = useToast();
+
+  const bgColor = useColorModeValue("black", "gray.900");
+  const textColor = useColorModeValue("white", "gray.100");
+  const accentColor = useColorModeValue("yellow.400", "yellow.200");
+  const drawerBgColor = useColorModeValue("white", "gray.800");
+  const drawerTextColor = useColorModeValue("black", "white");
 
   useEffect(() => {
     if (account.id) {
@@ -92,64 +98,100 @@ const Header = () => {
         justify="space-between"
         wrap="wrap"
         padding="1rem"
-        bg="black"
-        color="white"
+        bg={bgColor}
+        color={textColor}
         height="12vh"
+        boxShadow="0 2px 10px rgba(0,0,0,0.1)"
       >
         <IconButton
           icon={<HamburgerIcon />}
           onClick={onOpen}
           variant="outline"
-          color="yellow.400"
+          color={accentColor}
           aria-label="Open Menu"
+          _hover={{ bg: 'rgba(255,255,255,0.1)' }}
         />
 
         <Flex align="center" justify="center" flex={1}>
-          <Image src={spaceImage} alt="Space Image" height="8vh" mr={2} onClick={() => navigate("/")} cursor="pointer" />
+          <Image
+            src={spaceImage}
+            alt="Space Image"
+            height="8vh"
+            mr={2}
+            onClick={() => navigate("/")}
+            cursor="pointer"
+            transition="transform 0.3s"
+            _hover={{ transform: 'scale(1.05)' }}
+          />
           <Text
             fontFamily="TTLaundryGothicB"
-            fontSize="1.5rem"
+            fontSize="1.8rem"
             fontWeight="bold"
             onClick={() => navigate("/")}
             cursor="pointer"
+            transition="color 0.3s"
+            _hover={{ color: accentColor }}
           >
-            Space<Text as="span" color="yellow.400">hub</Text>
+            Space<Text as="span" color={accentColor}>hub</Text>
           </Text>
         </Flex>
 
         <Flex align="center">
           {account.isLoggedOut() && (
-            <Button colorScheme="yellow" variant="outline" mr={4} onClick={() => navigate(`/host/signup`)}>
+            <Button
+              colorScheme="yellow"
+              variant="solid"
+              mr={4}
+              onClick={() => navigate(`/host/signup`)}
+            >
               호스트 회원가입
             </Button>
           )}
           {account.isUser() && (
-            <Button colorScheme="yellow" variant="outline" mr={4} onClick={SwitchHost}>
+            <Button
+              colorScheme="yellow"
+              variant="solid"
+              mr={4}
+              onClick={SwitchHost}
+            >
               호스트로 전환
             </Button>
           )}
           {account.isHost() && (
-            <Button colorScheme="yellow" variant="outline" mr={4} onClick={SwitchUser}>
+            <Button
+              colorScheme="yellow"
+              variant="solid"
+              mr={4}
+              onClick={SwitchUser}
+            >
               유저로 전환
             </Button>
           )}
           <Menu>
-            <MenuButton as={Button} rounded="full" variant="link" cursor="pointer" minW={0}>
+            <MenuButton
+              as={Button}
+              rounded="full"
+              variant="link"
+              cursor="pointer"
+              minW={0}
+            >
               <Image
                 src={`${member.profileImage}?t=${timestamp}`}
                 alt="Profile"
                 borderRadius="full"
                 boxSize="40px"
+                border="2px solid"
+                borderColor={accentColor}
               />
             </MenuButton>
-            <MenuList bg="white" borderColor="yellow.400">
-              <MenuItem icon={<FontAwesomeIcon icon={faList} />} onClick={() => navigate("/board/list")}>공지사항</MenuItem>
-              <MenuItem icon={<FontAwesomeIcon icon={faMapMarkerAlt} />} onClick={() => navigate(`member/hostSpaceList/${account.id}`)}>나의 공간리스트</MenuItem>
-              <MenuItem icon={<FontAwesomeIcon icon={faStar} />} onClick={() => navigate(`member/myFavoritesList`)}>즐겨찾기</MenuItem>
-              <MenuItem icon={<FontAwesomeIcon icon={faCalendarAlt} />} onClick={() => navigate(`member/myReservationList/${account.id}`)}>예약리스트</MenuItem>
-              <MenuItem icon={<FontAwesomeIcon icon={faDollarSign} />} onClick={() => navigate(`paid/myPaymentList`)}>결제내역</MenuItem>
-              <MenuItem icon={<FontAwesomeIcon icon={faUser} />} onClick={() => navigate(`member/info/${account.id}`)}>마이페이지</MenuItem>
-              <MenuItem icon={<FontAwesomeIcon icon={faSignOutAlt} />} onClick={() => { account.logout(); navigate("/"); }}>로그아웃</MenuItem>
+            <MenuList bg={drawerBgColor} borderColor={accentColor} boxShadow="xl">
+              <MenuItem icon={<FontAwesomeIcon icon={faList} />} onClick={() => navigate("/board/list")} _hover={{ bg: accentColor }}>공지사항</MenuItem>
+              <MenuItem icon={<FontAwesomeIcon icon={faMapMarkerAlt} />} onClick={() => navigate(`member/hostSpaceList/${account.id}`)} _hover={{ bg: accentColor }}>나의 공간리스트</MenuItem>
+              <MenuItem icon={<FontAwesomeIcon icon={faStar} />} onClick={() => navigate(`member/myFavoritesList`)} _hover={{ bg: accentColor }}>즐겨찾기</MenuItem>
+              <MenuItem icon={<FontAwesomeIcon icon={faCalendarAlt} />} onClick={() => navigate(`member/myReservationList/${account.id}`)} _hover={{ bg: accentColor }}>예약리스트</MenuItem>
+              <MenuItem icon={<FontAwesomeIcon icon={faDollarSign} />} onClick={() => navigate(`paid/myPaymentList`)} _hover={{ bg: accentColor }}>결제내역</MenuItem>
+              <MenuItem icon={<FontAwesomeIcon icon={faUser} />} onClick={() => navigate(`member/info/${account.id}`)} _hover={{ bg: accentColor }}>마이페이지</MenuItem>
+              <MenuItem icon={<FontAwesomeIcon icon={faSignOutAlt} />} onClick={() => { account.logout(); navigate("/"); }} _hover={{ bg: accentColor }}>로그아웃</MenuItem>
             </MenuList>
           </Menu>
         </Flex>
@@ -157,54 +199,57 @@ const Header = () => {
 
       <Drawer placement="left" onClose={onClose} isOpen={isOpen}>
         <DrawerOverlay />
-        <DrawerContent bg="white">
-          <DrawerHeader borderBottomWidth="1px" borderColor="gray.200">
+        <DrawerContent bg={drawerBgColor}>
+          <DrawerHeader borderBottomWidth="1px" borderColor={accentColor}>
             <Flex justify="space-between" align="center">
-              <Text color="black" fontWeight="bold">메뉴</Text>
+              <Text color={drawerTextColor} fontWeight="bold" fontSize="xl">메뉴</Text>
               <IconButton
                 icon={<CloseIcon />}
                 onClick={onClose}
                 variant="ghost"
-                color="black"
+                color={drawerTextColor}
                 aria-label="Close Menu"
+                _hover={{ bg: accentColor }}
               />
             </Flex>
           </DrawerHeader>
           <DrawerBody>
             <VStack spacing={6} align="stretch">
               {account.isLoggedIn() && (
-                <Box py={4} bg="gray.100" borderRadius="md">
+                <Box py={6} bg={useColorModeValue("gray.100", "gray.700")} borderRadius="md" boxShadow="md">
                   <VStack>
                     <Image
                       src={`${member.profileImage}?t=${timestamp}`}
                       alt="Profile"
                       borderRadius="full"
-                      boxSize="100px"
+                      boxSize="120px"
+                      border="3px solid"
+                      borderColor={accentColor}
                     />
-                    <Text fontWeight="bold" fontSize="xl" color="black">{account.nickname}</Text>
+                    <Text fontWeight="bold" fontSize="2xl" color={drawerTextColor}>{account.nickname}</Text>
                   </VStack>
                 </Box>
               )}
-              <Divider />
-              <Button leftIcon={<FontAwesomeIcon icon={faHome} />} variant="ghost" justifyContent="flex-start" onClick={() => handleMenuClick("/")} color="black">홈</Button>
+              <Divider borderColor={accentColor} />
+              <Button leftIcon={<FontAwesomeIcon icon={faHome} />} variant="ghost" justifyContent="flex-start" onClick={() => handleMenuClick("/")} color={drawerTextColor} _hover={{ bg: accentColor }} fontSize="lg" py={6}>홈</Button>
               {account.isLoggedOut() && (
                 <>
-                  <Button leftIcon={<FontAwesomeIcon icon={faSignInAlt} />} variant="ghost" justifyContent="flex-start" onClick={() => handleMenuClick("/member/login")} color="black">로그인</Button>
-                  <Button leftIcon={<FontAwesomeIcon icon={faUserPlus} />} variant="ghost" justifyContent="flex-start" onClick={() => handleMenuClick("/member/signup")} color="black">회원가입</Button>
+                  <Button leftIcon={<FontAwesomeIcon icon={faSignInAlt} />} variant="ghost" justifyContent="flex-start" onClick={() => handleMenuClick("/member/login")} color={drawerTextColor} _hover={{ bg: accentColor }} fontSize="lg" py={6}>로그인</Button>
+                  <Button leftIcon={<FontAwesomeIcon icon={faUserPlus} />} variant="ghost" justifyContent="flex-start" onClick={() => handleMenuClick("/member/signup")} color={drawerTextColor} _hover={{ bg: accentColor }} fontSize="lg" py={6}>회원가입</Button>
                 </>
               )}
-              <Button leftIcon={<FontAwesomeIcon icon={faList} />} variant="ghost" justifyContent="flex-start" onClick={() => handleMenuClick("/board/list")} color="black">게시판</Button>
-              <Button leftIcon={<FontAwesomeIcon icon={faMapMarkerAlt} />} variant="ghost" justifyContent="flex-start" onClick={() => handleMenuClick("/space/register")} color="black">공간등록</Button>
-              <Button leftIcon={<FontAwesomeIcon icon={faCog} />} variant="ghost" justifyContent="flex-start" onClick={() => handleMenuClick("/space/type")} color="black">공간유형</Button>
-              <Button leftIcon={<FontAwesomeIcon icon={faCog} />} variant="ghost" justifyContent="flex-start" onClick={() => handleMenuClick("/space/option")} color="black">공간옵션</Button>
-              <Button leftIcon={<FontAwesomeIcon icon={faDollarSign} />} variant="ghost" justifyContent="flex-start" onClick={() => handleMenuClick("/paid/payment")} color="black">결제상태</Button>
-              <Button leftIcon={<FontAwesomeIcon icon={faChartBar} />} variant="ghost" justifyContent="flex-start" onClick={() => handleMenuClick("/dashboard/admin")} color="black">관리자 페이지</Button>
+              <Button leftIcon={<FontAwesomeIcon icon={faList} />} variant="ghost" justifyContent="flex-start" onClick={() => handleMenuClick("/board/list")} color={drawerTextColor} _hover={{ bg: accentColor }} fontSize="lg" py={6}>게시판</Button>
+              <Button leftIcon={<FontAwesomeIcon icon={faMapMarkerAlt} />} variant="ghost" justifyContent="flex-start" onClick={() => handleMenuClick("/space/register")} color={drawerTextColor} _hover={{ bg: accentColor }} fontSize="lg" py={6}>공간등록</Button>
+              <Button leftIcon={<FontAwesomeIcon icon={faCog} />} variant="ghost" justifyContent="flex-start" onClick={() => handleMenuClick("/space/type")} color={drawerTextColor} _hover={{ bg: accentColor }} fontSize="lg" py={6}>공간유형</Button>
+              <Button leftIcon={<FontAwesomeIcon icon={faCog} />} variant="ghost" justifyContent="flex-start" onClick={() => handleMenuClick("/space/option")} color={drawerTextColor} _hover={{ bg: accentColor }} fontSize="lg" py={6}>공간옵션</Button>
+              <Button leftIcon={<FontAwesomeIcon icon={faDollarSign} />} variant="ghost" justifyContent="flex-start" onClick={() => handleMenuClick("/paid/payment")} color={drawerTextColor} _hover={{ bg: accentColor }} fontSize="lg" py={6}>결제상태</Button>
+              <Button leftIcon={<FontAwesomeIcon icon={faChartBar} />} variant="ghost" justifyContent="flex-start" onClick={() => handleMenuClick("/dashboard/admin")} color={drawerTextColor} _hover={{ bg: accentColor }} fontSize="lg" py={6}>관리자 페이지</Button>
               {account.isLoggedIn() && (
                 <>
-                  <Divider />
-                  <Button leftIcon={<FontAwesomeIcon icon={faUser} />} variant="ghost" justifyContent="flex-start" onClick={() => handleMenuClick(`/member/info/${account.id}`)} color="black">마이페이지</Button>
-                  <Button leftIcon={<FontAwesomeIcon icon={faExchangeAlt} />} variant="ghost" justifyContent="flex-start" onClick={() => handleMenuClick("/host/dashboard")} color="black">호스트센터</Button>
-                  <Button leftIcon={<FontAwesomeIcon icon={faSignOutAlt} />} variant="ghost" justifyContent="flex-start" onClick={() => { account.logout(); handleMenuClick("/"); }} color="black">로그아웃</Button>
+                  <Divider borderColor={accentColor} />
+                  <Button leftIcon={<FontAwesomeIcon icon={faUser} />} variant="ghost" justifyContent="flex-start" onClick={() => handleMenuClick(`/member/info/${account.id}`)} color={drawerTextColor} _hover={{ bg: accentColor }} fontSize="lg" py={6}>마이페이지</Button>
+                  <Button leftIcon={<FontAwesomeIcon icon={faExchangeAlt} />} variant="ghost" justifyContent="flex-start" onClick={() => handleMenuClick("/host/dashboard")} color={drawerTextColor} _hover={{ bg: accentColor }} fontSize="lg" py={6}>호스트센터</Button>
+                  <Button leftIcon={<FontAwesomeIcon icon={faSignOutAlt} />} variant="ghost" justifyContent="flex-start" onClick={() => { account.logout(); handleMenuClick("/"); }} color={drawerTextColor} _hover={{ bg: accentColor }} fontSize="lg" py={6}>로그아웃</Button>
                 </>
               )}
             </VStack>
@@ -212,6 +257,6 @@ const Header = () => {
         </DrawerContent>
       </Drawer>
     </Box>
-  )
+  );
 }
 export default Header;
