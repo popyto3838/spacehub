@@ -65,7 +65,7 @@ const Header = () => {
             .then((res) => {
 
               account.login(res.data.token);
-              navigate("/space/register");
+              navigate("/host/dashboard");
             })
         }
       })
