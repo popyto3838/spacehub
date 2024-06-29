@@ -216,18 +216,18 @@ const Header = () => {
                 </div>
                 <nav className={isOpen ? 'menu open' : 'menu'}>
                     <ul>
-                        <img
+                      {account.isLoggedIn() && <img
 
                             src={`${member.profileImage}`}
                             // src="/img/profile/1/일본배경.jpg"
-                            alt="User Profile Image"
+                            alt=""
                             style={{
                                 width: '70px',
                                 height: '60px',
                                 borderRadius: '50%', // 원형 모양으로 보이게 하기 위한 스타일
                                 objectFit: 'cover', // 이미지가 잘리지 않고 채워지도록 함
                             }}
-                        />
+                        />}
                         <li>{account.nickname}</li>
                         <li>
                             <a href="/">Home</a>

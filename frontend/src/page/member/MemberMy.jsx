@@ -67,10 +67,6 @@ export function MemberMy() {
 
           const host1 = hostRes.data;
           setHost(host1);
-
-        console.log(member1.src);
-        console.log(member1);
-        console.log(host1);
       })
       .catch(() => {
         toast({
@@ -89,7 +85,7 @@ export function MemberMy() {
 
   useEffect(() => {
     fetchMemberData();
-  }, [account.id, navigate, toast]);
+  }, [account.id, navigate, toast, fetchMemberData]);
 
 
 
