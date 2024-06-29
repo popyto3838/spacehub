@@ -162,7 +162,7 @@ const RegisterPage5 = ({formData, setFormData}) => {
       <Heading as="h3" size="lg" mt={8} mb={4}>새로운 이미지 업로드</Heading>
       <Alert status="warning" mb={4}>
         <AlertIcon/>
-        <AlertTitle>4:3 비율의 이미지를 권장합니다. 다른 비율의 이미지는 정상적으로 표시되지 않을 수 있습니다.</AlertTitle>
+        <AlertTitle>4:3 비율 또는 16:9 비율의 이미지를 권장합니다. 다른 비율의 이미지는 원하시는 형태로 표시되지 않을 수 있습니다.</AlertTitle>
       </Alert>
       <FormControl>
         <FormLabel htmlFor="newImages">사진 업로드</FormLabel>
