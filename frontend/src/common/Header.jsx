@@ -1,25 +1,18 @@
 import React, {useContext, useEffect, useState} from 'react';
 import spaceImage from '/img/space.png';
 import '/public/css/common/Header.css';
-import {
-  Box,
-  Button,
-  Text,
-  Menu,
-  MenuButton,
-  MenuItem,
-  MenuList,
-  Image, Center, useToast,
-} from "@chakra-ui/react";
+import {Box, Button, Center, Image, Menu, MenuButton, MenuItem, MenuList, Text, useToast,} from "@chakra-ui/react";
 import {useNavigate} from "react-router-dom";
-import {LoginContext, LoginProvider} from "../component/LoginProvider.jsx";
+import {LoginContext} from "../component/LoginProvider.jsx";
 import axios from "axios";
-import {ChevronDownIcon} from "@chakra-ui/icons";
-import {motion, AnimatePresence} from 'framer-motion';
+import {AnimatePresence, motion} from 'framer-motion';
 
 const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [member, setMember] = useState({});
+  const [imageVersion, setImageVersion] = useState(0);
+  const [timestamp, setTimestamp] = useState(Date.now());
+
   const navigate = useNavigate();
   const account = useContext(LoginContext);
   const toast = useToast();
@@ -39,13 +32,20 @@ const Header = () => {
       axios
         .get(`/api/member/${account.id}`)
         .then((res) => {
+          setImageVersion(prev => prev + 1);
+
           setMember(res.data);
         })
         .catch(() => {
           navigate("/member/signup");
         });
     }
-  }, [account]);
+  }, [account, navigate]);
+
+
+  const updateImage = () => {
+    setTimestamp(Date.now()); // 현재 타임스탬프 갱신
+  };
 
   function SwitchHost() {
     axios.post("/api/member/nullcheck", {
@@ -65,7 +65,7 @@ const Header = () => {
             .then((res) => {
 
               account.login(res.data.token);
-              navigate("/host/dashboard");
+              navigate("/space/register");
             })
         }
       })
@@ -78,7 +78,7 @@ const Header = () => {
       .then((res) => {
         toast({
           status: "success",
-          description: "유저 페이지로 이동되었습니다.",
+          description: "유저로 전환되었습니다.",
           position: "top"
         })
 
@@ -112,20 +112,20 @@ const Header = () => {
                 {account.isUser() && (
                   <Center mb={4}>
                     <Button onClick={SwitchHost} colorScheme={"purple"}>
-                      호스트페이지 이동하기
+                      호스트로 전환하기
                     </Button>
                   </Center>
                 )}
                 {account.isHost() && (
                   <Center mb={4}>
                     <Button onClick={SwitchUser} colorScheme={"pink"}>
-                      유저페이지로 이동하기
+                      유저로 전환하기
                     </Button>
                   </Center>
                 )}
                 <MenuButton as={Box} cursor="pointer">
                   <Image
-                    src={`${member.profileImage}`}
+                    src={`${member.profileImage}?t=${timestamp}`}
                     alt="Profile"
                     borderRadius="full"
                     boxSize="40px"
@@ -159,6 +159,13 @@ const Header = () => {
                             navigate(`member/hostSpaceList/${account.id}`)
                           }}
                           fontSize="sm">나의 공간리스트 </Text>
+                      </MenuItem>
+                      <MenuItem color="black">
+                        <Text
+                          onClick={() => {
+                            navigate(`member/myFavoritesList`)
+                          }}
+                          fontSize="sm">즐겨찾기</Text>
                       </MenuItem>
                       <MenuItem color="black">
                         <Text
@@ -209,18 +216,17 @@ const Header = () => {
         </div>
         <nav className={isOpen ? 'menu open' : 'menu'}>
           <ul>
-            <img
-
-              src={`${member.profileImage}`}
+            {account.isLoggedIn() && <img
+              src={`${member.profileImage}?t=${timestamp}`}
               // src="/img/profile/1/일본배경.jpg"
-              alt="User Profile Image"
+              alt=""
               style={{
                 width: '70px',
                 height: '60px',
                 borderRadius: '50%', // 원형 모양으로 보이게 하기 위한 스타일
                 objectFit: 'cover', // 이미지가 잘리지 않고 채워지도록 함
               }}
-            />
+            />}
             <li>{account.nickname}</li>
             <li>
               <a href="/">Home</a>

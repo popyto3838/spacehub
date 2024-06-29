@@ -9,13 +9,15 @@ import {
   InputGroup,
   InputRightElement,
   Select,
-  useToast,
+  useToast, VStack, Heading, Divider, InputLeftElement,
 } from "@chakra-ui/react";
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import TimerComponent from "./TimerComponent.jsx";
 import NaverLogin from "./NaverLogin.jsx";
+import { motion } from "framer-motion";
+import { FiMail, FiLock, FiUser, FiSmartphone } from "react-icons/fi";
 
 export function MemberSignup() {
   const [email, setEmail] = useState("");
@@ -24,7 +26,6 @@ export function MemberSignup() {
   const [passwordCheck, setPasswordCheck] = useState("");
   const [mobile, setMobile] = useState()
 
-  const [authName, setAuthName] = useState()
   const [isLoading, setIsLoading] = useState(false);
   const [isCheckedEmail, setIsCheckedEmail] = useState(false);
   const [isCheckedNickName, setIsCheckedNickName] = useState(false);
@@ -36,6 +37,7 @@ export function MemberSignup() {
   const [capsLockWarning, setCapsLockWarning] = useState(false);
 
 
+  const MotionBox = motion(Box);
   const toast = useToast();
   const navigate = useNavigate();
 
@@ -206,160 +208,243 @@ export function MemberSignup() {
   };
 
 
-  return (
-    <Box
-      w="450px"
-      mx="auto"
-      mt={8}
-      p={6}
-      borderWidth={1}
-      borderRadius="lg"
-      boxShadow="lg"
-    >
-      <Box as="h2" size="lg" textAlign="center" mb={6}>
-        {" "}
-        회원가입{" "}
-      </Box>
-      <Box>
-        <Box>
-          <FormControl>
-            <FormLabel>이메일</FormLabel>
-            <InputGroup>
-              <Input
-                placeholder="ex)hello@naver.com"
-                type={"email"}
-                onChange={(e) => {
-                  setEmail(e.target.value);
-                  setIsCheckedEmail(false);
-                  setIsValidEmail(!e.target.validity.typeMismatch);
-                }}
-              />
-              <InputRightElement w="75px" mr={1}>
-                <Button
-                  isDisabled={!isValidEmail || email.trim().length == 0}
-                  onClick={handleCheckEmail}
-                >
-                  중복확인
-                </Button>
-              </InputRightElement>
-            </InputGroup>
-            {isCheckedEmail || (
-              <FormHelperText>이메일 중복확인을 해주세요.</FormHelperText>
-            )}
-            {isValidEmail || (
-              <FormHelperText>
-                올바른 이메일 형식으로 작성해주세요.
-              </FormHelperText>
-            )}
-            <Button colorScheme={"purple"} type="button" onClick={sendNumber}>
-              인증번호받기
-            </Button>
-            {isCodeSent && (
-              <Box>
-              <InputGroup>
-                <Input
-                  type={"text"}
-                  onChange={(e) => {
-                    setInputCode(e.target.value);
-                  }}
-                />
-                <InputRightElement w="75px" mr={1}>
-                  <Button onClick={confirmNumber}>이메일 인증</Button>
-                </InputRightElement>
-              </InputGroup>
-                {expirationTime && <TimerComponent expirationTime={expirationTime} />}
-              </Box>
-            )}
-          </FormControl>
-          <FormControl>
-            <FormLabel>연락처</FormLabel>
-            <Input
-                onChange={(e) => {
-                  setMobile(e.target.value);
-                  setIsCheckedMobile(false);
-                }}
-              />
-              <Button colorScheme={"purple"} type="button" onClick={sendNumberMobile}>
-                인증번호받기
-              </Button>
-            {isCodeSent && (
-              <Box>
+
+
+
+
+
+
+
+    return (
+      <Box
+        minHeight="100vh"
+        bg="linear-gradient(135deg, #f3e7e9 0%, #f9ebff 100%)"
+        display="flex"
+        alignItems="center"
+        justifyContent="center"
+        p={4}
+      >
+        <Box
+          maxWidth="500px"
+          w="full"
+          bg="rgba(255, 255, 255, 0.8)"
+          backdropFilter="blur(10px)"
+          borderRadius="2xl"
+          boxShadow="2xl"
+          overflow="hidden"
+        >
+          <Box p={8}>
+            <VStack spacing={6} align="stretch">
+              <Heading
+                as="h2"
+                size="xl"
+                textAlign="center"
+                bgGradient="linear(to-r, #667eea, #764ba2)"
+                bgClip="text"
+                fontWeight="extrabold"
+
+              >
+                Create Your Account
+              </Heading>
+
+              <FormControl isRequired>
+                <FormLabel>Email</FormLabel>
                 <InputGroup>
+                  <InputLeftElement pointerEvents="none">
+                    <FiMail color="gray.300" />
+                  </InputLeftElement>
                   <Input
-                    type={"text"}
+                    type="email"
+                    placeholder="hello@example.com"
+                    bg="white"
                     onChange={(e) => {
-                      setInputCode(e.target.value);
+                      setEmail(e.target.value);
+                      setIsCheckedEmail(false);
+                      setIsValidEmail(!e.target.validity.typeMismatch);
                     }}
                   />
-                  <InputRightElement w="75px" mr={1}>
-                    <Button onClick={confirmNumberMobile}>핸드폰 인증</Button>
+                  <InputRightElement width="4.5rem">
+                    <Button
+                      h="1.75rem"
+                      size="sm"
+                      colorScheme="purple"
+                      isDisabled={!isValidEmail || email.trim().length === 0}
+                      onClick={handleCheckEmail}
+                    >
+                      Check
+                    </Button>
                   </InputRightElement>
                 </InputGroup>
-                {expirationTime && <TimerComponent expirationTime={expirationTime} />}
-              </Box>
-            )}
-          </FormControl>
+                {!isCheckedEmail && (
+                  <FormHelperText color="red.500">Please check email availability.</FormHelperText>
+                )}
+              </FormControl>
 
-        </Box>
-        <Box>
-          <FormControl>
-            <FormLabel>암호</FormLabel>
-            <Input
-              type="password" onKeyUp={handleCapsLockWarning}
-              onChange={(e) => setPassword(e.target.value)} />
-            {capsLockWarning && <Text color="purple.500">Caps Lock이 켜져 있습니다.</Text>}
-          </FormControl>
-        </Box>
-        <Box>
-          <FormControl>
-            <FormLabel>암호확인</FormLabel>
-            <Input
-              type="password"
-              onChange={(e) => setPasswordCheck(e.target.value)} />
-            {password === passwordCheck || (
-              <FormHelperText>암호가 일치하지 않습니다.</FormHelperText>
-            )}
-          </FormControl>
-        </Box>
-        <Box>
-          <FormControl>
-            <FormLabel>별명</FormLabel>
-            <InputGroup>
-              <Input
-                onChange={(e) => {
-                  setNickname(e.target.value);
-                  setIsCheckedNickName(false);
-                }}
-              />
-              <InputRightElement w={"75px"} mr={1}>
-                <Button
-                  isDisabled={nickname.trim().length == 0}
-                  onClick={handleCheckNickName}
+              <Button
+                leftIcon={<FiMail />}
+                colorScheme="purple"
+                onClick={sendNumber}
+                isFullWidth
+              >
+                Get Verification Code
+              </Button>
+
+              {isCodeSent && (
+                <Box
+
                 >
-                  중복확인
-                </Button>
-              </InputRightElement>
-            </InputGroup>
-            {isCheckedNickName || (
-              <FormHelperText>별명 중복확인을 해주세요.</FormHelperText>
-            )}
-          </FormControl>
-        </Box>
-        <Box>
-          <Button
-            mt={13}
-            isDisabled={isDisabled}
-            colorScheme="teal"
-            width="full"
-            onClick={handleSignup}
-          >
-            가입
-          </Button>
-        </Box>
-        <Box w="266px" h="111px" mt={22}>
-          <NaverLogin />
+                  <VStack spacing={4}>
+                    <InputGroup>
+                      <Input
+                        placeholder="Enter verification code"
+                        onChange={(e) => setInputCode(e.target.value)}
+                      />
+                      <InputRightElement width="4.5rem">
+                        <Button h="1.75rem" size="sm" onClick={confirmNumber}>
+                          Verify
+                        </Button>
+                      </InputRightElement>
+                    </InputGroup>
+                    {expirationTime && <TimerComponent expirationTime={expirationTime} />}
+                  </VStack>
+                </Box>
+              )}
+
+              <FormControl isRequired>
+                <FormLabel>Phone Number</FormLabel>
+                <InputGroup>
+                  <InputLeftElement pointerEvents="none">
+                    <FiSmartphone color="gray.300" />
+                  </InputLeftElement>
+                  <Input
+                    placeholder="01012345678"
+                    bg="white"
+                    onChange={(e) => {
+                      setMobile(e.target.value);
+                      setIsCheckedMobile(false);
+                    }}
+                  />
+                </InputGroup>
+              </FormControl>
+
+              <Button
+                leftIcon={<FiSmartphone />}
+                colorScheme="purple"
+                onClick={sendNumberMobile}
+                isFullWidth
+              >
+                Get SMS Code
+              </Button>
+
+              {isCodeSent && (
+                <Box
+
+                >
+                  <VStack spacing={4}>
+                    <InputGroup>
+                      <Input
+                        placeholder="Enter SMS code"
+                        onChange={(e) => setInputCode(e.target.value)}
+                      />
+                      <InputRightElement width="4.5rem">
+                        <Button h="1.75rem" size="sm" onClick={confirmNumberMobile}>
+                          Verify
+                        </Button>
+                      </InputRightElement>
+                    </InputGroup>
+                    {expirationTime && <TimerComponent expirationTime={expirationTime} />}
+                  </VStack>
+                </Box>
+              )}
+
+              <FormControl isRequired>
+                <FormLabel>Password</FormLabel>
+                <InputGroup>
+                  <InputLeftElement pointerEvents="none">
+                    <FiLock color="gray.300" />
+                  </InputLeftElement>
+                  <Input
+                    type="password"
+                    bg="white"
+                    onKeyUp={handleCapsLockWarning}
+                    onChange={(e) => setPassword(e.target.value)}
+                  />
+                </InputGroup>
+                {capsLockWarning && (
+                  <FormHelperText color="red.500">Caps Lock is ON</FormHelperText>
+                )}
+              </FormControl>
+
+              <FormControl isRequired>
+                <FormLabel>Confirm Password</FormLabel>
+                <InputGroup>
+                  <InputLeftElement pointerEvents="none">
+                    <FiLock color="gray.300" />
+                  </InputLeftElement>
+                  <Input
+                    type="password"
+                    bg="white"
+                    onChange={(e) => setPasswordCheck(e.target.value)}
+                  />
+                </InputGroup>
+                {password !== passwordCheck && (
+                  <FormHelperText color="red.500">Passwords do not match</FormHelperText>
+                )}
+              </FormControl>
+
+              <FormControl isRequired>
+                <FormLabel>Nickname</FormLabel>
+                <InputGroup>
+                  <InputLeftElement pointerEvents="none">
+                    <FiUser color="gray.300" />
+                  </InputLeftElement>
+                  <Input
+                    bg="white"
+                    onChange={(e) => {
+                      setNickname(e.target.value);
+                      setIsCheckedNickName(false);
+                    }}
+                  />
+                  <InputRightElement width="4.5rem">
+                    <Button
+                      h="1.75rem"
+                      size="sm"
+                      colorScheme="purple"
+                      isDisabled={nickname.trim().length === 0}
+                      onClick={handleCheckNickName}
+                    >
+                      Check
+                    </Button>
+                  </InputRightElement>
+                </InputGroup>
+                {!isCheckedNickName && (
+                  <FormHelperText color="red.500">Please check nickname availability</FormHelperText>
+                )}
+              </FormControl>
+
+              <Button
+                colorScheme="purple"
+                size="lg"
+                isFullWidth
+                isDisabled={isDisabled}
+                onClick={handleSignup}
+                mt={4}
+                bgGradient="linear(to-r, #667eea, #764ba2)"
+                _hover={{
+                  bgGradient: "linear(to-r, #764ba2, #667eea)",
+                }}
+              >
+                Sign Up
+              </Button>
+
+              <Divider />
+
+              <Box>
+                <NaverLogin />
+              </Box>
+            </VStack>
+          </Box>
         </Box>
       </Box>
-    </Box>
-  );
-}
+    );
+  }
