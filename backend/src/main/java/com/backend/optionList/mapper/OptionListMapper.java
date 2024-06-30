@@ -18,7 +18,7 @@ public interface OptionListMapper {
     @Select("""
             SELECT *
             FROM OPTION_LIST
-            ORDER BY OPTION_LIST_ID DESC 
+            ORDER BY OPTION_LIST_ID DESC
             """)
     List<OptionList> selectAll();
 

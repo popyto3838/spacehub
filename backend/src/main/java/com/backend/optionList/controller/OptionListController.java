@@ -44,8 +44,10 @@ public class OptionListController {
     }
 
     @PutMapping("/{optionListId}")
-    public ResponseEntity<String> update(@RequestBody OptionList optionList) {
+    public ResponseEntity<String> update(@PathVariable int optionListId,
+                                         @RequestBody OptionList optionList) {
         try {
+            optionList.setOptionListId(optionListId);
             optionListService.update(optionList);
             return ResponseEntity.ok("옵션이 업데이트되었습니다.");
         } catch (Exception e) {
