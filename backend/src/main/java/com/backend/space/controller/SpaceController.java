@@ -1,6 +1,7 @@
 package com.backend.space.controller;
 
 import com.backend.dto.FindResponseSpaceJoinDTO;
+import com.backend.dto.SpaceDTO;
 import com.backend.file.service.FileService;
 import com.backend.member.service.MemberService;
 import com.backend.space.domain.FindResponseSpaceMemberIdDto;
@@ -76,11 +77,19 @@ public class SpaceController {
         return ResponseEntity.ok(spaceHostIdDtos);
     }
 
-    @PostMapping("/update/{spaceId}")
+    @PutMapping("/update/{spaceId}")
     public void editSpace(@PathVariable Integer spaceId,
                           @RequestPart("space") String spaceStr,
                           @RequestPart("optionList") String optionListStr,
                           @RequestPart(value = "files", required = false) List<MultipartFile> files) throws IOException {
 
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        // JSON 문자열을 객체로 변환
+        Space space = objectMapper.readValue(spaceStr, Space.class);
+        List<Integer> optionList = objectMapper.readValue(optionListStr, new TypeReference<List<Integer>>() {});
+
+        // 서비스에 업데이트 요청
+        spaceService.updateSpace(spaceId, space, optionList, files);
     }
 }

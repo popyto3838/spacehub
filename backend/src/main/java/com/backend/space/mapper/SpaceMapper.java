@@ -3,10 +3,7 @@ package com.backend.space.mapper;
 import com.backend.space.domain.FindResponseSpaceMemberIdDto;
 import com.backend.space.domain.Space;
 import com.backend.dto.OptionListDTO;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Options;
-import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.*;
 
 import java.util.List;
 
@@ -91,4 +88,33 @@ public interface SpaceMapper {
             WHERE MEMBER_ID = #{memberId}
             """)
     List<FindResponseSpaceMemberIdDto> selectAllByMemberId(Integer memberId);
+
+    @Update("""
+            UPDATE SPACE
+            SET   MEMBER_ID = #{space.memberId},
+                  TYPE_LIST_ID = #{space.typeListId},
+                  TITLE = #{space.title},
+                  SUB_TITLE = #{space.subTitle},
+                  ZONECODE = #{space.zonecode},
+                  ADDRESS = #{space.address},
+                  DETAIL_ADDRESS = #{space.detailAddress},
+                  EXTRA_ADDRESS = #{space.extraAddress},
+                  LATITUDE = #{space.latitude},
+                  LONGITUDE = #{space.longitude},
+                  INTRODUCE = #{space.introduce},
+                  FACILITY = #{space.facility},
+                  NOTICE = #{space.notice},
+                  PRICE = #{space.price},
+                  CAPACITY = #{space.capacity},
+                  FLOOR = #{space.floor},
+                  PARKING_SPACE = #{space.parkingSpace},
+            WHERE SPACE_ID = #{spaceId}
+            """)
+    int updateSpace(Integer spaceId, Space space);
+
+    @Delete("""
+            DELETE FROM SPACE_CONFIG
+            WHERE SPACE_ID = #{spaceId}
+            """)
+    int deleteSpaceConfigBySpaceId(Integer spaceId);
 }
