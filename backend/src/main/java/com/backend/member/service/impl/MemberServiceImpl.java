@@ -452,7 +452,7 @@ public class MemberServiceImpl implements MemberService {
                 s3Client.putObject(objectRequest, RequestBody.fromInputStream(file.getInputStream(),file.getSize()));
 
                 String profileImage = s3Client.utilities().getUrl(builder ->
-                        builder.bucket(bucketName).key(file.getOriginalFilename())).toExternalForm();
+                        builder.bucket(bucketName).key(fileName)).toExternalForm();
                 System.out.println("profileImage = " + profileImage);
                 // db에 파일 저장
                 mapper.insertFileList(member.getMemberId(), profileImage, fileName);

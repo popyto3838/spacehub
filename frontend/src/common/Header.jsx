@@ -20,6 +20,9 @@ import {motion, AnimatePresence} from 'framer-motion';
 const Header = () => {
     const [isOpen, setIsOpen] = useState(false);
     const [member, setMember] = useState({});
+    const [imageVersion, setImageVersion] = useState(0);
+    const [timestamp, setTimestamp] = useState(Date.now());
+
     const navigate = useNavigate();
     const account = useContext(LoginContext);
     const toast = useToast();
@@ -39,13 +42,20 @@ const Header = () => {
             axios
                 .get(`/api/member/${account.id}`)
                 .then((res) => {
+                    setImageVersion(prev => prev + 1);
+
                     setMember(res.data);
                 })
                 .catch(() => {
                     navigate("/member/signup");
                 });
         }
-    }, [account]);
+    }, [account,navigate]);
+
+
+    const updateImage = () => {
+        setTimestamp(Date.now()); // 현재 타임스탬프 갱신
+    };
 
     function SwitchHost() {
         axios.post("/api/member/nullcheck", {
@@ -125,7 +135,7 @@ const Header = () => {
                                 )}
                                 <MenuButton as={Box} cursor="pointer">
                                     <Image
-                                        src={`${member.profileImage}`}
+                                        src={`${member.profileImage}?t=${timestamp}`}
                                         alt="Profile"
                                         borderRadius="full"
                                         boxSize="40px"
@@ -216,18 +226,17 @@ const Header = () => {
                 </div>
                 <nav className={isOpen ? 'menu open' : 'menu'}>
                     <ul>
-                        <img
-
-                            src={`${member.profileImage}`}
+                      {account.isLoggedIn() && <img
+                            src={`${member.profileImage}?t=${timestamp}`}
                             // src="/img/profile/1/일본배경.jpg"
-                            alt="User Profile Image"
+                            alt=""
                             style={{
                                 width: '70px',
                                 height: '60px',
                                 borderRadius: '50%', // 원형 모양으로 보이게 하기 위한 스타일
                                 objectFit: 'cover', // 이미지가 잘리지 않고 채워지도록 함
                             }}
-                        />
+                        />}
                         <li>{account.nickname}</li>
                         <li>
                             <a href="/">Home</a>
