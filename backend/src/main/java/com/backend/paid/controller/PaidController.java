@@ -1,14 +1,14 @@
 package com.backend.paid.controller;
 
 import com.backend.paid.domain.Paid;
+import com.backend.paid.domain.PaymentCancelRequestDTO;
 import com.backend.paid.service.PaidService;
-import com.backend.reservation.domain.Reservation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import software.amazon.awssdk.services.s3.endpoints.internal.Value;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -34,8 +34,6 @@ public class PaidController {
 
     @PostMapping("/write")
     public void write(@RequestBody Paid Paid) {
-        log.info("=========Paid=========={}",Paid);
-        log.info("공간결제 시작");
         paidService.insert(Paid);
     }
 
@@ -48,4 +46,15 @@ public class PaidController {
     public void delete(@PathVariable Integer paidId) {
         paidService.delete(paidId);
     }
+
+    @PostMapping("/getToken")
+    public String getToken() throws IOException {
+        return paidService.getToken();
+    }
+
+    @PostMapping("/cancelPayment")
+    public void cancelPayment(@RequestBody PaymentCancelRequestDTO paidCancelRequest) throws IOException {
+        paidService.cancelPayment(paidCancelRequest);
+    }
+
 }

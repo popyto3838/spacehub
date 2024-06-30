@@ -15,5 +15,6 @@ public class Paid {
     private Timestamp inputDt;
     private String title;
     private String impUid;
+    private PaymentStatus status;
 
 }
