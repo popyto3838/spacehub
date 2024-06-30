@@ -1,9 +1,9 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useState, useEffect } from 'react';
 import {
   Alert,
-  AlertDescription,
   AlertIcon,
   AlertTitle,
+  AlertDescription,
   Box,
   Button,
   FormControl,
@@ -21,34 +21,21 @@ import {
   ModalOverlay,
   useDisclosure,
   useToast,
-  VStack,
-  Text,
-  Stack,
-  Spacer,
-  Divider,
 } from '@chakra-ui/react';
 import { CloseIcon, AddIcon } from '@chakra-ui/icons';
 
 const RegisterPage5 = ({ formData, setFormData, deletedFiles, setDeletedFiles, newFiles, setNewFiles }) => {
-  const [newPreviewUrls, setNewPreviewUrls] = useState([]);
   const toast = useToast();
-  const [previewUrls, setPreviewUrls] = useState([]); // 기존 이미지 미리보기 URL
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [selectedImage, setSelectedImage] = useState(null);
 
-  useEffect(() => {
-    if (formData.files) {
-      setPreviewUrls(formData.files.map(file => URL.createObjectURL(file.file)));
-    }
-  }, [formData.files]);
-
-  useEffect(() => {
-    // 컴포넌트가 언마운트될 때 URL 해제
-    return () => {
-      previewUrls.forEach(url => URL.revokeObjectURL(url));
-      newPreviewUrls.forEach(url => URL.revokeObjectURL(url));
-    };
-  }, [previewUrls, newPreviewUrls]);
+  const handleDeleteImage = useCallback((id) => {
+    setFormData(prev => ({
+      ...prev,
+      files: prev.files.filter(file => file.id !== id)
+    }));
+    setDeletedFiles(prev => [...prev, id]);
+  }, [setFormData, setDeletedFiles]);
 
   const handleNewFileChange = (e) => {
     const files = Array.from(e.target.files);
@@ -65,8 +52,7 @@ const RegisterPage5 = ({ formData, setFormData, deletedFiles, setDeletedFiles, n
       return;
     }
 
-    // 중복 파일 검사
-    const existingFileNames = new Set([...formData.files.map(f => f.file.name), ...newFiles.map(f => f.name)]);
+    const existingFileNames = new Set([...formData.files.map(f => f.name), ...newFiles.map(f => f.name)]);
     const nonDuplicateFiles = files.filter(file => !existingFileNames.has(file.name));
 
     if (nonDuplicateFiles.length !== files.length) {
@@ -79,38 +65,12 @@ const RegisterPage5 = ({ formData, setFormData, deletedFiles, setDeletedFiles, n
       });
     }
 
-    setNewFiles([...newFiles, ...nonDuplicateFiles]);
-
-    const urls = nonDuplicateFiles.map((file) => URL.createObjectURL(file));
-    setNewPreviewUrls([...newPreviewUrls, ...urls]);
+    setNewFiles(prev => [...prev, ...nonDuplicateFiles]);
   };
 
-  const handleDeleteImage = useCallback((index, isNewFile = false) => {
-    if (isNewFile) {
-      URL.revokeObjectURL(newPreviewUrls[index]);
-      const updatedNewFiles = newFiles.filter((_, i) => i !== index);
-      const updatedNewPreviewUrls = newPreviewUrls.filter((_, i) => i !== index);
-      setNewFiles(updatedNewFiles);
-      setNewPreviewUrls(updatedNewPreviewUrls);
-    } else {
-      URL.revokeObjectURL(previewUrls[index]);
-      const updatedFiles = formData.files.filter((_, i) => i !== index);
-      const updatedPreviewUrls = previewUrls.filter((_, i) => i !== index);
-      setFormData({ ...formData, files: updatedFiles });
-      setDeletedFiles([...deletedFiles, formData.files[index].id]); // 삭제된 파일 추가
-      setPreviewUrls(updatedPreviewUrls);
-    }
-  }, [newFiles, newPreviewUrls, formData, previewUrls, deletedFiles, setFormData, setNewFiles, setNewPreviewUrls, setDeletedFiles]);
-
-  const handleAddImages = () => {
-    const newFilesWithSrc = newFiles.map(file => ({ file }));
-    setFormData(prevFormData => ({
-      ...prevFormData,
-      files: [...prevFormData.files, ...newFilesWithSrc],
-    }));
-    setNewFiles([]);
-    setNewPreviewUrls([]);
-  };
+  const handleDeleteNewImage = useCallback((index) => {
+    setNewFiles(prev => prev.filter((_, i) => i !== index));
+  }, [setNewFiles]);
 
   const openImageModal = (url) => {
     setSelectedImage(url);
@@ -126,9 +86,9 @@ const RegisterPage5 = ({ formData, setFormData, deletedFiles, setDeletedFiles, n
         <AlertDescription>(이미지를 클릭하면 확대하여 볼 수 있습니다.)</AlertDescription>
       </Alert>
       <HStack spacing={4} wrap="wrap">
-        {previewUrls.map((url, index) => (
-          <Box key={index} position="relative" width="150px" height="150px" boxShadow="md" borderRadius="md" overflow="hidden">
-            <Image src={url} alt={`Image ${index + 1}`} boxSize="150px" objectFit="cover" onClick={() => openImageModal(url)} cursor="pointer" />
+        {formData.files.map((file) => (
+          <Box key={file.id} position="relative" width="150px" height="150px" boxShadow="md" borderRadius="md" overflow="hidden">
+            <Image src={file.url} alt={file.name} boxSize="150px" objectFit="cover" onClick={() => openImageModal(file.url)} cursor="pointer" />
             <IconButton
               icon={<CloseIcon />}
               size="sm"
@@ -137,7 +97,7 @@ const RegisterPage5 = ({ formData, setFormData, deletedFiles, setDeletedFiles, n
               right="2"
               onClick={(e) => {
                 e.stopPropagation();
-                handleDeleteImage(index);
+                handleDeleteImage(file.id);
               }}
             />
           </Box>
@@ -166,10 +126,10 @@ const RegisterPage5 = ({ formData, setFormData, deletedFiles, setDeletedFiles, n
         </Box>
       </FormControl>
 
-      <HStack spacing={4} wrap="wrap">
-        {newPreviewUrls.map((url, index) => (
+      <HStack spacing={4} wrap="wrap" border="1px solid red" p={4} mb={4}>
+        {newFiles.map((file, index) => (
           <Box key={index} position="relative" width="150px" height="150px" boxShadow="md" borderRadius="md" overflow="hidden">
-            <Image src={url} alt={`New Image ${index + 1}`} boxSize="150px" objectFit="cover" onClick={() => openImageModal(url)} cursor="pointer" />
+            <Image src={URL.createObjectURL(file)} alt={`New Image ${index + 1}`} boxSize="150px" objectFit="cover" onClick={() => openImageModal(URL.createObjectURL(file))} cursor="pointer" />
             <IconButton
               icon={<CloseIcon />}
               size="sm"
@@ -178,16 +138,12 @@ const RegisterPage5 = ({ formData, setFormData, deletedFiles, setDeletedFiles, n
               right="2"
               onClick={(e) => {
                 e.stopPropagation();
-                handleDeleteImage(index, true);
+                handleDeleteNewImage(index);
               }}
             />
           </Box>
         ))}
       </HStack>
-
-      <Button mt={4} colorScheme="teal" onClick={handleAddImages} isDisabled={newFiles.length === 0}>
-        이미지 추가
-      </Button>
 
       <Modal isOpen={isOpen} onClose={onClose} size="6xl">
         <ModalOverlay />

@@ -65,9 +65,9 @@ const RegisterStepper = () => {
   const navigate = useNavigate();
   const { spaceId } = useParams();
   const toast = useToast();
-  const [isEdit, setIsEdit] = useState(!!spaceId); // isEdit 초기값 설정
+  const [isEdit, setIsEdit] = useState(!!spaceId);
   const [activeStep, setActiveStep] = useState(0);
-  const [isLoading, setIsLoading] = useState(false); // 로딩 상태 추가
+  const [isLoading, setIsLoading] = useState(false);
 
   const initialFormData = {
     memberId: account.id,
@@ -88,29 +88,33 @@ const RegisterStepper = () => {
     capacity: 0,
     floor: 0,
     parkingSpace: 0,
-    files: [], // 기존 파일 정보 저장 (수정 시 필요)
+    files: [],
     options: [],
   };
 
   const [formData, setFormData] = useState(initialFormData);
-  const [deletedFiles, setDeletedFiles] = useState([]); // 삭제된 파일 목록
-  const [newFiles, setNewFiles] = useState([]); // 새로운 파일 목록
+  const [deletedFiles, setDeletedFiles] = useState([]);
+  const [newFiles, setNewFiles] = useState([]);
 
   useEffect(() => {
     if (spaceId) {
       setIsEdit(true);
-      setIsLoading(true); // 로딩 시작
+      setIsLoading(true);
       axios.get(`/api/space/${spaceId}`)
         .then((res) => {
           const spaceData = res.data.space;
-          const spaceImgFiles = res.data.spaceImgFiles.map(file => ({ file: new File([], file.fileName), id: file.fileId }));
+          const spaceImgFiles = res.data.spaceImgFiles.map(file => ({
+            id: file.fileId,
+            name: file.fileName,
+            url: file.fileUrl || file.fileName // Ensure the URL is used
+          }));
           setFormData({
-            ...initialFormData, // 초기값을 덮어쓰지 않도록 initialFormData와 병합
+            ...initialFormData,
             ...spaceData,
             files: spaceImgFiles,
             options: res.data.optionList.map(option => option.optionListId),
           });
-          setIsLoading(false); // 로딩 완료
+          setIsLoading(false);
         })
         .catch((error) => {
           console.error("Error fetching space data:", error);
@@ -121,7 +125,7 @@ const RegisterStepper = () => {
             duration: 3000,
             isClosable: true,
           });
-          setIsLoading(false); // 로딩 완료
+          setIsLoading(false);
         });
     } else {
       setIsEdit(false);
@@ -140,32 +144,24 @@ const RegisterStepper = () => {
   const handleSubmit = async () => {
     const formDataToSend = new FormData();
 
-    // space 데이터 추가 (파일 목록 제외)
-    const { files, options, ...spaceData } = formData; // options를 분리
+    const { files, options, ...spaceData } = formData;
     formDataToSend.append('space', JSON.stringify(spaceData));
 
-    // optionList 데이터 추가 (배열 형태로)
-    formDataToSend.append('optionList', JSON.stringify(formData.options));
+    formDataToSend.append('optionList', JSON.stringify(options));
 
-    // 기존 파일 추가
-    formData.files.forEach(fileObj => {
-      if (fileObj.file && !(fileObj.file instanceof File)) {
-        const file = new File([fileObj.file], fileObj.file.name);
-        formDataToSend.append('files', file);
-      } else {
-        formDataToSend.append('files', fileObj.file);
+    files.forEach(fileObj => {
+      if (!deletedFiles.includes(fileObj.id)) {
+        if (fileObj.file) {
+          formDataToSend.append('files', fileObj.file);
+        }
       }
     });
 
-    // 새로운 파일 데이터 추가
-    if (newFiles.length > 0) {
-      for (const file of newFiles) {
-        formDataToSend.append('files', file);
-      }
-    }
+    newFiles.forEach(file => {
+      formDataToSend.append('files', file);
+    });
 
     if (isEdit) {
-      // 수정 요청
       formDataToSend.append('deletedFiles', JSON.stringify(deletedFiles));
       try {
         await axios.put(`/api/space/update/${spaceId}`, formDataToSend, {
@@ -191,7 +187,6 @@ const RegisterStepper = () => {
         });
       }
     } else {
-      // 등록 요청
       try {
         await axios.post(`/api/space/insert`, formDataToSend, {
           headers: {
@@ -219,11 +214,10 @@ const RegisterStepper = () => {
   };
 
   const isNextDisabled = () => {
-    // const requiredFields = ['type', 'title', 'subTitle', 'zonecode', 'address', 'detailAddress', 'extraAddress', 'latitude', 'longitude', 'introduce', 'facility', 'notice', 'price', 'capacity', 'floor', 'parkingSpace'];
-    // return requiredFields.some(field => !formData[field]);
+    // 필요한 유효성 검사 로직 구현
+    return false;
   };
 
-  // 로딩 중일 때는 빈 화면 표시
   if (isLoading) {
     return <div>Loading...</div>;
   }
