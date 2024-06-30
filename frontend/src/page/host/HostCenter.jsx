@@ -47,7 +47,7 @@ export function HostCenter() {
       </Box>
 
       {/* 하단 부분 (배경 이미지 포함) */}
-      <Box><HostDashboard memberId={account.id} /></Box>
+      <Box><HostDashboard memberId={account.id}/></Box>
     </VStack>
   );
 }
