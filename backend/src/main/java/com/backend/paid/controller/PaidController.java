@@ -34,6 +34,7 @@ public class PaidController {
 
     @PostMapping("/write")
     public void write(@RequestBody Paid Paid) {
+        log.info("=========Paid=========={}",Paid);
         log.info("공간결제 시작");
         paidService.insert(Paid);
     }

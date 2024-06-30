@@ -51,8 +51,8 @@ public class ReservationServiceImpl implements ReservationService {
     }
 
     @Override
-    public List<Reservation> selectAll() {
-        return reservationMapper.selectAll();
+    public List<Reservation> selectAll(Integer spaceId) {
+        return reservationMapper.selectAll(spaceId);
     }
 
     @Override

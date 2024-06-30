@@ -15,11 +15,13 @@ public interface PaidMapper {
                 ,       RESERVATION_ID
                 ,       MEMBER_ID
                 ,       TOTAL_PRICE
+                ,       IMP_UID
                 ) VALUES
                 (       #{spaceId}
                 ,       #{reservationId}
                 ,       #{memberId}
                 ,       #{totalPrice}
+                ,       #{impUid}
                 )
         """)
     int insert(Paid paid);
