@@ -23,5 +23,5 @@ public interface ReservationService {
 
     List<FindResponseHostReservationList> selectAllbyHostId(Integer spaceId);
 
-    List<Reservation> selectAll();
+    List<Reservation> selectAll(Integer spaceId);
 }

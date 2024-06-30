@@ -38,8 +38,9 @@ public interface ReservationMapper {
     @Select("""
             SELECT  *
             FROM    RESERVATION
+            WHERE   SPACE_ID=#{spaceId}
             """)
-    List<Reservation> selectAll();
+    List<Reservation> selectAll(Integer spaceId);
 
 
     @Select("""
