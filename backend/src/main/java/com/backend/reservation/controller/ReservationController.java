@@ -22,9 +22,9 @@ public class ReservationController {
     private final ReservationService reservationService;
 
 
-    @GetMapping("/listAll")
-    public ResponseEntity<List<Reservation>> listAll() {
-        List<Reservation> list = reservationService.selectAll();
+    @GetMapping("/listAll/{spaceId}")
+    public ResponseEntity<List<Reservation>> listAll(@PathVariable Integer spaceId) {
+        List<Reservation> list = reservationService.selectAll(spaceId);
         if (list == null) {
             return ResponseEntity.notFound().build();
         }

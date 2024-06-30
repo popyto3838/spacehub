@@ -80,12 +80,15 @@ const Payment = () => {
         }, async (rsp) => {
             console.log(rsp);
             if (rsp.success == true) {
+                const imp_uid = rsp.imp_uid;
+                alert(imp_uid)
                 axios
                     .post("/api/paid/write", {
                         "spaceId": spaceIdResult,
                         "reservationId": reservationId,
                         "memberId": account.id,
-                        "totalPrice": totalPrice // 총 금액 사용
+                        "totalPrice": totalPrice,
+                        "impUid" : imp_uid
                     })
                     .then((res) => {
                         toast({
