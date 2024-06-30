@@ -7,6 +7,7 @@ import com.backend.member.service.MemberService;
 import com.backend.space.domain.FindResponseSpaceMemberIdDto;
 import com.backend.space.domain.Space;
 import com.backend.space.service.SpaceService;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -27,20 +28,18 @@ public class SpaceController {
     private final MemberService memberService;
 
     @PostMapping("insert")
-    public ResponseEntity<String> add(@RequestPart("spaceDto") String spaceDtoStr,
+    public ResponseEntity<String> add(@RequestPart("space") String spaceStr,
+                                      @RequestPart("optionList") String optionListStr,
                                       @RequestPart(value = "files", required = false) List<MultipartFile> files) throws IOException {
-        SpaceDTO spaceDto = objectMapper.readValue(spaceDtoStr, SpaceDTO.class);
-        Space space = spaceDto.getSpace();
-        int memberId = spaceDto.getMemberId();
-
-        space.setMemberId(memberId);
-
+        Space space = objectMapper.readValue(spaceStr, Space.class);
+        List<Integer> optionList = objectMapper.readValue(optionListStr, new TypeReference<List<Integer>>() {});
+        System.out.println("space = " + space);
+        System.out.println("space.getMemberId() = " + space.getMemberId());
         // SPACE CREATE
         spaceService.insertSpace(space);
 
         // 옵션 리스트 저장
-        List<Integer> optionList = spaceDto.getOptionList();
-        if (optionList != null) {
+        if (optionList != null && !optionList.isEmpty()) {
             spaceService.insertSpaceConfig(space.getSpaceId(), optionList);
         }
 

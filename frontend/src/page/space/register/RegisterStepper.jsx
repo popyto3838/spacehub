@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import {
   Box,
   Button,
@@ -20,34 +20,41 @@ import RegisterPage3 from "./RegisterPage3.jsx";
 import RegisterPage4 from "./RegisterPage4.jsx";
 import RegisterPage5 from "./RegisterPage5.jsx";
 import RegisterPage6 from "./RegisterPage6.jsx";
-import {useNavigate, useParams} from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
-import {LoginContext} from "../../../component/LoginProvider.jsx";
+import { LoginContext } from "../../../component/LoginProvider.jsx";
 
 // Stepper steps definition
 const steps = [
-  {title: 'Step 1', description: '공간 소개'},
-  {title: 'Step 2', description: '상세 정보'},
-  {title: 'Step 3', description: '규칙 설정'},
-  {title: 'Step 4', description: '숫자 설정'},
-  {title: 'Step 5', description: '사진 등록'},
-  {title: 'Step 6', description: '옵션 등록'},
+  { title: 'Step 1', description: '공간 소개' },
+  { title: 'Step 2', description: '상세 정보' },
+  { title: 'Step 3', description: '규칙 설정' },
+  { title: 'Step 4', description: '숫자 설정' },
+  { title: 'Step 5', description: '사진 등록' },
+  { title: 'Step 6', description: '옵션 등록' },
 ];
 
-const StepContent = ({step, formData, setFormData}) => {
+const StepContent = ({ step, formData, setFormData, deletedFiles, setDeletedFiles, newFiles, setNewFiles }) => {
   switch (step) {
     case 0:
-      return <RegisterPage1 formData={formData} setFormData={setFormData}/>;
+      return <RegisterPage1 formData={formData} setFormData={setFormData} />;
     case 1:
-      return <RegisterPage2 formData={formData} setFormData={setFormData}/>;
+      return <RegisterPage2 formData={formData} setFormData={setFormData} />;
     case 2:
-      return <RegisterPage3 formData={formData} setFormData={setFormData}/>;
+      return <RegisterPage3 formData={formData} setFormData={setFormData} />;
     case 3:
-      return <RegisterPage4 formData={formData} setFormData={setFormData}/>;
+      return <RegisterPage4 formData={formData} setFormData={setFormData} />;
     case 4:
-      return <RegisterPage5 formData={formData} setFormData={setFormData}/>;
+      return <RegisterPage5
+        formData={formData}
+        setFormData={setFormData}
+        deletedFiles={deletedFiles}
+        setDeletedFiles={setDeletedFiles}
+        newFiles={newFiles}
+        setNewFiles={setNewFiles}
+      />;
     case 5:
-      return <RegisterPage6 formData={formData} setFormData={setFormData}/>;
+      return <RegisterPage6 formData={formData} setFormData={setFormData} />;
     default:
       return null;
   }
@@ -56,15 +63,15 @@ const StepContent = ({step, formData, setFormData}) => {
 const RegisterStepper = () => {
   const account = useContext(LoginContext);
   const navigate = useNavigate();
-  const {spaceId} = useParams();
+  const { spaceId } = useParams();
   const toast = useToast();
   const [isEdit, setIsEdit] = useState(!!spaceId); // isEdit 초기값 설정
   const [activeStep, setActiveStep] = useState(0);
   const [isLoading, setIsLoading] = useState(false); // 로딩 상태 추가
 
   const initialFormData = {
-    hostId: account.id,
-    typeId: 0,
+    memberId: account.id,
+    typeListId: 0,
     type: null,
     title: '',
     subTitle: '',
@@ -86,6 +93,8 @@ const RegisterStepper = () => {
   };
 
   const [formData, setFormData] = useState(initialFormData);
+  const [deletedFiles, setDeletedFiles] = useState([]); // 삭제된 파일 목록
+  const [newFiles, setNewFiles] = useState([]); // 새로운 파일 목록
 
   useEffect(() => {
     if (spaceId) {
@@ -94,7 +103,7 @@ const RegisterStepper = () => {
       axios.get(`/api/space/${spaceId}`)
         .then((res) => {
           const spaceData = res.data.space;
-          const spaceImgFiles = res.data.spaceImgFiles.map(file => ({src: file.fileName, id: file.fileId}));
+          const spaceImgFiles = res.data.spaceImgFiles.map(file => ({ file: new File([], file.fileName), id: file.fileId }));
           setFormData({
             ...initialFormData, // 초기값을 덮어쓰지 않도록 initialFormData와 병합
             ...spaceData,
@@ -131,51 +140,81 @@ const RegisterStepper = () => {
   const handleSubmit = async () => {
     const formDataToSend = new FormData();
 
-    // 1. space 데이터 추가
-    formDataToSend.append('space', JSON.stringify(formData));
+    // space 데이터 추가 (파일 목록 제외)
+    const { files, options, ...spaceData } = formData; // options를 분리
+    formDataToSend.append('space', JSON.stringify(spaceData));
 
-    // 2. optionList 데이터 추가 (배열 형태로)
+    // optionList 데이터 추가 (배열 형태로)
     formDataToSend.append('optionList', JSON.stringify(formData.options));
 
-    // 3. 파일 데이터 추가 (RegisterPage5에서 이미 추가됨)
-    if (formData.files && formData.files.length > 0) {
-      for (const file of formData.files) {
-        if (typeof file === 'object' && file.file instanceof File) { // 새로운 파일만 추가
-          formDataToSend.append('files', file.file);
-        }
+    // 기존 파일 추가
+    formData.files.forEach(fileObj => {
+      if (fileObj.file && !(fileObj.file instanceof File)) {
+        const file = new File([fileObj.file], fileObj.file.name);
+        formDataToSend.append('files', file);
+      } else {
+        formDataToSend.append('files', fileObj.file);
+      }
+    });
+
+    // 새로운 파일 데이터 추가
+    if (newFiles.length > 0) {
+      for (const file of newFiles) {
+        formDataToSend.append('files', file);
       }
     }
 
-    try {
-      const endpoint = isEdit ? `/api/space/update/${spaceId}` : '/api/space/insert'; // 수정 또는 등록 API 엔드포인트 결정
-      const method = isEdit ? 'put' : 'post';
-      const response = await axios({
-        method: method,
-        url: endpoint,
-        data: formDataToSend,
-        headers: {
-          'Content-Type': 'multipart/form-data',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        }
-      });
-
-      toast({
-        title: isEdit ? '공간 수정이 완료되었습니다.' : '공간 등록이 완료되었습니다.',
-        status: 'success',
-        duration: 3000,
-        isClosable: true,
-      });
-      navigate('/');
-
-    } catch (error) {
-      console.error("Error submitting space data:", error);
-      toast({
-        title: isEdit ? '공간 수정에 실패했습니다.' : '공간 등록에 실패했습니다.',
-        description: error.response?.data?.message || '잠시 후 다시 시도해주세요.',
-        status: 'error',
-        duration: 3000,
-        isClosable: true,
-      });
+    if (isEdit) {
+      // 수정 요청
+      formDataToSend.append('deletedFiles', JSON.stringify(deletedFiles));
+      try {
+        await axios.put(`/api/space/update/${spaceId}`, formDataToSend, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        });
+        toast({
+          title: '공간 수정이 완료되었습니다.',
+          status: 'success',
+          duration: 3000,
+          isClosable: true,
+        });
+        navigate('/');
+      } catch (error) {
+        console.error("Error submitting space data:", error);
+        toast({
+          title: '공간 수정에 실패했습니다.',
+          description: error.response?.data?.message || '잠시 후 다시 시도해주세요.',
+          status: 'error',
+          duration: 3000,
+          isClosable: true,
+        });
+      }
+    } else {
+      // 등록 요청
+      try {
+        await axios.post(`/api/space/insert`, formDataToSend, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        });
+        toast({
+          title: '공간 등록이 완료되었습니다.',
+          status: 'success',
+          duration: 3000,
+          isClosable: true,
+        });
+        navigate('/');
+      } catch (error) {
+        console.error("Error submitting space data:", error);
+        toast({
+          title: '공간 등록에 실패했습니다.',
+          description: error.response?.data?.message || '잠시 후 다시 시도해주세요.',
+          status: 'error',
+          duration: 3000,
+          isClosable: true,
+        });
+      }
     }
   };
 
@@ -196,22 +235,30 @@ const RegisterStepper = () => {
           <Step key={index}>
             <StepIndicator>
               <StepStatus
-                complete={<StepIcon/>}
-                incomplete={<StepNumber/>}
-                active={<StepNumber/>}
+                complete={<StepIcon />}
+                incomplete={<StepNumber />}
+                active={<StepNumber />}
               />
             </StepIndicator>
             <Box flexShrink='0'>
               <StepTitle>{step.title}</StepTitle>
               <StepDescription>{step.description}</StepDescription>
             </Box>
-            <StepSeparator/>
+            <StepSeparator />
           </Step>
         ))}
       </Stepper>
 
       <Box mt={6}>
-        <StepContent step={activeStep} formData={formData} setFormData={setFormData}/>
+        <StepContent
+          step={activeStep}
+          formData={formData}
+          setFormData={setFormData}
+          deletedFiles={deletedFiles}
+          setDeletedFiles={setDeletedFiles}
+          newFiles={newFiles}
+          setNewFiles={setNewFiles}
+        />
       </Box>
 
       <Box display="flex" justifyContent="space-between" mt={4}>
