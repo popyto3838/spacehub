@@ -23,6 +23,8 @@ public class Comment {
     private Integer spaceId; // space의 spaceId를 받음
 
     private Integer commentCount; // comment의 갯수
+    private Integer rateScore; // comment의 별점을 받음
+    private Integer rateScoreAvg; // comment의 별점의 평균
 
     private List<File> commentFilesLists;
 

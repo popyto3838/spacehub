@@ -4,10 +4,12 @@ import com.backend.comment.domain.Comment;
 import com.backend.comment.mapper.CommentMapper;
 import com.backend.comment.service.CommentService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import software.amazon.awssdk.services.s3.S3Client;
 
 import java.io.File;
 import java.io.IOException;
@@ -18,6 +20,15 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CommentServiceImpl implements CommentService {
     final CommentMapper commentMapper;
+
+    // AWS 설정
+    final S3Client s3Client;
+
+    @Value("${aws.s3.bucket.name}")
+    String bucketName;
+
+    @Value("${image.src.prefix}")
+    String srcPrefix;
 
     @Override
     public void insert(Comment comment, Authentication authentication) {
@@ -102,7 +113,8 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public List<Comment> listReview(Integer spaceId) {
         // 코멘트들 조회
-        List<Comment> comments = commentMapper.selectAllBySpaceId(spaceId);
+        // List<Comment> comments = commentMapper.selectAllBySpaceId(spaceId);
+        List<Comment> comments = commentMapper.selectAllBySpaceIdForReview(spaceId);
         for (Comment comment : comments) {
             // fileNames에서 파일 이름 조회
             List<String> fileNames = commentMapper.selectByFileNameByCommentId(comment.getCommentId());
@@ -198,7 +210,8 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public List<Comment> listQna(Integer spaceId) {
-        return commentMapper.selectAllBySpaceId(spaceId);
+        // return commentMapper.selectAllBySpaceId(spaceId);
+        return commentMapper.selectAllBySpaceIdForQNA(spaceId);
     }
 
     @Override

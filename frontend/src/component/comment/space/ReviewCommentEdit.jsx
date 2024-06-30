@@ -17,6 +17,8 @@ import {
   Textarea,
   useDisclosure,
   useToast,
+  Wrap,
+  WrapItem,
 } from "@chakra-ui/react";
 import { LoginContext } from "../../LoginProvider.jsx";
 import axios from "axios";
@@ -36,6 +38,13 @@ export function ReviewCommentEdit({
   const [hoveredIndexes, setHoveredIndexes] = useState(
     Array(comment.commentFilesLists.length).fill(false),
   );
+
+  // 별점 클릭 이벤트 핸들러
+  const [rateScore, setRateScore] = useState(comment.rateScore);
+  const starArray = [1, 2, 3, 4, 5];
+  const clickStar = (starScore) => {
+    setRateScore(starScore);
+  };
 
   const handleMouseEnter = (index) => {
     setHoveredIndexes((prev) => {
@@ -78,6 +87,7 @@ export function ReviewCommentEdit({
         content: commentText,
         removeFileList,
         addFileList,
+        rateScore,
       })
       .then((res) => {
         toast({
@@ -125,9 +135,26 @@ export function ReviewCommentEdit({
   return (
     <Box>
       <Box>
-        <Box border={"1px solid black"} m={1}>
-          별점
-        </Box>
+        {/* 별점 */}
+        <Wrap>
+          {starArray.map((star) => (
+            <WrapItem key={star}>
+              {comment.rateScore >= 1 && (
+                <Image
+                  w={10}
+                  onClick={() => clickStar(star)}
+                  src={`/star/ic-star-${star <= rateScore ? "on" : "off"}.png`}
+                  alt={"star"}
+                  cursor={"pointer"}
+                />
+              )}
+            </WrapItem>
+          ))}
+          <WrapItem>
+            <Box>{rateScore}점</Box>
+          </WrapItem>
+        </Wrap>
+
         <Box>
           {/* 코멘트에 첨부되어있는 파일 */}
           <Flex>

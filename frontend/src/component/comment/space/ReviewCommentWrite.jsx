@@ -15,11 +15,16 @@ import {
 import { useContext, useEffect, useState } from "react";
 import { LoginContext } from "../../LoginProvider.jsx";
 import axios from "axios";
+import { Star } from "./Star.jsx";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faStar } from "@fortawesome/free-solid-svg-icons";
 
 export function ReviewCommentWrite({ spaceId, isProcessing, setIsProcessing }) {
   const [content, setContent] = useState("");
   const [isWriting, setIsWriting] = useState(false);
   const [files, setFiles] = useState([]);
+  // 별점
+  const [rateScore, setRateScore] = useState(0);
 
   const [member, setMember] = useState({});
   const [commentList, setCommentList] = useState([]);
@@ -31,7 +36,12 @@ export function ReviewCommentWrite({ spaceId, isProcessing, setIsProcessing }) {
     setIsProcessing(true);
 
     axios
-      .postForm("/api/comment/writeReview", { spaceId, content, files })
+      .postForm("/api/comment/writeReview", {
+        spaceId,
+        content,
+        files,
+        rateScore,
+      })
       .then((res) => {
         setContent("");
         toast({
@@ -89,6 +99,12 @@ export function ReviewCommentWrite({ spaceId, isProcessing, setIsProcessing }) {
         <Heading as="h2" size="xl" mb={6} color="gray.700">
           REVIEW {commentList.length} 개
         </Heading>
+        <Box>
+          <Box>
+            <FontAwesomeIcon icon={faStar} />
+            {commentList.length > 0 ? commentList[0].rateScoreAvg : ""}점
+          </Box>
+        </Box>
         <Spacer />
         <Tooltip
           label={"로그인 하세요"}
@@ -119,9 +135,9 @@ export function ReviewCommentWrite({ spaceId, isProcessing, setIsProcessing }) {
           </Flex>
 
           {/* 별점, 텍스트박스, 파일첨부 등록 버튼 */}
-          <Box border={"1px solid black"} m={1}>
-            별점
-          </Box>
+          {/* 별점 컴포넌트 */}
+          <Star setRateScore={setRateScore} rateScore={rateScore} />
+
           <Flex>
             <Box>
               <Box border={"1px solid green"}>

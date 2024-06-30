@@ -17,6 +17,8 @@ import {
   Textarea,
   useDisclosure,
   useToast,
+  Wrap,
+  WrapItem,
 } from "@chakra-ui/react";
 import { useContext, useEffect, useState } from "react";
 import { LoginContext } from "../../LoginProvider.jsx";
@@ -30,6 +32,9 @@ export function ReviewCommentItem({
   spaceId,
 }) {
   const [isEditing, setIsEditing] = useState(false);
+
+  // 별점
+  const starArray = [1, 2, 3, 4, 5];
 
   // 좋아요
   const [like, setLike] = useState({
@@ -97,7 +102,22 @@ export function ReviewCommentItem({
       {isEditing || (
         <Box>
           <Flex border={"1px solid black"} m={1}>
-            <Box>별점</Box>
+            {/* 별점 */}
+            <Wrap>
+              {starArray.map((star) => (
+                <WrapItem key={star}>
+                  {comment.rateScore >= 1 && (
+                    <Image
+                      w={10}
+                      src={`/star/ic-star-${star <= comment.rateScore ? "on" : "off"}.png`}
+                      alt={"star"}
+                    />
+                  )}
+                </WrapItem>
+              ))}
+            </Wrap>
+            <Box>{comment.rateScore}점</Box>
+
             <Spacer />
             {account.hasAccess(comment.memberId) && (
               <Menu>
@@ -129,6 +149,7 @@ export function ReviewCommentItem({
         </Box>
       )}
 
+      {/* 수정중일때 */}
       {isEditing && (
         <ReviewCommentEdit
           comment={comment}
