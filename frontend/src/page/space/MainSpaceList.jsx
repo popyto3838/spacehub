@@ -67,7 +67,7 @@ export function MainSpaceList() {
   useEffect(() => {
     // selectedType 변경 시 필터링
     if (selectedType) {
-      const filtered = allSpaces.filter(space => space.typeId === selectedType);
+      const filtered = allSpaces.filter(space => space.space.typeListId === selectedType);
       setFilteredSpaces(filtered);
     } else {
       setFilteredSpaces(allSpaces);
