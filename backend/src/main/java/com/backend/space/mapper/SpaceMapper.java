@@ -78,13 +78,10 @@ public interface SpaceMapper {
 
     @Select("""
             SELECT O.OPTION_LIST_ID, O.NAME, O.IS_ACTIVE, F.FILE_NAME
-                    FROM OPTION_LIST O
-                    LEFT JOIN FILE F ON O.OPTION_LIST_ID = F.PARENT_ID AND F.DIVISION = 'OPTION'
-                    WHERE O.OPTION_LIST_ID IN (
-                        SELECT OPTION_LIST_ID
-                        FROM SPACE_CONFIG
-                        WHERE SPACE_ID = #{spaceId}
-                    )
+            FROM OPTION_LIST O
+            INNER JOIN SPACE_CONFIG SC ON O.OPTION_LIST_ID = SC.OPTION_ID
+            LEFT JOIN FILE F ON O.OPTION_LIST_ID = F.PARENT_ID AND F.DIVISION = 'OPTION'
+            WHERE SC.SPACE_ID = #{spaceId}
             """)
     List<OptionListDTO> selectOptionListBySpaceId(Integer spaceId);
 

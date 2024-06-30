@@ -1,7 +1,6 @@
 package com.backend.space.controller;
 
 import com.backend.dto.FindResponseSpaceJoinDTO;
-import com.backend.dto.SpaceDTO;
 import com.backend.file.service.FileService;
 import com.backend.member.service.MemberService;
 import com.backend.space.domain.FindResponseSpaceMemberIdDto;
@@ -32,9 +31,8 @@ public class SpaceController {
                                       @RequestPart("optionList") String optionListStr,
                                       @RequestPart(value = "files", required = false) List<MultipartFile> files) throws IOException {
         Space space = objectMapper.readValue(spaceStr, Space.class);
-        List<Integer> optionList = objectMapper.readValue(optionListStr, new TypeReference<List<Integer>>() {});
-        System.out.println("space = " + space);
-        System.out.println("space.getMemberId() = " + space.getMemberId());
+        List<Integer> optionList = objectMapper.readValue(optionListStr, new TypeReference<List<Integer>>() {
+        });
         // SPACE CREATE
         spaceService.insertSpace(space);
 
@@ -69,7 +67,7 @@ public class SpaceController {
     }
 
     @GetMapping("/hostSpaceList/{memberId}")
-    public  ResponseEntity<List<FindResponseSpaceMemberIdDto>> selectAllbyMemberId(@PathVariable Integer memberId) {
+    public ResponseEntity<List<FindResponseSpaceMemberIdDto>> selectAllbyMemberId(@PathVariable Integer memberId) {
 
         List<FindResponseSpaceMemberIdDto> spaceHostIdDtos = spaceService.selectAllByMemberId(memberId);
         if (spaceHostIdDtos == null) {
@@ -78,4 +76,11 @@ public class SpaceController {
         return ResponseEntity.ok(spaceHostIdDtos);
     }
 
+    @PostMapping("/update/{spaceId}")
+    public void editSpace(@PathVariable Integer spaceId,
+                          @RequestPart("space") String spaceStr,
+                          @RequestPart("optionList") String optionListStr,
+                          @RequestPart(value = "files", required = false) List<MultipartFile> files) throws IOException {
+
+    }
 }
