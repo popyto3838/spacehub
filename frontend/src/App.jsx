@@ -26,7 +26,6 @@ import AdminDashboard from "./page/admin/AdminDashboard.jsx";
 import { MemberHostInfo } from "./page/member/MemberHostInfo.jsx";
 import { MemberHostPage } from "./page/member/MemberHostPage.jsx";
 import MyReservationList from "./page/member/MyReservationList.jsx";
-import HostSpaceList from "./page/member/HostSpaceList.jsx";
 import HostReservationList from "./page/member/HostReservationList.jsx";
 import MyFavoritesList from "./page/member/MyFavoritesList.jsx";
 import MyPaymentList from "./page/paid/MyPaymentList.jsx";
@@ -80,7 +79,6 @@ function App() {
           path: "member/myReservationList/:memberId",
           element: <MyReservationList />,
         },
-        { path: "member/hostSpaceList/:hostId", element: <HostSpaceList /> },
         {
           path: "member/hostReservationList/:spaceId",
           element: <HostReservationList />,

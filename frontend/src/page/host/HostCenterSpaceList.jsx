@@ -53,6 +53,9 @@ function HostCenterSpaceList() {
   const myPaymentPageFunc = (param) => {
     myPaymentPage("/member/hostReservationList/" + param);
   };
+  const mySpacePageFunc = (param) => {
+    myPaymentPage("/space/" + param);
+  };
 
   return (
     <Container maxW="container.xl" py={10}>
@@ -82,6 +85,7 @@ function HostCenterSpaceList() {
               <Th>공간 이름</Th>
               <Th>주소</Th>
               <Th>가격 (시간당)</Th>
+              <Th>예약 관리</Th>
               <Th>관리</Th>
             </Tr>
           </Thead>
@@ -91,15 +95,24 @@ function HostCenterSpaceList() {
                 <Td>{space.spaceId}</Td>
                 <Td
                   fontWeight="bold"
-                  onClick={() => {
-                    myPaymentPageFunc(space.spaceId);
-                  }}
                   _hover={{ cursor: "pointer", color: "blue.500" }}
+                  onClick={() => mySpacePageFunc(space.spaceId)}
                 >
                   >{space.title}
                 </Td>
                 <Td>{space.address}</Td>
                 <Td>₩{space.price.toLocaleString()}</Td>
+                <Td>
+                  <Button
+                    leftIcon={<FontAwesomeIcon icon={faEdit} />}
+                    colorScheme="blue"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => myPaymentPageFunc(space.spaceId)}
+                  >
+                    예약관리
+                  </Button>
+                </Td>
                 <Td>
                   <Button
                     leftIcon={<FontAwesomeIcon icon={faEdit} />}
