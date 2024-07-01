@@ -1,7 +1,16 @@
 import {
   Box,
   Button,
+  Flex,
   Heading,
+  Image,
+  Input,
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
   Spinner,
   Switch,
   Table,
@@ -10,12 +19,10 @@ import {
   Th,
   Thead,
   Tr,
+  useDisclosure,
   useToast,
-  Input,
-  Image,
-  Flex
 } from "@chakra-ui/react";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrashCan, faUpload } from "@fortawesome/free-solid-svg-icons";
@@ -24,8 +31,10 @@ export function SpaceTypeList() {
   const [isLoading, setIsLoading] = useState(true);
   const [typeLists, setTypeLists] = useState([]);
   const [typeStates, setTypeStates] = useState(new Map());
+  const [deleteFileId, setDeleteFileId] = useState(null);
   const toast = useToast();
   const fileInputRefs = useRef({});
+  const { isOpen, onClose, onOpen } = useDisclosure();
 
   useEffect(() => {
     axios
@@ -33,7 +42,9 @@ export function SpaceTypeList() {
       .then((res) => {
         const types = res.data;
         setTypeLists(types);
-        const newTypeStates = new Map(types.map((type) => [type.itemId, type.active]));
+        const newTypeStates = new Map(
+          types.map((type) => [type.itemId, type.active]),
+        );
         setTypeStates(newTypeStates);
       })
       .catch((err) => {
@@ -138,9 +149,11 @@ export function SpaceTypeList() {
     }
   };
 
-  const handleDeleteIcon = async (fileId) => {
+  const handleDeleteIcon = async () => {
+    if (deleteFileId === null) return;
+
     try {
-      await axios.delete(`/api/file/icon/${fileId}`);
+      await axios.delete(`/api/file/icon/${deleteFileId}`);
       const res = await axios.get(`/api/space/type/list`);
       setTypeLists(res.data);
       toast({
@@ -149,6 +162,7 @@ export function SpaceTypeList() {
         duration: 3000,
         isClosable: true,
       });
+      onClose(); // 모달 닫기
     } catch (error) {
       toast({
         title: "아이콘 삭제에 실패했습니다.",
@@ -157,7 +171,13 @@ export function SpaceTypeList() {
         duration: 3000,
         isClosable: true,
       });
+      onClose(); // 모달 닫기
     }
+  };
+
+  const openDeleteModal = (fileId) => {
+    setDeleteFileId(fileId);
+    onOpen();
   };
 
   if (isLoading) {
@@ -178,7 +198,9 @@ export function SpaceTypeList() {
           <Thead>
             <Tr>
               <Th width="10%">#</Th>
-              <Th width="50%" textAlign="center">옵션명</Th>
+              <Th width="50%" textAlign="center">
+                옵션명
+              </Th>
               <Th width="10%">활성화</Th>
               <Th width="20%">아이콘</Th>
               <Th width="10%">유형삭제</Th>
@@ -206,7 +228,12 @@ export function SpaceTypeList() {
                         objectFit="cover"
                         mr={2}
                       />
-                      <Button colorScheme="red" onClick={() => handleDeleteIcon(typeList.iconFile.fileId)}>
+                      <Button
+                        colorScheme="red"
+                        onClick={() =>
+                          openDeleteModal(typeList.iconFile.fileId)
+                        }
+                      >
                         <FontAwesomeIcon icon={faTrashCan} />
                       </Button>
                     </Flex>
@@ -216,11 +243,15 @@ export function SpaceTypeList() {
                         type="file"
                         onChange={(e) => handleIconUpload(e, typeList.itemId)}
                         display="none"
-                        ref={(el) => (fileInputRefs.current[typeList.itemId] = el)}
+                        ref={(el) =>
+                          (fileInputRefs.current[typeList.itemId] = el)
+                        }
                       />
                       <Button
                         leftIcon={<FontAwesomeIcon icon={faUpload} />}
-                        onClick={() => fileInputRefs.current[typeList.itemId].click()}
+                        onClick={() =>
+                          fileInputRefs.current[typeList.itemId].click()
+                        }
                       >
                         아이콘 업로드
                       </Button>
@@ -228,12 +259,34 @@ export function SpaceTypeList() {
                   )}
                 </Td>
                 <Td>
-                  <Button colorScheme="red" onClick={() => handleDeleteType(typeList.itemId)}>
+                  <Button
+                    colorScheme="red"
+                    onClick={() => openDeleteModal(typeList.iconFile.fileId)}
+                  >
                     <FontAwesomeIcon icon={faTrashCan} />
                   </Button>
                 </Td>
               </Tr>
             ))}
+            <Modal isOpen={isOpen} onClose={onClose}>
+              <ModalOverlay />
+              <ModalContent>
+                <ModalHeader>아이콘 이미지 삭제</ModalHeader>
+                <ModalBody>정말로 삭제하시겠습니까?</ModalBody>
+                <ModalFooter>
+                  <Button colorScheme={"gray"} onClick={onClose}>
+                    취소
+                  </Button>
+                  <Button
+                    ml={2}
+                    colorScheme={"blue"}
+                    onClick={handleDeleteIcon}
+                  >
+                    확인
+                  </Button>
+                </ModalFooter>
+              </ModalContent>
+            </Modal>
           </Tbody>
         </Table>
       </Box>
