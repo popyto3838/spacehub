@@ -1,6 +1,6 @@
 import axios from "axios";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import { ChakraProvider } from "@chakra-ui/react";
+import { ChakraProvider, extendTheme } from "@chakra-ui/react";
 import { Home } from "./page/Home.jsx";
 import { BoardWrite } from "./page/board/BoardWrite.jsx";
 import { MainPage } from "./page/MainPage.jsx";
@@ -31,7 +31,6 @@ import MyFavoritesList from "./page/member/MyFavoritesList.jsx";
 import MyPaymentList from "./page/paid/MyPaymentList.jsx";
 import HostCenterSpaceList from "./page/host/HostCenterSpaceList.jsx";
 
-
 // axios interceptor 설정
 axios.interceptors.request.use((config) => {
   // 토큰을 얻어서
@@ -43,6 +42,20 @@ axios.interceptors.request.use((config) => {
   }
   // config를 리턴
   return config;
+});
+
+const theme = extendTheme({
+  fonts: {
+    heading: "'Inter', sans-serif",
+    body: "'Inter', sans-serif",
+  },
+  styles: {
+    global: {
+      body: {
+        lineHeight: "1.8",
+      },
+    },
+  },
 });
 
 function App() {
@@ -95,7 +108,7 @@ function App() {
   return (
     <>
       <LoginProvider>
-        <ChakraProvider>
+        <ChakraProvider theme={theme}>
           <RouterProvider router={router} />
         </ChakraProvider>
       </LoginProvider>
