@@ -1,5 +1,6 @@
 import { createContext, useEffect, useState } from "react";
 import { jwtDecode } from "jwt-decode";
+import {useToast} from "@chakra-ui/react";
 
 
 export const LoginContext = createContext(null);
@@ -11,6 +12,8 @@ export function LoginProvider({ children }) {
   const [authority, setAuthority] = useState("");
   const [mobile, setMobile] = useState("");
   const [email, setEmail] = useState("");
+
+
 
   console.log(authority)
 
@@ -63,6 +66,8 @@ export function LoginProvider({ children }) {
     setAuthority(payload.scope.split(" "));
   }
   function logout() {
+    const toast =useToast();
+
     localStorage.removeItem("token");
     localStorage.removeItem("com.naver.nid.oauth.state_token");
     setExpired(0);
@@ -85,6 +90,12 @@ export function LoginProvider({ children }) {
     deleteAllCookies();
 
     sessionStorage.clear();
+
+    toast({
+      status : "success",
+      description : "로그아웃 되었습니다",
+      position: "top",
+    })
 
 
   }

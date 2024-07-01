@@ -160,7 +160,7 @@ const Header = () => {
               colorScheme="yellow"
               variant="outline"
               mr={4}
-              onClick={() => navigate(`/host/signup`)}
+              onClick={() => navigate(`/member/signup`)}
               fontSize="lg"
               h="4vh"
             >

@@ -200,12 +200,15 @@ export function MemberLogin() {
           />
         </FormControl>
 
+        <Box w="100%">
         <Checkbox
           isChecked={rememberMe}
           onChange={(e) => setRememberMe(e.target.checked)}
+
         >
           아이디와 패스워드 저장
         </Checkbox>
+        </Box>
 
         <Button w="100%" onClick={handleLogin} colorScheme="purple">
           로그인

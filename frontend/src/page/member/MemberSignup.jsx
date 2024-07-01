@@ -16,7 +16,6 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import TimerComponent from "./TimerComponent.jsx";
 import NaverLogin from "./NaverLogin.jsx";
-import { motion } from "framer-motion";
 import { FiMail, FiLock, FiUser, FiSmartphone } from "react-icons/fi";
 
 export function MemberSignup() {
@@ -25,6 +24,7 @@ export function MemberSignup() {
   const [nickname, setNickname] = useState("");
   const [passwordCheck, setPasswordCheck] = useState("");
   const [mobile, setMobile] = useState()
+  const [signUp, setSignUp] = useState(false)
 
   const [isLoading, setIsLoading] = useState(false);
   const [isCheckedEmail, setIsCheckedEmail] = useState(false);
@@ -33,11 +33,11 @@ export function MemberSignup() {
   const [verificationCode, setVerificationCode] = useState("");
   const [inputCode, setInputCode] = useState("");
   const [isCodeSent, setIsCodeSent] = useState(false);
+  const [isSmsCodeSent, setIsSmsCodeSent] = useState(false);
   const [expirationTime, setExpirationTime] = useState(null);
   const [capsLockWarning, setCapsLockWarning] = useState(false);
 
 
-  const MotionBox = motion(Box);
   const toast = useToast();
   const navigate = useNavigate();
 
@@ -154,6 +154,14 @@ export function MemberSignup() {
     isDisabled = true;
   }
 
+  if (isSmsCodeSent){
+    isDisabled =true;
+  }
+
+  if (!signUp){
+    isDisabled = true;
+  }
+
   const sendNumber = () => {
     console.log("email", email);
 
@@ -187,7 +195,7 @@ export function MemberSignup() {
         alert("인증번호 발송");
         setVerificationCode(response.data.verificationCode);
         setExpirationTime(response.data.expirationTime);
-        setIsCodeSent(true);
+        setIsSmsCodeSent(true);
       })
       .catch((error) => {
         console.error("Error sending verification code:", error);
@@ -199,8 +207,8 @@ export function MemberSignup() {
   const confirmNumberMobile = () => {
     if (inputCode == verificationCode) {
       alert("인증되었습니다.");
-      setIsCodeSent(false);
-
+      setIsSmsCodeSent(false);
+      setSignUp(true);
 
     } else {
       alert("인증에 실패했습니다");
@@ -242,9 +250,10 @@ export function MemberSignup() {
                 bgGradient="linear(to-r, #667eea, #764ba2)"
                 bgClip="text"
                 fontWeight="extrabold"
+                color="black"
 
               >
-                Create Your Account
+                회원가입
               </Heading>
 
               <FormControl isRequired>
@@ -271,23 +280,24 @@ export function MemberSignup() {
                       isDisabled={!isValidEmail || email.trim().length === 0}
                       onClick={handleCheckEmail}
                     >
-                      Check
+                      중복확인
                     </Button>
                   </InputRightElement>
                 </InputGroup>
                 {!isCheckedEmail && (
-                  <FormHelperText color="red.500">Please check email availability.</FormHelperText>
+                  <FormHelperText color="red.500">유효한 이메일을 입력해주세요</FormHelperText>
                 )}
               </FormControl>
 
+              {isCheckedEmail && (
               <Button
                 leftIcon={<FiMail />}
                 colorScheme="purple"
                 onClick={sendNumber}
                 isFullWidth
               >
-                Get Verification Code
-              </Button>
+                이메일 인증코드 받기
+              </Button>)}
 
               {isCodeSent && (
                 <Box
@@ -333,13 +343,11 @@ export function MemberSignup() {
                 onClick={sendNumberMobile}
                 isFullWidth
               >
-                Get SMS Code
+               SMS 인증코드 받기
               </Button>
 
-              {isCodeSent && (
-                <Box
-
-                >
+              {isSmsCodeSent && (
+                <Box>
                   <VStack spacing={4}>
                     <InputGroup>
                       <Input
@@ -413,7 +421,7 @@ export function MemberSignup() {
                       isDisabled={nickname.trim().length === 0}
                       onClick={handleCheckNickName}
                     >
-                      Check
+                      중복확인
                     </Button>
                   </InputRightElement>
                 </InputGroup>

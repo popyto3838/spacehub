@@ -106,7 +106,7 @@ export function MemberHostInfo(){
       .then((res)=>{
         account.login(res.data.token);
         console.log(res.data.token);
-        navigate("/space/register")
+        navigate("/host/dashboard")
       })
 
 
