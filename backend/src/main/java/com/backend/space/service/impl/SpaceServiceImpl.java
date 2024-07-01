@@ -1,6 +1,7 @@
 package com.backend.space.service.impl;
 
 import com.backend.dto.FindResponseSpaceJoinDTO;
+import com.backend.dto.OptionListDTO;
 import com.backend.file.domain.File;
 import com.backend.file.mapper.FileMapper;
 import com.backend.file.service.FileService;
@@ -9,7 +10,6 @@ import com.backend.space.domain.FindResponseSpaceMemberIdDto;
 import com.backend.space.domain.Space;
 import com.backend.space.mapper.SpaceMapper;
 import com.backend.space.service.SpaceService;
-import com.backend.dto.OptionListDTO;
 import edu.emory.mathcs.backport.java.util.Collections;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -104,6 +104,12 @@ public class SpaceServiceImpl implements SpaceService {
                 firstFile.setFileName(fileUrl); // 파일 이름 대신 URL 설정
                 dto.setSpaceImgFiles(Collections.singletonList(firstFile)); // 첫 번째 파일만 추가
             }
+            // 평균 별점 설정 (반올림하여 0.5단위 계산)
+            Double averageRating = spaceMapper.getAverageRatingBySpaceId(space.getSpaceId());
+            if (averageRating != null) {
+                averageRating = Math.round(averageRating * 20) / 20.0;
+            }
+            dto.setAverageRating(averageRating);
 
             spaceWithThumnailList.add(dto);
         }

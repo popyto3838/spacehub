@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Button,
@@ -10,14 +10,14 @@ import {
   Image,
   Text,
   useColorModeValue,
-  VStack
+  VStack,
 } from "@chakra-ui/react";
 import axios from "axios";
-import {useNavigate} from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import SpaceCard from "./SpaceCard.jsx";
-import {motion} from "framer-motion";
-import {FaChevronDown, FaSearch} from "react-icons/fa";
-import {Icon} from "@chakra-ui/icons";
+import { motion } from "framer-motion";
+import { FaChevronDown, FaSearch } from "react-icons/fa";
+import { Icon } from "@chakra-ui/icons";
 
 export function MainSpaceList() {
   const [visibleSpaces, setVisibleSpaces] = useState(10); // 초기 표시할 공간 수
@@ -39,35 +39,38 @@ export function MainSpaceList() {
   const MotionBox = motion(Box);
 
   useEffect(() => {
-    axios.get('/api/space/type/list')
-      .then(response => {
+    axios
+      .get("/api/space/type/list")
+      .then((response) => {
         setSpaceTypes(response.data);
         if (response.data.length > visibleTypes) {
           setShowMoreTypes(true);
         }
       })
-      .catch(error => {
-        console.error('공간 유형 정보를 불러오는데 실패하였습니다:', error);
+      .catch((error) => {
+        console.error("공간 유형 정보를 불러오는데 실패하였습니다:", error);
       });
 
-    axios.get('/api/space/list')
-      .then(response => {
+    axios
+      .get("/api/space/list")
+      .then((response) => {
         setAllSpaces(response.data);
         setFilteredSpaces(response.data); // 초기에는 모든 공간 데이터를 표시
         if (response.data.length > visibleSpaces) {
           setShowMoreSpaces(true);
         }
       })
-      .catch(error => {
-        console.error('공간 데이터를 불러오는데 실패하였습니다:', error);
+      .catch((error) => {
+        console.error("공간 데이터를 불러오는데 실패하였습니다:", error);
       });
-
   }, [visibleSpaces, visibleTypes]);
 
   useEffect(() => {
     // selectedType 변경 시 필터링
     if (selectedType) {
-      const filtered = allSpaces.filter(space => space.space.typeListId === selectedType);
+      const filtered = allSpaces.filter(
+        (space) => space.space.typeListId === selectedType,
+      );
       setFilteredSpaces(filtered);
     } else {
       setFilteredSpaces(allSpaces);
@@ -75,11 +78,11 @@ export function MainSpaceList() {
   }, [selectedType, allSpaces]);
 
   const handleShowMoreSpaces = () => {
-    setVisibleSpaces(prevVisibleSpaces => prevVisibleSpaces + 10);
+    setVisibleSpaces((prevVisibleSpaces) => prevVisibleSpaces + 10);
   };
 
   const handleShowMoreTypes = () => {
-    setVisibleTypes(prevVisibleTypes => prevVisibleTypes + 10);
+    setVisibleTypes((prevVisibleTypes) => prevVisibleTypes + 10);
   };
 
   function handleCardClick(spaceId) {
@@ -87,8 +90,8 @@ export function MainSpaceList() {
   }
 
   const handleClickType = (typeId) => {
-    setSelectedType(prevTypeId => (prevTypeId === typeId ? null : typeId))
-  }
+    setSelectedType((prevTypeId) => (prevTypeId === typeId ? null : typeId));
+  };
 
   return (
     <>
@@ -104,15 +107,21 @@ export function MainSpaceList() {
               </Text>
             </Box>
 
-            <Grid templateColumns="repeat(auto-fill, minmax(180px, 1fr))" gap={8} w="full">
-              {spaceTypes.slice(0, visibleTypes).map(type => (
+            <Grid
+              templateColumns="repeat(auto-fill, minmax(180px, 1fr))"
+              gap={8}
+              w="full"
+            >
+              {spaceTypes.slice(0, visibleTypes).map((type) => (
                 <GridItem key={type.itemId} w="100%">
                   <MotionBox
-                    whileHover={{y: -5}}
-                    transition={{duration: 0.3}}
+                    whileHover={{ y: -5 }}
+                    transition={{ duration: 0.3 }}
                     onClick={() => handleClickType(type.itemId)}
                     cursor="pointer"
-                    bg={selectedType === type.itemId ? accentColor : cardBgColor}
+                    bg={
+                      selectedType === type.itemId ? accentColor : cardBgColor
+                    }
                     color={selectedType === type.itemId ? "white" : textColor}
                     borderRadius="xl"
                     boxShadow="lg"
@@ -131,14 +140,19 @@ export function MainSpaceList() {
                         overflow="hidden"
                       >
                         <Image
-                          src={type.iconFile?.fileName || 'http://via.placeholder.com/1000.jpg'}
+                          src={
+                            type.iconFile?.fileName ||
+                            "http://via.placeholder.com/1000.jpg"
+                          }
                           alt={type.name}
                           objectFit="cover"
                           w="full"
                           h="full"
                         />
                       </Box>
-                      <Text fontWeight="bold" fontSize="lg">{type.name}</Text>
+                      <Text fontWeight="bold" fontSize="lg">
+                        {type.name}
+                      </Text>
                     </VStack>
                   </MotionBox>
                 </GridItem>
@@ -151,7 +165,7 @@ export function MainSpaceList() {
                 colorScheme="teal"
                 size="lg"
                 fontWeight="bold"
-                leftIcon={<Icon as={FaChevronDown}/>}
+                leftIcon={<Icon as={FaChevronDown} />}
               >
                 더 많은 유형 보기
               </Button>
@@ -162,23 +176,32 @@ export function MainSpaceList() {
                 <Heading as="h2" size="xl" color={textColor}>
                   공간 목록
                 </Heading>
-                <Icon as={FaSearch} boxSize={6} color={accentColor}/>
+                <Icon as={FaSearch} boxSize={6} color={accentColor} />
               </Flex>
-              <Grid templateColumns="repeat(auto-fill, minmax(280px, 1fr))" gap={8}>
-                {filteredSpaces.slice(0, visibleSpaces).map(({space, spaceImgFiles}) => (
-                  <GridItem key={space.spaceId}>
-                    <MotionBox
-                      whileHover={{scale: 1.05}}
-                      transition={{duration: 0.2}}
-                      onClick={() => handleCardClick(space.spaceId)}
-                    >
-                      <SpaceCard
-                        space={space}
-                        thumbnailPath={spaceImgFiles && spaceImgFiles.length > 0 ? spaceImgFiles[0].fileName : null}
-                      />
-                    </MotionBox>
-                  </GridItem>
-                ))}
+              <Grid
+                templateColumns="repeat(auto-fill, minmax(280px, 1fr))"
+                gap={8}
+              >
+                {filteredSpaces
+                  .slice(0, visibleSpaces)
+                  .map(({ space, spaceImgFiles, averageRating }) => (
+                    <GridItem key={space.spaceId}>
+                      <MotionBox
+                        whileHover={{ scale: 1.05 }}
+                        transition={{ duration: 0.2 }}
+                        onClick={() => handleCardClick(space.spaceId)}
+                      >
+                        <SpaceCard
+                          space={{ ...space, averageRating }}
+                          thumbnailPath={
+                            spaceImgFiles && spaceImgFiles.length > 0
+                              ? spaceImgFiles[0].fileName
+                              : null
+                          }
+                        />
+                      </MotionBox>
+                    </GridItem>
+                  ))}
               </Grid>
             </Box>
 
@@ -188,7 +211,7 @@ export function MainSpaceList() {
                 colorScheme="teal"
                 size="lg"
                 fontWeight="bold"
-                leftIcon={<Icon as={FaChevronDown}/>}
+                leftIcon={<Icon as={FaChevronDown} />}
               >
                 더 많은 공간 보기
               </Button>

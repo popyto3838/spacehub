@@ -17,4 +17,7 @@ public class FindResponseSpaceJoinDTO {
     private List<File> spaceImgFiles;
     // Option 이미지 FILE 테이블과 OPTION_LIST 테이블
     private List<OptionListDTO> optionList;
+
+    // 별점
+    private Double averageRating;
 }

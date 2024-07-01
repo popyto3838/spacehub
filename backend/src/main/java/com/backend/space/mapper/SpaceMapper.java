@@ -117,4 +117,13 @@ public interface SpaceMapper {
             WHERE SPACE_ID = #{spaceId}
             """)
     int deleteSpaceConfigBySpaceId(Integer spaceId);
+
+
+    @Select("""
+            SELECT AVG(RATE_SCORE)
+            FROM COMMENT
+            WHERE PARENT_ID = #{spaceId}
+            AND DIVISION = 'REVIEW'
+            """)
+    Double getAverageRatingBySpaceId(int spaceId);
 }
