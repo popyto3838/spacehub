@@ -261,7 +261,7 @@ export function SpaceTypeList() {
                 <Td>
                   <Button
                     colorScheme="red"
-                    onClick={() => openDeleteModal(typeList.iconFile.fileId)}
+                    onClick={() => handleDeleteType(typeList.itemId)}
                   >
                     <FontAwesomeIcon icon={faTrashCan} />
                   </Button>
