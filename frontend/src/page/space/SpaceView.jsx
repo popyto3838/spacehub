@@ -285,14 +285,23 @@ function SpaceView() {
           </Box>
 
           <Flex direction={{ base: "column", lg: "row" }} gap={12}>
-            <Box flex={2}>
+            <Box flex={3}>
+              {" "}
+              {/* DatePicker와의 비율 조정 */}
               <Box
                 position="relative"
                 mb={8}
                 className="image-slider"
                 overflow="hidden"
+                width="100%"
+                paddingTop="56.25%" // 16:9 비율
               >
                 <Flex
+                  position="absolute"
+                  top={0}
+                  left={0}
+                  right={0}
+                  bottom={0}
                   transition="transform 0.3s ease-in-out"
                   transform={`translateX(-${currentImageIndex * 100}%)`}
                 >
@@ -302,7 +311,7 @@ function SpaceView() {
                       src={img}
                       alt={`Space image ${index + 1}`}
                       w="100%"
-                      h="500px"
+                      h="100%"
                       objectFit="cover"
                       flexShrink={0}
                     />
@@ -329,7 +338,6 @@ function SpaceView() {
                   size="lg"
                 />
               </Box>
-
               <Flex align="center" mb={12} id="thumbnail-container">
                 <IconButton
                   icon={<ChevronLeftIcon />}
@@ -382,7 +390,6 @@ function SpaceView() {
                   }
                 />
               </Flex>
-
               <HStack justify="center" spacing={6} mb={12}>
                 {sections.map((section) => (
                   <Link
@@ -407,7 +414,6 @@ function SpaceView() {
                   </Link>
                 ))}
               </HStack>
-
               <VStack spacing={16} align="stretch">
                 <Box id="introduceArea" p={8} bg="gray.50" borderRadius="lg">
                   <Heading as="h2" size="xl" mb={6} color="gray.700">
