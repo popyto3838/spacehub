@@ -41,6 +41,7 @@ export function ReviewCommentList({ spaceId, isProcessing, setIsProcessing }) {
       ))}
 
       {/* 페이징 */}
+      {/* 페이징 작업 */}
       <Center>
         {pageInfo.prevPageNumber && (
           <Box>
