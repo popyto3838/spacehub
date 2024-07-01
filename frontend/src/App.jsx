@@ -31,6 +31,7 @@ import MyFavoritesList from "./page/member/MyFavoritesList.jsx";
 import MyPaymentList from "./page/paid/MyPaymentList.jsx";
 import HostCenterSpaceList from "./page/host/HostCenterSpaceList.jsx";
 
+
 // axios interceptor 설정
 axios.interceptors.request.use((config) => {
   // 토큰을 얻어서

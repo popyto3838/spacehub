@@ -16,7 +16,6 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import TimerComponent from "./TimerComponent.jsx";
 import NaverLogin from "./NaverLogin.jsx";
-import { motion } from "framer-motion";
 import { FiMail, FiLock, FiUser, FiSmartphone } from "react-icons/fi";
 
 export function MemberSignup() {
@@ -25,6 +24,7 @@ export function MemberSignup() {
   const [nickname, setNickname] = useState("");
   const [passwordCheck, setPasswordCheck] = useState("");
   const [mobile, setMobile] = useState()
+  const [signUp, setSignUp] = useState(false)
 
   const [isLoading, setIsLoading] = useState(false);
   const [isCheckedEmail, setIsCheckedEmail] = useState(false);
@@ -33,11 +33,12 @@ export function MemberSignup() {
   const [verificationCode, setVerificationCode] = useState("");
   const [inputCode, setInputCode] = useState("");
   const [isCodeSent, setIsCodeSent] = useState(false);
+  const [isSmsCodeSent, setIsSmsCodeSent] = useState(false);
   const [expirationTime, setExpirationTime] = useState(null);
   const [capsLockWarning, setCapsLockWarning] = useState(false);
+  const [isCodeSentEmail, setIsCodeSentEmail] = useState(false);
+  const [isCodeSentPhone, setIsCodeSentPhone] = useState(false);
 
-
-  const MotionBox = motion(Box);
   const toast = useToast();
   const navigate = useNavigate();
 
@@ -104,6 +105,9 @@ export function MemberSignup() {
           position: "top",
         });
         setIsCheckedEmail(true);
+      })
+      .finally(() => {
+        setIsCodeSentEmail(false);
       });
   }
 
@@ -154,6 +158,14 @@ export function MemberSignup() {
     isDisabled = true;
   }
 
+  if (isSmsCodeSent){
+    isDisabled =true;
+  }
+
+  if (!signUp){
+    isDisabled = true;
+  }
+
   const sendNumber = () => {
     console.log("email", email);
 
@@ -174,6 +186,7 @@ export function MemberSignup() {
     if (inputCode == verificationCode) {
       alert("인증되었습니다.");
       setIsCodeSent(false);
+      setIsCodeSentEmail(true);
     } else {
       alert("인증에 실패했습니다");
     }
@@ -187,7 +200,8 @@ export function MemberSignup() {
         alert("인증번호 발송");
         setVerificationCode(response.data.verificationCode);
         setExpirationTime(response.data.expirationTime);
-        setIsCodeSent(true);
+        setIsSmsCodeSent(true);
+
       })
       .catch((error) => {
         console.error("Error sending verification code:", error);
@@ -199,8 +213,9 @@ export function MemberSignup() {
   const confirmNumberMobile = () => {
     if (inputCode == verificationCode) {
       alert("인증되었습니다.");
-      setIsCodeSent(false);
-
+      setIsSmsCodeSent(false);
+      setIsCodeSentPhone(true);
+      setSignUp(true);
 
     } else {
       alert("인증에 실패했습니다");
@@ -237,18 +252,19 @@ export function MemberSignup() {
             <VStack spacing={6} align="stretch">
               <Heading
                 as="h2"
-                size="xl"
+                fontSize="24px"
                 textAlign="center"
                 bgGradient="linear(to-r, #667eea, #764ba2)"
                 bgClip="text"
                 fontWeight="extrabold"
+                color="black"
 
               >
-                Create Your Account
+                회원가입
               </Heading>
 
               <FormControl isRequired>
-                <FormLabel>Email</FormLabel>
+                <FormLabel>이메일</FormLabel>
                 <InputGroup>
                   <InputLeftElement pointerEvents="none">
                     <FiMail color="gray.300" />
@@ -268,26 +284,28 @@ export function MemberSignup() {
                       h="1.75rem"
                       size="sm"
                       colorScheme="purple"
-                      isDisabled={!isValidEmail || email.trim().length === 0}
+                      isDisabled={!isValidEmail || email.trim().length === 0 || isCheckedEmail}
                       onClick={handleCheckEmail}
                     >
-                      Check
+                      중복확인
                     </Button>
                   </InputRightElement>
                 </InputGroup>
                 {!isCheckedEmail && (
-                  <FormHelperText color="red.500">Please check email availability.</FormHelperText>
+                  <FormHelperText color="red.500">유효한 이메일을 입력해주세요</FormHelperText>
                 )}
               </FormControl>
 
+              {isCheckedEmail && (
               <Button
                 leftIcon={<FiMail />}
                 colorScheme="purple"
                 onClick={sendNumber}
                 isFullWidth
+                isDisabled={isCodeSentEmail}
               >
-                Get Verification Code
-              </Button>
+                이메일 인증코드 받기
+              </Button>)}
 
               {isCodeSent && (
                 <Box
@@ -296,12 +314,12 @@ export function MemberSignup() {
                   <VStack spacing={4}>
                     <InputGroup>
                       <Input
-                        placeholder="Enter verification code"
+                        placeholder="인증번호를 입력해주세요"
                         onChange={(e) => setInputCode(e.target.value)}
                       />
                       <InputRightElement width="4.5rem">
                         <Button h="1.75rem" size="sm" onClick={confirmNumber}>
-                          Verify
+                          확인
                         </Button>
                       </InputRightElement>
                     </InputGroup>
@@ -311,7 +329,7 @@ export function MemberSignup() {
               )}
 
               <FormControl isRequired>
-                <FormLabel>Phone Number</FormLabel>
+                <FormLabel>전화번호</FormLabel>
                 <InputGroup>
                   <InputLeftElement pointerEvents="none">
                     <FiSmartphone color="gray.300" />
@@ -332,14 +350,13 @@ export function MemberSignup() {
                 colorScheme="purple"
                 onClick={sendNumberMobile}
                 isFullWidth
+                isDisabled={isCodeSentPhone}
               >
-                Get SMS Code
+               SMS 인증코드 받기
               </Button>
 
-              {isCodeSent && (
-                <Box
-
-                >
+              {isSmsCodeSent && (
+                <Box>
                   <VStack spacing={4}>
                     <InputGroup>
                       <Input
@@ -348,7 +365,7 @@ export function MemberSignup() {
                       />
                       <InputRightElement width="4.5rem">
                         <Button h="1.75rem" size="sm" onClick={confirmNumberMobile}>
-                          Verify
+                          확인
                         </Button>
                       </InputRightElement>
                     </InputGroup>
@@ -358,7 +375,7 @@ export function MemberSignup() {
               )}
 
               <FormControl isRequired>
-                <FormLabel>Password</FormLabel>
+                <FormLabel>비밀번호</FormLabel>
                 <InputGroup>
                   <InputLeftElement pointerEvents="none">
                     <FiLock color="gray.300" />
@@ -371,12 +388,12 @@ export function MemberSignup() {
                   />
                 </InputGroup>
                 {capsLockWarning && (
-                  <FormHelperText color="red.500">Caps Lock is ON</FormHelperText>
+                  <FormHelperText color="red.500">Caps Lock이 켜져있습니다.</FormHelperText>
                 )}
               </FormControl>
 
               <FormControl isRequired>
-                <FormLabel>Confirm Password</FormLabel>
+                <FormLabel>비밀번호 확인</FormLabel>
                 <InputGroup>
                   <InputLeftElement pointerEvents="none">
                     <FiLock color="gray.300" />
@@ -393,7 +410,7 @@ export function MemberSignup() {
               </FormControl>
 
               <FormControl isRequired>
-                <FormLabel>Nickname</FormLabel>
+                <FormLabel>닉네임</FormLabel>
                 <InputGroup>
                   <InputLeftElement pointerEvents="none">
                     <FiUser color="gray.300" />
@@ -413,12 +430,12 @@ export function MemberSignup() {
                       isDisabled={nickname.trim().length === 0}
                       onClick={handleCheckNickName}
                     >
-                      Check
+                      중복확인
                     </Button>
                   </InputRightElement>
                 </InputGroup>
                 {!isCheckedNickName && (
-                  <FormHelperText color="red.500">Please check nickname availability</FormHelperText>
+                  <FormHelperText color="red.500">닉네임 중복 확인을 해주세요</FormHelperText>
                 )}
               </FormControl>
 
@@ -434,7 +451,7 @@ export function MemberSignup() {
                   bgGradient: "linear(to-r, #764ba2, #667eea)",
                 }}
               >
-                Sign Up
+                회원가입
               </Button>
 
               <Divider />
