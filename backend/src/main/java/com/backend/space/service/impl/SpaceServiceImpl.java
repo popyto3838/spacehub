@@ -82,6 +82,13 @@ public class SpaceServiceImpl implements SpaceService {
         }).collect(Collectors.toList());
         spaceDto.setOptionList(options);
 
+        // 평균 별점 설정
+        Double averageRating = spaceMapper.getAverageRatingBySpaceId(spaceId);
+        if (averageRating != null) {
+            averageRating = Math.round(averageRating * 20) / 20.0; // 반올림하여 0.5 단위 계산
+        }
+        spaceDto.setAverageRating(averageRating);
+
         return spaceDto;
     }
 
