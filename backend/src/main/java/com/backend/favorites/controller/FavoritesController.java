@@ -33,6 +33,7 @@ public class FavoritesController {
 
     @GetMapping("/myFavoritesList/{memberId}")
     public ResponseEntity<List<Favorites>> selectAllByMemberId(@PathVariable("memberId") Integer memberId) {
+        log.info("memberId: " + memberId);
         List<Favorites> list = favoritesService.selectAllByMemberId(memberId);
         if (list == null) {
             return ResponseEntity.notFound().build();
