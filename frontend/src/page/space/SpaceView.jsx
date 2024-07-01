@@ -419,9 +419,13 @@ function SpaceView() {
                   <Heading as="h2" size="xl" mb={6} color="gray.700">
                     공간소개
                   </Heading>
-                  <Text fontSize="lg" mb={8} lineHeight="tall">
-                    {spaceDetails.introduce}
-                  </Text>
+                  {/*<Text fontSize="lg" mb={8} lineHeight="tall">*/}
+                  {/*  {spaceDetails.introduce}*/}
+                  {/*</Text>*/}
+                  <div
+                    className="quill-content"
+                    dangerouslySetInnerHTML={{ __html: spaceDetails.introduce }}
+                  ></div>
                   <Grid
                     templateColumns="repeat(3, 1fr)"
                     gap={8}
@@ -470,10 +474,14 @@ function SpaceView() {
                   <Heading as="h2" size="xl" mb={6} color="gray.700">
                     시설안내
                   </Heading>
-                  <Text fontSize="lg" mb={8} lineHeight="tall">
-                    {spaceDetails.facility}
-                  </Text>
-                  <Heading as="h3" size="lg" mb={6} color="gray.600">
+                  {/*<Text fontSize="lg" mb={8} lineHeight="tall">*/}
+                  {/*  {spaceDetails.facility}*/}
+                  {/*</Text>*/}
+                  <div
+                    className="quill-content"
+                    dangerouslySetInnerHTML={{ __html: spaceDetails.facility }}
+                  ></div>
+                  <Heading as="h3" size="lg" mb={6} mt={6} color="gray.600">
                     제공 편의시설
                   </Heading>
                   <Grid
@@ -513,9 +521,13 @@ function SpaceView() {
                   <Heading as="h2" size="xl" mb={6} color="gray.700">
                     유의사항
                   </Heading>
-                  <Text fontSize="lg" lineHeight="tall">
-                    {spaceDetails.notice}
-                  </Text>
+                  {/*<Text fontSize="lg" lineHeight="tall">*/}
+                  {/*  {spaceDetails.notice}*/}
+                  {/*</Text>*/}
+                  <div
+                    className="quill-content"
+                    dangerouslySetInnerHTML={{ __html: spaceDetails.notice }}
+                  ></div>
                 </Box>
                 <Divider />
                 <Box id="QA" p={8}>

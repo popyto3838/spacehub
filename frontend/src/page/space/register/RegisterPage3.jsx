@@ -1,42 +1,41 @@
 import React from "react";
-import {Box, FormControl, FormLabel, Textarea} from "@chakra-ui/react";
+import { Box, FormControl, FormLabel } from "@chakra-ui/react";
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css"; // import styles
 
-const RegisterPage3 = ({formData, setFormData}) => {
-  const handleIntroChange = (e) => {
-    setFormData({...formData, introduce: e.target.value});
+const RegisterPage3 = ({ formData, setFormData }) => {
+  const handleIntroChange = (value) => {
+    setFormData({ ...formData, introduce: value });
   };
 
-  const handleFacilityChange = (e) => {
-    setFormData({...formData, facility: e.target.value});
+  const handleFacilityChange = (value) => {
+    setFormData({ ...formData, facility: value });
   };
 
-  const handleNoticeChange = (e) => {
-    setFormData({...formData, notice: e.target.value});
+  const handleNoticeChange = (value) => {
+    setFormData({ ...formData, notice: value });
   };
 
   return (
     <Box>
       <FormControl mb={4}>
         <FormLabel htmlFor="space-intro">공간 소개</FormLabel>
-        <Textarea
-          id="space-intro"
-          value={(formData && formData.introduce) || ''}
+        <ReactQuill
+          value={(formData && formData.introduce) || ""}
           onChange={handleIntroChange}
         />
       </FormControl>
       <FormControl mb={4}>
         <FormLabel htmlFor="space-facility">시설 안내</FormLabel>
-        <Textarea
-          id="space-facility"
-          value={(formData && formData.facility) || ''}
+        <ReactQuill
+          value={(formData && formData.facility) || ""}
           onChange={handleFacilityChange}
         />
       </FormControl>
       <FormControl mb={4}>
         <FormLabel htmlFor="space-notice">유의 사항</FormLabel>
-        <Textarea
-          id="space-notice"
-          value={(formData && formData.notice) || ''}
+        <ReactQuill
+          value={(formData && formData.notice) || ""}
           onChange={handleNoticeChange}
         />
       </FormControl>

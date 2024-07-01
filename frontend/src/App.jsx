@@ -30,6 +30,7 @@ import HostReservationList from "./page/member/HostReservationList.jsx";
 import MyFavoritesList from "./page/member/MyFavoritesList.jsx";
 import MyPaymentList from "./page/paid/MyPaymentList.jsx";
 import HostCenterSpaceList from "./page/host/HostCenterSpaceList.jsx";
+import "../public/css/ReactQuill.css";
 
 // axios interceptor 설정
 axios.interceptors.request.use((config) => {
