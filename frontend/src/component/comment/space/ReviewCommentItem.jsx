@@ -17,14 +17,24 @@ import {
   Textarea,
   useDisclosure,
   useToast,
+  Wrap,
+  WrapItem,
 } from "@chakra-ui/react";
 import { useContext, useEffect, useState } from "react";
 import { LoginContext } from "../../LoginProvider.jsx";
 import { ReviewCommentEdit } from "./ReviewCommentEdit.jsx";
 import axios from "axios";
 
-export function ReviewCommentItem({ comment, isProcessing, setIsProcessing }) {
+export function ReviewCommentItem({
+  comment,
+  isProcessing,
+  setIsProcessing,
+  spaceId,
+}) {
   const [isEditing, setIsEditing] = useState(false);
+
+  // 별점
+  const starArray = [1, 2, 3, 4, 5];
 
   // 좋아요
   const [like, setLike] = useState({
@@ -34,6 +44,7 @@ export function ReviewCommentItem({ comment, isProcessing, setIsProcessing }) {
   const [isLikeProcessing, setIsLikeProcessing] = useState(false);
 
   const [member, setMember] = useState({});
+
   const account = useContext(LoginContext);
   const toast = useToast();
   const { isOpen, onClose, onOpen } = useDisclosure();
@@ -82,48 +93,70 @@ export function ReviewCommentItem({ comment, isProcessing, setIsProcessing }) {
           w={"50px"}
           src={member.profileImage}
         />
-        <Box fontSize={"2xl"}>{member.nickname}</Box>
+        <Box fontSize={"2xl"}>{comment.nickname}</Box>
         <Spacer />
         <Box>좋아요</Box>
       </Flex>
 
-      {/* 텍스트박스, 등록 버튼 */}
+      {/* 별점, 텍스트박스, 등록 버튼 */}
       {isEditing || (
         <Box>
           <Flex border={"1px solid black"} m={1}>
-            <Box>별점</Box>
+            {/* 별점 */}
+            <Wrap>
+              {starArray.map((star) => (
+                <WrapItem key={star}>
+                  {comment.rateScore >= 1 && (
+                    <Image
+                      w={10}
+                      src={`/star/ic-star-${star <= comment.rateScore ? "on" : "off"}.png`}
+                      alt={"star"}
+                    />
+                  )}
+                </WrapItem>
+              ))}
+            </Wrap>
+            <Box>{comment.rateScore}점</Box>
+
             <Spacer />
-            <Menu>
-              <MenuButton m={1} fontSize={"2xl"}>
-                ...
-              </MenuButton>
-              <MenuList minWidth={"50px"}>
-                <MenuItem onClick={() => setIsEditing(!isEditing)}>
-                  수정
-                </MenuItem>
-                <MenuItem onClick={onOpen}>삭제</MenuItem>
-              </MenuList>
-            </Menu>
+            {account.hasAccess(comment.memberId) && (
+              <Menu>
+                <MenuButton m={1} fontSize={"2xl"}>
+                  ...
+                </MenuButton>
+                <MenuList minWidth={"50px"}>
+                  <MenuItem onClick={() => setIsEditing(!isEditing)}>
+                    수정
+                  </MenuItem>
+                  <MenuItem onClick={onOpen}>삭제</MenuItem>
+                </MenuList>
+              </Menu>
+            )}
           </Flex>
-          <Flex>
-            <Textarea
-              h={"80px"}
-              readOnly={true}
-              value={comment.content}
-              placeholder={"플레이스 홀더~"}
-              isDisabled={!account.isLoggedIn()}
-            />
-          </Flex>
+          <Box>
+            {/* 수정중이 아닐때는 첨부한 이미지 파일이 보임*/}
+            <Flex>
+              {comment.commentFilesLists &&
+                comment.commentFilesLists.map((file) => (
+                  <Flex border={"1px solid green"} key={file.fileName}>
+                    <Image w={150} src={file.src} />
+                  </Flex>
+                ))}
+            </Flex>
+            <Textarea h={"80px"} readOnly={true} value={comment.content} />
+          </Box>
           <Box>{comment.inputDt}</Box>
         </Box>
       )}
 
+      {/* 수정중일때 */}
       {isEditing && (
         <ReviewCommentEdit
           comment={comment}
           isProcessing={isProcessing}
           setIsProcessing={setIsProcessing}
           setIsEditing={setIsEditing}
+          spaceId={spaceId}
         />
       )}
 

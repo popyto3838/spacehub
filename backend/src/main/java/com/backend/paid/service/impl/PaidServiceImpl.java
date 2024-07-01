@@ -89,8 +89,11 @@ public class PaidServiceImpl implements PaidService {
 
     @Override
     public void cancelPayment(PaymentCancelRequestDTO paidCancelRequest) throws IOException {
+        log.info("=====================1===========================");
         Paid paid = paidMapper.selectByPaidId(paidCancelRequest.getPaidId());
         if (paid.getStatus().equals(PaymentStatus.COMP)) {
+            log.info("=========================2=======================");
+
             HttpsURLConnection conn = null;
 
             URL url = new URL("https://api.iamport.kr/payments/cancel");
@@ -110,7 +113,7 @@ public class PaidServiceImpl implements PaidService {
             bw.flush();
             bw.close();
             String responseMessage = conn.getResponseMessage();
-            log.info(responseMessage);
+            log.info("==============responseMessage==========={}", responseMessage);
             conn.disconnect();
             paidCancelRequest.setStatus(PaymentStatus.REFUND);
             paidMapper.paymentRefund(paidCancelRequest);

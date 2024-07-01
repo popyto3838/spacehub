@@ -4,10 +4,12 @@ import com.backend.board.domain.Board;
 import com.backend.board.mapper.BoardMapper;
 import com.backend.board.service.BoardService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import software.amazon.awssdk.services.s3.S3Client;
 
 import java.io.File;
 import java.io.IOException;
@@ -21,6 +23,15 @@ import java.util.Map;
 public class BoardServiceImpl implements BoardService {
 
     final BoardMapper boardMapper;
+
+    // AWS 설정
+    final S3Client s3Client;
+
+    @Value("${aws.s3.bucket.name}")
+    String bucketName;
+
+    @Value("${image.src.prefix}")
+    String srcPrefix;
 
     @Override
     public void insert(Board board, Authentication authentication, MultipartFile[] files) throws IOException {
@@ -46,6 +57,17 @@ public class BoardServiceImpl implements BoardService {
                 File destination = new File(path);
                 // transferTo : 인풋스트림, 아웃풋스트림을 꺼내서 하드디스크에 저장
                 file.transferTo(destination); // checked exception 처리
+
+                // 실제 파일 저장 (s3)
+//                String key = STR."prj3/\{board.getBoardId()}/\{file.getOriginalFilename()}";
+//                PutObjectRequest objectRequest = PutObjectRequest.builder()
+//                        .bucket(bucketName)
+//                        .key(key)
+//                        .acl(ObjectCannedACL.PUBLIC_READ)
+//                        .build();
+//
+//                s3Client.putObject(objectRequest,
+//                        RequestBody.fromInputStream(file.getInputStream(), file.getSize()));
             }
         }
     }
@@ -98,6 +120,18 @@ public class BoardServiceImpl implements BoardService {
                     return fl;
                 })
                 .toList();
+
+        // s3에서 파일 조회
+//            List<com.backend.file.domain.File> files1 = fileNames.stream()
+//                    .map(fileName2 ->
+//                            {var fl2 = new com.backend.file.domain.File();
+//                                fl2.setFileName(fileName2);
+//                                fl2.setSrc(STR."\{srcPrefix}\{boardId}/\{fileName2}");
+//                                return fl2;
+//                            })
+//                    .toList();
+//            board.setFilesLists(files1);
+
         // board에 이미지 경로 넣어줌
         System.out.println("view의 files = " + files);
         System.out.println("view의 fileNames = " + fileNames);
@@ -130,6 +164,14 @@ public class BoardServiceImpl implements BoardService {
                 File file = new File(path);
                 file.delete();
                 boardMapper.deleteByBoardIdAndName(board.getBoardId(), fileName);
+
+                // s3 에 있는 file
+//                String key = STR."prj3/\{board.getBoardId()}/\{fileName}";
+//                DeleteObjectRequest objectRequest = DeleteObjectRequest.builder()
+//                        .bucket(bucketName)
+//                        .key(key)
+//                        .build();
+//                s3Client.deleteObject(objectRequest);
             }
         }
 
@@ -155,6 +197,16 @@ public class BoardServiceImpl implements BoardService {
                 String path = STR."C:/Temp/prj3p/\{board.getBoardId()}/\{fileName}";
                 File destination = new File(path);
                 file.transferTo(destination);
+
+                // s3 에 쓰기(덮어써짐)
+//                String key = STR."prj3/\{board.getBoardId()}/\{fileName}";
+//                PutObjectRequest objectRequest = PutObjectRequest.builder()
+//                        .bucket(bucketName)
+//                        .key(key)
+//                        .acl(ObjectCannedACL.PUBLIC_READ)
+//                        .build();
+//
+//                s3Client.putObject(objectRequest, RequestBody.fromInputStream(file.getInputStream(), file.getSize()));
             }
         }
 
@@ -177,6 +229,14 @@ public class BoardServiceImpl implements BoardService {
         for (String fileName : fileNames) {
             File file = new File(dir + fileName);
             file.delete();
+
+            // s3 에 있는 file
+//            String key = STR."prj3/\{boardId}/\{fileName}";
+//            DeleteObjectRequest objectRequest = DeleteObjectRequest.builder()
+//                    .bucket(bucketName)
+//                    .key(key)
+//                    .build();
+//            s3Client.deleteObject(objectRequest);
         }
         // 필요없는 부모 디렉토리 삭제
         File dirFile = new File(dir);
