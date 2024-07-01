@@ -118,7 +118,12 @@ export function QnaCommentItem({ comment, isProcessing, setIsProcessing }) {
             <ModalBody>작성하신 QNA를 삭제하시겠습니까?</ModalBody>
             <ModalFooter>
               <Button onClick={onClose}>취소</Button>
-              <Button onClick={handleClickRemoveQnaComment}>확인</Button>
+              <Button
+                isLoading={isProcessing}
+                onClick={handleClickRemoveQnaComment}
+              >
+                확인
+              </Button>
             </ModalFooter>
           </ModalContent>
         </Modal>
