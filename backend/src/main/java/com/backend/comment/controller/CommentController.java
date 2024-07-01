@@ -11,6 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -61,8 +62,9 @@ public class CommentController {
     }
 
     @GetMapping("listReview/{spaceId}")
-    public List<Comment> listReview(@PathVariable Integer spaceId) {
-        return commentService.listReview(spaceId);
+    public Map<String, Object> listReview(@PathVariable Integer spaceId,
+                                          @RequestParam(defaultValue = "1") Integer page) {
+        return commentService.listReview(spaceId, page);
     }
 
     @DeleteMapping("deleteReview")

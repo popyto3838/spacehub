@@ -162,5 +162,8 @@ public interface CommentMapper {
             """)
     int deleteByCommentIdAndName(Integer parentId, String fileName);
 
-
+    @Select("""
+            SELECT COUNT(*) FROM COMMENT
+            """)
+    Integer countAll();
 }

@@ -6,6 +6,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 public interface CommentService {
 
@@ -24,7 +25,7 @@ public interface CommentService {
     // space의 review
     void insertReview(Comment comment, Authentication authentication, MultipartFile[] files) throws IOException;
 
-    List<Comment> listReview(Integer spaceId);
+    Map<String, Object> listReview(Integer spaceId, Integer page);
 
     void deleteReview(Comment comment);
 

@@ -13,7 +13,9 @@ import software.amazon.awssdk.services.s3.S3Client;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @Transactional(rollbackFor = Exception.class)
@@ -100,18 +102,55 @@ public class CommentServiceImpl implements CommentService {
                 if (!dirFile.exists()) {
                     dirFile.mkdirs();
                 }
+
+
                 // 파일 경로
                 String path = STR."C:/Temp/prj3p/\{comment.getCommentId()}/\{file.getOriginalFilename()}";
                 // 저장 위치 명시
                 File destination = new File(path);
                 // transferTo : 인풋스트림, 아웃풋스트림을 꺼내서 하드디스크에 저장
                 file.transferTo(destination); // checked exception 처리
+
+                // 실제 파일 저장(s3)
+//                String key = STR."prj3/\{comment.getDivision()}/\{comment.getCommentId()}/\{file.getOriginalFilename()}";
+//                PutObjectRequest objectRequest = PutObjectRequest.builder()
+//                        .bucket(bucketName)
+//                        .key(key)
+//                        .acl(ObjectCannedACL.PUBLIC_READ)
+//                        .build();
+//
+//                s3Client.putObject(objectRequest, RequestBody.fromInputStream(file.getInputStream(), file.getSize()));
             }
         }
     }
 
     @Override
-    public List<Comment> listReview(Integer spaceId) {
+    public Map<String, Object> listReview(Integer spaceId, Integer page) {
+        // 페이징
+        Map pageInfo = new HashMap();
+        Integer countAll = commentMapper.countAll();
+
+        Integer offset = (page - 1) * 10;
+        Integer lastPageNumber = (countAll - 1) / 10 + 1;
+        Integer leftPageNumber = (page - 1) / 10 * 10 + 1;
+        Integer rightPageNumber = leftPageNumber + 9;
+        Integer prevPageNumber = leftPageNumber - 1;
+        Integer nextPgeNumber = rightPageNumber + 1;
+        rightPageNumber = Math.min(rightPageNumber, lastPageNumber);
+        leftPageNumber = rightPageNumber - 9;
+        leftPageNumber = Math.max(leftPageNumber, 1);
+
+        if (prevPageNumber > 0) {
+            pageInfo.put("prevPageNumber", prevPageNumber);
+        }
+        if (nextPgeNumber <= lastPageNumber) {
+            pageInfo.put("nextPageNumber", nextPgeNumber);
+        }
+        pageInfo.put("currentPageNumber", page);
+        pageInfo.put("lastPageNumber", lastPageNumber);
+        pageInfo.put("leftPageNumber", leftPageNumber);
+        pageInfo.put("rightPageNumber", rightPageNumber);
+
         // 코멘트들 조회
         // List<Comment> comments = commentMapper.selectAllBySpaceId(spaceId);
         List<Comment> comments = commentMapper.selectAllBySpaceIdForReview(spaceId);
@@ -123,17 +162,33 @@ public class CommentServiceImpl implements CommentService {
                     .map(fileName -> {
                         var fl = new com.backend.file.domain.File();
                         fl.setFileName(fileName);
-                        fl.setSrc(STR." http://172.30.1.93:8888/\{comment.getCommentId()}/\{fileName}");
+                        fl.setSrc(STR." http://172.27.128.1:8888/\{comment.getCommentId()}/\{fileName}");
                         return fl;
                     })
                     .toList();
+
+            // s3에서 파일 조회
+//            List<com.backend.file.domain.File> files1 = fileNames.stream()
+//                    .map(fileName2 ->
+//                            {var fl2 = new com.backend.file.domain.File();
+//                                fl2.setFileName(fileName2);
+//                                fl2.setSrc(STR."\{srcPrefix}\{comment.getCommentId()}/\{fileName2}");
+//                                return fl2;
+//                            })
+//                    .toList();
+//            comment.setCommentFilesLists(files1);
 
             // 댓글에 첨부 파일 목록 저장
             comment.setCommentFilesLists(files);
         }
         System.out.println("comments = " + comments);
 
-        return comments;
+        Map<String, Object> result = new HashMap<>();
+        result.put("comments", comments);
+        result.put("pageInfo", pageInfo);
+
+        return result;
+        // return comments;
         // commentMapper.selectAllBySpaceId(spaceId);
     }
 
@@ -153,6 +208,16 @@ public class CommentServiceImpl implements CommentService {
             dirFile.delete();
         }
 
+        // s3에 있는 file
+//        for (String fileName : fileNames) {
+//            String key = STR."prj3/\{comment.getDivision()}/\{comment.getCommentId()}/\{fileName}";
+//            DeleteObjectRequest objectRequest = DeleteObjectRequest.builder()
+//                    .bucket(bucketName)
+//                    .key(key)
+//                    .build();
+//            s3Client.deleteObject(objectRequest);
+//        }
+
         // file 테이블 지움
         commentMapper.deleteByCommentIdForFile(comment.getCommentId());
 
@@ -167,6 +232,16 @@ public class CommentServiceImpl implements CommentService {
                 String path = STR."C:/Temp/prj3p/\{comment.getCommentId()}/\{fileName}";
                 File file = new File(path);
                 file.delete();
+
+                // s3의 파일 삭제
+//                String key = STR."prj3/\{comment.getDivision()}/\{comment.getCommentId()}/\{fileName}";
+//                DeleteObjectRequest deleteObjectRequest = DeleteObjectRequest.builder()
+//                        .bucket(bucketName)
+//                        .key(key)
+//                        .build();
+//                s3Client.deleteObject(deleteObjectRequest);
+
+                // db records 삭제
                 commentMapper.deleteByCommentIdAndName(comment.getCommentId(), fileName);
             }
         }
@@ -193,6 +268,15 @@ public class CommentServiceImpl implements CommentService {
                 String path = STR."C:/Temp/prj3p/\{comment.getCommentId()}/\{fileName}";
                 File destination = new File(path);
                 file.transferTo(destination);
+
+                // s3에 쓰기(덮어쓰기)
+//                String key = STR."prj3/\{comment.getDivision()}/\{comment.getCommentId()}/\{fileName}";
+//                PutObjectRequest objectRequest = PutObjectRequest.builder()
+//                        .bucket(bucketName)
+//                        .key(key)
+//                        .acl(ObjectCannedACL.PUBLIC_READ)
+//                        .build();
+//                s3Client.putObject(objectRequest, RequestBody.fromInputStream(file.getInputStream(), file.getSize()));
             }
         }
 
