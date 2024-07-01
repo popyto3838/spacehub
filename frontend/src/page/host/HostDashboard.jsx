@@ -14,31 +14,52 @@ import {
 } from "@chakra-ui/react";
 import {ChevronRightIcon} from '@chakra-ui/icons';
 import axios from 'axios';
+import {useNavigate} from "react-router-dom";
 
-export function Dashboard() {
+export function HostDashboard({memberId}) {
   const [spaces, setSpaces] = useState([]);
   const [reservations, setReservations] = useState([]);
   const [reviews, setReviews] = useState([]);
   const [inquiries, setInquiries] = useState([]);
 
+  const navigate = useNavigate();
+
   useEffect(() => {
-    // API 호출하여 데이터 가져오기
-    axios.get('/api/host/spaces')
-      .then(response => setSpaces(response.data))
-      .catch(error => console.error('Failed to fetch spaces:', error));
+    if (memberId) {
+      // API 호출하여 데이터 가져오기
+      axios.get(`/api/host/spaces?memberId=${memberId}`)
+        .then(response => setSpaces(response.data))
+        .catch(error => console.error('Failed to fetch spaces:', error));
 
-    axios.get('/api/host/reservations')
-      .then(response => setReservations(response.data))
-      .catch(error => console.error('Failed to fetch reservations:', error));
+      axios.get(`/api/host/reservations?memberId=${memberId}`)
+        .then(response => setReservations(response.data))
+        .catch(error => console.error('Failed to fetch reservations:', error));
 
-    axios.get('/api/host/reviews')
-      .then(response => setReviews(response.data))
-      .catch(error => console.error('Failed to fetch reviews:', error));
+      axios.get(`/api/host/reviews?memberId=${memberId}`)
+        .then(response => setReviews(response.data))
+        .catch(error => console.error('Failed to fetch reviews:', error));
 
-    axios.get('/api/host/inquiries')
-      .then(response => setInquiries(response.data))
-      .catch(error => console.error('Failed to fetch inquiries:', error));
-  }, []);
+      axios.get(`/api/host/inquiries?memberId=${memberId}`)
+        .then(response => setInquiries(response.data))
+        .catch(error => console.error('Failed to fetch inquiries:', error));
+    }
+  }, [memberId]);
+
+  const handleNavigateToHostSpaceList = () => {
+    navigate(`/host/spaceList/${memberId}`);
+  }
+
+  const handleNavigateToReservations = () => {
+    navigate(`/member/hostSpaceList/${memberId}`);
+  }
+
+  const handleNavigateToReviews = () => {
+    navigate(`/member/reviews/${memberId}`);
+  }
+
+  const handleNavigateToInquiries = () => {
+    navigate(`/member/inquiries/${memberId}`);
+  }
 
   return (
     <Container maxW="container.xl" py={10}>
@@ -54,10 +75,12 @@ export function Dashboard() {
               <Flex justify="space-between" align="center">
                 <Heading fontSize="xl">등록 공간/리스트 관리</Heading>
                 <IconButton
-                  icon={<ChevronRightIcon />}
+                  icon={<ChevronRightIcon/>}
                   aria-label="registered space list"
-                />              </Flex>
-              <Divider my={4} />
+                  onClick={handleNavigateToHostSpaceList}
+                />
+              </Flex>
+              <Divider my={4}/>
               <VStack spacing={4} align="stretch">
                 {spaces.slice(0, 3).map(space => (
                   <Box key={space.id} p={4} shadow="sm" borderWidth="1px">
@@ -74,11 +97,12 @@ export function Dashboard() {
               <Flex justify="space-between" align="center">
                 <Heading fontSize="xl">예약 리스트</Heading>
                 <IconButton
-                  icon={<ChevronRightIcon />}
+                  icon={<ChevronRightIcon/>}
                   aria-label="View all reservations"
+                  onClick={handleNavigateToReservations}
                 />
               </Flex>
-              <Divider my={4} />
+              <Divider my={4}/>
               <VStack spacing={4} align="stretch">
                 {reservations.slice(0, 3).map(reservation => (
                   <Box key={reservation.id} p={4} shadow="sm" borderWidth="1px">
@@ -95,11 +119,12 @@ export function Dashboard() {
               <Flex justify="space-between" align="center">
                 <Heading fontSize="xl">리뷰/후기</Heading>
                 <IconButton
-                  icon={<ChevronRightIcon />}
+                  icon={<ChevronRightIcon/>}
                   aria-label="View all reviews"
+                  onClick={handleNavigateToReviews}
                 />
               </Flex>
-              <Divider my={4} />
+              <Divider my={4}/>
               <VStack spacing={4} align="stretch">
                 {reviews.slice(0, 3).map(review => (
                   <Box key={review.id} p={4} shadow="sm" borderWidth="1px">
@@ -116,11 +141,12 @@ export function Dashboard() {
               <Flex justify="space-between" align="center">
                 <Heading fontSize="xl">문의글</Heading>
                 <IconButton
-                  icon={<ChevronRightIcon />}
+                  icon={<ChevronRightIcon/>}
                   aria-label="View all inquiries"
+                  onClick={handleNavigateToInquiries}
                 />
               </Flex>
-              <Divider my={4} />
+              <Divider my={4}/>
               <VStack spacing={4} align="stretch">
                 {inquiries.slice(0, 3).map(inquiry => (
                   <Box key={inquiry.id} p={4} shadow="sm" borderWidth="1px">
@@ -137,4 +163,4 @@ export function Dashboard() {
   );
 }
 
-export default Dashboard;
+export default HostDashboard;

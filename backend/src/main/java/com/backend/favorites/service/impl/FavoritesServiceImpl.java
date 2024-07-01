@@ -29,6 +29,11 @@ public class FavoritesServiceImpl implements FavoritesService {
     }
 
     @Override
+    public List<Favorites> selectAllByMemberId(Integer memberId) {
+        return favoritesMapper.selectAllByMemberId(memberId);
+    }
+
+    @Override
     public int delete(Favorites favorites) {
         return favoritesMapper.delete(favorites);
     }

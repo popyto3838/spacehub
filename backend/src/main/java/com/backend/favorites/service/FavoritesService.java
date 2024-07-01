@@ -10,4 +10,6 @@ public interface FavoritesService {
     Favorites selectByMemberIdAndSpaceID(Favorites favorites);
 
     int delete(Favorites favorites);
+
+    List<Favorites> selectAllByMemberId(Integer memberId);
 }

@@ -131,13 +131,19 @@ public interface MemberMapper {
             """)
     void switchHost(Member member);
 
-    @Update("""
-            UPDATE HOST 
-            SET BANK_NAME =#{bankName},
-                ACCOUNT_NUMBER =#{accountNumber}
-            WHERE MEMBER_ID=#{memberId}
+    @Insert("""
+            INSERT INTO HOST (BANK_NAME, ACCOUNT_NUMBER, MEMBER_ID)
+            VALUES (#{bankName}, #{accountNumber}, #{memberId})
             """)
     void insertAccount(Host host);
+
+    @Update("""
+           UPDATE HOST
+           SET ACCOUNT_NUMBER = #{accountNumber},
+               BANK_NAME = #{bankName}
+           WHERE MEMBER_ID = #{memberId}
+           """)
+    void EditAccount(Host host);
 
     @Update("""
             UPDATE MEMBER
@@ -151,10 +157,7 @@ public interface MemberMapper {
            UPDATE HOST 
            SET   BUSINESS_NUMBER=#{businessNumber}, 
                  BUSINESS_NAME=#{businessName}, 
-                 REP_NAME=#{repName},
-                 MEMBER_ID= #{memberId},
-                 ACCOUNT_NUMBER= #{accountNumber},
-                 BANK_NAME= #{bankName}
+                 REP_NAME=#{repName}
            WHERE MEMBER_ID = #{memberId}
            """)
     void addHostInfo(Host host);
@@ -245,4 +248,15 @@ public interface MemberMapper {
             WHERE MEMBER_ID = #{memberId}
             """)
     Host findHostByMemberId(String memberId);
+
+    @Update("""
+           UPDATE HOST 
+           SET   BUSINESS_NUMBER=#{businessNumber}, 
+                 BUSINESS_NAME=#{businessName}, 
+                 REP_NAME=#{repName}
+           WHERE MEMBER_ID = #{memberId}
+            """)
+    void EditHostInfo(Host host);
+
+
 }

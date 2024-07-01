@@ -31,6 +31,15 @@ public class FavoritesController {
         return ResponseEntity.ok(favorites);
     }
 
+    @GetMapping("/myFavoritesList/{memberId}")
+    public ResponseEntity<List<Favorites>> selectAllByMemberId(@PathVariable("memberId") Integer memberId) {
+        List<Favorites> list = favoritesService.selectAllByMemberId(memberId);
+        if (list == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(list);
+    }
+
 
     @DeleteMapping("/delete")
     public ResponseEntity<Void> deleteFavorite(Favorites favorites) {

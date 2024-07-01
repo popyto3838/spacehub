@@ -4,7 +4,7 @@ import '/public/css/component/DatePicker.css';
 import axios from 'axios';
 import {LoginContext} from './LoginProvider.jsx';
 import {Button, useToast} from '@chakra-ui/react';
-import {useNavigate} from 'react-router-dom';
+import {useNavigate, useParams} from 'react-router-dom';
 
 const Calendar = (props) => {
     const account = useContext(LoginContext);
@@ -16,6 +16,7 @@ const Calendar = (props) => {
     const [currentDate, setCurrentDate] = useState(today);
     const [reservations, setReservations] = useState([]);
     const [selectedHours, setSelectedHours] = useState([]);
+    const {spaceId} = useParams();
 
     useEffect(() => {
         fetchReservations();
@@ -23,13 +24,13 @@ const Calendar = (props) => {
 
     const fetchReservations = async () => {
         try {
-            const response = await axios.get('/api/reservation/listAll');
+            const response = await axios.get(`/api/reservation/listAll/${spaceId}`);
             console.log(response.data);
             const formattedReservations = response.data.map(reservation => ({
                 ...reservation,
                 startDate: new Date(reservation.startDate),
                 endDate: new Date(reservation.endDate),
-                startTime: reservation.startTime.substring(0, 5),  // "HH:MM" 형식으로 변경
+                startTime: reservation.startTime.substring(0, 5),  // "HH:MM" 형식으로 변
                 endTime: reservation.endTime.substring(0, 5)  // "HH:MM" 형식으로 변경
             }));
             setReservations(formattedReservations);

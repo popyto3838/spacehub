@@ -1,12 +1,13 @@
 package com.backend.paid.service;
 
 import com.backend.paid.domain.Paid;
-import com.backend.reservation.domain.Reservation;
+import com.backend.paid.domain.PaymentCancelRequestDTO;
 
+import java.io.IOException;
 import java.util.List;
 
 public interface PaidService {
-    List<Paid> list();
+    List<Paid> selectAllByMemberId(Integer memberId);
 
     Paid view(Integer PaidId);
 
@@ -15,4 +16,9 @@ public interface PaidService {
     void update(Paid paid);
 
     void delete(Integer paidId);
+
+    String getToken() throws IOException;
+
+    void cancelPayment(PaymentCancelRequestDTO paidCancelRequest) throws IOException;
+
 }

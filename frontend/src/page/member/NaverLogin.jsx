@@ -4,7 +4,7 @@ import {Box, Button, Flex, Image, Img} from "@chakra-ui/react";
 
 export const NaverLogin = () => {
   const { naver } = window;
-  const NAVER_CLIENT_ID = "Nm_O1bmeAHYWLjjBZm6e"; // 발급 받은 Client ID 입력
+  const NAVER_CLIENT_ID = "Tfi7kSJEmh9bNFWbZ3oD"; // 발급 받은 Client ID 입력
   const NAVER_CALLBACK_URL = "http://localhost:5173/member/naverlogin"; // 작성했던 Callback URL 입력
 
   // 네이버 로그인 기능 및 버튼 구현
@@ -15,7 +15,7 @@ export const NaverLogin = () => {
     loginButton: {
       color: "green", // green, white
       type: 3, // 1: 작은버튼, 2: 중간버튼, 3: 큰 버튼
-      height: 444, // 크기는 높이로 결정한다.
+      height: 222, // 크기는 높이로 결정한다.
     },
   });
 

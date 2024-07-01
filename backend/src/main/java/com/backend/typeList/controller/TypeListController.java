@@ -5,6 +5,7 @@ import com.backend.file.service.FileService;
 import com.backend.typeList.domain.TypeList;
 import com.backend.typeList.service.TypeListService;
 import lombok.RequiredArgsConstructor;
+import org.apache.ibatis.annotations.Update;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,8 +31,10 @@ public class TypeListController {
     }
 
     @PutMapping("/{typeListId}")
-    public ResponseEntity<String> update(@RequestBody TypeList typeList) {
+    public ResponseEntity<String> update(@PathVariable int typeListId,
+                                         @RequestBody TypeList typeList) {
         try {
+            typeList.setTypeListId(typeListId);
             typeListService.update(typeList);
             return ResponseEntity.ok("타입이 업데이트되었습니다.");
         } catch (Exception e) {

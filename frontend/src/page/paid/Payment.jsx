@@ -1,9 +1,9 @@
 import axios from 'axios';
-import { Button, useToast } from "@chakra-ui/react";
+import {Button, useToast} from "@chakra-ui/react";
 import '/public/css/paid/Payment.css';
-import React, { useContext, useEffect, useState } from 'react';
-import { useNavigate, useParams } from "react-router-dom";
-import { LoginContext } from "../../component/LoginProvider.jsx";
+import React, {useContext, useEffect, useState} from 'react';
+import {useNavigate, useParams} from "react-router-dom";
+import {LoginContext} from "../../component/LoginProvider.jsx";
 
 const Payment = () => {
     const toast = useToast();
@@ -11,9 +11,9 @@ const Payment = () => {
     const navigate = useNavigate();
     const [reservationStatus, setReservationStatus] = useState('');
     const [spaceIdResult, setSpaceId] = useState('');
-    const { reservationId } = useParams();
+    const {reservationId} = useParams();
     const [totalPrice, setTotalPrice] = useState(0);
-    const [member,setMember] = useState(null);
+    const [member, setMember] = useState(null);
 
     useEffect(() => {
         axios.get("/api/reservation/" + reservationId)
@@ -27,7 +27,8 @@ const Payment = () => {
             });
     }, []);
 
-    useEffect(() => { }, [spaceIdResult]);
+    useEffect(() => {
+    }, [spaceIdResult]);
 
     useEffect(() => {
         const jquery = document.createElement("script");
@@ -65,7 +66,7 @@ const Payment = () => {
             return;
         }
 
-        const { IMP } = window;
+        const {IMP} = window;
         IMP.init('imp61364323');
         IMP.request_pay({
             pg: 'html5_inicis.INIpayTest',
@@ -79,13 +80,15 @@ const Payment = () => {
         }, async (rsp) => {
             console.log(rsp);
             if (rsp.success == true) {
-                alert("결제성공");
+                const imp_uid = rsp.imp_uid;
+                alert(imp_uid)
                 axios
                     .post("/api/paid/write", {
                         "spaceId": spaceIdResult,
                         "reservationId": reservationId,
                         "memberId": account.id,
-                        "totalPrice": totalPrice // 총 금액 사용
+                        "totalPrice": totalPrice,
+                        "impUid" : imp_uid
                     })
                     .then((res) => {
                         toast({
@@ -94,7 +97,7 @@ const Payment = () => {
                             position: "top",
                             duration: 1000,
                         });
-                        navigate("/paid/payment");
+                        navigate("/paid/myPaymentList")
                     })
                     .catch((err) => {
                         toast({

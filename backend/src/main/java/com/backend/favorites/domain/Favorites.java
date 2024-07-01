@@ -11,4 +11,7 @@ public class Favorites {
     private Integer spaceId;
     private Timestamp inputDt;
     private Timestamp updateDt;
+    private String title;
+    private String address;
+    private Integer price;
 }
