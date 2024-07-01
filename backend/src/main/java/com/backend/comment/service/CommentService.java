@@ -25,7 +25,7 @@ public interface CommentService {
     // space의 review
     void insertReview(Comment comment, Authentication authentication, MultipartFile[] files) throws IOException;
 
-    Map<String, Object> listReview(Integer spaceId, Integer page);
+    Map<String, Object> listReview(Integer spaceId, Integer reviewPage);
 
     void deleteReview(Comment comment);
 
@@ -34,7 +34,7 @@ public interface CommentService {
     // space의 qna
     void insertQna(Comment comment, Authentication authentication);
 
-    List<Comment> listQna(Integer spaceId);
+    Map<String, Object> listQna(Integer spaceId, Integer qnaPage);
 
     void deleteQna(Comment comment);
 

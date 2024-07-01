@@ -95,8 +95,9 @@ public interface BoardMapper {
     @Select("""
             SELECT B.BOARD_ID, B.TITLE, B.CONTENT, B.INPUT_DT, B.UPDATE_DT, B.CATEGORY_ID,
                    CASE WHEN M.WITHDRAWN = 'Y' THEN '탈퇴한 회원입니다.' ELSE M.NICKNAME END AS WRITER,
-                   B.MEMBER_ID
+                   B.MEMBER_ID, C.CATEGORY_NAME DIVISION
             FROM BOARD B JOIN MEMBER M ON B.MEMBER_ID = M.MEMBER_ID
+                         JOIN CATEGORY C ON B.CATEGORY_ID = C.CATEGORY_ID
             WHERE B.BOARD_ID = #{boardId}
             """)
     Board selectByBoardId(Integer boardId);

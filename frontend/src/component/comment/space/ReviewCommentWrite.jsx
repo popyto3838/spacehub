@@ -56,6 +56,7 @@ export function ReviewCommentWrite({ spaceId, isProcessing, setIsProcessing }) {
         setIsProcessing(false);
         setIsWriting(false);
         setFiles([]);
+        setRateScore(0);
       });
   }
 
@@ -65,7 +66,8 @@ export function ReviewCommentWrite({ spaceId, isProcessing, setIsProcessing }) {
       axios
         .get(`/api/comment/listReview/${spaceId}`)
         .then((res) => {
-          setCommentList(res.data);
+          const comments = res.data.comments;
+          setCommentList(comments);
         })
         .catch((err) => {})
         .finally(() => {});
@@ -97,7 +99,7 @@ export function ReviewCommentWrite({ spaceId, isProcessing, setIsProcessing }) {
       {/* 맨 윗줄 */}
       <Flex>
         <Heading as="h2" size="xl" mb={6} color="gray.700">
-          REVIEW {commentList.length} 개
+          REVIEW {commentList.length > 0 ? commentList[0].commentCount : ""} 개
         </Heading>
         <Box>
           <Box>

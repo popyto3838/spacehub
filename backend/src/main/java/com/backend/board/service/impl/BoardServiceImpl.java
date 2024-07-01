@@ -9,9 +9,12 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
+import software.amazon.awssdk.services.s3.model.ObjectCannedACL;
+import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
@@ -46,28 +49,28 @@ public class BoardServiceImpl implements BoardService {
                 // db에 파일 저장
                 boardMapper.insertFileList(board.getBoardId(), file.getOriginalFilename(), board.getCategoryId());
                 // 실제 파일 저장
-                String dir = STR."C:/Temp/prj3p/\{board.getBoardId()}"; // 부모 디렉토리(폴더)
-                File dirFile = new File(dir);
-                if (!dirFile.exists()) {
-                    dirFile.mkdirs();
-                }
-                // 파일 경로
-                String path = STR."C:/Temp/prj3p/\{board.getBoardId()}/\{file.getOriginalFilename()}";
-                // 저장 위치 명시
-                File destination = new File(path);
-                // transferTo : 인풋스트림, 아웃풋스트림을 꺼내서 하드디스크에 저장
-                file.transferTo(destination); // checked exception 처리
+//                String dir = STR."C:/Temp/prj3p/\{board.getBoardId()}"; // 부모 디렉토리(폴더)
+//                File dirFile = new File(dir);
+//                if (!dirFile.exists()) {
+//                    dirFile.mkdirs();
+//                }
+//                // 파일 경로
+//                String path = STR."C:/Temp/prj3p/\{board.getBoardId()}/\{file.getOriginalFilename()}";
+//                // 저장 위치 명시
+//                File destination = new File(path);
+//                // transferTo : 인풋스트림, 아웃풋스트림을 꺼내서 하드디스크에 저장
+//                file.transferTo(destination); // checked exception 처리
 
                 // 실제 파일 저장 (s3)
-//                String key = STR."prj3/\{board.getBoardId()}/\{file.getOriginalFilename()}";
-//                PutObjectRequest objectRequest = PutObjectRequest.builder()
-//                        .bucket(bucketName)
-//                        .key(key)
-//                        .acl(ObjectCannedACL.PUBLIC_READ)
-//                        .build();
-//
-//                s3Client.putObject(objectRequest,
-//                        RequestBody.fromInputStream(file.getInputStream(), file.getSize()));
+                String key = STR."prj3/\{board.getDivision()}/\{board.getBoardId()}/\{file.getOriginalFilename()}";
+                PutObjectRequest objectRequest = PutObjectRequest.builder()
+                        .bucket(bucketName)
+                        .key(key)
+                        .acl(ObjectCannedACL.PUBLIC_READ)
+                        .build();
+
+                s3Client.putObject(objectRequest,
+                        RequestBody.fromInputStream(file.getInputStream(), file.getSize()));
             }
         }
     }
@@ -112,31 +115,33 @@ public class BoardServiceImpl implements BoardService {
         // fileNames에서 파일 이름 조회
         List<String> fileNames = boardMapper.selectByFileNameByBoardId(boardId);
         // 파일 경로 저장
-        List<com.backend.file.domain.File> files = fileNames.stream()
-                .map(fileName -> {
-                    var fl = new com.backend.file.domain.File();
-                    fl.setFileName(fileName);
-                    fl.setSrc(STR."http://172.27.128.1:8888/\{boardId}/\{fileName}");
-                    return fl;
-                })
-                .toList();
+//        List<com.backend.file.domain.File> files = fileNames.stream()
+//                .map(fileName -> {
+//                    var fl = new com.backend.file.domain.File();
+//                    fl.setFileName(fileName);
+//                    fl.setSrc(STR."http://172.27.128.1:8888/\{boardId}/\{fileName}");
+//                    return fl;
+//                })
+//                .toList();
 
         // s3에서 파일 조회
-//            List<com.backend.file.domain.File> files1 = fileNames.stream()
-//                    .map(fileName2 ->
-//                            {var fl2 = new com.backend.file.domain.File();
-//                                fl2.setFileName(fileName2);
-//                                fl2.setSrc(STR."\{srcPrefix}\{boardId}/\{fileName2}");
-//                                return fl2;
-//                            })
-//                    .toList();
-//            board.setFilesLists(files1);
+        List<com.backend.file.domain.File> files1 = fileNames.stream()
+                .map(fileName2 ->
+                {
+                    var fl2 = new com.backend.file.domain.File();
+                    fl2.setFileName(fileName2);
+                    fl2.setSrc(STR."\{srcPrefix}\{boardId}/\{fileName2}");
+                    return fl2;
+                })
+                .toList();
+        board.setFilesLists(files1);
 
         // board에 이미지 경로 넣어줌
-        System.out.println("view의 files = " + files);
+//        System.out.println("view의 files = " + files);
+        System.out.println("view의 files1 = " + files1);
         System.out.println("view의 fileNames = " + fileNames);
         System.out.println("view의 board = " + board);
-        board.setFilesLists(files);
+//        board.setFilesLists(files);
 
         Map<String, Object> like = new HashMap<>();
         if (authentication == null) {
@@ -160,18 +165,18 @@ public class BoardServiceImpl implements BoardService {
         // 첨부된 파일 삭제
         if (removeFileList != null && removeFileList.size() > 0) {
             for (String fileName : removeFileList) {
-                String path = STR."C:/Temp/prj3p/\{board.getBoardId()}/\{fileName}"; // 경로
-                File file = new File(path);
-                file.delete();
-                boardMapper.deleteByBoardIdAndName(board.getBoardId(), fileName);
+//                String path = STR."C:/Temp/prj3p/\{board.getBoardId()}/\{fileName}"; // 경로
+//                File file = new File(path);
+//                file.delete();
+//                boardMapper.deleteByBoardIdAndName(board.getBoardId(), fileName);
 
                 // s3 에 있는 file
-//                String key = STR."prj3/\{board.getBoardId()}/\{fileName}";
-//                DeleteObjectRequest objectRequest = DeleteObjectRequest.builder()
-//                        .bucket(bucketName)
-//                        .key(key)
-//                        .build();
-//                s3Client.deleteObject(objectRequest);
+                String key = STR."prj3/\{board.getDivision()}/\{board.getBoardId()}/\{fileName}";
+                DeleteObjectRequest objectRequest = DeleteObjectRequest.builder()
+                        .bucket(bucketName)
+                        .key(key)
+                        .build();
+                s3Client.deleteObject(objectRequest);
             }
         }
 
@@ -189,24 +194,24 @@ public class BoardServiceImpl implements BoardService {
                 }
                 // disk에 쓰기
                 // 파일이 원래 없는 경우 부모 경로 생성
-                File dir = new File(STR."C:/Temp/prj3p/\{board.getBoardId()}");
-                if (!dir.exists()) {
-                    // 디렉토리 생성
-                    dir.mkdirs();
-                }
-                String path = STR."C:/Temp/prj3p/\{board.getBoardId()}/\{fileName}";
-                File destination = new File(path);
-                file.transferTo(destination);
+//                File dir = new File(STR."C:/Temp/prj3p/\{board.getBoardId()}");
+//                if (!dir.exists()) {
+//                    // 디렉토리 생성
+//                    dir.mkdirs();
+//                }
+//                String path = STR."C:/Temp/prj3p/\{board.getBoardId()}/\{fileName}";
+//                File destination = new File(path);
+//                file.transferTo(destination);
 
                 // s3 에 쓰기(덮어써짐)
-//                String key = STR."prj3/\{board.getBoardId()}/\{fileName}";
-//                PutObjectRequest objectRequest = PutObjectRequest.builder()
-//                        .bucket(bucketName)
-//                        .key(key)
-//                        .acl(ObjectCannedACL.PUBLIC_READ)
-//                        .build();
-//
-//                s3Client.putObject(objectRequest, RequestBody.fromInputStream(file.getInputStream(), file.getSize()));
+                String key = STR."prj3/\{board.getDivision()}/\{board.getBoardId()}/\{fileName}";
+                PutObjectRequest objectRequest = PutObjectRequest.builder()
+                        .bucket(bucketName)
+                        .key(key)
+                        .acl(ObjectCannedACL.PUBLIC_READ)
+                        .build();
+
+                s3Client.putObject(objectRequest, RequestBody.fromInputStream(file.getInputStream(), file.getSize()));
             }
         }
 
@@ -222,27 +227,31 @@ public class BoardServiceImpl implements BoardService {
 
     @Override
     public void delete(Integer boardId) {
+        Board board = boardMapper.selectByBoardId(boardId);
+
         // file명 조회
         List<String> fileNames = boardMapper.selectByFileNameByBoardId(boardId);
         // disk에 있는 file 삭제
-        String dir = STR."C:/Temp/prj3p/\{boardId}";
+//        String dir = STR."C:/Temp/prj3p/\{boardId}";
+
         for (String fileName : fileNames) {
-            File file = new File(dir + fileName);
-            file.delete();
+//            File file = new File(dir + fileName);
+//            file.delete();
 
             // s3 에 있는 file
-//            String key = STR."prj3/\{boardId}/\{fileName}";
-//            DeleteObjectRequest objectRequest = DeleteObjectRequest.builder()
-//                    .bucket(bucketName)
-//                    .key(key)
-//                    .build();
-//            s3Client.deleteObject(objectRequest);
+            String key = STR."prj3/\{board.getDivision()}/\{boardId}/\{fileName}";
+            DeleteObjectRequest objectRequest = DeleteObjectRequest.builder()
+                    .bucket(bucketName)
+                    .key(key)
+                    .build();
+            s3Client.deleteObject(objectRequest);
         }
         // 필요없는 부모 디렉토리 삭제
-        File dirFile = new File(dir);
-        if (dirFile.exists()) {
-            dirFile.delete();
-        }
+//        File dirFile = new File(dir);
+//        if (dirFile.exists()) {
+//            dirFile.delete();
+//        }
+
         // File 테이블 지움
         boardMapper.deleteFileByBoardId(boardId);
 

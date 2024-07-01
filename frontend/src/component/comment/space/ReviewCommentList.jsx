@@ -2,16 +2,20 @@ import { Box, Button, Center } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { ReviewCommentItem } from "./ReviewCommentItem.jsx";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 export function ReviewCommentList({ spaceId, isProcessing, setIsProcessing }) {
   const [commentList, setCommentList] = useState([]);
   // 페이징
   const [pageInfo, setPageInfo] = useState({});
+  const [searchParams] = useSearchParams();
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (!isProcessing) {
       axios
-        .get(`/api/comment/listReview/${spaceId}`)
+        .get(`/api/comment/listReview/${spaceId}?${searchParams}`)
         .then((res) => {
           // res.data가 객체인지 확인하고 comments 배열을 추출
           const comments = res.data.comments;
@@ -21,11 +25,16 @@ export function ReviewCommentList({ spaceId, isProcessing, setIsProcessing }) {
         .catch((err) => {})
         .finally(() => {});
     }
-  }, [isProcessing]);
+  }, [isProcessing, searchParams]);
 
+  // 페이징
   const pageNumber = [];
   for (let i = pageInfo.leftPageNumber; i <= pageInfo.rightPageNumber; i++) {
     pageNumber.push(i);
+  }
+  function handleClickPageButton(pageNumber) {
+    searchParams.set("reviewPage", pageNumber);
+    navigate(`/space/${spaceId}?${searchParams}`);
   }
 
   return (
@@ -41,7 +50,6 @@ export function ReviewCommentList({ spaceId, isProcessing, setIsProcessing }) {
       ))}
 
       {/* 페이징 */}
-      {/* 페이징 작업 */}
       <Center>
         {pageInfo.prevPageNumber && (
           <Box>
