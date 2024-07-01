@@ -2,35 +2,58 @@ import React, { useEffect, useState } from "react";
 import "/public/css/member/MyReservationList.css";
 import {
   Box,
+  Button,
+  Container,
+  Flex,
   Heading,
+  HStack,
+  Input,
+  InputGroup,
+  InputLeftElement,
   Table,
-  TableContainer,
   Tbody,
   Td,
+  Text,
   Th,
   Thead,
   Tr,
+  useColorModeValue,
 } from "@chakra-ui/react";
+import { SearchIcon } from "@chakra-ui/icons";
 import { useNavigate, useParams } from "react-router-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCalendarAlt } from "@fortawesome/free-solid-svg-icons";
 import axios from "axios";
 import PaymentBtn from "../paid/PaymentBtn.jsx";
 
 function MyReservationList() {
   const { memberId } = useParams();
-  const [reservationList, setReservationList] = useState([]);
+  const [reservations, setReservations] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
   const myPaymentPage = useNavigate();
+
+  // 페이징 관련 상태
+  const [currentPage, setCurrentPage] = useState(1);
+  const [reservationsPerPage] = useState(10);
+
+  const bgColor = useColorModeValue("white", "gray.800");
+  const textColor = useColorModeValue("gray.800", "white");
 
   useEffect(() => {
     axios
       .get("/api/reservation/list/" + memberId)
       .then((res) => {
         console.log(res.data);
-        setReservationList(res.data);
+        setReservations(res.data);
       })
       .catch((err) => {
         console.error(err);
       });
   }, [memberId]);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm]);
 
   const getStatusMessage = (status) => {
     switch (status) {
@@ -54,48 +77,104 @@ function MyReservationList() {
       .replace(/\.$/, "");
   };
 
+  const filteredReservations = reservations.filter((reservation) =>
+    reservation.title.toLowerCase().includes(searchTerm.toLowerCase()),
+  );
+
+  // 페이징 로직
+  const indexOfLastReservation = currentPage * reservationsPerPage;
+  const indexOfFirstReservation = indexOfLastReservation - reservationsPerPage;
+  const currentReservations = filteredReservations.slice(
+    indexOfFirstReservation,
+    indexOfLastReservation,
+  );
+
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
   return (
-    <div>
-      <Box maxW="80%" mx="auto" mt={8} p={4} className="reservationListArea">
-        <Heading as="h2" size="lg" mb={4} className="reservationListTitle">
+    <Container maxW="container.xl" py={10}>
+      <Flex justify="space-between" align="center" mb={8}>
+        <Heading size="lg" color={textColor}>
+          <FontAwesomeIcon
+            icon={faCalendarAlt}
+            style={{ marginRight: "10px" }}
+          />
           예약 리스트
         </Heading>
-        <TableContainer>
-          <Table variant="simple">
-            <Thead>
-              <Tr>
-                <Th>번호</Th>
-                <Th>공간 이름</Th>
-                <Th>예약 일시</Th>
-                <Th>이용 시간</Th>
-                <Th>가격</Th>
-                <Th>예약 상태</Th>
-                <Th>결제 버튼</Th>
-                <Th>예약 일시</Th>
+        <InputGroup maxW="300px">
+          <InputLeftElement pointerEvents="none">
+            <SearchIcon color="gray.300" />
+          </InputLeftElement>
+          <Input
+            type="text"
+            placeholder="공간 이름 검색..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </InputGroup>
+      </Flex>
+
+      <Box bg={bgColor} shadow="md" borderRadius="lg" overflow="hidden">
+        <Table variant="simple">
+          <Thead>
+            <Tr bg={useColorModeValue("gray.50", "gray.700")}>
+              <Th>번호</Th>
+              <Th>공간 이름</Th>
+              <Th>예약 일시</Th>
+              <Th>이용 시간</Th>
+              <Th>가격</Th>
+              <Th>예약 상태</Th>
+              <Th>결제</Th>
+              <Th>예약 일시</Th>
+            </Tr>
+          </Thead>
+          <Tbody>
+            {currentReservations.map((reservation) => (
+              <Tr key={reservation.reservationId}>
+                <Td>{reservation.reservationId}</Td>
+                <Td fontWeight="bold">{reservation.title}</Td>
+                <Td>{reservation.startDate}</Td>
+                <Td>{`${reservation.startTime} ~ ${reservation.endTime}`}</Td>
+                <Td>₩{reservation.totalPrice.toLocaleString()}</Td>
+                <Td>{getStatusMessage(reservation.status)}</Td>
+                <Td>
+                  <PaymentBtn reservationId={reservation.reservationId} />
+                </Td>
+                <Td>{formatDate(reservation.inputDt)}</Td>
               </Tr>
-            </Thead>
-            <Tbody>
-              {reservationList.map((list) => (
-                <Tr key={list.reservationId}>
-                  <Td>{list.reservationId}</Td>
-                  <Td>{list.title}</Td>
-                  <Td>{list.startDate}</Td>
-                  <Td>
-                    {list.startTime} ~ {list.endTime}
-                  </Td>
-                  <Td>{list.totalPrice}</Td>
-                  <Td>{getStatusMessage(list.status)}</Td>
-                  <Td>
-                    <PaymentBtn reservationId={list.reservationId}></PaymentBtn>
-                  </Td>
-                  <Td>{formatDate(list.inputDt)}</Td> {/* 날짜 형식 변환 */}
-                </Tr>
-              ))}
-            </Tbody>
-          </Table>
-        </TableContainer>
+            ))}
+          </Tbody>
+        </Table>
       </Box>
-    </div>
+
+      {filteredReservations.length === 0 && (
+        <Text mt={4} textAlign="center" color="gray.500">
+          예약된 내역이 없습니다.
+        </Text>
+      )}
+
+      {/* 페이징 컨트롤 */}
+      <Flex justifyContent="center" mt={4}>
+        <HStack>
+          {Array.from(
+            {
+              length: Math.ceil(
+                filteredReservations.length / reservationsPerPage,
+              ),
+            },
+            (_, i) => (
+              <Button
+                key={i}
+                onClick={() => paginate(i + 1)}
+                colorScheme={currentPage === i + 1 ? "blue" : "gray"}
+              >
+                {i + 1}
+              </Button>
+            ),
+          )}
+        </HStack>
+      </Flex>
+    </Container>
   );
 }
 
