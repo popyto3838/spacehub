@@ -54,6 +54,7 @@ public class PaidController {
 
     @PostMapping("/cancelPayment")
     public void cancelPayment(@RequestBody PaymentCancelRequestDTO paidCancelRequest) throws IOException {
+        log.info("====paidCancelRequest===={}", paidCancelRequest);
         paidService.cancelPayment(paidCancelRequest);
     }
 

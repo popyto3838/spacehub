@@ -29,7 +29,6 @@ function MyPaymentList() {
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const toast = useToast();
-  const [paymentsToken, setPaymentsToken] = useState("");
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [selectedImpUid, setSelectedImpUid] = useState(null);
   const [paidId, setPaidId] = useState(null);
@@ -51,13 +50,6 @@ function MyPaymentList() {
     }
   }, [member]);
 
-  useEffect(() => {
-    if (paymentsToken !== "") {
-      console.log(paymentsToken);
-      console.log(paymentsToken);
-    }
-  }, [paymentsToken]);
-
   const onPayCancel = (impUid, paidId) => {
     alert(paidId);
     setSelectedImpUid(impUid);
@@ -67,9 +59,9 @@ function MyPaymentList() {
 
   const handleRefund = async () => {
     try {
-      await getToken();
+      const token = await getToken(); // getToken 함수가 토큰을 반환하게 합니다.
       await axios.post("/api/paid/cancelPayment", {
-        token: paymentsToken,
+        token: token,
         impUid: selectedImpUid,
         amount: 100,
         paidId: paidId,
@@ -95,9 +87,10 @@ function MyPaymentList() {
   const getToken = async () => {
     try {
       const res = await axios.post("/api/paid/getToken");
-      setPaymentsToken(res.data);
+      return res.data; // 반환된 토큰을 반환합니다.
     } catch (error) {
       console.error("Error getting token:", error);
+      throw error; // 오류가 발생하면 예외를 던집니다.
     }
   };
 
