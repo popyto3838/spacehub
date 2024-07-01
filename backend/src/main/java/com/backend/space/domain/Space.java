@@ -1,11 +1,13 @@
 package com.backend.space.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Data
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Space {
 
     private int spaceId; // SPACE(PK)
@@ -30,9 +32,6 @@ public class Space {
     private int capacity;
     private int floor;
     private int parkingSpace;
-
-    private LocalDateTime inputDt;
-    private LocalDateTime updateDt;
 
     private String thumbnailPath; // frontend 썸네일 출력용 경로
 

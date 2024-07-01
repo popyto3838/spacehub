@@ -29,8 +29,8 @@ public interface TypeListMapper {
 
     @Update("""
             UPDATE TYPE_LIST
-            SET NAME = #{name}, ACTIVE = #{active}
+            SET NAME = #{name}, IS_ACTIVE = #{isActive}
             WHERE TYPE_LIST_ID = #{typeListId}
             """)
-    int updateTypelist(TypeList typeListId);
+    int updateTypelist(TypeList typeList);
 }

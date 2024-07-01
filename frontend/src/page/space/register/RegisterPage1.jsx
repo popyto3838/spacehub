@@ -17,29 +17,40 @@ const RegisterPage1 = ({formData, setFormData}) => {
       });
     }
   };
-  const handleTitleChange = (e) => setFormData({ ...formData, title: e.target.value });
-  const handleSubTitleChange = (e) => setFormData({ ...formData, subTitle: e.target.value });
+  const handleTitleChange = (e) => setFormData({...formData, title: e.target.value});
+  const handleSubTitleChange = (e) => setFormData({...formData, subTitle: e.target.value});
 
   useEffect(() => {
     axios.get(`/api/space/type/list`)
       .then((res) => {
         setTypeLists(res.data);
         setLoading(false); // 데이터 로딩 완료
-
-        // typeLists 데이터가 로드된 후 formData 업데이트
-        if (res.data.length > 0 && !formData.type) {
-          setFormData({
-            ...formData,
-            type: '', // 첫 번째 타입을 기본값으로 설정
-            typeListId: 0,
-          });
-        }
       })
       .catch((error) => {
         console.error("Error fetching type lists:", error);
         setLoading(false); // 에러 발생 시에도 로딩 상태 해제
+        toast({
+          title: '공간 유형 데이터를 불러오는 데 실패했습니다.',
+          description: error.response?.data?.message || '잠시 후 다시 시도해주세요.',
+          status: 'error',
+          duration: 3000,
+          isClosable: true,
+        });
       });
   }, []);
+
+  useEffect(() => {
+    // formData가 업데이트될 때 typeListId를 확인하고 맞는 타입을 설정
+    if (typeLists.length > 0 && formData.typeListId) {
+      const selectedType = typeLists.find(type => type.itemId === formData.typeListId);
+      if (selectedType) {
+        setFormData(prevFormData => ({
+          ...prevFormData,
+          type: selectedType.name,
+        }));
+      }
+    }
+  }, [typeLists, formData.typeListId]);
 
   if (loading) {
     return <div>Loading...</div>; // 데이터 로딩 중일 때 로딩 표시
