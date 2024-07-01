@@ -9,7 +9,7 @@ import {
   FormControl,
   FormLabel,
   Checkbox,
-  InputGroup, InputRightElement, useToast, Divider,
+  InputGroup, InputRightElement, useToast, Divider, VStack, Heading,
 } from '@chakra-ui/react';
 import {Icon, InfoIcon} from '@chakra-ui/icons';
 import TimerComponent from "./TimerComponent.jsx";
@@ -35,6 +35,7 @@ export function MemberHostInfo(){
   const [part2, setPart2] = useState('');
   const [part3, setPart3] = useState('');
   const [businessNumber, setBusinessNumber] = useState('');
+  const [isDisabled, setIsDisabled] = useState(true)
 
   const account = useContext(LoginContext);
   const toast = useToast();
@@ -53,6 +54,7 @@ export function MemberHostInfo(){
           description : "계좌등록이 완료되었습니다.",
           position : "top"
         })
+        setIsDisabled(false)
       })
       .catch((err) => {
         if (err.response.status === 400) {
@@ -115,90 +117,120 @@ export function MemberHostInfo(){
   }
 
   return (
-    <Box maxW="md" mx="auto" mt={8} p={6} borderWidth={1} borderRadius="lg" boxShadow="lg">
+    <Box
+      minHeight="100vh"
+      bg="linear-gradient(135deg, #f3e7e9 0%, #f9ebff 100%)"
+      display="flex"
+      alignItems="center"
+      justifyContent="center"
+      p={4}
+    >
+      <Box
+        maxWidth="500px"
+        w="full"
+        bg="rgba(255, 255, 255, 0.8)"
+        backdropFilter="blur(10px)"
+        borderRadius="2xl"
+        boxShadow="2xl"
+        overflow="hidden"
+      >
+        <Box p={8}>
+          <VStack spacing={6} align="stretch">
+            <Heading
+              as="h2"
+              fontSize="22px"
+              textAlign="center"
+              bgGradient="linear(to-r, #667eea, #764ba2)"
+              bgClip="text"
+              fontWeight="extrabold"
+              color="black"
+            >
+              호스트 추가정보 입력
+            </Heading>
 
-      <Text fontSize="xl" fontWeight="bold" mb={2}>
-        계좌 정보를 입력해 주세요.
-      </Text>
-      <Divider borderColor="purple.500" />
-      <Box  p={3} borderRadius="md">
-        <Text>은행명</Text>
+            <Divider borderColor="purple.500" />
 
-        <Input
+            <FormControl>
+              <FormLabel>은행명</FormLabel>
+              <Input
+                bg="white"
+                onChange={(e) => {
+                  setBankName(e.target.value);
+                  setIsCheckedMobile(false);
+                }}
+              />
+            </FormControl>
 
-          onChange={(e) => {
-            setBankName(e.target.value);
-            setIsCheckedMobile(false);
-          }}
-        />
-        <Text>내 계좌번호</Text>
-        <InputGroup>
-        <Input
-          placeholder="계좌번호를 입력하세요"
-               onChange={(e) => {
-                 setAccountNumber(e.target.value);
-               }}
-        />
-        <InputRightElement w={"75px"} mr={1}>
-        <Button
-          onClick={handleAccount}
-          size="sm" colorScheme={"blue"}>등록하기</Button>
-        </InputRightElement>
-      </InputGroup>
-      </Box>
-      <Box  p={3} borderRadius="md">
+            <FormControl>
+              <FormLabel>내 계좌번호</FormLabel>
+              <InputGroup>
+                <Input
+                  bg="white"
+                  placeholder="계좌번호를 입력하세요"
+                  onChange={(e) => {
+                    setAccountNumber(e.target.value);
+                  }}
+                />
+                <InputRightElement width="4.5rem">
+                  <Button
+                    h="1.75rem"
+                    size="sm"
+                    colorScheme="purple"
+                    onClick={handleAccount}
+                  >
+                    등록하기
+                  </Button>
+                </InputRightElement>
+              </InputGroup>
+            </FormControl>
 
-      <FormControl mb={4}>
-        <FormLabel>사업자명(개인/법인)</FormLabel>
-        <Input  onChange={(e) => setBusinessName(e.target.value)} />
-      </FormControl>
+            <FormControl>
+              <FormLabel>사업자명(개인/법인)</FormLabel>
+              <Input bg="white" onChange={(e) => setBusinessName(e.target.value)} />
+            </FormControl>
 
-        <FormControl isRequired>
-          <FormLabel>사업자 등록번호</FormLabel>
-          <Flex>
-            <Input maxW="100px" mr={2}
-                   value={part1}
-                   onChange={(e) => setPart1(e.target.value)}
-            />
-            <Text alignSelf="center">-</Text>
-            <Input maxW="100px" mx={2}
-                   value={part2}
-                   onChange={(e) => setPart2(e.target.value)}
-            />
-            <Text alignSelf="center">-</Text>
-            <Input maxW="100px" ml={2}
-                   value={part3}
-                   onChange={(e) => setPart3(e.target.value)}
-            />
-          </Flex>
-          <Flex mt={2}>
-            <Icon as={InfoIcon} color="blue.500" mr={2} />
-            <Text fontSize="sm" color="gray.500">정확한 정보를 입력했는지 다시 한번 확인해주세요.</Text>
-          </Flex>
-          <Flex mt={2}>
-            <Icon as={InfoIcon} color="blue.500" mr={2} />
-            <Text fontSize="sm" color="gray.500">
-              추후, 사업자 정보가 수정된다면 반드시 온라인 상담을 통해 변경 내용을 알려주셔야 합니다.
-            </Text>
-          </Flex>
-        </FormControl>
+            <FormControl isRequired>
+              <FormLabel>사업자 등록번호</FormLabel>
+              <Flex>
+                <Input bg="white" maxW="100px" mr={2} value={part1} onChange={(e) => setPart1(e.target.value)} />
+                <Text alignSelf="center">-</Text>
+                <Input bg="white" maxW="100px" mx={2} value={part2} onChange={(e) => setPart2(e.target.value)} />
+                <Text alignSelf="center">-</Text>
+                <Input bg="white" maxW="100px" ml={2} value={part3} onChange={(e) => setPart3(e.target.value)} />
+              </Flex>
+              <Flex mt={2}>
+                <Icon as={InfoIcon} color="blue.500" mr={2} />
+                <Text fontSize="sm" color="gray.600">정확한 정보를 입력했는지 다시 한번 확인해주세요.</Text>
+              </Flex>
+              <Flex mt={2}>
+                <Icon as={InfoIcon} color="blue.500" mr={2} />
+                <Text fontSize="sm" color="gray.600">
+                  추후, 사업자 정보가 수정된다면 반드시 온라인 상담을 통해 변경 내용을 알려주셔야 합니다.
+                </Text>
+              </Flex>
+            </FormControl>
 
-        <FormControl mt={5} mb={4}>
-          <FormLabel>대표자명</FormLabel>
-          <Input  onChange={(e) => setRepName(e.target.value)} />
-        </FormControl >
+            <FormControl>
+              <FormLabel>대표자명</FormLabel>
+              <Input bg="white" onChange={(e) => setRepName(e.target.value)} />
+            </FormControl>
 
-        <Flex justifyContent="flex-end" >
-          <Button colorScheme="purple" type="submit"
-          onClick={submitHostInfo}
-          >
-            제출
-          </Button>
-        </Flex>
-
+            <Button
+              colorScheme="purple"
+              size="lg"
+              isFullWidth
+              onClick={submitHostInfo}
+              isDisabled={isDisabled}
+              bgGradient="linear(to-r, #667eea, #764ba2)"
+              _hover={{
+                bgGradient: "linear(to-r, #764ba2, #667eea)",
+              }}
+            >
+              제출
+            </Button>
+          </VStack>
+        </Box>
       </Box>
     </Box>
-
-
   );
 };

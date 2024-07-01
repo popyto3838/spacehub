@@ -212,6 +212,8 @@ const Header = () => {
                 onClick={() => navigate("/board/list")}>
                 공지사항
               </MenuItem>
+              {account.isLoggedIn() && (
+                <>
               <MenuItem
                 color="gray.800"
                 _hover={{bg: "gray.700", color: "yellow.400"}}
@@ -255,6 +257,16 @@ const Header = () => {
                   account.logout();
                   navigate("/");
                 }}>로그아웃
+              </MenuItem>
+                </>
+              )}
+              <MenuItem
+                color="gray.800"
+                _hover={{bg: "gray.700", color: "yellow.400"}}
+                icon={<FontAwesomeIcon icon={faSignOutAlt}/>}
+                onClick={() => {
+                  navigate("/member/login");
+                }}>로그인
               </MenuItem>
             </MenuList>
           </Menu>

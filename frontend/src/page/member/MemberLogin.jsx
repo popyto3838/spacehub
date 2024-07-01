@@ -1,13 +1,13 @@
 import {
   Box,
-  Button, Checkbox,
+  Button, Checkbox, Divider,
   Flex,
   FormControl,
   FormHelperText,
   FormLabel, Heading,
   HStack,
   Input,
-  InputGroup,
+  InputGroup, InputLeftElement,
   InputRightElement,
   Modal,
   ModalBody,
@@ -27,6 +27,7 @@ import axios from "axios";
 import {LoginContext} from "../../component/LoginProvider.jsx";
 import NaverLogin from "./NaverLogin.jsx";
 import TimerComponent from "./TimerComponent.jsx";
+import {FiLock, FiMail} from "react-icons/fi";
 
 export function MemberLogin() {
   const [email, setEmail] = useState(localStorage.getItem('email') || '');
@@ -176,171 +177,108 @@ export function MemberLogin() {
 
 
   return (
-    <Box maxW="md" mx="auto" mt={8} p={6} borderWidth={1} borderRadius="lg" boxShadow="lg" bg="white">
-      <VStack spacing={6}>
-        <Heading as="h2" size="xl" textAlign="center">
-          LOGIN
-        </Heading>
+    <Box
+      minHeight="100vh"
+      bg="linear-gradient(135deg, #f3e7e9 0%, #f9ebff 100%)"
+      display="flex"
+      alignItems="center"
+      justifyContent="center"
+      p={4}
+    >
+      <Box
+        maxWidth="500px"
+        w="full"
+        bg="rgba(255, 255, 255, 0.8)"
+        backdropFilter="blur(10px)"
+        borderRadius="2xl"
+        boxShadow="2xl"
+        overflow="hidden"
+      >
+        <Box p={8}>
+          <VStack spacing={6} align="stretch">
+            <Heading
+              as="h2"
+              size="xl"
+              textAlign="center"
+              bgGradient="linear(to-r, #667eea, #764ba2)"
+              bgClip="text"
+              fontWeight="extrabold"
+              color="black"
+            >
+              로그인
+            </Heading>
 
-        <FormControl>
-          <FormLabel>이메일</FormLabel>
-          <Input
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="hello@example.com"
-          />
-        </FormControl>
-
-        <FormControl>
-          <FormLabel>패스워드</FormLabel>
-          <Input
-            value={password}
-            type="password"
-            onChange={(e) => setPassword(e.target.value)}
-          />
-        </FormControl>
-
-        <Box w="100%">
-        <Checkbox
-          isChecked={rememberMe}
-          onChange={(e) => setRememberMe(e.target.checked)}
-
-        >
-          아이디와 패스워드 저장
-        </Checkbox>
-        </Box>
-
-        <Button w="100%" onClick={handleLogin} colorScheme="purple">
-          로그인
-        </Button>
-
-        <Box w="100%">
-          <NaverLogin/>
-        </Box>
-
-        <HStack spacing={4} justify="center" w="100%">
-          <Button variant="outline" onClick={onFirstModalOpen}>
-            아이디 찾기
-          </Button>
-          <Button variant="outline" onClick={onSecondModalOpen}>
-            비밀번호 찾기
-          </Button>
-          <Button variant="outline" onClick={() => navigate("/member/signup")}>
-            회원가입
-          </Button>
-        </HStack>
-      </VStack>
-
-
-      <Modal isOpen={isFirstModalOpen} onClose={onFirstModalClose}>
-        <ModalOverlay/>
-        <ModalContent>
-          <ModalHeader>아이디 찾기</ModalHeader>
-          <ModalCloseButton/>
-          <ModalBody>
             <FormControl>
-              <FormLabel>핸드폰번호를 입력해주세요</FormLabel>
-              <Input
-                onChange={(e) => {
-                  setMobile(e.target.value);
-                }}
-                placeholder="01012345678"/>
-              <Button colorScheme={"purple"} type="button" onClick={sendNumberMobile}>
-                인증번호받기
-              </Button>
-              {isCodeSent && (
-                <Box>
-                  <InputGroup>
-                    <Input
-                      type={"text"}
-                      onChange={(e) => {
-                        setInputCode(e.target.value);
-                      }}
-                    />
-                    <InputRightElement w="75px" mr={1}>
-                      <Button onClick={confirmNumberMobile}>핸드폰 인증</Button>
-                    </InputRightElement>
-                  </InputGroup>
-                  {expirationTime && <TimerComponent expirationTime={expirationTime}/>}
-                </Box>
-              )}
+              <FormLabel>이메일</FormLabel>
+              <InputGroup>
+                <InputLeftElement pointerEvents="none">
+                  <FiMail color="gray.300" />
+                </InputLeftElement>
+                <Input
+                  type="email"
+                  placeholder="hello@example.com"
+                  bg="white"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                />
+              </InputGroup>
             </FormControl>
 
-            <FormControl mt={4}>
-              <FormLabel>가입하신 아이디는</FormLabel>
-              <Input placeholder={foundEmail ? `${foundEmail} 입니다` : ''} readOnly/>
-            </FormControl>
-          </ModalBody>
-          <ModalFooter>
-            <Button colorScheme="blue" mr={3} onClick={onFirstModalClose}>
-              닫기
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
-      <Modal isOpen={isSecondModalOpen} onClose={onSecondModalClose}>
-        <ModalOverlay/>
-        <ModalContent>
-          <ModalHeader>비밀번호 찾기</ModalHeader>
-          <ModalCloseButton/>
-          <ModalBody>
             <FormControl>
-              <FormLabel>핸드폰번호를 입력해주세요</FormLabel>
-              <Input
-                onChange={(e) => {
-                  setMobile(e.target.value);
-                }}
-                placeholder="01012345678"/>
-              <Button colorScheme={"purple"} type="button" onClick={sendNumberMobile}>
-                인증번호받기
-              </Button>
-              {isCodeSent && (
-                <Box>
-                  <InputGroup>
-                    <Input
-                      type={"text"}
-                      onChange={(e) => {
-                        setInputCode(e.target.value);
-                      }}
-                    />
-                    <InputRightElement w="75px" mr={1}>
-                      <Button onClick={confirmNumberMobilePassword}>핸드폰 인증</Button>
-                    </InputRightElement>
-                  </InputGroup>
-                  {expirationTime && <TimerComponent expirationTime={expirationTime}/>}
-                </Box>
-              )}
+              <FormLabel>패스워드</FormLabel>
+              <InputGroup>
+                <InputLeftElement pointerEvents="none">
+                  <FiLock color="gray.300" />
+                </InputLeftElement>
+                <Input
+                  type="password"
+                  bg="white"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+              </InputGroup>
             </FormControl>
 
-            <FormControl mt={4}>
-              <FormLabel>비밀번호를 재설정 해주세요</FormLabel>
-              <Input
-                type={"password"}
-                onChange={(e) =>
-                  setPassword(e.target.value)
-                }
-                placeholder={"새 비밀번호"}/>
+            <Checkbox
+              isChecked={rememberMe}
+              onChange={(e) => setRememberMe(e.target.checked)}
+            >
+              아이디와 패스워드 저장
+            </Checkbox>
 
-              <Input
-                type={"password"}
-                onChange={(e) => setPasswordCheck(e.target.value)}
-                mt={7} placeholder={"새 비밀번호 확인"}/>
-              {password === passwordCheck || (
-                <FormHelperText>암호가 일치하지 않습니다.</FormHelperText>
-              )}
-            </FormControl>
-          </ModalBody>
-          <ModalFooter>
-            <Button onClick={onSecondModalClose}>취소</Button>
-            <Button colorScheme="blue" mr={3} onClick={handleClickSave}>
-              저장
+            <Button
+              colorScheme="purple"
+              fontSize="25px"
+              isFullWidth
+              onClick={handleLogin}
+              bgGradient="linear(to-r, #667eea, #764ba2)"
+              _hover={{
+                bgGradient: "linear(to-r, #764ba2, #667eea)",
+              }}
+            >
+              로그인
             </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
+
+            <Divider />
+
+            <Box>
+              <NaverLogin />
+            </Box>
+
+            <HStack spacing={4} justify="center" w="100%">
+              <Button variant="outline" onClick={onFirstModalOpen}>
+                아이디 찾기
+              </Button>
+              <Button variant="outline" onClick={onSecondModalOpen}>
+                비밀번호 찾기
+              </Button>
+              <Button variant="outline" onClick={() => navigate("/member/signup")}>
+                회원가입
+              </Button>
+            </HStack>
+          </VStack>
+        </Box>
+      </Box>
     </Box>
-
-
-  )
-    ;
+  );
 }

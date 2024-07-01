@@ -12,7 +12,7 @@ export function LoginProvider({ children }) {
   const [authority, setAuthority] = useState("");
   const [mobile, setMobile] = useState("");
   const [email, setEmail] = useState("");
-
+  const toast = useToast();
 
 
   console.log(authority)
@@ -65,8 +65,8 @@ export function LoginProvider({ children }) {
     console.log(id);
     setAuthority(payload.scope.split(" "));
   }
+
   function logout() {
-    const toast =useToast();
 
     localStorage.removeItem("token");
     localStorage.removeItem("com.naver.nid.oauth.state_token");
@@ -92,10 +92,11 @@ export function LoginProvider({ children }) {
     sessionStorage.clear();
 
     toast({
-      status : "success",
+      status: "success",
       description : "로그아웃 되었습니다",
-      position: "top",
+      position : "top"
     })
+
 
 
   }
