@@ -1,5 +1,5 @@
 import {
-  Box,
+  Box, Container,
   Spinner,
   Table,
   Tbody,
@@ -30,13 +30,15 @@ export function MemberList() {
 
 
   return (
-    <Box overflowX="auto">
-      <Box>회원목록</Box>
-      <Box>
-        <Table colorScheme="teal" size="md">
+    <Container maxW="container.xl" py={10}>
+      <Box overflowX="auto">
+        <Box fontSize="xl" fontWeight="bold" mb={4}>
+          회원목록
+        </Box>
+        <Table colorScheme="purple" size="md">
           <Thead>
             <Tr>
-              <Th>#</Th>
+              <Th>memberId</Th>
               <Th>이메일</Th>
               <Th>닉네임</Th>
               <Th>권한</Th>
@@ -46,10 +48,10 @@ export function MemberList() {
           <Tbody>
             {memberList.map((member) => (
               <Tr
-                onClick={() => navigate(`/member/${member.memberId}`)}
-                cursor={"pointer"}
-                _hover={{ bgColor: "blue.300" }}
                 key={member.memberId}
+                onClick={() => navigate(`/member/${member.memberId}`)}
+                cursor="pointer"
+                _hover={{ bgColor: "teal.100" }}
               >
                 <Td>{member.memberId}</Td>
                 <Td>{member.email}</Td>
@@ -61,6 +63,6 @@ export function MemberList() {
           </Tbody>
         </Table>
       </Box>
-    </Box>
+    </Container>
   );
 }
