@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useState} from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   Box,
   Button,
@@ -16,13 +16,13 @@ import {
   useToast,
   VStack,
 } from "@chakra-ui/react";
-import {ChevronLeftIcon, ChevronRightIcon} from "@chakra-ui/icons";
-import {Link} from "react-scroll";
+import { ChevronLeftIcon, ChevronRightIcon } from "@chakra-ui/icons";
+import { Link } from "react-scroll";
 import axios from "axios";
-import {useNavigate, useParams} from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import DatePicker from "../../component/DatePicker.jsx";
 import KakaoMap from "../../component/KakaoMap.jsx";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faBullhorn,
   faCog,
@@ -33,14 +33,15 @@ import {
   faQuestionCircle,
   faShare,
   faStar,
+  faStarHalfAlt,
   faWonSign,
 } from "@fortawesome/free-solid-svg-icons";
 import "/public/css/space/SpaceView.css";
 import KakaoShareButton from "./KakaoShareButton.jsx";
 import ReportModal from "../../component/ReportModal.jsx";
-import {QnaCommentComponent} from "../../component/comment/space/QnaCommentComponent.jsx";
-import {ReviewCommentComponent} from "../../component/comment/space/ReviewCommentComponent.jsx";
-import {LoginContext} from "../../component/LoginProvider.jsx";
+import { QnaCommentComponent } from "../../component/comment/space/QnaCommentComponent.jsx";
+import { ReviewCommentComponent } from "../../component/comment/space/ReviewCommentComponent.jsx";
+import { LoginContext } from "../../component/LoginProvider.jsx";
 
 function SpaceView() {
   const [space, setSpace] = useState({});
@@ -53,10 +54,10 @@ function SpaceView() {
   const [activeSection, setActiveSection] = useState("공간소개");
   const member = useContext(LoginContext);
 
-  const {spaceId} = useParams();
+  const { spaceId } = useParams();
   const toast = useToast();
   const navigate = useNavigate();
-  const {isOpen, onClose, onOpen} = useDisclosure();
+  const { isOpen, onClose, onOpen } = useDisclosure();
 
   const [isLoading, setIsLoading] = useState(false);
   const bgColor = useColorModeValue("white", "gray.800");
@@ -65,11 +66,11 @@ function SpaceView() {
   const [isFavorited, setIsFavorited] = useState(false);
 
   const sections = [
-    {id: "introduceArea", name: "공간소개", icon: faHome},
-    {id: "facilityArea", name: "시설안내", icon: faCog},
-    {id: "noticeArea", name: "유의사항", icon: faExclamationCircle},
-    {id: "QA", name: "Q&A", icon: faQuestionCircle},
-    {id: "comment", name: "이용후기", icon: faComments},
+    { id: "introduceArea", name: "공간소개", icon: faHome },
+    { id: "facilityArea", name: "시설안내", icon: faCog },
+    { id: "noticeArea", name: "유의사항", icon: faExclamationCircle },
+    { id: "QA", name: "Q&A", icon: faQuestionCircle },
+    { id: "comment", name: "이용후기", icon: faComments },
   ];
 
   useEffect(() => {
@@ -210,9 +211,26 @@ function SpaceView() {
         .finally(setIsLoading(false));
     }
   };
+
+  const renderStars = (rating) => {
+    const stars = [];
+    for (let i = 1; i <= 5; i++) {
+      if (rating >= i) {
+        stars.push(<FontAwesomeIcon key={i} icon={faStar} color="#FFD700" />);
+      } else if (rating >= i - 0.5) {
+        stars.push(
+          <FontAwesomeIcon key={i} icon={faStarHalfAlt} color="#FFD700" />,
+        );
+      } else {
+        stars.push(<FontAwesomeIcon key={i} icon={faStar} color="gray.300" />);
+      }
+    }
+    return stars;
+  };
+
   return (
     <Box bg={bgColor} minHeight="100vh">
-      <Container maxW="1600px" py={10} px={4}>
+      <Container maxW="80%" py={20}>
         <VStack spacing={12} align="stretch">
           <Box>
             <Heading
@@ -234,7 +252,7 @@ function SpaceView() {
                   templateId={109470}
                 >
                   <Button
-                    leftIcon={<FontAwesomeIcon icon={faShare}/>}
+                    leftIcon={<FontAwesomeIcon icon={faShare} />}
                     variant="outline"
                     colorScheme="gray"
                   >
@@ -242,7 +260,7 @@ function SpaceView() {
                   </Button>
                 </KakaoShareButton>
                 <Button
-                  leftIcon={<FontAwesomeIcon icon={faBullhorn}/>}
+                  leftIcon={<FontAwesomeIcon icon={faBullhorn} />}
                   variant="outline"
                   colorScheme="gray"
                   onClick={onOpen}
@@ -250,7 +268,7 @@ function SpaceView() {
                   신고
                 </Button>
                 <Button
-                  leftIcon={<FontAwesomeIcon icon={faHeart}/>}
+                  leftIcon={<FontAwesomeIcon icon={faHeart} />}
                   variant="outline"
                   colorScheme={isFavorited ? "red" : "none"}
                   onClick={clickFavorite}
@@ -266,15 +284,24 @@ function SpaceView() {
             </HStack>
           </Box>
 
-          <Flex direction={{base: "column", lg: "row"}} gap={12}>
-            <Box flex={2}>
+          <Flex direction={{ base: "column", lg: "row" }} gap={12}>
+            <Box flex={3}>
+              {" "}
+              {/* DatePicker와의 비율 조정 */}
               <Box
                 position="relative"
                 mb={8}
                 className="image-slider"
                 overflow="hidden"
+                width="100%"
+                paddingTop="56.25%" // 16:9 비율
               >
                 <Flex
+                  position="absolute"
+                  top={0}
+                  left={0}
+                  right={0}
+                  bottom={0}
                   transition="transform 0.3s ease-in-out"
                   transform={`translateX(-${currentImageIndex * 100}%)`}
                 >
@@ -284,14 +311,14 @@ function SpaceView() {
                       src={img}
                       alt={`Space image ${index + 1}`}
                       w="100%"
-                      h="500px"
+                      h="100%"
                       objectFit="cover"
                       flexShrink={0}
                     />
                   ))}
                 </Flex>
                 <IconButton
-                  icon={<ChevronLeftIcon/>}
+                  icon={<ChevronLeftIcon />}
                   position="absolute"
                   left={4}
                   top="50%"
@@ -301,7 +328,7 @@ function SpaceView() {
                   size="lg"
                 />
                 <IconButton
-                  icon={<ChevronRightIcon/>}
+                  icon={<ChevronRightIcon />}
                   position="absolute"
                   right={4}
                   top="50%"
@@ -311,10 +338,9 @@ function SpaceView() {
                   size="lg"
                 />
               </Box>
-
               <Flex align="center" mb={12} id="thumbnail-container">
                 <IconButton
-                  icon={<ChevronLeftIcon/>}
+                  icon={<ChevronLeftIcon />}
                   onClick={goToPreviousThumbnails}
                   isDisabled={startThumbnailIndex === 0}
                 />
@@ -352,19 +378,18 @@ function SpaceView() {
                             : 0.6
                         }
                         transition="opacity 0.2s"
-                        _hover={{opacity: 1}}
+                        _hover={{ opacity: 1 }}
                       />
                     ))}
                 </Flex>
                 <IconButton
-                  icon={<ChevronRightIcon/>}
+                  icon={<ChevronRightIcon />}
                   onClick={goToNextThumbnails}
                   isDisabled={
                     startThumbnailIndex >= spaceImages.length - thumbnailCount
                   }
                 />
               </Flex>
-
               <HStack justify="center" spacing={6} mb={12}>
                 {sections.map((section) => (
                   <Link
@@ -381,7 +406,7 @@ function SpaceView() {
                         activeSection === section.name ? "red" : "gray"
                       }
                       onClick={() => setActiveSection(section.name)}
-                      leftIcon={<FontAwesomeIcon icon={section.icon}/>}
+                      leftIcon={<FontAwesomeIcon icon={section.icon} />}
                       fontSize="lg"
                     >
                       {section.name}
@@ -389,15 +414,18 @@ function SpaceView() {
                   </Link>
                 ))}
               </HStack>
-
               <VStack spacing={16} align="stretch">
                 <Box id="introduceArea" p={8} bg="gray.50" borderRadius="lg">
                   <Heading as="h2" size="xl" mb={6} color="gray.700">
                     공간소개
                   </Heading>
-                  <Text fontSize="lg" mb={8} lineHeight="tall">
-                    {spaceDetails.introduce}
-                  </Text>
+                  {/*<Text fontSize="lg" mb={8} lineHeight="tall">*/}
+                  {/*  {spaceDetails.introduce}*/}
+                  {/*</Text>*/}
+                  <div
+                    className="quill-content"
+                    dangerouslySetInnerHTML={{ __html: spaceDetails.introduce }}
+                  ></div>
                   <Grid
                     templateColumns="repeat(3, 1fr)"
                     gap={8}
@@ -441,15 +469,19 @@ function SpaceView() {
                     </Box>
                   </Grid>
                 </Box>
-                <Divider/>
+                <Divider />
                 <Box id="facilityArea" p={8}>
                   <Heading as="h2" size="xl" mb={6} color="gray.700">
                     시설안내
                   </Heading>
-                  <Text fontSize="lg" mb={8} lineHeight="tall">
-                    {spaceDetails.facility}
-                  </Text>
-                  <Heading as="h3" size="lg" mb={6} color="gray.600">
+                  {/*<Text fontSize="lg" mb={8} lineHeight="tall">*/}
+                  {/*  {spaceDetails.facility}*/}
+                  {/*</Text>*/}
+                  <div
+                    className="quill-content"
+                    dangerouslySetInnerHTML={{ __html: spaceDetails.facility }}
+                  ></div>
+                  <Heading as="h3" size="lg" mb={6} mt={6} color="gray.600">
                     제공 편의시설
                   </Heading>
                   <Grid
@@ -484,33 +516,37 @@ function SpaceView() {
                     />
                   </Box>
                 </Box>
-                <Divider/>
+                <Divider />
                 <Box id="noticeArea" p={8} bg="gray.50" borderRadius="lg">
                   <Heading as="h2" size="xl" mb={6} color="gray.700">
                     유의사항
                   </Heading>
-                  <Text fontSize="lg" lineHeight="tall">
-                    {spaceDetails.notice}
-                  </Text>
+                  {/*<Text fontSize="lg" lineHeight="tall">*/}
+                  {/*  {spaceDetails.notice}*/}
+                  {/*</Text>*/}
+                  <div
+                    className="quill-content"
+                    dangerouslySetInnerHTML={{ __html: spaceDetails.notice }}
+                  ></div>
                 </Box>
-                <Divider/>
+                <Divider />
                 <Box id="QA" p={8}>
                   <Heading as="h2" size="xl" mb={6} color="gray.700">
                     Q&A
                   </Heading>
                   {/* Q&A 내용 */}
                   {spaceDetails.spaceId && (
-                    <QnaCommentComponent spaceId={spaceDetails.spaceId}/>
+                    <QnaCommentComponent spaceId={spaceDetails.spaceId} />
                   )}
                 </Box>
-                <Divider/>
+                <Divider />
                 <Box id="comment" p={8} bg="gray.50" borderRadius="lg">
                   <Heading as="h2" size="xl" mb={6} color="gray.700">
                     이용후기
                   </Heading>
                   {/* 이용후기 내용 */}
                   {spaceDetails.spaceId && (
-                    <ReviewCommentComponent spaceId={spaceDetails.spaceId}/>
+                    <ReviewCommentComponent spaceId={spaceDetails.spaceId} />
                   )}
                 </Box>
               </VStack>
@@ -530,17 +566,17 @@ function SpaceView() {
                 <VStack spacing={8} align="stretch">
                   <HStack justify="space-between">
                     <Heading size="xl" color="gray.800">
-                      <FontAwesomeIcon icon={faWonSign}/> {spaceDetails.price}{" "}
+                      <FontAwesomeIcon icon={faWonSign} /> {spaceDetails.price}{" "}
                       / 시간
                     </Heading>
                     <HStack>
-                      <FontAwesomeIcon icon={faStar} color="#FFD700"/>
+                      <Box>{renderStars(space.averageRating)}</Box>
                       <Text fontWeight="bold" fontSize="xl">
-                        {space.ratingAvg || 4.9}
+                        {space.averageRating?.toFixed(2) || "0.00"}
                       </Text>
                     </HStack>
                   </HStack>
-                  <DatePicker price={spaceDetails.price} spaceId={spaceId}/>
+                  <DatePicker price={spaceDetails.price} spaceId={spaceId} />
                 </VStack>
               </Box>
             </Box>
