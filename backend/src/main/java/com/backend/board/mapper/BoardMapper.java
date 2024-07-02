@@ -2,6 +2,7 @@ package com.backend.board.mapper;
 
 import com.backend.board.domain.Board;
 import com.backend.board.domain.Category;
+import com.backend.file.domain.File;
 import com.backend.fileList.domain.FileList;
 import org.apache.ibatis.annotations.*;
 
@@ -261,4 +262,43 @@ public interface BoardMapper {
             WHERE MEMBER_ID = #{memberId}
             """)
     int deleteLikeByMemberId(Integer memberId);
+
+    @Select("""
+            SELECT *
+            FROM FILE
+            WHERE FILE_NAME = #{fullPath}
+            """)
+    File findFileByFullPath(String fullPath);
+
+    @Update("""
+            UPDATE FILE
+            SET FILE_NAME = #{fileName}
+            WHERE FILE_ID = #{fileId}
+            """)
+    int updateFile(File existingFile);
+
+    @Insert("""
+            <script>
+            INSERT INTO FILE(PARENT_ID, DIVISION, FILE_NAME)
+            VALUES (#{parentId},
+                    <choose>
+                        <when test="categoryId == 1"> 'NOTICE' </when>
+                        <when test="categoryId == 2"> 'FAQ' </when>
+                    </choose>,
+                    #{fileName})
+            </script>
+            """)
+    int insertFile(File fileRecord);
+
+    /*    SELECT F.FILE_NAME, F.PARENT_ID, F.FILE_ID, B.BOARD_ID
+        FROM FILE F
+        JOIN BOARD B ON F.PARENT_ID = B.BOARD_ID
+        WHERE PARENT_ID = #{parentId}*/
+    @Select("""
+            SELECT *
+            FROM FILE
+            WHERE PARENT_ID = #{parentId}
+              AND DIVISION = #{division}
+            """)
+    List<File> selectFileByDivisionAndParentId(String division, Integer parentId);
 }
