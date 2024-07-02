@@ -255,7 +255,7 @@ const Header = () => {
                   color="gray.800"
                   _hover={{ bg: "gray.700", color: "yellow.400" }}
                   icon={<FontAwesomeIcon icon={faMapMarkerAlt} />}
-                  onClick={() => navigate(`/host/spaceList/${account.id}`)}
+                  onClick={() => navigate(`/host/spaceList`)}
                 >
                   나의 공간리스트
                 </MenuItem>
