@@ -1,11 +1,13 @@
 package com.backend.reservation.domain;
 
 import com.backend.reservation.domain.status.ReservationStatus;
-import lombok.Data;
+import lombok.*;
 
-import java.sql.Timestamp;
-
-@Data
+@Builder
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class UpdateStatusRequestDTO {
     private Integer reservationId;
     private ReservationStatus status;

@@ -56,7 +56,7 @@ export function HostDashboard({ memberId }) {
   };
 
   const handleNavigateToReservations = () => {
-    navigate(`/member/hostSpaceList/${memberId}`);
+    navigate(`/host/spaceList`);
   };
 
   const handleNavigateToReviews = () => {
