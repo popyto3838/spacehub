@@ -2,11 +2,15 @@ import {
   Badge,
   Box,
   Button,
+  Card,
+  CardBody,
+  Container,
   Flex,
   FormControl,
   FormHelperText,
   FormLabel,
   Heading,
+  HStack,
   Image,
   Input,
   Modal,
@@ -15,11 +19,13 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
+  SimpleGrid,
   Switch,
   Text,
   Textarea,
   useDisclosure,
   useToast,
+  VStack,
 } from "@chakra-ui/react";
 import { useContext, useEffect, useState } from "react";
 import axios from "axios";
@@ -94,98 +100,138 @@ export function BoardEdit() {
   }
 
   return (
-    <Box>
-      <Box>
-        <Heading>{board.boardId}번 게시물 수정</Heading>
-      </Box>
-      <Box>
-        <Box>
-          <FormControl>
-            <FormLabel>제목</FormLabel>
-            <Input
-              defaultValue={board.title}
-              onChange={(e) => setBoard({ ...board, title: e.target.value })}
-            />
-          </FormControl>
-        </Box>
-        <Box>
-          <FormControl>
-            <FormLabel>내용</FormLabel>
-            <Textarea
-              defaultValue={board.content}
-              onChange={(e) => setBoard({ ...board, content: e.target.value })}
-            />
-          </FormControl>
-        </Box>
-        <Box>
-          <FormControl>
-            <FormLabel>작성자</FormLabel>
-            <Input value={account.nickname} readOnly />
-          </FormControl>
-        </Box>
+    <Box bg="gray.100" minHeight="100vh" py={8}>
+      <Container maxW="container.xl">
+        <VStack spacing={8}>
+          <Card w="full">
+            <CardBody>
+              <Heading>{board.boardId}번 게시물 수정</Heading>
+            </CardBody>
+          </Card>
 
-        {/* 게시물에 첨부된 파일 */}
-        <Box>
-          <Box>첨부 파일 목록</Box>
-          {board.filesLists &&
-            board.filesLists.map((file) => (
-              <Box border={"1px solid black"} key={file.fileName}>
-                <Flex>
-                  지우기 :
-                  <Switch
+          <Card w="full">
+            <CardBody>
+              <VStack spacing={4} align="stretch">
+                <FormControl>
+                  <FormLabel>제목</FormLabel>
+                  <Input
+                    defaultValue={board.title}
                     onChange={(e) =>
-                      handleSwitchChangeRemove(file.fileName, e.target.checked)
+                      setBoard({ ...board, title: e.target.value })
                     }
                   />
-                  <Text>{file.fileName}</Text>
-                </Flex>
-                <Box>
-                  <Image
-                    sx={
-                      removeFileList.includes(file.fileName)
-                        ? { filter: "blur(8px)" }
-                        : {}
+                </FormControl>
+                <FormControl>
+                  <FormLabel>내용</FormLabel>
+                  <Textarea
+                    defaultValue={board.content}
+                    onChange={(e) =>
+                      setBoard({ ...board, content: e.target.value })
                     }
-                    src={file.src}
-                    alt={file.fileName}
                   />
+                </FormControl>
+                <FormControl>
+                  <FormLabel>작성자</FormLabel>
+                  <Input value={board.writer} readOnly />
+                </FormControl>
+              </VStack>
+            </CardBody>
+          </Card>
+
+          {/* 게시물에 첨부된 파일 */}
+          {board.filesLists && board.filesLists.length > 0 && (
+            <Card w="full">
+              <CardBody>
+                <Heading size="md" mb={4}>
+                  첨부 파일 목록
+                </Heading>
+                <SimpleGrid columns={[1, 2, 3]} spacing={4}>
+                  {board.filesLists.map((file) => (
+                    <Box
+                      key={file.fileName}
+                      borderWidth={1}
+                      borderRadius="lg"
+                      overflow="hidden"
+                    >
+                      <Flex justify="space-between" p={2}>
+                        <Text>지우기:</Text>
+                        <Switch
+                          onChange={(e) =>
+                            handleSwitchChangeRemove(
+                              file.fileName,
+                              e.target.checked,
+                            )
+                          }
+                        />
+                      </Flex>
+                      <Text p={2}>{file.fileName}</Text>
+                      <Image
+                        sx={
+                          removeFileList.includes(file.fileName)
+                            ? { filter: "blur(8px)" }
+                            : {}
+                        }
+                        src={file.src}
+                        alt={file.fileName}
+                      />
+                    </Box>
+                  ))}
+                </SimpleGrid>
+              </CardBody>
+            </Card>
+          )}
+
+          {/* 게시물에 파일 첨부 */}
+          <Card w="full">
+            <CardBody>
+              <FormControl>
+                <FormLabel>파일 첨부</FormLabel>
+                <Input
+                  multiple={true}
+                  type="file"
+                  accept="image/*, .pdf, .doc, .docx, .xls, .txt, .ppt"
+                  onChange={(e) => setAddFileList(e.target.files)}
+                />
+                <FormHelperText>
+                  첨부 파일의 총 용량은 10MB, 한 파일은 1MB를 초과할 수
+                  없습니다.
+                </FormHelperText>
+              </FormControl>
+              {fileNameList.length > 0 && (
+                <Box mt={4}>
+                  <ul>{fileNameList}</ul>
                 </Box>
-              </Box>
-            ))}
-        </Box>
+              )}
+            </CardBody>
+          </Card>
 
-        {/* 게시물에 파일 첨부 */}
-        <Box>
-          <FormControl>
-            <FormLabel>파일 첨부</FormLabel>
-            <Input
-              multiple={true}
-              type={"file"}
-              accept={"image/*, .pdf, .doc, .docx, .xls, .txt, .ppt"}
-              onChange={(e) => setAddFileList(e.target.files)}
-            />
-            <FormHelperText>
-              첨부 파일의 총 용량은 10MB, 한 파일은 1MB를 초과할 수 없습니다.
-            </FormHelperText>
-          </FormControl>
-          <Box>
-            <ul>{fileNameList}</ul>
-          </Box>
-        </Box>
+          <Card w="full">
+            <CardBody>
+              <HStack spacing={4}>
+                <Button ml={"auto"} onClick={() => navigate(-1)}>
+                  취소
+                </Button>
+                <Button colorScheme="blue" onClick={onOpen}>
+                  확인
+                </Button>
+              </HStack>
+            </CardBody>
+          </Card>
+        </VStack>
+      </Container>
 
-        <Box>
-          <Button onClick={() => navigate(-1)}>취소</Button>
-          <Button onClick={onOpen}>확인</Button>
-        </Box>
-      </Box>
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>게시물 수정</ModalHeader>
           <ModalBody>수정하시겠습니까?</ModalBody>
           <ModalFooter>
-            <Button onClick={onClose}>취소</Button>
-            <Button onClick={handleClickSave}>수정</Button>
+            <Button mr={3} onClick={onClose}>
+              취소
+            </Button>
+            <Button colorScheme="blue" onClick={handleClickSave}>
+              수정
+            </Button>
           </ModalFooter>
         </ModalContent>
       </Modal>

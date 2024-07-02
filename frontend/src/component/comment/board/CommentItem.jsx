@@ -1,7 +1,9 @@
 import {
-  Box,
   Button,
+  Card,
+  CardBody,
   Flex,
+  HStack,
   Modal,
   ModalBody,
   ModalContent,
@@ -9,8 +11,10 @@ import {
   ModalHeader,
   ModalOverlay,
   Spacer,
+  Text,
   useDisclosure,
   useToast,
+  VStack,
 } from "@chakra-ui/react";
 import axios from "axios";
 import { useContext, useState } from "react";
@@ -46,36 +50,47 @@ export function CommentItem({ comment, isProcessing, setIsProcessing }) {
   }
 
   return (
-    <Box border={"1px solid black"}>
-      <Flex>
-        <Box>{comment.nickname}</Box>
-        <Spacer />
-        <Box>{comment.inputDt}</Box>
-      </Flex>
-      {isEditing || (
-        /* 수정중이 아닐때는 Flex 박스를 보여줌 */
-        <Flex>
-          <Box>{comment.content}</Box>
-          <Spacer />
-          {account.hasAccess(comment.memberId) && (
-            <Box>
-              <Button onClick={() => setIsEditing(true)}>수정</Button>
-              <Button isLoading={isProcessing} onClick={onOpen}>
-                삭제
-              </Button>
-            </Box>
+    <Card>
+      <CardBody>
+        <VStack spacing={2} align="stretch">
+          <Flex justify="space-between" align="center">
+            <Text fontWeight="bold">{comment.nickname}</Text>
+            <Text fontSize="sm" color="gray.500">
+              {comment.inputDt}
+            </Text>
+          </Flex>
+          {isEditing || (
+            <Flex align="center">
+              <Text>{comment.content}</Text>
+              <Spacer />
+              {account.hasAccess(comment.memberId) && (
+                <HStack spacing={2}>
+                  <Button size="sm" onClick={() => setIsEditing(true)}>
+                    수정
+                  </Button>
+                  <Button
+                    size="sm"
+                    colorScheme="red"
+                    isLoading={isProcessing}
+                    onClick={onOpen}
+                  >
+                    삭제
+                  </Button>
+                </HStack>
+              )}
+            </Flex>
           )}
-        </Flex>
-      )}
 
-      {isEditing && (
-        <CommentEdit
-          comment={comment}
-          setIsEditing={setIsEditing}
-          isProcessing={isProcessing}
-          setIsProcessing={setIsProcessing}
-        />
-      )}
+          {isEditing && (
+            <CommentEdit
+              comment={comment}
+              setIsEditing={setIsEditing}
+              isProcessing={isProcessing}
+              setIsProcessing={setIsProcessing}
+            />
+          )}
+        </VStack>
+      </CardBody>
 
       {account.hasAccess(comment.memberId) && (
         <Modal isOpen={isOpen} onClose={onClose}>
@@ -84,14 +99,20 @@ export function CommentItem({ comment, isProcessing, setIsProcessing }) {
             <ModalHeader>댓글 삭제</ModalHeader>
             <ModalBody>댓글을 삭제하시겠습니까?</ModalBody>
             <ModalFooter>
-              <Button onClick={onClose}>취소</Button>
-              <Button isLoading={isProcessing} onClick={handleClickDelete}>
+              <Button mr={3} onClick={onClose}>
+                취소
+              </Button>
+              <Button
+                colorScheme="red"
+                isLoading={isProcessing}
+                onClick={handleClickDelete}
+              >
                 삭제
               </Button>
             </ModalFooter>
           </ModalContent>
         </Modal>
       )}
-    </Box>
+    </Card>
   );
 }
