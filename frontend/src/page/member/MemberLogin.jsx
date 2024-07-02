@@ -212,7 +212,7 @@ export function MemberLogin() {
               <FormLabel>이메일</FormLabel>
               <InputGroup>
                 <InputLeftElement pointerEvents="none">
-                  <FiMail color="gray.300" />
+                  <FiMail color="gray.300"/>
                 </InputLeftElement>
                 <Input
                   type="email"
@@ -228,7 +228,7 @@ export function MemberLogin() {
               <FormLabel>패스워드</FormLabel>
               <InputGroup>
                 <InputLeftElement pointerEvents="none">
-                  <FiLock color="gray.300" />
+                  <FiLock color="gray.300"/>
                 </InputLeftElement>
                 <Input
                   type="password"
@@ -259,10 +259,10 @@ export function MemberLogin() {
               로그인
             </Button>
 
-            <Divider />
+            <Divider/>
 
             <Box>
-              <NaverLogin />
+              <NaverLogin/>
             </Box>
 
             <HStack spacing={4} justify="center" w="100%">
