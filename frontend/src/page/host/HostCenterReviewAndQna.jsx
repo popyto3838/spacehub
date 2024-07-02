@@ -21,16 +21,17 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEdit, faHome } from "@fortawesome/free-solid-svg-icons";
 import { SearchIcon } from "@chakra-ui/icons";
 import React, { useContext, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { LoginContext } from "../../component/LoginProvider.jsx";
 import axios from "axios";
 
-export function HostCenterReviews() {
+export function HostCenterReviewAndQna() {
   const [spaces, setSpaces] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const navigate = useNavigate();
   const member = useContext(LoginContext);
   const mySpacePage = useNavigate();
+  const { division } = useParams();
 
   const bgColor = useColorModeValue("white", "gray.800");
   const textColor = useColorModeValue("gray.800", "white");
@@ -42,7 +43,9 @@ export function HostCenterReviews() {
   useEffect(() => {
     if (member && member.id) {
       axios
-        .get(`/api/comment/myReviewList/${member.id}`)
+        .get(
+          `/api/comment/myReviewList?memberId=${member.id}&division=${division}`,
+        )
         .then((response) => {
           console.log(response.data);
           setSpaces(response.data);
@@ -74,8 +77,8 @@ export function HostCenterReviews() {
     <Container maxW="container.xl" py={10}>
       <Flex justify="space-between" align="center" mb={8}>
         <Heading size="lg" color={textColor}>
-          <FontAwesomeIcon icon={faHome} style={{ marginRight: "10px" }} />내
-          리뷰 관리
+          <FontAwesomeIcon icon={faHome} style={{ marginRight: "10px" }} />
+          {division === "review" ? "내 리뷰 관리" : "Q&A 관리"}
         </Heading>
         <InputGroup maxW="300px">
           <InputLeftElement pointerEvents="none">
@@ -97,7 +100,7 @@ export function HostCenterReviews() {
               <Th>#</Th>
               <Th>공간이름</Th>
               <Th>내용</Th>
-              <Th>별점</Th>
+              {division !== "qna" && <Th>별점</Th>}
               <Th>작성자</Th>
               <Th>관리</Th>
             </Tr>
@@ -108,7 +111,7 @@ export function HostCenterReviews() {
                 <Td>{comment.commentId}</Td>
                 <Td>{comment.title}</Td>
                 <Td>{comment.content}</Td>
-                <Td>{comment.rateScore}</Td>
+                {division !== "qna" && <Td>{comment.rateScore}</Td>}
                 <Td>{comment.nickname}</Td>
                 <Td>
                   <Button

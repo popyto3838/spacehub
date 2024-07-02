@@ -1,6 +1,7 @@
 package com.backend.comment.mapper;
 
 import com.backend.comment.domain.Comment;
+import com.backend.comment.domain.FindRequestHostDetailDto;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;
@@ -191,7 +192,7 @@ public interface CommentMapper {
                 JOIN    SPACE   S ON C.PARENT_ID = S.SPACE_ID
                 JOIN    MEMBER  M ON S.MEMBER_ID = M.MEMBER_ID
                 WHERE   S.MEMBER_ID              = #{memberId}
-                AND     C.DIVISION               = 'REVIEW';
+                AND     C.DIVISION               = #{division}
             """)
-    List<Comment> selectAllByMemberIdReview(Integer memberId);
+    List<Comment> selectAllByMemberIdReview(FindRequestHostDetailDto hostDetailDto);
 }

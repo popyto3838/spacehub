@@ -1,6 +1,7 @@
 package com.backend.comment.service;
 
 import com.backend.comment.domain.Comment;
+import com.backend.comment.domain.FindRequestHostDetailDto;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -40,5 +41,5 @@ public interface CommentService {
 
     void updateQna(Comment comment);
 
-    List<Comment> selectAllByMemberIdReview(Integer spaceId);
+    List<Comment> selectAllByMemberIdReview(FindRequestHostDetailDto hostDetailDto);
 }
