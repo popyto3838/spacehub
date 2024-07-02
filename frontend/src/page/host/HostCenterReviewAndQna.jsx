@@ -121,7 +121,7 @@ export function HostCenterReviewAndQna() {
                     size="sm"
                     onClick={() => mySpacePaceFunc(comment.spaceId)}
                   >
-                    리뷰관리
+                    {division === "review" ? "리뷰관리" : "Q&A관리"}
                   </Button>
                 </Td>
               </Tr>
