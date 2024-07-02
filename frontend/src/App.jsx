@@ -1,6 +1,6 @@
 import axios from "axios";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import { ChakraProvider } from "@chakra-ui/react";
+import { ChakraProvider, extendTheme } from "@chakra-ui/react";
 import { Home } from "./page/Home.jsx";
 import { BoardWrite } from "./page/board/BoardWrite.jsx";
 import { MainPage } from "./page/MainPage.jsx";
@@ -18,7 +18,6 @@ import { MemberEdit } from "./page/member/MemberEdit.jsx";
 import { NaverLoginHandler } from "./page/member/NaverLoginHandler.jsx";
 import { LoginProvider } from "./component/LoginProvider.jsx";
 import { SpaceType } from "./page/admin/space_config/SpaceType.jsx";
-import Payment from "./page/paid/Payment.jsx";
 import { HostCenter } from "./page/host/HostCenter.jsx";
 import { HostSignup } from "./page/member/HostSignup.jsx";
 import { MemberMy } from "./page/member/MemberMy.jsx";
@@ -27,12 +26,12 @@ import AdminDashboard from "./page/admin/AdminDashboard.jsx";
 import { MemberHostInfo } from "./page/member/MemberHostInfo.jsx";
 import { MemberHostPage } from "./page/member/MemberHostPage.jsx";
 import MyReservationList from "./page/member/MyReservationList.jsx";
-import HostSpaceList from "./page/member/HostSpaceList.jsx";
 import HostReservationList from "./page/member/HostReservationList.jsx";
 import MyFavoritesList from "./page/member/MyFavoritesList.jsx";
 import MyPaymentList from "./page/paid/MyPaymentList.jsx";
 import HostCenterSpaceList from "./page/host/HostCenterSpaceList.jsx";
-import { HostCenterReviews } from "./page/host/HostCenterReviews.jsx"; // axios interceptor 설정
+import "../public/css/ReactQuill.css";
+import { HostCenterReviews } from "./page/host/HostCenterReviews.jsx";
 
 // axios interceptor 설정
 axios.interceptors.request.use((config) => {
@@ -45,6 +44,20 @@ axios.interceptors.request.use((config) => {
   }
   // config를 리턴
   return config;
+});
+
+const theme = extendTheme({
+  fonts: {
+    heading: "'Inter', sans-serif",
+    body: "'Inter', sans-serif",
+  },
+  styles: {
+    global: {
+      body: {
+        lineHeight: "1.8",
+      },
+    },
+  },
 });
 
 function App() {
@@ -70,7 +83,6 @@ function App() {
         { path: "member/login", element: <MemberLogin /> },
         { path: "member/edit/:memberId", element: <MemberEdit /> },
         { path: "auth/naverlogin", element: <NaverLoginHandler /> },
-        { path: "paid/payment/:reservationId", element: <Payment /> },
         { path: "paid/myPaymentList", element: <MyPaymentList /> },
         { path: "member/naverlogin", element: <NaverLoginHandler /> },
         { path: "host/dashboard", element: <HostCenter /> },
@@ -83,13 +95,12 @@ function App() {
           path: "member/myReservationList/:memberId",
           element: <MyReservationList />,
         },
-        { path: "member/hostSpaceList/:hostId", element: <HostSpaceList /> },
         {
           path: "member/hostReservationList/:spaceId",
           element: <HostReservationList />,
         },
         {
-          path: "member/MyFavoritesList/:memberId",
+          path: "member/MyFavoritesList",
           element: <MyFavoritesList />,
         },
         { path: "host/spaceList/:memberId", element: <HostCenterSpaceList /> },
@@ -100,12 +111,13 @@ function App() {
   return (
     <>
       <LoginProvider>
-        <ChakraProvider>
+        <ChakraProvider theme={theme}>
           <RouterProvider router={router} />
         </ChakraProvider>
       </LoginProvider>
     </>
   );
 }
+
 
 export default App;
