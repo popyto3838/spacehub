@@ -69,15 +69,16 @@ public interface CommentMapper {
 
     @Select("""
             SELECT C.COMMENT_ID, C.CONTENT, C.INPUT_DT, C.UPDATE_DT, C.PARENT_ID, C.MEMBER_ID,C.RATE_SCORE,
-                   (SELECT AVG(RATE_SCORE) FROM COMMENT WHERE DIVISION = 'REVIEW') rate_score_avg,
+                   (SELECT AVG(RATE_SCORE) FROM COMMENT WHERE DIVISION = 'REVIEW' AND PARENT_ID = #{parentId}) rate_score_avg,
+                   (SELECT COUNT(COMMENT_ID) FROM COMMENT WHERE DIVISION = 'REVIEW' AND PARENT_ID = #{parentId}) comment_count,
                    CASE WHEN M.WITHDRAWN = 'Y' THEN '탈퇴한 회원입니다.' ELSE M.NICKNAME END AS NICKNAME
             FROM COMMENT C JOIN MEMBER M ON C.MEMBER_ID = M.MEMBER_ID
             WHERE C.PARENT_ID = #{parentId}
               AND C.DIVISION = 'REVIEW'
             ORDER BY C.COMMENT_ID
+            LIMIT #{offset}, 5
             """)
-    List<Comment> selectAllBySpaceIdForReview(Integer spaceId);
-    /* SUM(C.RATE_SCORE) / COUNT(C.COMMENT_ID) rate_score_avg, */
+    List<Comment> selectAllBySpaceIdForReview(Integer parentId, Integer offset);
 
     @Select("""
             SELECT C.COMMENT_ID, C.CONTENT, C.INPUT_DT, C.UPDATE_DT, C.PARENT_ID, C.MEMBER_ID,C.RATE_SCORE,
@@ -132,13 +133,15 @@ public interface CommentMapper {
 
     @Select("""
             SELECT C.COMMENT_ID, C.CONTENT, C.INPUT_DT, C.UPDATE_DT, C.PARENT_ID, C.MEMBER_ID,C.RATE_SCORE,
-                   CASE WHEN M.WITHDRAWN = 'Y' THEN '탈퇴한 회원입니다.' ELSE M.NICKNAME END AS NICKNAME
+                   CASE WHEN M.WITHDRAWN = 'Y' THEN '탈퇴한 회원입니다.' ELSE M.NICKNAME END AS NICKNAME,
+                   (SELECT COUNT(COMMENT_ID) FROM COMMENT WHERE DIVISION = 'QNA' AND PARENT_ID = #{parentId}) comment_count
             FROM COMMENT C JOIN MEMBER M ON C.MEMBER_ID = M.MEMBER_ID
             WHERE C.PARENT_ID = #{parentId}
               AND C.DIVISION = 'QNA'
             ORDER BY COMMENT_ID
+            LIMIT #{offset}, 5
             """)
-    List<Comment> selectAllBySpaceIdForQNA(Integer spaceId);
+    List<Comment> selectAllBySpaceIdForQNA(Integer parentId, Integer offset);
 
     @Select("""
             SELECT FILE_NAME, PARENT_ID
@@ -163,7 +166,18 @@ public interface CommentMapper {
     int deleteByCommentIdAndName(Integer parentId, String fileName);
 
     @Select("""
-            SELECT COUNT(*) FROM COMMENT
+            SELECT COUNT(*)
+            FROM COMMENT
+            WHERE DIVISION = 'REVIEW'
+              AND PARENT_ID = #{spaceId}
             """)
-    Integer countAll();
+    Integer countAllForReview(Integer spaceId);
+
+    @Select("""
+            SELECT COUNT(*)
+            FROM COMMENT
+            WHERE DIVISION = 'QNA'
+              AND PARENT_ID = #{spaceId}
+            """)
+    Integer countAllForQNA(Integer spaceId);
 }
