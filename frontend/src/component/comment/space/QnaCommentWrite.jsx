@@ -41,7 +41,8 @@ export function QnaCommentWrite({ spaceId, isProcessing, setIsProcessing }) {
       axios
         .get(`/api/comment/listQna/${spaceId}`)
         .then((res) => {
-          setCommentList(res.data);
+          const comments = res.data.comments;
+          setCommentList(comments);
         })
         .catch((err) => {})
         .finally(() => {});
@@ -74,7 +75,7 @@ export function QnaCommentWrite({ spaceId, isProcessing, setIsProcessing }) {
       {/* 맨윗줄 */}
       <Flex>
         <Heading as="h2" size="xl" mb={6} color="gray.700">
-          QNA {commentList.length} 개
+          QNA {commentList.length > 0 ? commentList[0].commentCount : ""} 개
         </Heading>
         <Spacer />
         <Tooltip

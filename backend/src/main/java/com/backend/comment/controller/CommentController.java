@@ -63,8 +63,8 @@ public class CommentController {
 
     @GetMapping("listReview/{spaceId}")
     public Map<String, Object> listReview(@PathVariable Integer spaceId,
-                                          @RequestParam(defaultValue = "1") Integer page) {
-        return commentService.listReview(spaceId, page);
+                                          @RequestParam(defaultValue = "1") Integer reviewPage) {
+        return commentService.listReview(spaceId, reviewPage);
     }
 
     @DeleteMapping("deleteReview")
@@ -100,8 +100,9 @@ public class CommentController {
     }
 
     @GetMapping("listQna/{spaceId}")
-    public List<Comment> listQna(@PathVariable Integer spaceId) {
-        return commentService.listQna(spaceId);
+    public Map<String, Object> listQna(@PathVariable Integer spaceId,
+                                       @RequestParam(defaultValue = "1") Integer qnaPage) {
+        return commentService.listQna(spaceId, qnaPage);
     }
 
     @DeleteMapping("deleteQna")

@@ -9,9 +9,12 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
+import software.amazon.awssdk.services.s3.model.ObjectCannedACL;
+import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
@@ -97,42 +100,43 @@ public class CommentServiceImpl implements CommentService {
                 // db에 파일 저장
                 commentMapper.insertFileList(comment.getCommentId(), file.getOriginalFilename());
                 // 실제 파일 저장
-                String dir = STR."C:/Temp/prj3p/\{comment.getCommentId()}"; // 부모 디렉토리(폴더)
-                File dirFile = new File(dir);
-                if (!dirFile.exists()) {
-                    dirFile.mkdirs();
-                }
-
-
-                // 파일 경로
-                String path = STR."C:/Temp/prj3p/\{comment.getCommentId()}/\{file.getOriginalFilename()}";
-                // 저장 위치 명시
-                File destination = new File(path);
-                // transferTo : 인풋스트림, 아웃풋스트림을 꺼내서 하드디스크에 저장
-                file.transferTo(destination); // checked exception 처리
+//                String dir = STR."C:/Temp/prj3p/\{comment.getCommentId()}"; // 부모 디렉토리(폴더)
+//                File dirFile = new File(dir);
+//                if (!dirFile.exists()) {
+//                    dirFile.mkdirs();
+//                }
+//
+//
+//                // 파일 경로
+//                String path = STR."C:/Temp/prj3p/\{comment.getCommentId()}/\{file.getOriginalFilename()}";
+//                // 저장 위치 명시
+//                File destination = new File(path);
+//                // transferTo : 인풋스트림, 아웃풋스트림을 꺼내서 하드디스크에 저장
+//                file.transferTo(destination); // checked exception 처리
 
                 // 실제 파일 저장(s3)
-//                String key = STR."prj3/\{comment.getDivision()}/\{comment.getCommentId()}/\{file.getOriginalFilename()}";
-//                PutObjectRequest objectRequest = PutObjectRequest.builder()
-//                        .bucket(bucketName)
-//                        .key(key)
-//                        .acl(ObjectCannedACL.PUBLIC_READ)
-//                        .build();
-//
-//                s3Client.putObject(objectRequest, RequestBody.fromInputStream(file.getInputStream(), file.getSize()));
+                String key = STR."prj3/\{comment.getDivision()}/\{comment.getCommentId()}/\{file.getOriginalFilename()}";
+                PutObjectRequest objectRequest = PutObjectRequest.builder()
+                        .bucket(bucketName)
+                        .key(key)
+                        .acl(ObjectCannedACL.PUBLIC_READ)
+                        .build();
+
+                s3Client.putObject(objectRequest, RequestBody.fromInputStream(file.getInputStream(), file.getSize()));
             }
         }
     }
 
     @Override
-    public Map<String, Object> listReview(Integer spaceId, Integer page) {
+    public Map<String, Object> listReview(Integer spaceId, Integer reviewPage) {
         // 페이징
         Map pageInfo = new HashMap();
-        Integer countAll = commentMapper.countAll();
+        Integer countAll = commentMapper.countAllForReview(spaceId);
 
-        Integer offset = (page - 1) * 10;
-        Integer lastPageNumber = (countAll - 1) / 10 + 1;
-        Integer leftPageNumber = (page - 1) / 10 * 10 + 1;
+        Integer commentsPerPage = 5; // 페이지당 코멘트 수를 5로 설정
+        Integer offset = (reviewPage - 1) * commentsPerPage;
+        Integer lastPageNumber = (countAll - 1) / commentsPerPage + 1;
+        Integer leftPageNumber = (reviewPage - 1) / 10 * 10 + 1;
         Integer rightPageNumber = leftPageNumber + 9;
         Integer prevPageNumber = leftPageNumber - 1;
         Integer nextPgeNumber = rightPageNumber + 1;
@@ -146,40 +150,41 @@ public class CommentServiceImpl implements CommentService {
         if (nextPgeNumber <= lastPageNumber) {
             pageInfo.put("nextPageNumber", nextPgeNumber);
         }
-        pageInfo.put("currentPageNumber", page);
+        pageInfo.put("currentPageNumber", reviewPage);
         pageInfo.put("lastPageNumber", lastPageNumber);
         pageInfo.put("leftPageNumber", leftPageNumber);
         pageInfo.put("rightPageNumber", rightPageNumber);
 
         // 코멘트들 조회
         // List<Comment> comments = commentMapper.selectAllBySpaceId(spaceId);
-        List<Comment> comments = commentMapper.selectAllBySpaceIdForReview(spaceId);
+        List<Comment> comments = commentMapper.selectAllBySpaceIdForReview(spaceId, offset);
         for (Comment comment : comments) {
             // fileNames에서 파일 이름 조회
             List<String> fileNames = commentMapper.selectByFileNameByCommentId(comment.getCommentId());
             // 파일 경로 저장
-            List<com.backend.file.domain.File> files = fileNames.stream()
-                    .map(fileName -> {
-                        var fl = new com.backend.file.domain.File();
-                        fl.setFileName(fileName);
-                        fl.setSrc(STR." http://172.27.128.1:8888/\{comment.getCommentId()}/\{fileName}");
-                        return fl;
-                    })
-                    .toList();
+//            List<com.backend.file.domain.File> files = fileNames.stream()
+//                    .map(fileName -> {
+//                        var fl = new com.backend.file.domain.File();
+//                        fl.setFileName(fileName);
+//                        fl.setSrc(STR." http://172.27.128.1:8888/\{comment.getCommentId()}/\{fileName}");
+//                        return fl;
+//                    })
+//                    .toList();
 
             // s3에서 파일 조회
-//            List<com.backend.file.domain.File> files1 = fileNames.stream()
-//                    .map(fileName2 ->
-//                            {var fl2 = new com.backend.file.domain.File();
-//                                fl2.setFileName(fileName2);
-//                                fl2.setSrc(STR."\{srcPrefix}\{comment.getCommentId()}/\{fileName2}");
-//                                return fl2;
-//                            })
-//                    .toList();
-//            comment.setCommentFilesLists(files1);
+            List<com.backend.file.domain.File> files1 = fileNames.stream()
+                    .map(fileName2 ->
+                    {
+                        var fl2 = new com.backend.file.domain.File();
+                        fl2.setFileName(fileName2);
+                        fl2.setSrc(STR."\{srcPrefix}\{comment.getCommentId()}/\{fileName2}");
+                        return fl2;
+                    })
+                    .toList();
+            comment.setCommentFilesLists(files1);
 
             // 댓글에 첨부 파일 목록 저장
-            comment.setCommentFilesLists(files);
+            // comment.setCommentFilesLists(files);
         }
         System.out.println("comments = " + comments);
 
@@ -197,26 +202,26 @@ public class CommentServiceImpl implements CommentService {
         // file명 조회
         List<String> fileNames = commentMapper.selectByFileNameByCommentId(comment.getCommentId());
         // disk에 있는 file 삭제
-        String dir = STR."C:/Temp/prj3p/\{comment.getCommentId()}";
-        for (String fileName : fileNames) {
-            File file = new File(dir + fileName);
-            file.delete();
-        }
-        // 필요없는 부모 디렉토리 삭제
-        File dirFile = new File(dir);
-        if (dirFile.exists()) {
-            dirFile.delete();
-        }
+//        String dir = STR."C:/Temp/prj3p/\{comment.getCommentId()}";
+//        for (String fileName : fileNames) {
+//            File file = new File(dir + fileName);
+//            file.delete();
+//        }
+//        // 필요없는 부모 디렉토리 삭제
+//        File dirFile = new File(dir);
+//        if (dirFile.exists()) {
+//            dirFile.delete();
+//        }
 
         // s3에 있는 file
-//        for (String fileName : fileNames) {
-//            String key = STR."prj3/\{comment.getDivision()}/\{comment.getCommentId()}/\{fileName}";
-//            DeleteObjectRequest objectRequest = DeleteObjectRequest.builder()
-//                    .bucket(bucketName)
-//                    .key(key)
-//                    .build();
-//            s3Client.deleteObject(objectRequest);
-//        }
+        for (String fileName : fileNames) {
+            String key = STR."prj3/\{comment.getDivision()}/\{comment.getCommentId()}/\{fileName}";
+            DeleteObjectRequest objectRequest = DeleteObjectRequest.builder()
+                    .bucket(bucketName)
+                    .key(key)
+                    .build();
+            s3Client.deleteObject(objectRequest);
+        }
 
         // file 테이블 지움
         commentMapper.deleteByCommentIdForFile(comment.getCommentId());
@@ -229,17 +234,17 @@ public class CommentServiceImpl implements CommentService {
         // 첨부된 파일 삭제
         if (removeFileList != null && removeFileList.size() > 0) {
             for (String fileName : removeFileList) {
-                String path = STR."C:/Temp/prj3p/\{comment.getCommentId()}/\{fileName}";
-                File file = new File(path);
-                file.delete();
+//                String path = STR."C:/Temp/prj3p/\{comment.getCommentId()}/\{fileName}";
+//                File file = new File(path);
+//                file.delete();
 
                 // s3의 파일 삭제
-//                String key = STR."prj3/\{comment.getDivision()}/\{comment.getCommentId()}/\{fileName}";
-//                DeleteObjectRequest deleteObjectRequest = DeleteObjectRequest.builder()
-//                        .bucket(bucketName)
-//                        .key(key)
-//                        .build();
-//                s3Client.deleteObject(deleteObjectRequest);
+                String key = STR."prj3/\{comment.getDivision()}/\{comment.getCommentId()}/\{fileName}";
+                DeleteObjectRequest deleteObjectRequest = DeleteObjectRequest.builder()
+                        .bucket(bucketName)
+                        .key(key)
+                        .build();
+                s3Client.deleteObject(deleteObjectRequest);
 
                 // db records 삭제
                 commentMapper.deleteByCommentIdAndName(comment.getCommentId(), fileName);
@@ -260,23 +265,23 @@ public class CommentServiceImpl implements CommentService {
                 }
                 // disk에 쓰기
                 // 파일이 원래 없는 경우 부모 경로 생성
-                File dir = new File(STR."C:/Temp/prj3p/\{comment.getCommentId()}");
-                if (!dir.exists()) {
-                    // 디렉토리 생성
-                    dir.mkdirs();
-                }
-                String path = STR."C:/Temp/prj3p/\{comment.getCommentId()}/\{fileName}";
-                File destination = new File(path);
-                file.transferTo(destination);
+//                File dir = new File(STR."C:/Temp/prj3p/\{comment.getCommentId()}");
+//                if (!dir.exists()) {
+//                    // 디렉토리 생성
+//                    dir.mkdirs();
+//                }
+//                String path = STR."C:/Temp/prj3p/\{comment.getCommentId()}/\{fileName}";
+//                File destination = new File(path);
+//                file.transferTo(destination);
 
                 // s3에 쓰기(덮어쓰기)
-//                String key = STR."prj3/\{comment.getDivision()}/\{comment.getCommentId()}/\{fileName}";
-//                PutObjectRequest objectRequest = PutObjectRequest.builder()
-//                        .bucket(bucketName)
-//                        .key(key)
-//                        .acl(ObjectCannedACL.PUBLIC_READ)
-//                        .build();
-//                s3Client.putObject(objectRequest, RequestBody.fromInputStream(file.getInputStream(), file.getSize()));
+                String key = STR."prj3/\{comment.getDivision()}/\{comment.getCommentId()}/\{fileName}";
+                PutObjectRequest objectRequest = PutObjectRequest.builder()
+                        .bucket(bucketName)
+                        .key(key)
+                        .acl(ObjectCannedACL.PUBLIC_READ)
+                        .build();
+                s3Client.putObject(objectRequest, RequestBody.fromInputStream(file.getInputStream(), file.getSize()));
             }
         }
 
@@ -293,9 +298,43 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public List<Comment> listQna(Integer spaceId) {
+    public Map<String, Object> listQna(Integer spaceId, Integer qnaPage) {
+        // 페이징
+        Map pageInfo = new HashMap();
+        Integer countAll = commentMapper.countAllForQNA(spaceId);
+
+        Integer commentsPerPage = 5; // 페이지당 코멘트 수를 5로 설정
+        Integer offset = (qnaPage - 1) * commentsPerPage;
+        Integer lastPageNumber = (countAll - 1) / commentsPerPage + 1;
+        Integer leftPageNumber = (qnaPage - 1) / 10 * 10 + 1;
+        Integer rightPageNumber = leftPageNumber + 9;
+        Integer prevPageNumber = leftPageNumber - 1;
+        Integer nextPgeNumber = rightPageNumber + 1;
+        rightPageNumber = Math.min(rightPageNumber, lastPageNumber);
+        leftPageNumber = rightPageNumber - 9;
+        leftPageNumber = Math.max(leftPageNumber, 1);
+
+        if (prevPageNumber > 0) {
+            pageInfo.put("prevPageNumber", prevPageNumber);
+        }
+        if (nextPgeNumber <= lastPageNumber) {
+            pageInfo.put("nextPageNumber", nextPgeNumber);
+        }
+        pageInfo.put("currentPageNumber", qnaPage);
+        pageInfo.put("lastPageNumber", lastPageNumber);
+        pageInfo.put("leftPageNumber", leftPageNumber);
+        pageInfo.put("rightPageNumber", rightPageNumber);
+
+        List<Comment> comments = commentMapper.selectAllBySpaceIdForQNA(spaceId, offset);
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("comments", comments);
+        result.put("pageInfo", pageInfo);
+
+        return result;
+
         // return commentMapper.selectAllBySpaceId(spaceId);
-        return commentMapper.selectAllBySpaceIdForQNA(spaceId);
+        // return commentMapper.selectAllBySpaceIdForQNA(spaceId, offset);
     }
 
     @Override
