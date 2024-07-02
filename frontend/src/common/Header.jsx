@@ -265,7 +265,7 @@ const Header = () => {
                   color="gray.800"
                   _hover={{ bg: "gray.700", color: "yellow.400" }}
                   icon={<FontAwesomeIcon icon={faCalendarAlt} />}
-                  onClick={() => navigate(`/host/spaceList/${account.id}`)}
+                  onClick={() => navigate(`/host/spaceList`)}
                 >
                   호스트 예약관리
                 </MenuItem>
@@ -445,7 +445,7 @@ const Header = () => {
                   variant="ghost"
                   justifyContent="flex-start"
                   _hover={{ bg: "gray.700", color: "yellow.400" }}
-                  onClick={() => navigate(`/host/spaceList/${account.id}`)}
+                  onClick={() => navigate(`/host/spaceList`)}
                   color="white"
                 >
                   나의 공간 리스트
@@ -457,7 +457,7 @@ const Header = () => {
                   variant="ghost"
                   justifyContent="flex-start"
                   _hover={{ bg: "gray.700", color: "yellow.400" }}
-                  onClick={() => navigate(`/host/spaceList/${account.id}`)}
+                  onClick={() => navigate(`/host/spaceList`)}
                   color="white"
                 >
                   호스트 예약 관리
