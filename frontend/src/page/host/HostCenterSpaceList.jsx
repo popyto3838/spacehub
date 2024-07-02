@@ -33,10 +33,8 @@ function HostCenterSpaceList() {
 
   const bgColor = useColorModeValue("white", "gray.800");
   const textColor = useColorModeValue("gray.800", "white");
-  const borderColor = useColorModeValue("gray.200", "gray.700");
 
   useEffect(() => {
-    console.log("===============", member.id);
     axios
       .get(`/api/space/hostSpaceList/${member.id}`)
       .then((response) => setSpaces(response.data))
