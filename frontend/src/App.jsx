@@ -104,7 +104,7 @@ function App() {
           element: <MyFavoritesList />,
         },
         { path: "host/spaceList/:memberId", element: <HostCenterSpaceList /> },
-        { path: "member/reviews/:memberId", element: <HostCenterReviews /> },
+        { path: "member/reviews", element: <HostCenterReviews /> },
       ],
     },
   ]);
@@ -118,6 +118,5 @@ function App() {
     </>
   );
 }
-
 
 export default App;
