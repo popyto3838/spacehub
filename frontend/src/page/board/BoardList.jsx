@@ -2,13 +2,12 @@ import {
   Badge,
   Box,
   Button,
+  ButtonGroup,
   Center,
   Flex,
   Input,
-  Radio,
-  RadioGroup,
   Select,
-  Stack,
+  Spacer,
   Table,
   Tbody,
   Td,
@@ -93,71 +92,38 @@ export function BoardList() {
 
   return (
     <Box>
-      <Flex>
-        <Box>
-          <Select
-            value={searchType}
-            onChange={(e) => setSearchType(e.target.value)}
-          >
-            <option value={"titleContent"}>제목+내용</option>
-            <option value={"title"}>제목</option>
-            <option value={"content"}>내용</option>
-            <option value={"nickname"}>작성자</option>
-          </Select>
-        </Box>
-        <Box>
-          <Input
-            value={searchKeyword}
-            onChange={(e) => setSearchKeyword(e.target.value)}
-            placeholder={"검색어를 입력하세요."}
-          />
-        </Box>
-        <Box>
-          <Button onClick={handleClickSearch}>검색</Button>
-        </Box>
-      </Flex>
-      <Flex>
-        <Box>유저명 : {account.nickname}</Box>
-        {account.isLoggedIn() && (
-          <Button onClick={() => account.logout()}>로그아웃</Button>
-        )}
-      </Flex>
-
       {/* 카테고리 */}
-      <RadioGroup
-        border={"1px solid black"}
-        value={categoryType}
-        onClick={(e) => setCategoryType(e.target.value)}
-      >
-        <Stack direction={"row"}>
-          <Radio onClick={handleClickCategoryType} value={"all"}>
+      <Flex border={"1px solid black"}>
+        <ButtonGroup
+          variant={"outline"}
+          value={categoryType}
+          onClick={(e) => setCategoryType(e.target.value)}
+        >
+          <Button onClick={handleClickCategoryType} value={"all"}>
             전체
-          </Radio>
-          <Radio onClick={handleClickCategoryType} value={"notice"}>
+          </Button>
+          <Button onClick={handleClickCategoryType} value={"notice"}>
             공지사항
-          </Radio>
-          <Radio onClick={handleClickCategoryType} value={"faq"}>
+          </Button>
+          <Button onClick={handleClickCategoryType} value={"faq"}>
             FAQ
-          </Radio>
-        </Stack>
-      </RadioGroup>
-      {/* 카테고리 작업중 */}
+          </Button>
+        </ButtonGroup>
+      </Flex>
 
-      <Box>
-        <Button onClick={() => navigate("/board/write")}>글쓰기</Button>
-      </Box>
       {boardList.length === 0 && <Center>조회 결과가 없습니다.</Center>}
       {boardList.length > 0 && (
         <Box>
           <Table>
             <Thead>
               <Tr>
-                <Th>#</Th>
-                <Th>조회수</Th>
-                <Th>제목</Th>
-                <Th>좋아요 : </Th>
                 <Th>카테고리</Th>
+                <Th>#</Th>
+                <Th>제목</Th>
                 <Th>작성자</Th>
+                <Th>작성일시</Th>
+                <Th>조회수</Th>
+                <Th>좋아요</Th>
               </Tr>
             </Thead>
             <Tbody>
@@ -170,8 +136,15 @@ export function BoardList() {
                   cursor={"pointer"}
                   _hover={{ bgColor: "blue.200" }}
                 >
+                  {categoryList.map(
+                    (category) =>
+                      category.categoryId === board.categoryId && (
+                        <Td key={category.categoryId}>
+                          {category.categoryName}
+                        </Td>
+                      ),
+                  )}
                   <Td>{board.boardId}</Td>
-                  <Td>{board.views}</Td>
                   <Td>
                     {board.title}
                     {/* 첨부된 이미지가 있으면 Badge에 파일수 출력 */}
@@ -183,24 +156,48 @@ export function BoardList() {
                       <Badge>댓글 : {board.numberOfComments}</Badge>
                     )}
                   </Td>
+                  <Td>{board.writer}</Td>
+                  <Td>{board.inputDateAndTime}</Td>
+                  <Td>{board.views}</Td>
                   {/* 좋아요 갯수 */}
                   <Td>{board.numberOfLikes > 0 && board.numberOfLikes}</Td>
-                  <Td>{board.categoryId}</Td>
-                  <Td>{board.writer}</Td>
-                  {categoryList.map(
-                    (category) =>
-                      category.categoryId === board.categoryId && (
-                        <Td key={category.categoryId}>
-                          {category.categoryName}
-                        </Td>
-                      ),
-                  )}
                 </Tr>
               ))}
             </Tbody>
           </Table>
         </Box>
       )}
+
+      {/* 검색, 글쓰기 버튼 */}
+      <Flex>
+        <Center>
+          <Box>
+            <Select
+              value={searchType}
+              onChange={(e) => setSearchType(e.target.value)}
+            >
+              <option value={"titleContent"}>제목+내용</option>
+              <option value={"title"}>제목</option>
+              <option value={"content"}>내용</option>
+              <option value={"nickname"}>작성자</option>
+            </Select>
+          </Box>
+          <Box>
+            <Input
+              value={searchKeyword}
+              onChange={(e) => setSearchKeyword(e.target.value)}
+              placeholder={"검색어를 입력하세요."}
+            />
+          </Box>
+          <Button onClick={handleClickSearch}>검색</Button>
+        </Center>
+        <Spacer />
+        {(account.isHost() || account.isAdmin()) && (
+          <Button onClick={() => navigate("/board/write")}>글쓰기</Button>
+        )}
+      </Flex>
+
+      {/* 페이징 */}
       <Center>
         {pageInfo.prevPageNumber && (
           <Box>

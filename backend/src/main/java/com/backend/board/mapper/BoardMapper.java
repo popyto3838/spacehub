@@ -2,6 +2,7 @@ package com.backend.board.mapper;
 
 import com.backend.board.domain.Board;
 import com.backend.board.domain.Category;
+import com.backend.file.domain.File;
 import com.backend.fileList.domain.FileList;
 import org.apache.ibatis.annotations.*;
 
@@ -95,8 +96,9 @@ public interface BoardMapper {
     @Select("""
             SELECT B.BOARD_ID, B.TITLE, B.CONTENT, B.INPUT_DT, B.UPDATE_DT, B.CATEGORY_ID,
                    CASE WHEN M.WITHDRAWN = 'Y' THEN '탈퇴한 회원입니다.' ELSE M.NICKNAME END AS WRITER,
-                   B.MEMBER_ID
+                   B.MEMBER_ID, C.CATEGORY_NAME DIVISION
             FROM BOARD B JOIN MEMBER M ON B.MEMBER_ID = M.MEMBER_ID
+                         JOIN CATEGORY C ON B.CATEGORY_ID = C.CATEGORY_ID
             WHERE B.BOARD_ID = #{boardId}
             """)
     Board selectByBoardId(Integer boardId);
@@ -260,4 +262,43 @@ public interface BoardMapper {
             WHERE MEMBER_ID = #{memberId}
             """)
     int deleteLikeByMemberId(Integer memberId);
+
+    @Select("""
+            SELECT *
+            FROM FILE
+            WHERE FILE_NAME = #{fullPath}
+            """)
+    File findFileByFullPath(String fullPath);
+
+    @Update("""
+            UPDATE FILE
+            SET FILE_NAME = #{fileName}
+            WHERE FILE_ID = #{fileId}
+            """)
+    int updateFile(File existingFile);
+
+    @Insert("""
+            <script>
+            INSERT INTO FILE(PARENT_ID, DIVISION, FILE_NAME)
+            VALUES (#{parentId},
+                    <choose>
+                        <when test="categoryId == 1"> 'NOTICE' </when>
+                        <when test="categoryId == 2"> 'FAQ' </when>
+                    </choose>,
+                    #{fileName})
+            </script>
+            """)
+    int insertFile(File fileRecord);
+
+    /*    SELECT F.FILE_NAME, F.PARENT_ID, F.FILE_ID, B.BOARD_ID
+        FROM FILE F
+        JOIN BOARD B ON F.PARENT_ID = B.BOARD_ID
+        WHERE PARENT_ID = #{parentId}*/
+    @Select("""
+            SELECT *
+            FROM FILE
+            WHERE PARENT_ID = #{parentId}
+              AND DIVISION = #{division}
+            """)
+    List<File> selectFileByDivisionAndParentId(String division, Integer parentId);
 }
