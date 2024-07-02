@@ -60,7 +60,7 @@ export function Star({ setRateScore, rateScore }) {
           w={10}
           onClick={() => clickStar(1)}
           className={"star"}
-          src={`/star/ic-star-${icList[star1.toString()]}.png`}
+          src={`https://studysanta.s3.ap-northeast-2.amazonaws.com/prj3/star/ic-star-${icList[star1.toString()]}.png`}
           alt={"star"}
           cursor={"pointer"}
         />
@@ -70,7 +70,7 @@ export function Star({ setRateScore, rateScore }) {
           w={10}
           onClick={() => clickStar(2)}
           className={"star"}
-          src={`/star/ic-star-${icList[star2.toString()]}.png`}
+          src={`https://studysanta.s3.ap-northeast-2.amazonaws.com/prj3/star/ic-star-${icList[star2.toString()]}.png`}
           alt={"star"}
           cursor={"pointer"}
         />

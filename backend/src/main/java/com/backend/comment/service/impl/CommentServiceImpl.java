@@ -97,6 +97,9 @@ public class CommentServiceImpl implements CommentService {
         // 코멘트 파일 첨부
         if (files != null) {
             for (MultipartFile file : files) {
+                if (!file.isEmpty()) {
+                    // String division;
+                }
                 // db에 파일 저장
                 commentMapper.insertFileList(comment.getCommentId(), file.getOriginalFilename());
                 // 실제 파일 저장
