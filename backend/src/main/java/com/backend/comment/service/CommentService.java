@@ -39,4 +39,6 @@ public interface CommentService {
     void deleteQna(Comment comment);
 
     void updateQna(Comment comment);
+
+    List<Comment> selectAllByMemberIdReview(Integer spaceId);
 }

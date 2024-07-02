@@ -346,4 +346,9 @@ public class CommentServiceImpl implements CommentService {
     public void updateQna(Comment comment) {
         commentMapper.updateByCommentId(comment);
     }
+
+    @Override
+    public List<Comment> selectAllByMemberIdReview(Integer memberId) {
+        return commentMapper.selectAllByMemberIdReview(memberId);
+    }
 }

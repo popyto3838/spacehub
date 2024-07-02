@@ -4,6 +4,7 @@ import {
   Container,
   Flex,
   Heading,
+  HStack,
   Input,
   InputGroup,
   InputLeftElement,
@@ -19,36 +20,56 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEdit, faHome } from "@fortawesome/free-solid-svg-icons";
 import { SearchIcon } from "@chakra-ui/icons";
-import React, { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import React, { useContext, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { LoginContext } from "../../component/LoginProvider.jsx";
 import axios from "axios";
 
 export function HostCenterReviews() {
   const [spaces, setSpaces] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const navigate = useNavigate();
-  const { memberId } = useParams();
+  const member = useContext(LoginContext);
+  const mySpacePage = useNavigate();
 
   const bgColor = useColorModeValue("white", "gray.800");
   const textColor = useColorModeValue("gray.800", "white");
-  const borderColor = useColorModeValue("gray.200", "gray.700");
+
+  // 페이징 관련 상태
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(10);
 
   useEffect(() => {
-    axios
-      .get(`/api/space/hostSpaceList/${memberId}`)
-      .then((response) => setSpaces(response.data))
-      .catch((error) =>
-        console.error("공간 목록을 불러오는데 실패했습니다:", error),
-      );
-  }, [memberId]);
+    if (member && member.id) {
+      console.log("=============================", member.id);
+      axios
+        .get(`/api/comment/myReviewList/${member.id}`)
+        .then((response) => {
+          console.log(response.data);
+          setSpaces(response.data);
+        })
+        .catch((error) =>
+          console.error("공간 목록을 불러오는데 실패했습니다:", error),
+        );
+    }
+  }, [member]);
 
-  const handleEdit = (spaceId) => {
-    navigate(`/space/edit/${spaceId}`);
-  };
-
-  const filteredSpaces = spaces.filter((space) =>
-    space.title.toLowerCase().includes(searchTerm.toLowerCase()),
+  const filteredSpaces = spaces.filter(
+    (space) =>
+      space.content &&
+      space.content.toLowerCase().includes(searchTerm.toLowerCase()),
   );
+
+  // 페이징 로직
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = filteredSpaces.slice(indexOfFirstItem, indexOfLastItem);
+
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
+  const mySpacePaceFunc = (param) => {
+    mySpacePage("/space/" + param);
+  };
 
   return (
     <Container maxW="container.xl" py={10}>
@@ -63,7 +84,7 @@ export function HostCenterReviews() {
           </InputLeftElement>
           <Input
             type="text"
-            placeholder="공간 이름 검색..."
+            placeholder="리뷰 내용 검색..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
@@ -75,28 +96,30 @@ export function HostCenterReviews() {
           <Thead>
             <Tr bg={useColorModeValue("gray.50", "gray.700")}>
               <Th>#</Th>
-              <Th>공간 이름</Th>
-              <Th>작성자</Th>
+              <Th>공간이름</Th>
+              <Th>내용</Th>
               <Th>별점</Th>
+              <Th>작성자</Th>
               <Th>관리</Th>
             </Tr>
           </Thead>
           <Tbody>
-            {filteredSpaces.map((space) => (
-              <Tr key={space.spaceId}>
-                <Td>{space.spaceId}</Td>
-                <Td fontWeight="bold">{space.title}</Td>
-                <Td>{space.address}</Td>
-                <Td>₩{space.price.toLocaleString()}</Td>
+            {currentItems.map((comment) => (
+              <Tr key={comment.commentId}>
+                <Td>{comment.commentId}</Td>
+                <Td>{comment.title}</Td>
+                <Td>{comment.content}</Td>
+                <Td>{comment.rateScore}</Td>
+                <Td>{comment.nickname}</Td>
                 <Td>
                   <Button
                     leftIcon={<FontAwesomeIcon icon={faEdit} />}
                     colorScheme="blue"
                     variant="outline"
                     size="sm"
-                    onClick={() => handleEdit(space.spaceId)}
+                    onClick={() => mySpacePaceFunc(comment.spaceId)}
                   >
-                    수정
+                    리뷰관리
                   </Button>
                 </Td>
               </Tr>
@@ -107,9 +130,27 @@ export function HostCenterReviews() {
 
       {filteredSpaces.length === 0 && (
         <Text mt={4} textAlign="center" color="gray.500">
-          등록된 공간이 없습니다.
+          등록된 리뷰가 없습니다.
         </Text>
       )}
+
+      {/* 페이징 컨트롤 */}
+      <Flex justifyContent="center" mt={4}>
+        <HStack>
+          {Array.from(
+            { length: Math.ceil(filteredSpaces.length / itemsPerPage) },
+            (_, i) => (
+              <Button
+                key={i}
+                onClick={() => paginate(i + 1)}
+                colorScheme={currentPage === i + 1 ? "blue" : "gray"}
+              >
+                {i + 1}
+              </Button>
+            ),
+          )}
+        </HStack>
+      </Flex>
     </Container>
   );
 }

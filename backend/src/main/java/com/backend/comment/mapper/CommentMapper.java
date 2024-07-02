@@ -180,4 +180,18 @@ public interface CommentMapper {
               AND PARENT_ID = #{spaceId}
             """)
     Integer countAllForQNA(Integer spaceId);
+
+    @Select("""
+                SELECT  C.*
+                ,       S.MEMBER_ID
+                ,       S.SPACE_ID
+                ,       M.NICKNAME
+                ,       S.TITLE 
+                FROM    COMMENT C
+                JOIN    SPACE   S ON C.PARENT_ID = S.SPACE_ID
+                JOIN    MEMBER  M ON S.MEMBER_ID = M.MEMBER_ID
+                WHERE   S.MEMBER_ID              = #{memberId}
+                AND     C.DIVISION               = 'REVIEW';
+            """)
+    List<Comment> selectAllByMemberIdReview(Integer memberId);
 }
