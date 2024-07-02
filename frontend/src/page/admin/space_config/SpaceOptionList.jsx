@@ -1,7 +1,16 @@
 import {
   Box,
   Button,
+  Flex,
   Heading,
+  Image,
+  Input,
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
   Spinner,
   Switch,
   Table,
@@ -10,12 +19,10 @@ import {
   Th,
   Thead,
   Tr,
+  useDisclosure,
   useToast,
-  Input,
-  Image,
-  Flex
 } from "@chakra-ui/react";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrashCan, faUpload } from "@fortawesome/free-solid-svg-icons";
@@ -24,8 +31,10 @@ export function SpaceOptionList() {
   const [isLoading, setIsLoading] = useState(true);
   const [optionLists, setOptionLists] = useState([]);
   const [optionStates, setOptionStates] = useState(new Map());
+  const [deleteFileId, setDeleteFileId] = useState(null);
   const toast = useToast();
   const fileInputRefs = useRef({}); // useRef로 각 파일 입력 요소를 저장
+  const { isOpen, onClose, onOpen } = useDisclosure();
 
   useEffect(() => {
     axios
@@ -34,7 +43,9 @@ export function SpaceOptionList() {
         const options = res.data;
         console.log("options:", options); // 데이터 확인을 위해 추가
         setOptionLists(options);
-        const newOptionStates = new Map(options.map((option) => [option.itemId, option.active]));
+        const newOptionStates = new Map(
+          options.map((option) => [option.itemId, option.active]),
+        );
         setOptionStates(newOptionStates);
       })
       .catch((err) => {
@@ -79,7 +90,9 @@ export function SpaceOptionList() {
 
   const handleSwitchChange = async (itemId) => {
     const updatedStatus = !optionStates.get(itemId);
-    const optionToUpdate = optionLists.find((option) => option.itemId === itemId);
+    const optionToUpdate = optionLists.find(
+      (option) => option.itemId === itemId,
+    );
 
     if (optionToUpdate) {
       const updatedOption = { ...optionToUpdate, active: updatedStatus };
@@ -110,7 +123,7 @@ export function SpaceOptionList() {
   };
 
   const handleIconUpload = async (e, itemId) => {
-    console.log("optionListId:", itemId);  // 여기에 console.log 추가
+    console.log("optionListId:", itemId); // 여기에 console.log 추가
     const file = e.target.files[0];
     if (!file) return;
 
@@ -140,9 +153,10 @@ export function SpaceOptionList() {
     }
   };
 
-  const handleDeleteIcon = async (fileId) => {
+  const handleDeleteIcon = async () => {
+    if (deleteFileId === null) return;
     try {
-      await axios.delete(`/api/file/icon/${fileId}`);
+      await axios.delete(`/api/file/icon/${deleteFileId}`);
       const res = await axios.get(`/api/space/option/list`);
       setOptionLists(res.data);
       toast({
@@ -151,6 +165,7 @@ export function SpaceOptionList() {
         duration: 3000,
         isClosable: true,
       });
+      onClose();
     } catch (error) {
       toast({
         title: "아이콘 삭제에 실패했습니다.",
@@ -160,6 +175,11 @@ export function SpaceOptionList() {
         isClosable: true,
       });
     }
+  };
+
+  const openDeleteModal = (fileId) => {
+    setDeleteFileId(fileId);
+    onOpen();
   };
 
   if (isLoading) {
@@ -180,7 +200,9 @@ export function SpaceOptionList() {
           <Thead>
             <Tr>
               <Th width="10%">#</Th>
-              <Th width="50%" textAlign="center">옵션명</Th>
+              <Th width="50%" textAlign="center">
+                옵션명
+              </Th>
               <Th width="10%">활성화</Th>
               <Th width="20%">아이콘</Th>
               <Th width="10%">옵션삭제</Th>
@@ -208,7 +230,12 @@ export function SpaceOptionList() {
                         objectFit="cover"
                         mr={2}
                       />
-                      <Button colorScheme="red" onClick={() => handleDeleteIcon(optionList.iconFile.fileId)}>
+                      <Button
+                        colorScheme="red"
+                        onClick={() =>
+                          openDeleteModal(optionList.iconFile.fileId)
+                        }
+                      >
                         <FontAwesomeIcon icon={faTrashCan} />
                       </Button>
                     </Flex>
@@ -218,11 +245,15 @@ export function SpaceOptionList() {
                         type="file"
                         onChange={(e) => handleIconUpload(e, optionList.itemId)}
                         display="none"
-                        ref={(el) => (fileInputRefs.current[optionList.itemId] = el)}
+                        ref={(el) =>
+                          (fileInputRefs.current[optionList.itemId] = el)
+                        }
                       />
                       <Button
                         leftIcon={<FontAwesomeIcon icon={faUpload} />}
-                        onClick={() => fileInputRefs.current[optionList.itemId].click()}
+                        onClick={() =>
+                          fileInputRefs.current[optionList.itemId].click()
+                        }
                       >
                         아이콘 업로드
                       </Button>
@@ -230,12 +261,34 @@ export function SpaceOptionList() {
                   )}
                 </Td>
                 <Td>
-                  <Button colorScheme="red" onClick={() => handleDeleteOption(optionList.itemId)}>
+                  <Button
+                    colorScheme="red"
+                    onClick={() => handleDeleteOption(optionList.itemId)}
+                  >
                     <FontAwesomeIcon icon={faTrashCan} />
                   </Button>
                 </Td>
               </Tr>
             ))}
+            <Modal isOpen={isOpen} onClose={onClose}>
+              <ModalOverlay />
+              <ModalContent>
+                <ModalHeader>아이콘 이미지 삭제</ModalHeader>
+                <ModalBody>정말로 삭제하시겠습니까?</ModalBody>
+                <ModalFooter>
+                  <Button colorScheme={"gray"} onClick={onClose}>
+                    취소
+                  </Button>
+                  <Button
+                    ml={2}
+                    colorScheme={"blue"}
+                    onClick={handleDeleteIcon}
+                  >
+                    확인
+                  </Button>
+                </ModalFooter>
+              </ModalContent>
+            </Modal>
           </Tbody>
         </Table>
       </Box>

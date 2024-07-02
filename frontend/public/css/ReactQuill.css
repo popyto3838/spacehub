@@ -1,0 +1,39 @@
+/* 에디터 폰트 크기 설정 */
+.react-quill .ql-container {
+    font-size: 18px; /* 에디터 내의 폰트 크기 */
+}
+
+/* 기본 에디터 스타일 */
+.ql-editor {
+    min-height: 200px;
+}
+
+/* 출력되는 콘텐츠의 폰트 크기 */
+.quill-content {
+    font-size: 18px; /* 출력되는 콘텐츠의 폰트 크기 */
+}
+
+/* 제목 태그 크기 조정 */
+.quill-content h1 {
+    font-size: 1.75em; /* Heading 1 크기 */
+}
+
+.quill-content h2 {
+    font-size: 1.6em; /* Heading 2 크기 */
+}
+
+.quill-content h3 {
+    font-size: 1.45em; /* Heading 3 크기 */
+}
+
+.quill-content h4 {
+    font-size: 1.3em; /* Heading 4 크기 */
+}
+
+.quill-content h5 {
+    font-size: 1.15em; /* Heading 5 크기 */
+}
+
+.quill-content h6 {
+    font-size: 1em; /* Heading 6 크기 */
+}
