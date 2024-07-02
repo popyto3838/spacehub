@@ -60,7 +60,7 @@ public interface ReservationMapper {
             FROM    RESERVATION R
             JOIN    MEMBER M ON M.MEMBER_ID = R.MEMBER_ID
             JOIN    SPACE S ON S.SPACE_ID = R.SPACE_ID
-            WHERE   R.SPACE_ID = #{spaceId}a
+            WHERE   R.SPACE_ID = #{spaceId}
             """)
     List<FindResponseHostReservationList> selectAllBySpaceId(Integer spaceId);
 
