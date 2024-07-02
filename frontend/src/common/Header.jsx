@@ -224,7 +224,7 @@ const Header = () => {
               <MenuItem
                 color="gray.800"
                 _hover={{bg: "gray.700", color: "yellow.400"}}
-                icon={<FontAwesomeIcon icon={faList}/>}
+                icon={<FontAwesomeIcon icon={faClipboardQuestion} />}
                 onClick={() => navigate("/board/list")}>
                 게시판
               </MenuItem>
@@ -398,6 +398,18 @@ const Header = () => {
                 <Button leftIcon={<FontAwesomeIcon icon={faCalendarDays} />} variant="ghost" justifyContent="flex-start"
                         _hover={{bg: "gray.700", color: "yellow.400"}}
                         onClick={() => navigate(`/host/spaceList/${account.id}`)} color="white">호스트 예약 관리</Button>)}
+              {account.isUser() && (
+                <Button leftIcon={<FontAwesomeIcon icon={faStar}/>} variant="ghost" justifyContent="flex-start"
+                        _hover={{bg: "gray.700", color: "yellow.400"}}
+                        onClick={() => navigate(`member/myFavoritesList`)} color="white">즐겨찾기</Button>)}
+              {account.isUser() && (
+                <Button leftIcon={<FontAwesomeIcon icon={faCalendarAlt}/>} variant="ghost" justifyContent="flex-start"
+                        _hover={{bg: "gray.700", color: "yellow.400"}}
+                        onClick={() => navigate(`member/myReservationList/${account.id}`)} color="white">예약리스트</Button>)}
+              {account.isUser() && (
+                <Button leftIcon={<FontAwesomeIcon icon={faDollarSign}/>} variant="ghost" justifyContent="flex-start"
+                        _hover={{bg: "gray.700", color: "yellow.400"}}
+                        onClick={() => navigate(`paid/myPaymentList`)} color="white">결제내역</Button>)}
               {account.isAdmin() && (
                 <>
                   <Button leftIcon={<FontAwesomeIcon icon={faCog}/>} variant="ghost" justifyContent="flex-start"
