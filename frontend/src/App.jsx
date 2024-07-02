@@ -103,7 +103,7 @@ function App() {
           path: "member/MyFavoritesList",
           element: <MyFavoritesList />,
         },
-        { path: "host/spaceList/:memberId", element: <HostCenterSpaceList /> },
+        { path: "host/spaceList", element: <HostCenterSpaceList /> },
         { path: "member/reviews", element: <HostCenterReviews /> },
       ],
     },
