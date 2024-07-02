@@ -39,7 +39,6 @@ public class CommentController {
 
     @GetMapping("myReviewList/{memberId}")
     public List<Comment> selectAllByMemberIdReview(@PathVariable Integer memberId) {
-        log.info("=================memberId============={}", memberId);
         return commentService.selectAllByMemberIdReview(memberId);
     }
 
