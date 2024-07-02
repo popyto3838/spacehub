@@ -124,6 +124,8 @@ public class BoardServiceImpl implements BoardService {
         // 하나의 게시물 조회
         Board board = boardMapper.selectByBoardId(boardId);
 
+        // view부터 수정 필요 (insert 들어감)
+
         // fileNames에서 파일 이름 조회
         // List<String> fileNames = boardMapper.selectByFileNameByBoardId(boardId);
         // 파일 경로 저장
@@ -265,7 +267,7 @@ public class BoardServiceImpl implements BoardService {
         List<String> fileNames = boardMapper.selectByFileNameByBoardId(boardId);
         // disk에 있는 file 삭제
 //        String dir = STR."C:/Temp/prj3p/\{boardId}";
-        
+
         for (String fileName : fileNames) {
 //            File file = new File(dir + fileName);
 //            file.delete();
