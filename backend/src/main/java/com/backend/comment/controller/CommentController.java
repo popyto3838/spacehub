@@ -1,6 +1,7 @@
 package com.backend.comment.controller;
 
 import com.backend.comment.domain.Comment;
+import com.backend.comment.domain.FindRequestHostDetailDto;
 import com.backend.comment.service.CommentService;
 import com.backend.comment.service.impl.CommentServiceImpl;
 import lombok.RequiredArgsConstructor;
@@ -37,9 +38,10 @@ public class CommentController {
         return commentService.list(boardId);
     }
 
-    @GetMapping("myReviewList/{memberId}")
-    public List<Comment> selectAllByMemberIdReview(@PathVariable Integer memberId) {
-        return commentService.selectAllByMemberIdReview(memberId);
+    @GetMapping("/myReviewList")
+    public List<Comment> selectAllByMemberIdReview(@ModelAttribute FindRequestHostDetailDto hostDetailDto) {
+        log.info("====hostDetailDto===={}", hostDetailDto);
+        return commentService.selectAllByMemberIdReview(hostDetailDto);
     }
 
     @DeleteMapping("delete")
