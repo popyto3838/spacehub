@@ -175,6 +175,7 @@ const Header = () => {
               onClick={SwitchHost}
               fontSize="lg"
               h="4vh"
+
             >
               호스트로 전환
             </Button>
@@ -212,67 +213,68 @@ const Header = () => {
                 onClick={() => navigate("/board/list")}>
                 공지사항
               </MenuItem>
+              {account.isHost() && (
+                <MenuItem
+                  color="gray.800"
+                  _hover={{bg: "gray.700", color: "yellow.400"}}
+                  icon={<FontAwesomeIcon icon={faMapMarkerAlt}/>}
+                  onClick={() => navigate(`/host/spaceList/${account.id}`)}>
+                  나의 공간리스트
+                </MenuItem>)}
               {account.isLoggedIn() && (
                 <>
-              <MenuItem
-                color="gray.800"
-                _hover={{bg: "gray.700", color: "yellow.400"}}
-                icon={<FontAwesomeIcon icon={faMapMarkerAlt}/>}
-                onClick={() => navigate(`/host/spaceList/${account.id}`)}>
-                나의 공간리스트
-              </MenuItem>
-              <MenuItem
-                color="gray.800"
-                _hover={{bg: "gray.700", color: "yellow.400"}}
-                icon={<FontAwesomeIcon icon={faStar}/>}
-                onClick={() => navigate(`member/myFavoritesList`)}>
-                즐겨찾기
-              </MenuItem>
-              <MenuItem
-                color="gray.800"
-                _hover={{bg: "gray.700", color: "yellow.400"}}
-                icon={<FontAwesomeIcon icon={faCalendarAlt}/>}
-                onClick={() => navigate(`member/myReservationList/${account.id}`)}>
-                예약리스트
-              </MenuItem>
-              <MenuItem
-                color="gray.800"
-                _hover={{bg: "gray.700", color: "yellow.400"}}
-                icon={<FontAwesomeIcon icon={faDollarSign}/>}
-                onClick={() => navigate(`paid/myPaymentList`)}>
-                결제내역
-              </MenuItem>
-              <MenuItem
-                color="gray.800"
-                _hover={{bg: "gray.700", color: "yellow.400"}}
-                icon={<FontAwesomeIcon icon={faUser}/>}
-                onClick={() => navigate(`member/info/${account.id}`)}>
-                마이페이지
-              </MenuItem>
-              <MenuItem
-                color="gray.800"
-                _hover={{bg: "gray.700", color: "yellow.400"}}
-                icon={<FontAwesomeIcon icon={faSignOutAlt}/>}
-                onClick={() => {
-                  account.logout();
-                  navigate("/");
-                }}>로그아웃
-              </MenuItem>
+                  <MenuItem
+                    color="gray.800"
+                    _hover={{bg: "gray.700", color: "yellow.400"}}
+                    icon={<FontAwesomeIcon icon={faStar}/>}
+                    onClick={() => navigate(`member/myFavoritesList`)}>
+                    즐겨찾기
+                  </MenuItem>
+                  <MenuItem
+                    color="gray.800"
+                    _hover={{bg: "gray.700", color: "yellow.400"}}
+                    icon={<FontAwesomeIcon icon={faCalendarAlt}/>}
+                    onClick={() => navigate(`member/myReservationList/${account.id}`)}>
+                    예약리스트
+                  </MenuItem>
+                  <MenuItem
+                    color="gray.800"
+                    _hover={{bg: "gray.700", color: "yellow.400"}}
+                    icon={<FontAwesomeIcon icon={faDollarSign}/>}
+                    onClick={() => navigate(`paid/myPaymentList`)}>
+                    결제내역
+                  </MenuItem>
+                  <MenuItem
+                    color="gray.800"
+                    _hover={{bg: "gray.700", color: "yellow.400"}}
+                    icon={<FontAwesomeIcon icon={faUser}/>}
+                    onClick={() => navigate(`member/info/${account.id}`)}>
+                    마이페이지
+                  </MenuItem>
+                  <MenuItem
+                    color="gray.800"
+                    _hover={{bg: "gray.700", color: "yellow.400"}}
+                    icon={<FontAwesomeIcon icon={faSignOutAlt}/>}
+                    onClick={() => {
+                      account.logout();
+                      navigate("/");
+                    }}>로그아웃
+                  </MenuItem>
                 </>
               )}
-              <MenuItem
-                color="gray.800"
-                _hover={{bg: "gray.700", color: "yellow.400"}}
-                icon={<FontAwesomeIcon icon={faSignOutAlt}/>}
-                onClick={() => {
-                  navigate("/member/login");
-                }}>로그인
-              </MenuItem>
+              {account.isLoggedIn() || (
+                <MenuItem
+                  color="gray.800"
+                  _hover={{bg: "gray.700", color: "yellow.400"}}
+                  icon={<FontAwesomeIcon icon={faSignOutAlt}/>}
+                  onClick={() => {
+                    navigate("/member/login");
+                  }}>로그인
+                </MenuItem>)}
             </MenuList>
           </Menu>
         </Flex>
       </Flex>
-
       <Drawer placement="left" onClose={onClose} isOpen={isOpen}>
         <DrawerOverlay/>
         <DrawerContent bg="gray.900">
@@ -327,18 +329,24 @@ const Header = () => {
               <Button leftIcon={<FontAwesomeIcon icon={faMapMarkerAlt}/>} variant="ghost" justifyContent="flex-start"
                       _hover={{bg: "gray.700", color: "yellow.400"}}
                       onClick={() => handleMenuClick("/space/register")} color="white">공간등록</Button>
-              <Button leftIcon={<FontAwesomeIcon icon={faCog}/>} variant="ghost" justifyContent="flex-start"
-                      _hover={{bg: "gray.700", color: "yellow.400"}}
-                      onClick={() => handleMenuClick("/space/type")} color="white">공간유형</Button>
-              <Button leftIcon={<FontAwesomeIcon icon={faCog}/>} variant="ghost" justifyContent="flex-start"
-                      _hover={{bg: "gray.700", color: "yellow.400"}}
-                      onClick={() => handleMenuClick("/space/option")} color="white">공간옵션</Button>
+              {account.isAdmin() && (
+                <>
+                  <Button leftIcon={<FontAwesomeIcon icon={faCog}/>} variant="ghost" justifyContent="flex-start"
+                          _hover={{bg: "gray.700", color: "yellow.400"}}
+                          onClick={() => handleMenuClick("/space/type")} color="white">공간유형</Button>
+                  <Button leftIcon={<FontAwesomeIcon icon={faCog}/>} variant="ghost" justifyContent="flex-start"
+                          _hover={{bg: "gray.700", color: "yellow.400"}}
+                          onClick={() => handleMenuClick("/space/option")} color="white">공간옵션</Button>
+                </>
+              )}
               <Button leftIcon={<FontAwesomeIcon icon={faDollarSign}/>} variant="ghost" justifyContent="flex-start"
                       _hover={{bg: "gray.700", color: "yellow.400"}}
                       onClick={() => handleMenuClick("/paid/payment")} color="white">결제상태</Button>
-              <Button leftIcon={<FontAwesomeIcon icon={faChartBar}/>} variant="ghost" justifyContent="flex-start"
-                      _hover={{bg: "gray.700", color: "yellow.400"}}
-                      onClick={() => handleMenuClick("/dashboard/admin")} color="white">관리자 페이지</Button>
+              {account.isAdmin() && (
+                <Button leftIcon={<FontAwesomeIcon icon={faChartBar}/>} variant="ghost" justifyContent="flex-start"
+                        _hover={{bg: "gray.700", color: "yellow.400"}}
+                        onClick={() => handleMenuClick("/dashboard/admin")} color="white">관리자 페이지</Button>
+              )}
               {account.isLoggedIn() && (
                 <>
                   <Divider borderColor="gray.700"/>

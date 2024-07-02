@@ -11,12 +11,12 @@ import {
   Select,
   useToast, VStack, Heading, Divider, InputLeftElement,
 } from "@chakra-ui/react";
-import React, { useState } from "react";
+import React, {useState} from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 import TimerComponent from "./TimerComponent.jsx";
 import NaverLogin from "./NaverLogin.jsx";
-import { FiMail, FiLock, FiUser, FiSmartphone } from "react-icons/fi";
+import {FiMail, FiLock, FiUser, FiSmartphone} from "react-icons/fi";
 
 export function MemberSignup() {
   const [email, setEmail] = useState("");
@@ -43,7 +43,6 @@ export function MemberSignup() {
   const navigate = useNavigate();
 
 
-
   const handleCapsLockWarning = (e) => {
     const isCapsLockOn = e.getModifierState("CapsLock");
     setCapsLockWarning(isCapsLockOn);
@@ -57,7 +56,7 @@ export function MemberSignup() {
           email: email,
           password: password,
           nickname: nickname,
-          mobile : mobile
+          mobile: mobile
         }
       )
       .then((res) => {
@@ -158,11 +157,11 @@ export function MemberSignup() {
     isDisabled = true;
   }
 
-  if (isSmsCodeSent){
-    isDisabled =true;
+  if (isSmsCodeSent) {
+    isDisabled = true;
   }
 
-  if (!signUp){
+  if (!signUp) {
     isDisabled = true;
   }
 
@@ -209,7 +208,6 @@ export function MemberSignup() {
   };
 
 
-
   const confirmNumberMobile = () => {
     if (inputCode == verificationCode) {
       alert("인증되었습니다.");
@@ -223,82 +221,75 @@ export function MemberSignup() {
   };
 
 
-
-
-
-
-
-
-
-    return (
+  return (
+    <Box
+      minHeight="100vh"
+      bg="linear-gradient(135deg, #f3e7e9 0%, #f9ebff 100%)"
+      display="flex"
+      alignItems="center"
+      justifyContent="center"
+      p={4}
+    >
       <Box
-        minHeight="100vh"
-        bg="linear-gradient(135deg, #f3e7e9 0%, #f9ebff 100%)"
-        display="flex"
-        alignItems="center"
-        justifyContent="center"
-        p={4}
+        maxWidth="500px"
+        w="full"
+        bg="rgba(255, 255, 255, 0.8)"
+        backdropFilter="blur(10px)"
+        borderRadius="2xl"
+        boxShadow="2xl"
+        overflow="hidden"
       >
-        <Box
-          maxWidth="500px"
-          w="full"
-          bg="rgba(255, 255, 255, 0.8)"
-          backdropFilter="blur(10px)"
-          borderRadius="2xl"
-          boxShadow="2xl"
-          overflow="hidden"
-        >
-          <Box p={8}>
-            <VStack spacing={6} align="stretch">
-              <Heading
-                as="h2"
-                fontSize="24px"
-                textAlign="center"
-                bgGradient="linear(to-r, #667eea, #764ba2)"
-                bgClip="text"
-                fontWeight="extrabold"
-                color="black"
+        <Box p={8}>
+          <VStack spacing={6} align="stretch">
+            <Heading
+              as="h2"
+              fontSize="24px"
+              textAlign="center"
+              bgGradient="linear(to-r, #667eea, #764ba2)"
+              bgClip="text"
+              fontWeight="extrabold"
+              color="black"
 
-              >
-                회원가입
-              </Heading>
+            >
+              회원가입
+            </Heading>
 
-              <FormControl isRequired>
-                <FormLabel>이메일</FormLabel>
-                <InputGroup>
-                  <InputLeftElement pointerEvents="none">
-                    <FiMail color="gray.300" />
-                  </InputLeftElement>
-                  <Input
-                    type="email"
-                    placeholder="hello@example.com"
-                    bg="white"
-                    onChange={(e) => {
-                      setEmail(e.target.value);
-                      setIsCheckedEmail(false);
-                      setIsValidEmail(!e.target.validity.typeMismatch);
-                    }}
-                  />
-                  <InputRightElement width="4.5rem">
-                    <Button
-                      h="1.75rem"
-                      size="sm"
-                      colorScheme="purple"
-                      isDisabled={!isValidEmail || email.trim().length === 0 || isCheckedEmail}
-                      onClick={handleCheckEmail}
-                    >
-                      중복확인
-                    </Button>
-                  </InputRightElement>
-                </InputGroup>
-                {!isCheckedEmail && (
-                  <FormHelperText color="red.500">유효한 이메일을 입력해주세요</FormHelperText>
-                )}
-              </FormControl>
+            <FormControl isRequired>
+              <FormLabel>이메일</FormLabel>
+              <InputGroup>
+                <InputLeftElement pointerEvents="none">
+                  <FiMail color="gray.300"/>
+                </InputLeftElement>
+                <Input
+                  type="email"
+                  placeholder="hello@example.com"
+                  bg="white"
+                  onChange={(e) => {
+                    setEmail(e.target.value);
+                    setIsCheckedEmail(false);
+                    setIsValidEmail(!e.target.validity.typeMismatch);
+                  }}
+                />
+                <InputRightElement width="4.5rem">
+                  <Button
+                    h="1.75rem"
+                    size="sm"
+                    colorScheme="purple"
+                    isDisabled={!isValidEmail || email.trim().length === 0 || isCheckedEmail}
+                    onClick={handleCheckEmail}
+                  >
+                    중복확인
+                  </Button>
+                </InputRightElement>
+              </InputGroup>
+              {!isCheckedEmail && (
+                <FormHelperText color="red.500">유효한 이메일을 입력해주세요</FormHelperText>
+              )}
+            </FormControl>
 
-              {isCheckedEmail && (
+            {isCheckedEmail && (
               <Button
-                leftIcon={<FiMail />}
+                leftIcon={<FiMail/>}
                 colorScheme="purple"
                 onClick={sendNumber}
                 isFullWidth
@@ -307,161 +298,161 @@ export function MemberSignup() {
                 이메일 인증코드 받기
               </Button>)}
 
-              {isCodeSent && (
-                <Box
+            {isCodeSent && (
+              <Box
 
-                >
-                  <VStack spacing={4}>
-                    <InputGroup>
-                      <Input
-                        placeholder="인증번호를 입력해주세요"
-                        onChange={(e) => setInputCode(e.target.value)}
-                      />
-                      <InputRightElement width="4.5rem">
-                        <Button h="1.75rem" size="sm" onClick={confirmNumber}>
-                          확인
-                        </Button>
-                      </InputRightElement>
-                    </InputGroup>
-                    {expirationTime && <TimerComponent expirationTime={expirationTime} />}
-                  </VStack>
-                </Box>
-              )}
-
-              <FormControl isRequired>
-                <FormLabel>전화번호</FormLabel>
-                <InputGroup>
-                  <InputLeftElement pointerEvents="none">
-                    <FiSmartphone color="gray.300" />
-                  </InputLeftElement>
-                  <Input
-                    placeholder="01012345678"
-                    bg="white"
-                    onChange={(e) => {
-                      setMobile(e.target.value);
-                      setIsCheckedMobile(false);
-                    }}
-                  />
-                </InputGroup>
-              </FormControl>
-
-              <Button
-                leftIcon={<FiSmartphone />}
-                colorScheme="purple"
-                onClick={sendNumberMobile}
-                isFullWidth
-                isDisabled={isCodeSentPhone}
               >
-               SMS 인증코드 받기
-              </Button>
-
-              {isSmsCodeSent && (
-                <Box>
-                  <VStack spacing={4}>
-                    <InputGroup>
-                      <Input
-                        placeholder="Enter SMS code"
-                        onChange={(e) => setInputCode(e.target.value)}
-                      />
-                      <InputRightElement width="4.5rem">
-                        <Button h="1.75rem" size="sm" onClick={confirmNumberMobile}>
-                          확인
-                        </Button>
-                      </InputRightElement>
-                    </InputGroup>
-                    {expirationTime && <TimerComponent expirationTime={expirationTime} />}
-                  </VStack>
-                </Box>
-              )}
-
-              <FormControl isRequired>
-                <FormLabel>비밀번호</FormLabel>
-                <InputGroup>
-                  <InputLeftElement pointerEvents="none">
-                    <FiLock color="gray.300" />
-                  </InputLeftElement>
-                  <Input
-                    type="password"
-                    bg="white"
-                    onKeyUp={handleCapsLockWarning}
-                    onChange={(e) => setPassword(e.target.value)}
-                  />
-                </InputGroup>
-                {capsLockWarning && (
-                  <FormHelperText color="red.500">Caps Lock이 켜져있습니다.</FormHelperText>
-                )}
-              </FormControl>
-
-              <FormControl isRequired>
-                <FormLabel>비밀번호 확인</FormLabel>
-                <InputGroup>
-                  <InputLeftElement pointerEvents="none">
-                    <FiLock color="gray.300" />
-                  </InputLeftElement>
-                  <Input
-                    type="password"
-                    bg="white"
-                    onChange={(e) => setPasswordCheck(e.target.value)}
-                  />
-                </InputGroup>
-                {password !== passwordCheck && (
-                  <FormHelperText color="red.500">Passwords do not match</FormHelperText>
-                )}
-              </FormControl>
-
-              <FormControl isRequired>
-                <FormLabel>닉네임</FormLabel>
-                <InputGroup>
-                  <InputLeftElement pointerEvents="none">
-                    <FiUser color="gray.300" />
-                  </InputLeftElement>
-                  <Input
-                    bg="white"
-                    onChange={(e) => {
-                      setNickname(e.target.value);
-                      setIsCheckedNickName(false);
-                    }}
-                  />
-                  <InputRightElement width="4.5rem">
-                    <Button
-                      h="1.75rem"
-                      size="sm"
-                      colorScheme="purple"
-                      isDisabled={nickname.trim().length === 0}
-                      onClick={handleCheckNickName}
-                    >
-                      중복확인
-                    </Button>
-                  </InputRightElement>
-                </InputGroup>
-                {!isCheckedNickName && (
-                  <FormHelperText color="red.500">닉네임 중복 확인을 해주세요</FormHelperText>
-                )}
-              </FormControl>
-
-              <Button
-                colorScheme="purple"
-                size="lg"
-                isFullWidth
-                isDisabled={isDisabled}
-                onClick={handleSignup}
-                mt={4}
-                bgGradient="linear(to-r, #667eea, #764ba2)"
-                _hover={{
-                  bgGradient: "linear(to-r, #764ba2, #667eea)",
-                }}
-              >
-                회원가입
-              </Button>
-
-              <Divider />
-
-              <Box>
-                <NaverLogin />
+                <VStack spacing={4}>
+                  <InputGroup>
+                    <Input
+                      placeholder="인증번호를 입력해주세요"
+                      onChange={(e) => setInputCode(e.target.value)}
+                    />
+                    <InputRightElement width="4.5rem">
+                      <Button h="1.75rem" size="sm" onClick={confirmNumber}>
+                        확인
+                      </Button>
+                    </InputRightElement>
+                  </InputGroup>
+                  {expirationTime && <TimerComponent expirationTime={expirationTime}/>}
+                </VStack>
               </Box>
-            </VStack>
-          </Box>
+            )}
+
+            <FormControl isRequired>
+              <FormLabel>전화번호</FormLabel>
+              <InputGroup>
+                <InputLeftElement pointerEvents="none">
+                  <FiSmartphone color="gray.300"/>
+                </InputLeftElement>
+                <Input
+                  placeholder="01012345678"
+                  bg="white"
+                  onChange={(e) => {
+                    setMobile(e.target.value);
+                    setIsCheckedMobile(false);
+                  }}
+                />
+              </InputGroup>
+            </FormControl>
+
+            <Button
+              leftIcon={<FiSmartphone/>}
+              colorScheme="purple"
+              onClick={sendNumberMobile}
+              isFullWidth
+              isDisabled={isCodeSentPhone}
+            >
+              SMS 인증코드 받기
+            </Button>
+
+            {isSmsCodeSent && (
+              <Box>
+                <VStack spacing={4}>
+                  <InputGroup>
+                    <Input
+                      placeholder="Enter SMS code"
+                      onChange={(e) => setInputCode(e.target.value)}
+                    />
+                    <InputRightElement width="4.5rem">
+                      <Button h="1.75rem" size="sm" onClick={confirmNumberMobile}>
+                        확인
+                      </Button>
+                    </InputRightElement>
+                  </InputGroup>
+                  {expirationTime && <TimerComponent expirationTime={expirationTime}/>}
+                </VStack>
+              </Box>
+            )}
+
+            <FormControl isRequired>
+              <FormLabel>비밀번호</FormLabel>
+              <InputGroup>
+                <InputLeftElement pointerEvents="none">
+                  <FiLock color="gray.300"/>
+                </InputLeftElement>
+                <Input
+                  type="password"
+                  bg="white"
+                  onKeyUp={handleCapsLockWarning}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+              </InputGroup>
+              {capsLockWarning && (
+                <FormHelperText color="red.500">Caps Lock이 켜져있습니다.</FormHelperText>
+              )}
+            </FormControl>
+
+            <FormControl isRequired>
+              <FormLabel>비밀번호 확인</FormLabel>
+              <InputGroup>
+                <InputLeftElement pointerEvents="none">
+                  <FiLock color="gray.300"/>
+                </InputLeftElement>
+                <Input
+                  type="password"
+                  bg="white"
+                  onChange={(e) => setPasswordCheck(e.target.value)}
+                />
+              </InputGroup>
+              {password !== passwordCheck && (
+                <FormHelperText color="red.500">Passwords do not match</FormHelperText>
+              )}
+            </FormControl>
+
+            <FormControl isRequired>
+              <FormLabel>닉네임</FormLabel>
+              <InputGroup>
+                <InputLeftElement pointerEvents="none">
+                  <FiUser color="gray.300"/>
+                </InputLeftElement>
+                <Input
+                  bg="white"
+                  onChange={(e) => {
+                    setNickname(e.target.value);
+                    setIsCheckedNickName(false);
+                  }}
+                />
+                <InputRightElement width="4.5rem">
+                  <Button
+                    h="1.75rem"
+                    size="sm"
+                    colorScheme="purple"
+                    isDisabled={nickname.trim().length === 0}
+                    onClick={handleCheckNickName}
+                  >
+                    중복확인
+                  </Button>
+                </InputRightElement>
+              </InputGroup>
+              {!isCheckedNickName && (
+                <FormHelperText color="red.500">닉네임 중복 확인을 해주세요</FormHelperText>
+              )}
+            </FormControl>
+
+            <Button
+              colorScheme="purple"
+              size="lg"
+              isFullWidth
+              isDisabled={isDisabled}
+              onClick={handleSignup}
+              mt={4}
+              bgGradient="linear(to-r, #667eea, #764ba2)"
+              _hover={{
+                bgGradient: "linear(to-r, #764ba2, #667eea)",
+              }}
+            >
+              회원가입
+            </Button>
+
+            <Divider/>
+
+            <Box>
+              <NaverLogin/>
+            </Box>
+          </VStack>
         </Box>
       </Box>
-    );
-  }
+    </Box>
+  );
+}
