@@ -41,7 +41,6 @@ export function HostCenterReviews() {
 
   useEffect(() => {
     if (member && member.id) {
-      console.log("=============================", member.id);
       axios
         .get(`/api/comment/myReviewList/${member.id}`)
         .then((response) => {
