@@ -300,7 +300,6 @@ export function MemberSignup() {
 
             {isCodeSent && (
               <Box
-
               >
                 <VStack spacing={4}>
                   <InputGroup>

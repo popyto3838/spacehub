@@ -421,15 +421,17 @@ const Header = () => {
                 </>
               )}
               {account.isLoggedIn() && (
-                <>
+                  <>
                   <Divider borderColor="gray.700"/>
                   <Button leftIcon={<FontAwesomeIcon icon={faUser}/>} variant="ghost" justifyContent="flex-start"
                           _hover={{bg: "gray.700", color: "yellow.400"}} color="white"
                           onClick={() => handleMenuClick(`/member/info/${account.id}`)}>마이페이지</Button>
+                  </>
+              )}
+              {account.isHost() && (
                   <Button leftIcon={<FontAwesomeIcon icon={faExchangeAlt}/>} variant="ghost" justifyContent="flex-start"
                           _hover={{bg: "gray.700", color: "yellow.400"}}
                           onClick={() => handleMenuClick("/host/dashboard")} color="white">호스트센터</Button>
-                </>
               )}
               {account.isAdmin() && (
                 <Button leftIcon={<FontAwesomeIcon icon={faChartBar}/>} variant="ghost" justifyContent="flex-start"

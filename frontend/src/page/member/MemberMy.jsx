@@ -18,17 +18,13 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
-  Switch,
-  Text,
-  useDisclosure,
-  useToast,
-  VStack,
+  useDisclosure, FormHelperText, Spinner,
 } from "@chakra-ui/react";
 
 import React, { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import { LoginContext } from "../../component/LoginProvider.jsx";
-import { useNavigate } from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import TimerComponent from "./TimerComponent.jsx";
 
 export function MemberMy() {
@@ -40,6 +36,13 @@ export function MemberMy() {
   const [businessNumber, setBusinessNumber] = useState();
   const [repName, setRepName] = useState();
   const [imageVersion, setImageVersion] = useState(0);
+  const [oldNickName, setOldNickName] = useState("");
+  const [oldPassword, setOldPassword] = useState("");
+  const [passwordCheck, setPasswordCheck] = useState("");
+  const [isCheckedNickName, setIsCheckedNickName] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
+  const [password, setPassword] = useState();
+
 
   const [member, setMember] = useState({});
   const [host, setHost] = useState({});
@@ -48,9 +51,12 @@ export function MemberMy() {
   const [expirationTime, setExpirationTime] = useState(null);
   const [isCodeSent, setIsCodeSent] = useState(false);
 
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const {isOpen: isFirstModalOpen, onOpen: onFirstModalOpen, onClose: onFirstModalClose} = useDisclosure();
+  const {isOpen: isSecondModalOpen, onOpen: onSecondModalOpen, onClose: onSecondModalClose} = useDisclosure();
+  const {isOpen: isThirdModalOpen, onOpen: onThirdModalOpen, onClose: onThirdModalClose} = useDisclosure();
 
   const account = useContext(LoginContext);
+  const { memberId } = useParams();
   const toast = useToast();
   const navigate = useNavigate();
 
@@ -66,7 +72,7 @@ export function MemberMy() {
         .then(([memberRes, hostRes]) => {
           const member1 = memberRes.data;
           setMember({ ...member1, password: "" });
-
+          setOldNickName(member1.nickname);
           const host1 = hostRes.data;
           setHost(host1);
         })
@@ -96,9 +102,12 @@ export function MemberMy() {
       .then((res) => {
         toast({
           status: "success",
-          description: "계좌등록이 완료되었습니다.",
+          description: "계좌수정이 완료되었습니다.",
           position: "top",
         });
+
+        window.location.reload();
+
       })
       .catch((err) => {
         if (err.response.status === 400) {
@@ -139,7 +148,11 @@ export function MemberMy() {
       axios.post("/api/member/phone", {
         memberId: account.id,
         mobile: mobile,
+
       });
+
+      window.location.reload();
+
     } else {
       alert("인증에 실패했습니다");
     }
@@ -159,7 +172,8 @@ export function MemberMy() {
         });
         setImageVersion((prev) => prev + 1);
         fetchMemberData();
-        onClose();
+        onFirstModalClose();
+
         window.location.reload();
       });
   }
@@ -179,7 +193,122 @@ export function MemberMy() {
           position: "top",
         });
         fetchMemberData();
+
+        window.location.reload();
       });
+  }
+
+  function handleClickSave() {
+    axios
+      .put(
+        "/api/member/modify",
+        { ...member, oldPassword },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        },
+      )
+      .then((res) => {
+        toast({
+          status: "success",
+          description: "회원 정보가 수정되었습니다.",
+          position: "top",
+        });
+        account.login(res.data.token);
+        navigate(`member/info/${accountId}`);
+      })
+      .catch(() => {
+      })
+      .finally(() => {
+        onSecondModalClose();
+        setOldPassword("");
+      });
+  }
+
+
+  function handleCheckNickName() {
+    axios
+      .get(`/api/member/check?nickName=${member.nickname}`)
+      .then((res) => {
+        toast({
+          status: "warning",
+          description: "사용할 수 없는 닉네임입니다",
+          position: "top",
+        });
+      })
+      .catch((err) => {
+        toast({
+          status: "success",
+          description: "사용할 수 있는 닉네임입니다",
+          position: " top",
+        });
+        setIsCheckedNickName(true);
+      });
+  }
+
+  function handleClickRemove() {
+    setIsLoading(true);
+
+    axios
+      .delete(`/api/member/${account.id}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        data: { memberId :account.id
+               , password : oldPassword },
+      })
+      .then(() => {
+        toast({
+          status: "success",
+          description: "회원 탈퇴하였습니다.",
+          position: "top",
+        });
+        setTimeout(() => {
+          account.logout();
+        }, 1000);
+        navigate("/");
+      })
+      .catch((err) => {
+        toast({
+          status: "warning",
+          description: "회원 탈퇴 중 문제가 발생하였습니다.",
+          position: "top",
+        });
+
+      })
+      .finally(() => {
+        setIsLoading(false);
+        setPassword("");
+        onThirdModalClose();
+
+      });
+  }
+
+  if (member === null) {
+    return <Spinner />;
+  }
+
+  let isDisableNickNameCheckButton = false;
+
+  if (member.nickname === oldNickName) {
+    isDisableNickNameCheckButton = true;
+  }
+
+
+  if (isCheckedNickName) {
+    isDisableNickNameCheckButton = true;
+  }
+
+  let isDisableSaveButton = false;
+
+  if (member.password !== passwordCheck) {
+    isDisableSaveButton = true;
+  }
+
+
+  if (!isCheckedNickName) {
+    isDisableSaveButton = true;
   }
 
   return (
@@ -201,7 +330,7 @@ export function MemberMy() {
               objectFit: "cover", // 이미지가 잘리지 않고 채워지도록 함
             }}
           />
-          <Button onClick={onOpen} size="sm">
+          <Button onClick={onFirstModalOpen} size="sm">
             프로필 사진 수정
           </Button>
         </VStack>
@@ -248,7 +377,7 @@ export function MemberMy() {
               />
               <Text>내 계좌번호</Text>
               <Input
-                placeholder={member.mobile}
+                placeholder={host.accountNumber}
                 onChange={(e) => {
                   setAccountNumber(e.target.value);
                 }}
@@ -301,15 +430,65 @@ export function MemberMy() {
             </FormControl>
           </Box>
 
-          <FormControl>
-            <FormLabel>닉네임</FormLabel>
-            <Input value={member.nickname} isReadOnly />
-          </FormControl>
 
           <FormControl>
             <FormLabel>이메일</FormLabel>
             <Input value={member.email} isReadOnly />
           </FormControl>
+
+          <Box>
+            <FormControl>
+              <FormLabel>암호</FormLabel>
+              <Input
+                onChange={(e) =>
+                  setMember({ ...member, password: e.target.value })
+                }
+                placeholder={"암호를 변경하려면 입력하세요"}
+              />
+            </FormControl>
+          </Box>
+          <Box>
+            <FormControl>
+              <FormLabel>암호 확인</FormLabel>
+              <Input onChange={(e) => setPasswordCheck(e.target.value)}
+                     placeholder={"위와 동일한 암호를 입력해주세요"}
+              />
+              {member.password === passwordCheck || (
+                <FormHelperText>암호가 일치하지 않습니다.</FormHelperText>
+              )}
+            </FormControl>
+          </Box>
+          <Box>
+            <FormControl>별명</FormControl>
+            <InputGroup>
+              <Input
+                onChange={(e) => {
+                  const newNickName = e.target.value.trim();
+                  setMember({ ...member, nickname: newNickName });
+                  setIsCheckedNickName(newNickName === oldNickName);
+                }}
+                value={member.nickname}
+              />
+              <InputRightElement w={"75px"} mr={1}>
+                <Button
+                  isDisabled={isDisableNickNameCheckButton}
+                  size={"sm"}
+                  onClick={handleCheckNickName}
+                >
+                  중복확인
+                </Button>
+              </InputRightElement>
+            </InputGroup>
+          </Box>
+          <Box>
+            <Button
+              isDisabled={isDisableSaveButton}
+              onClick={onSecondModalOpen}
+              colorScheme={"blue"}
+            >
+              저장
+            </Button>
+          </Box>
 
           <FormControl>
             <FormLabel>SNS연동</FormLabel>
@@ -328,11 +507,6 @@ export function MemberMy() {
           </Text>
 
           <FormControl>
-            <FormLabel>비밀번호</FormLabel>
-            <Button size="sm">변경하기</Button>
-          </FormControl>
-
-          <FormControl>
             <FormLabel>마케팅 수신동의</FormLabel>
             <VStack align="stretch">
               <HStack>
@@ -345,7 +519,10 @@ export function MemberMy() {
               </HStack>
             </VStack>
           </FormControl>
-          <Modal isOpen={isOpen} onClose={onClose}>
+          <Button onClick={onThirdModalOpen}>
+            탈퇴하기
+          </Button>
+          <Modal isOpen={isFirstModalOpen} onClose={onFirstModalClose}>
             <ModalOverlay />
             <ModalContent>
               <ModalHeader>프로필사진 등록</ModalHeader>
@@ -360,13 +537,59 @@ export function MemberMy() {
                 </FormControl>
               </ModalBody>
               <ModalFooter>
-                <Button onClick={onClose}>취소</Button>
+                <Button onClick={onFirstModalClose}>취소</Button>
                 <Button colorScheme="blue" mr={3} onClick={handleProfile}>
                   저장
                 </Button>
               </ModalFooter>
             </ModalContent>
           </Modal>
+
+          <Modal isOpen={isSecondModalOpen} onClose={onSecondModalClose}>
+            <ModalOverlay />
+            <ModalContent>
+              <ModalHeader>기존 암호 확인</ModalHeader>
+              <ModalBody>
+                <FormControl>
+                  <FormLabel>기존 암호</FormLabel>
+                  <Input onChange={(e) => setOldPassword(e.target.value)} />
+                </FormControl>
+              </ModalBody>
+              <ModalFooter>
+                <Button onClick={onSecondModalClose}>취소</Button>
+                <Button colorScheme="blue" onClick={handleClickSave}>
+                  확인
+                </Button>
+              </ModalFooter>
+            </ModalContent>
+          </Modal>
+
+          <Modal isOpen={isThirdModalOpen} onClose={onThirdModalClose}>
+            <ModalOverlay />
+            <ModalContent>
+              <ModalHeader>탈퇴 확인</ModalHeader>
+              <ModalBody>
+                <FormControl>
+                  <FormLabel>암호</FormLabel>
+                  <Input
+                    value={password}
+                    onChange={(e) => setOldPassword(e.target.value)}
+                  />
+                </FormControl>
+              </ModalBody>
+              <ModalFooter>
+                <Button onClick={onThirdModalClose}>취소</Button>
+                <Button
+                  isLoading={isLoading}
+                  colorScheme={"red"}
+                  onClick={handleClickRemove}
+                >
+                  확인
+                </Button>
+              </ModalFooter>
+            </ModalContent>
+          </Modal>
+
         </VStack>
       </HStack>
     </Box>
