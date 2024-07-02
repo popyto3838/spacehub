@@ -83,6 +83,9 @@ export function ReviewCommentItem({
     }
   }, [account]);
 
+  // aws 설정
+  const s3BaseUrl = "https://studysanta.s3.ap-northeast-2.amazonaws.com/prj3";
+
   return (
     <Box border={"1px solid black"}>
       {/* 멤버이미지, 아이디, 수정/삭제 드롭다운 */}
@@ -109,7 +112,7 @@ export function ReviewCommentItem({
                   {comment.rateScore >= 1 && (
                     <Image
                       w={10}
-                      src={`/star/ic-star-${star <= comment.rateScore ? "on" : "off"}.png`}
+                      src={`${s3BaseUrl}/ic-star-${star <= comment.rateScore ? "on" : "off"}.png`}
                       alt={"star"}
                     />
                   )}

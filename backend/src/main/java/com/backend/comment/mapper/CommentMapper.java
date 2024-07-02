@@ -2,6 +2,7 @@ package com.backend.comment.mapper;
 
 import com.backend.comment.domain.Comment;
 import com.backend.comment.domain.FindRequestHostDetailDto;
+import com.backend.file.domain.File;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;
@@ -64,9 +65,9 @@ public interface CommentMapper {
 
     @Insert("""
             INSERT INTO FILE(PARENT_ID, DIVISION, FILE_NAME)
-            VALUES (#{parentId}, 'REVIEW', #{fileName})
+            VALUES (#{parentId}, 'REVIEW', #{fullPath})
             """)
-    int insertFileList(Integer parentId, String fileName);
+    int insertFileList(Integer parentId, String fullPath);
 
     @Select("""
             SELECT C.COMMENT_ID, C.CONTENT, C.INPUT_DT, C.UPDATE_DT, C.PARENT_ID, C.MEMBER_ID,C.RATE_SCORE,
@@ -145,7 +146,7 @@ public interface CommentMapper {
     List<Comment> selectAllBySpaceIdForQNA(Integer parentId, Integer offset);
 
     @Select("""
-            SELECT FILE_NAME, PARENT_ID
+            SELECT FILE_NAME, PARENT_ID, FILE_ID
             FROM FILE
             WHERE PARENT_ID = #{parentId}
             """)
@@ -162,9 +163,9 @@ public interface CommentMapper {
     @Delete("""
             DELETE FROM FILE
             WHERE PARENT_ID = #{parentId}
-              AND FILE_NAME = #{fileName}
+              AND FILE_NAME = #{fullPath}
             """)
-    int deleteByCommentIdAndName(Integer parentId, String fileName);
+    int deleteByCommentIdAndName(Integer parentId, String fullPath);
 
     @Select("""
             SELECT COUNT(*)
@@ -195,4 +196,11 @@ public interface CommentMapper {
                 AND     C.DIVISION               = #{division}
             """)
     List<Comment> selectAllByMemberIdReview(FindRequestHostDetailDto hostDetailDto);
+
+    @Select("""
+            SELECT FILE_NAME, PARENT_ID, FILE_ID
+            FROM FILE
+            WHERE PARENT_ID = #{parentId}
+            """)
+    List<File> selectByFileNameByCommentIdForS3(Integer parentId);
 }

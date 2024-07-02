@@ -14,6 +14,9 @@ export function Star({ setRateScore, rateScore }) {
     false: "off",
   };
 
+  // aws 설정
+  const s3BaseUrl = "https://studysanta.s3.ap-northeast-2.amazonaws.com/prj3";
+
   const clickStar = (starScore) => {
     if (starScore === 1) {
       setRateScore(1);
@@ -60,7 +63,7 @@ export function Star({ setRateScore, rateScore }) {
           w={10}
           onClick={() => clickStar(1)}
           className={"star"}
-          src={`https://studysanta.s3.ap-northeast-2.amazonaws.com/prj3/star/ic-star-${icList[star1.toString()]}.png`}
+          src={`${s3BaseUrl}/ic-star-${icList[star1.toString()]}.png`}
           alt={"star"}
           cursor={"pointer"}
         />
@@ -70,7 +73,7 @@ export function Star({ setRateScore, rateScore }) {
           w={10}
           onClick={() => clickStar(2)}
           className={"star"}
-          src={`https://studysanta.s3.ap-northeast-2.amazonaws.com/prj3/star/ic-star-${icList[star2.toString()]}.png`}
+          src={`${s3BaseUrl}/ic-star-${icList[star2.toString()]}.png`}
           alt={"star"}
           cursor={"pointer"}
         />
@@ -80,7 +83,7 @@ export function Star({ setRateScore, rateScore }) {
           w={10}
           onClick={() => clickStar(3)}
           className={"star"}
-          src={`/star/ic-star-${icList[star3.toString()]}.png`}
+          src={`${s3BaseUrl}/ic-star-${icList[star3.toString()]}.png`}
           alt={"star"}
           cursor={"pointer"}
         />
@@ -90,7 +93,7 @@ export function Star({ setRateScore, rateScore }) {
           w={10}
           onClick={() => clickStar(4)}
           className={"star"}
-          src={`/star/ic-star-${icList[star4.toString()]}.png`}
+          src={`${s3BaseUrl}/ic-star-${icList[star4.toString()]}.png`}
           alt={"star"}
           cursor={"pointer"}
         />
@@ -100,7 +103,7 @@ export function Star({ setRateScore, rateScore }) {
           w={10}
           onClick={() => clickStar(5)}
           className={"star"}
-          src={`/star/ic-star-${icList[star5.toString()]}.png`}
+          src={`${s3BaseUrl}/ic-star-${icList[star5.toString()]}.png`}
           alt={"star"}
           cursor={"pointer"}
         />
