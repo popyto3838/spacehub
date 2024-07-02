@@ -1,4 +1,4 @@
-import { Box } from "@chakra-ui/react";
+import { Box, Heading, VStack } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { CommentItem } from "./CommentItem.jsx";
@@ -25,15 +25,19 @@ export function CommentList({ boardId, isProcessing, setIsProcessing }) {
   /* 댓글을 하나 작성하지않으면 댓글들이 안나오는 오류 수정 */
   return (
     <Box>
-      전체 댓글 (숫자 나오게)개
-      {commentList.map((comment) => (
-        <CommentItem
-          isProcessing={isProcessing}
-          setIsProcessing={setIsProcessing}
-          comment={comment}
-          key={comment.commentId}
-        />
-      ))}
+      <Heading size="md" mb={4}>
+        전체 댓글 ({commentList.length})개
+      </Heading>
+      <VStack spacing={4} align="stretch">
+        {commentList.map((comment) => (
+          <CommentItem
+            isProcessing={isProcessing}
+            setIsProcessing={setIsProcessing}
+            comment={comment}
+            key={comment.commentId}
+          />
+        ))}
+      </VStack>
     </Box>
   );
 }
