@@ -158,8 +158,9 @@ public interface BoardMapper {
     @Delete("""
             DELETE FROM FILE
             WHERE PARENT_ID = #{parentId}
+              AND FILE_NAME = #{fullPath}
             """)
-    int deleteFileByBoardId(Integer parentId);
+    int deleteFileByBoardIdAndFileName(Integer parentId, String fullPath);
 
     // 게시물 클릭시 조회수 업데이트
     @Update("""
@@ -295,10 +296,29 @@ public interface BoardMapper {
         JOIN BOARD B ON F.PARENT_ID = B.BOARD_ID
         WHERE PARENT_ID = #{parentId}*/
     @Select("""
-            SELECT *
-            FROM FILE
-            WHERE PARENT_ID = #{parentId}
-              AND DIVISION = #{division}
+            SELECT F.FILE_NAME, F.PARENT_ID, F.FILE_ID, B.BOARD_ID
+            FROM FILE F JOIN BOARD B ON F.PARENT_ID = B.BOARD_ID
+            WHERE F.PARENT_ID = #{parentId}
+              AND F.DIVISION = #{division}
             """)
     List<File> selectFileByDivisionAndParentId(String division, Integer parentId);
+
+    @Delete("""
+            DELETE FROM FILE
+            WHERE PARENT_ID = #{parentId}
+            """)
+    int deleteFileByBoardId(Integer parentId);
+
+    @Insert("""
+            <script>
+            INSERT INTO FILE(PARENT_ID, DIVISION, FILE_NAME)
+            VALUES (#{parentId},
+                    <choose>
+                        <when test="categoryId == 1"> 'NOTICE' </when>
+                        <when test="categoryId == 2"> 'FAQ' </when>
+                    </choose>,
+                    #{fullPath})
+            </script>
+            """)
+    int insertFileListByFullPath(Integer parentId, String fullPath, Integer categoryId);
 }

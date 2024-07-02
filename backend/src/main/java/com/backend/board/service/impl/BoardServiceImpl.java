@@ -4,7 +4,6 @@ import com.backend.board.domain.Board;
 import com.backend.board.mapper.BoardMapper;
 import com.backend.board.service.BoardService;
 import com.backend.file.domain.File;
-import com.backend.file.mapper.FileMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
@@ -32,7 +31,6 @@ public class BoardServiceImpl implements BoardService {
 
     // AWS 설정
     final S3Client s3Client;
-    private final FileMapper fileMapper;
 
     @Value("${aws.s3.bucket.name}")
     String bucketName;
@@ -51,16 +49,16 @@ public class BoardServiceImpl implements BoardService {
         if (files != null) {
             for (MultipartFile file : files) {
                 if (!file.isEmpty()) {
-                    // db에 파일 저장
-                    boardMapper.insertFileList(board.getBoardId(), file.getOriginalFilename(), board.getCategoryId());
-
                     String division = getDivisionByCategoryId(board.getCategoryId());
 
                     // 실제 파일 저장 (s3)
                     String fileName = file.getOriginalFilename();
-                    String fullPath = "prj3/" + division + "/" + board.getCategoryId() + "/" + fileName;
+                    String fullPath = "prj3/" + division + "/" + board.getBoardId() + "/" + fileName;
 
-                    System.out.println("fullPath = " + fullPath); // fullPath = prj3/null/1/megaddibuddiuseal.png
+                    System.out.println("insert의 fileName = " + fileName);
+                    System.out.println("insert의 fullPath = " + fullPath);
+                    //insert의 fileName = bulbasaur.jpg
+                    //insert의 fullPath = prj3/FAQ/31/bulbasaur.jpg
 
                     PutObjectRequest objectRequest = PutObjectRequest.builder()
                             .bucket(bucketName)
@@ -70,12 +68,16 @@ public class BoardServiceImpl implements BoardService {
                     s3Client.putObject(objectRequest,
                             RequestBody.fromInputStream(file.getInputStream(), file.getSize()));
 
+                    // db에 파일 저장
+                    // boardMapper.insertFileList(board.getBoardId(), file.getOriginalFilename(), board.getCategoryId());
+                    boardMapper.insertFileListByFullPath(board.getBoardId(), fullPath, board.getCategoryId());
+
                 }
             }
         }
     }
 
-    // categoryId에 따라 division 값을 설정하는 유틸리티 메서드(insert에서 사용)
+    // categoryId에 따라 division 값을 설정하는 유틸리티 메서드(AWS File 업로드에서 사용)
     private String getDivisionByCategoryId(Integer categoryId) {
         if (categoryId == 1) {
             return "NOTICE";
@@ -124,42 +126,33 @@ public class BoardServiceImpl implements BoardService {
         // 하나의 게시물 조회
         Board board = boardMapper.selectByBoardId(boardId);
 
-        // view부터 수정 필요 (insert 들어감)
-
-        // fileNames에서 파일 이름 조회
-        // List<String> fileNames = boardMapper.selectByFileNameByBoardId(boardId);
-        // 파일 경로 저장
-//        List<com.backend.file.domain.File> files = fileNames.stream()
-//                .map(fileName -> {
-//                    var fl = new com.backend.file.domain.File();
-//                    fl.setFileName(fileName);
-//                    fl.setSrc(STR."http://172.27.128.1:8888/\{boardId}/\{fileName}");
-//                    return fl;
-//                })
-//                .toList();
-
         String division = getDivisionByCategoryId(board.getCategoryId());
 
         // s3에서 파일 조회
         List<File> files = boardMapper.selectFileByDivisionAndParentId(division, boardId);
         if (files != null && !files.isEmpty()) {
             // 모든 이미지 파일 가져오기
-            List<File> filesWithUrls = files.stream().map(file -> {
-                String fileUrl = s3Client.utilities().getUrl(builder ->
-                        builder.bucket(bucketName).key(file.getFileName())).toExternalForm();
-                file.setSrc(fileUrl);
-                file.setFileName(fileUrl);
-                return file;
-            }).collect(Collectors.toList());
+            List<File> filesWithUrls = files.stream()
+                    .map(file -> {
+                        var fl = new File();
+                        String fullPath = file.getFileName();
+                        String fileUrl = s3Client.utilities().getUrl(builder ->
+                                builder.bucket(bucketName).key(file.getFileName())).toExternalForm();
+                        fl.setSrc(fileUrl);
+                        fl.setFileName(fullPath);
+                        System.out.println("view의 fileUrl = " + fileUrl);
+                        System.out.println("view의 fullPath = " + fullPath);
+                        // view의 fileUrl = https://studysanta.s3.ap-northeast-2.amazonaws.com/prj3/FAQ/31/bulbasaur.jpg
+                        // view의 fullPath = prj3/FAQ/31/prj3/FAQ/31/bulbasaur.jpg
+                        return fl;
+                    }).collect(Collectors.toList());
             board.setFilesLists(filesWithUrls);
 
-            System.out.println("filesWithUrls = " + filesWithUrls);
+            System.out.println("view의 filesWithUrls = " + filesWithUrls);
         }
 
         // board에 이미지 경로 넣어줌
-        System.out.println("view의 files1 = " + files);
         System.out.println("view의 board = " + board);
-//        board.setFilesLists(files);
 
         Map<String, Object> like = new HashMap<>();
         if (authentication == null) {
@@ -172,45 +165,34 @@ public class BoardServiceImpl implements BoardService {
         result.put("board", board);
         result.put("like", like);
 
-        System.out.println("보드 = " + board.getBoardId());
-        System.out.println("멤버 = " + board.getMemberId());
         return result;
     }
 
 
     @Override
     public void update(Board board, List<String> removeFileList, MultipartFile[] addFileList) throws IOException {
+        String division = getDivisionByCategoryId(board.getCategoryId());
+
         // 첨부된 파일 삭제
         if (removeFileList != null && removeFileList.size() > 0) {
             for (String fileName : removeFileList) {
-//                String path = STR."C:/Temp/prj3p/\{board.getBoardId()}/\{fileName}"; // 경로
-//                File file = new File(path);
-//                file.delete();
-//                boardMapper.deleteByBoardIdAndName(board.getBoardId(), fileName);
-
                 // s3 에 있는 file
-                String key = STR."prj3/\{board.getDivision()}/\{board.getBoardId()}/\{fileName}";
+                // String fullPath = fileName;
+                String fullPath = fileName;
+                System.out.println("update의 delete fileName = " + fileName);
+                System.out.println("fullPath = " + fullPath);
+
+                // update의 delete fileName = prj3/FAQ/30/charmander.jpg
+                // fullPath = prj3/FAQ/30/charmander.jpg
+
                 DeleteObjectRequest objectRequest = DeleteObjectRequest.builder()
                         .bucket(bucketName)
-                        .key(key)
+                        .key(fullPath)
                         .build();
                 s3Client.deleteObject(objectRequest);
 
-                // 파일 정보 DB에 저장
-//                File existingFile = boardMapper.findFileByFullPath(fullPath);
-//                if (existingFile != null) {
-//                    // 기존 파일 정보 업데이트
-//                    existingFile.setFileName(fullPath);
-//                    boardMapper.updateFile(existingFile);
-//                } else {
-//                    // 새로운 파일 정보 저장
-//                    File fileRecord = new File();
-//                    fileRecord.setParentId(board.getBoardId());
-//                    fileRecord.setDivision(division);
-//                    fileRecord.setFileName(fullPath);
-//                    boardMapper.insertFile(fileRecord); // categoryId가 없다
-//                }
-
+                // File 테이블 지움
+                boardMapper.deleteFileByBoardIdAndFileName(board.getBoardId(), fullPath);
             }
         }
 
@@ -218,30 +200,23 @@ public class BoardServiceImpl implements BoardService {
         if (addFileList != null && addFileList.length > 0) {
             // 중복 확인을 위해 파일 목록 얻어옴
             List<String> fileNameList = boardMapper.selectByFileNameByBoardId(board.getBoardId());
+            //List<File> files = boardMapper.selectFileByDivisionAndParentId(division, board.getBoardId());
             // 탐색
             for (MultipartFile file : addFileList) {
                 // 파일명을 얻어서 덮어씀
-                String fileName = file.getOriginalFilename();
+                String fileName = "prj3/" + division + "/" + board.getBoardId() + "/" + file.getOriginalFilename();
                 if (!fileNameList.contains(fileName)) {
                     // 중복되지 않은 파일만 db에 추가
-                    boardMapper.insertFileList(board.getBoardId(), file.getOriginalFilename(), board.getCategoryId());
+                    boardMapper.insertFileList(board.getBoardId(), fileName, board.getCategoryId());
                 }
-                // disk에 쓰기
-                // 파일이 원래 없는 경우 부모 경로 생성
-//                File dir = new File(STR."C:/Temp/prj3p/\{board.getBoardId()}");
-//                if (!dir.exists()) {
-//                    // 디렉토리 생성
-//                    dir.mkdirs();
-//                }
-//                String path = STR."C:/Temp/prj3p/\{board.getBoardId()}/\{fileName}";
-//                File destination = new File(path);
-//                file.transferTo(destination);
+                System.out.println("update의 addfileName = " + fileName);
 
                 // s3 에 쓰기(덮어써짐)
-                String key = STR."prj3/\{board.getDivision()}/\{board.getBoardId()}/\{fileName}";
+                String fullPath = "prj3/" + division + "/" + board.getBoardId() + "/" + file.getOriginalFilename();
+                System.out.println("update의 addfile fullPath = " + fullPath);
                 PutObjectRequest objectRequest = PutObjectRequest.builder()
                         .bucket(bucketName)
-                        .key(key)
+                        .key(fullPath)
                         .acl(ObjectCannedACL.PUBLIC_READ)
                         .build();
 
@@ -263,28 +238,29 @@ public class BoardServiceImpl implements BoardService {
     public void delete(Integer boardId) {
         Board board = boardMapper.selectByBoardId(boardId);
 
+        String division = getDivisionByCategoryId(board.getCategoryId());
+
         // file명 조회
-        List<String> fileNames = boardMapper.selectByFileNameByBoardId(boardId);
-        // disk에 있는 file 삭제
-//        String dir = STR."C:/Temp/prj3p/\{boardId}";
+        List<File> files = boardMapper.selectFileByDivisionAndParentId(division, boardId);
+        System.out.println("delete의 첫 files = " + files);
 
-        for (String fileName : fileNames) {
-//            File file = new File(dir + fileName);
-//            file.delete();
+        // delete의 첫 files = [File(fileId=238, parentId=31, division=null, fileName=prj3/FAQ/31/bulbasaur.jpg, inputDt=null, updateDt=null, src=null), File(fileId=239, parentId=31, division=null, fileName=prj3/FAQ/31/ggobugi.jpg, inputDt=null, updateDt=null, src=null), File(fileId=240, parentId=31, division=null, fileName=prj3/FAQ/31/charmander.jpg, inputDt=null, updateDt=null, src=null)]
+        //fullPath = prj3/FAQ/31/bulbasaur.jpg
 
-            // s3 에 있는 file
-            String key = STR."prj3/\{board.getDivision()}/\{boardId}/\{fileName}";
-            DeleteObjectRequest objectRequest = DeleteObjectRequest.builder()
-                    .bucket(bucketName)
-                    .key(key)
-                    .build();
-            s3Client.deleteObject(objectRequest);
+        // s3에 있는 file 삭제
+        if (files != null) {
+            for (File file : files) {
+                String fullPath = file.getFileName();
+                // String fullPath = file.getFileName();
+                System.out.println("게시물 delete의 fullPath = " + fullPath);
+
+                DeleteObjectRequest objectRequest = DeleteObjectRequest.builder()
+                        .bucket(bucketName)
+                        .key(fullPath)
+                        .build();
+                s3Client.deleteObject(objectRequest);
+            }
         }
-        // 필요없는 부모 디렉토리 삭제
-//        File dirFile = new File(dir);
-//        if (dirFile.exists()) {
-//            dirFile.delete();
-//        }
 
         // File 테이블 지움
         boardMapper.deleteFileByBoardId(boardId);
