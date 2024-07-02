@@ -132,6 +132,9 @@ export function ReviewCommentEdit({
     });
   }
 
+  // aws 설정
+  const s3BaseUrl = "https://studysanta.s3.ap-northeast-2.amazonaws.com/prj3";
+
   return (
     <Box>
       <Box>
@@ -143,7 +146,7 @@ export function ReviewCommentEdit({
                 <Image
                   w={10}
                   onClick={() => clickStar(star)}
-                  src={`/star/ic-star-${star <= rateScore ? "on" : "off"}.png`}
+                  src={`${s3BaseUrl}/ic-star-${star <= rateScore ? "on" : "off"}.png`}
                   alt={"star"}
                   cursor={"pointer"}
                 />

@@ -19,7 +19,6 @@ public class Board {
     private Integer views;
     // 멤버의 nickname을 받음
     private String writer;
-    private String division;
 
 
     private static final SimpleDateFormat formatter = new SimpleDateFormat("yyyy년 MM월 dd일 HH시 mm분 ss초");
