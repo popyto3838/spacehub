@@ -369,7 +369,7 @@ const Header = () => {
                 onClick={() => handleMenuClick("/board/list")}
                 color="white"
               >
-                게시판`
+                게시판
               </Button>
               <Button
                 leftIcon={<FontAwesomeIcon icon={faMapMarkerAlt} />}
