@@ -31,7 +31,7 @@ import MyFavoritesList from "./page/member/MyFavoritesList.jsx";
 import MyPaymentList from "./page/paid/MyPaymentList.jsx";
 import HostCenterSpaceList from "./page/host/HostCenterSpaceList.jsx";
 import "../public/css/ReactQuill.css";
-import { HostCenterReviews } from "./page/host/HostCenterReviews.jsx";
+import { HostCenterReviewAndQna } from "./page/host/HostCenterReviewAndQna.jsx";
 
 // axios interceptor 설정
 axios.interceptors.request.use((config) => {
@@ -103,8 +103,11 @@ function App() {
           path: "member/MyFavoritesList",
           element: <MyFavoritesList />,
         },
-        { path: "host/spaceList/:memberId", element: <HostCenterSpaceList /> },
-        { path: "member/reviews/:memberId", element: <HostCenterReviews /> },
+        { path: "host/spaceList", element: <HostCenterSpaceList /> },
+        {
+          path: "member/reviews/:division",
+          element: <HostCenterReviewAndQna />,
+        },
       ],
     },
   ]);
@@ -118,6 +121,5 @@ function App() {
     </>
   );
 }
-
 
 export default App;

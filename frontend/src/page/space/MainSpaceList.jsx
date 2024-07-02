@@ -3,10 +3,12 @@ import {
   Box,
   Button,
   Container,
+  Divider,
   Flex,
   Grid,
   GridItem,
   Heading,
+  IconButton,
   Image,
   Text,
   useColorModeValue,
@@ -16,12 +18,12 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import SpaceCard from "./SpaceCard.jsx";
 import { motion } from "framer-motion";
-import { FaChevronDown, FaSearch } from "react-icons/fa";
+import { FaChevronDown, FaChevronRight, FaSearch } from "react-icons/fa";
 import { Icon } from "@chakra-ui/icons";
 
 export function MainSpaceList() {
-  const [visibleSpaces, setVisibleSpaces] = useState(10); // 초기 표시할 공간 수
-  const [visibleTypes, setVisibleTypes] = useState(10); // 초기 표시할 공간 유형 수
+  const [visibleSpaces, setVisibleSpaces] = useState(12); // 초기 표시할 공간 수
+  const [visibleTypes, setVisibleTypes] = useState(16); // 초기 표시할 공간 유형 수
   const [showMoreSpaces, setShowMoreSpaces] = useState(false);
   const [showMoreTypes, setShowMoreTypes] = useState(false);
   const [spaceTypes, setSpaceTypes] = useState([]);
@@ -78,11 +80,11 @@ export function MainSpaceList() {
   }, [selectedType, allSpaces]);
 
   const handleShowMoreSpaces = () => {
-    setVisibleSpaces((prevVisibleSpaces) => prevVisibleSpaces + 10);
+    setVisibleSpaces((prevVisibleSpaces) => prevVisibleSpaces + 6);
   };
 
   const handleShowMoreTypes = () => {
-    setVisibleTypes((prevVisibleTypes) => prevVisibleTypes + 10);
+    setVisibleTypes((prevVisibleTypes) => prevVisibleTypes + 16);
   };
 
   function handleCardClick(spaceId) {
@@ -94,149 +96,113 @@ export function MainSpaceList() {
   };
 
   return (
-    <>
-      <Box bg={bgColor} minHeight="100vh">
-        <Container maxW="80%" py={20}>
-          <VStack spacing={20} align="stretch">
-            <Box textAlign="center">
-              <Heading
-                as="h1"
-                size="3xl"
-                mb={6}
-                color={accentColor}
-                fontWeight="bold"
-                letterSpacing="tight"
-              >
-                찾는 공간이 있나요?
-              </Heading>
-              <Text fontSize="xl" color={textColor} fontWeight="medium">
-                다양한 공간을 살펴보고 원하는 공간을 찾아보세요.
-              </Text>
-            </Box>
-
-            <Box>
-              <Heading as="h2" size="xl" mb={8} color={textColor}>
-                공간 유형
-              </Heading>
-              <Grid
-                templateColumns="repeat(auto-fill, minmax(200px, 1fr))"
-                gap={8}
-                w="full"
-              >
-                {spaceTypes.slice(0, visibleTypes).map((type) => (
-                  <GridItem key={type.itemId}>
-                    <MotionBox
-                      whileHover={{ y: -5, boxShadow: "xl" }}
-                      transition={{ duration: 0.3 }}
-                      onClick={() => handleClickType(type.itemId)}
-                      cursor="pointer"
-                      bg={
-                        selectedType === type.itemId ? accentColor : cardBgColor
+    <Box bg="white" minHeight="100vh">
+      <Container maxW="100%" py={8}>
+        <VStack spacing={8} align="stretch">
+          <Box>
+            <Heading as="h2" size="lg" mb={4}>
+              공간 유형
+            </Heading>
+            <Grid
+              templateColumns="repeat(auto-fill, minmax(100px, 1fr))"
+              gap={4}
+              w="full"
+            >
+              {spaceTypes.slice(0, visibleTypes).map((type) => (
+                <GridItem key={type.itemId}>
+                  <MotionBox
+                    whileHover={{ y: -2 }}
+                    transition={{ duration: 0.2 }}
+                    onClick={() => handleClickType(type.itemId)}
+                    cursor="pointer"
+                    textAlign="center"
+                  >
+                    <Image
+                      src={
+                        type.iconFile?.fileName ||
+                        "http://via.placeholder.com/100.jpg"
                       }
-                      color={selectedType === type.itemId ? "white" : textColor}
-                      borderRadius="xl"
-                      boxShadow="md"
-                      p={6}
-                      textAlign="center"
-                      height="100%"
+                      alt={type.name}
+                      objectFit="cover"
+                      w="50px"
+                      h="50px"
+                      mx="auto"
+                      mb={2}
+                    />
+                    <Text fontSize="sm" fontWeight="medium">
+                      {type.name}
+                    </Text>
+                  </MotionBox>
+                </GridItem>
+              ))}
+            </Grid>
+            {showMoreTypes && visibleTypes < spaceTypes.length && (
+              <Flex justify="center" mt={4}>
+                <Button
+                  onClick={handleShowMoreTypes}
+                  rightIcon={<Icon as={FaChevronRight} />}
+                  variant="ghost"
+                >
+                  더 보기
+                </Button>
+              </Flex>
+            )}
+          </Box>
+
+          <Divider />
+
+          <Box>
+            <Flex justify="space-between" align="center" mb={4}>
+              <Heading as="h2" size="lg">
+                공간 목록
+              </Heading>
+              <IconButton
+                icon={<FaSearch />}
+                aria-label="Search spaces"
+                variant="ghost"
+              />
+            </Flex>
+            <Grid
+              templateColumns="repeat(auto-fill, minmax(250px, 1fr))"
+              gap={6}
+            >
+              {filteredSpaces
+                .slice(0, visibleSpaces)
+                .map(({ space, spaceImgFiles, averageRating }) => (
+                  <GridItem key={space.spaceId}>
+                    <MotionBox
+                      whileHover={{ y: -5 }}
+                      transition={{ duration: 0.2 }}
+                      onClick={() => handleCardClick(space.spaceId)}
                     >
-                      <VStack spacing={4}>
-                        <Box
-                          w={24}
-                          h={24}
-                          bg="gray.100"
-                          borderRadius="full"
-                          display="flex"
-                          alignItems="center"
-                          justifyContent="center"
-                          overflow="hidden"
-                        >
-                          <Image
-                            src={
-                              type.iconFile?.fileName ||
-                              "http://via.placeholder.com/1000.jpg"
-                            }
-                            alt={type.name}
-                            objectFit="cover"
-                            w="full"
-                            h="full"
-                          />
-                        </Box>
-                        <Text fontWeight="bold" fontSize="lg">
-                          {type.name}
-                        </Text>
-                      </VStack>
+                      <SpaceCard
+                        space={{ ...space, averageRating }}
+                        thumbnailPath={
+                          spaceImgFiles && spaceImgFiles.length > 0
+                            ? spaceImgFiles[0].fileName
+                            : null
+                        }
+                      />
                     </MotionBox>
                   </GridItem>
                 ))}
-              </Grid>
+            </Grid>
 
-              {showMoreTypes && visibleTypes < spaceTypes.length && (
-                <Flex justify="center" mt={8}>
-                  <Button
-                    onClick={handleShowMoreTypes}
-                    colorScheme="teal"
-                    size="lg"
-                    fontWeight="bold"
-                    leftIcon={<Icon as={FaChevronDown} />}
-                  >
-                    더 많은 유형 보기
-                  </Button>
-                </Flex>
-              )}
-            </Box>
-
-            <Box>
-              <Flex justify="space-between" align="center" mb={8}>
-                <Heading as="h2" size="xl" color={textColor}>
-                  공간 목록
-                </Heading>
-                <Icon as={FaSearch} boxSize={6} color={accentColor} />
+            {showMoreSpaces && visibleSpaces < allSpaces.length && (
+              <Flex justify="center" mt={8}>
+                <Button
+                  onClick={handleShowMoreSpaces}
+                  rightIcon={<Icon as={FaChevronDown} />}
+                  variant="outline"
+                >
+                  더 많은 공간 보기
+                </Button>
               </Flex>
-              <Grid
-                templateColumns="repeat(auto-fill, minmax(300px, 1fr))"
-                gap={8}
-              >
-                {filteredSpaces
-                  .slice(0, visibleSpaces)
-                  .map(({ space, spaceImgFiles, averageRating }) => (
-                    <GridItem key={space.spaceId}>
-                      <MotionBox
-                        whileHover={{ y: -5, boxShadow: "2xl" }}
-                        transition={{ duration: 0.3 }}
-                        onClick={() => handleCardClick(space.spaceId)}
-                      >
-                        <SpaceCard
-                          space={{ ...space, averageRating }}
-                          thumbnailPath={
-                            spaceImgFiles && spaceImgFiles.length > 0
-                              ? spaceImgFiles[0].fileName
-                              : null
-                          }
-                        />
-                      </MotionBox>
-                    </GridItem>
-                  ))}
-              </Grid>
-
-              {showMoreSpaces && visibleSpaces < allSpaces.length && (
-                <Flex justify="center" mt={8}>
-                  <Button
-                    onClick={handleShowMoreSpaces}
-                    colorScheme="teal"
-                    size="lg"
-                    fontWeight="bold"
-                    leftIcon={<Icon as={FaChevronDown} />}
-                  >
-                    더 많은 공간 보기
-                  </Button>
-                </Flex>
-              )}
-            </Box>
-          </VStack>
-        </Container>
-      </Box>
-    </>
+            )}
+          </Box>
+        </VStack>
+      </Container>
+    </Box>
   );
 }
 

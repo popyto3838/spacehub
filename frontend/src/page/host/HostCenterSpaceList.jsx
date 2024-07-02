@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   Box,
   Button,
@@ -18,30 +18,30 @@ import {
   useColorModeValue,
 } from "@chakra-ui/react";
 import { SearchIcon } from "@chakra-ui/icons";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEdit, faHome } from "@fortawesome/free-solid-svg-icons";
 import axios from "axios";
+import { LoginContext } from "../../component/LoginProvider.jsx";
 
 function HostCenterSpaceList() {
   const [spaces, setSpaces] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const navigate = useNavigate();
-  const { memberId } = useParams();
   const myPaymentPage = useNavigate();
+  const member = useContext(LoginContext);
 
   const bgColor = useColorModeValue("white", "gray.800");
   const textColor = useColorModeValue("gray.800", "white");
-  const borderColor = useColorModeValue("gray.200", "gray.700");
 
   useEffect(() => {
     axios
-      .get(`/api/space/hostSpaceList/${memberId}`)
+      .get(`/api/space/hostSpaceList/${member.id}`)
       .then((response) => setSpaces(response.data))
       .catch((error) =>
         console.error("공간 목록을 불러오는데 실패했습니다:", error),
       );
-  }, [memberId]);
+  }, [member.id]);
 
   const handleEdit = (spaceId) => {
     navigate(`/space/edit/${spaceId}`);
@@ -98,7 +98,7 @@ function HostCenterSpaceList() {
                   _hover={{ cursor: "pointer", color: "blue.500" }}
                   onClick={() => mySpacePageFunc(space.spaceId)}
                 >
-                  >{space.title}
+                  {space.title}
                 </Td>
                 <Td>{space.address}</Td>
                 <Td>₩{space.price.toLocaleString()}</Td>

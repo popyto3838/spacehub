@@ -1,9 +1,11 @@
 package com.backend.comment.controller;
 
 import com.backend.comment.domain.Comment;
+import com.backend.comment.domain.FindRequestHostDetailDto;
 import com.backend.comment.service.CommentService;
 import com.backend.comment.service.impl.CommentServiceImpl;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -16,6 +18,7 @@ import java.util.Map;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/comment")
+@Log4j2
 public class CommentController {
 
     final CommentService commentService;
@@ -33,6 +36,12 @@ public class CommentController {
     @GetMapping("list/{boardId}")
     public List<Comment> list(@PathVariable Integer boardId) {
         return commentService.list(boardId);
+    }
+
+    @GetMapping("/myReviewList")
+    public List<Comment> selectAllByMemberIdReview(@ModelAttribute FindRequestHostDetailDto hostDetailDto) {
+        log.info("====hostDetailDto===={}", hostDetailDto);
+        return commentService.selectAllByMemberIdReview(hostDetailDto);
     }
 
     @DeleteMapping("delete")

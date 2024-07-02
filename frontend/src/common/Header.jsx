@@ -21,14 +21,17 @@ import {
   useToast,
   VStack,
 } from "@chakra-ui/react";
-import {CloseIcon, HamburgerIcon} from '@chakra-ui/icons';
-import {useNavigate} from "react-router-dom";
-import {LoginContext} from "../component/LoginProvider.jsx";
+import { CloseIcon, HamburgerIcon } from "@chakra-ui/icons";
+import { useNavigate } from "react-router-dom";
+import { LoginContext } from "../component/LoginProvider.jsx";
 import axios from "axios";
-import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  faCalendarAlt, faCalendarDays,
-  faChartBar, faClipboard, faClipboardQuestion,
+  faCalendarAlt,
+  faCalendarDays,
+  faChartBar,
+  faClipboard,
+  faClipboardQuestion,
   faCog,
   faDollarSign,
   faExchangeAlt,
@@ -39,12 +42,12 @@ import {
   faSignOutAlt,
   faStar,
   faUser,
-  faUserPlus
-} from '@fortawesome/free-solid-svg-icons';
-import spaceImage from '/img/space.png';
+  faUserPlus,
+} from "@fortawesome/free-solid-svg-icons";
+import spaceImage from "/img/spacehub1.png";
 
 const Header = () => {
-  const {isOpen, onOpen, onClose} = useDisclosure();
+  const { isOpen, onOpen, onClose } = useDisclosure();
   const [member, setMember] = useState({});
   const [timestamp, setTimestamp] = useState(Date.now());
 
@@ -54,7 +57,8 @@ const Header = () => {
 
   useEffect(() => {
     if (account.id) {
-      axios.get(`/api/member/${account.id}`)
+      axios
+        .get(`/api/member/${account.id}`)
         .then((res) => {
           setMember(res.data);
         })
@@ -67,24 +71,26 @@ const Header = () => {
   const updateImage = () => setTimestamp(Date.now());
 
   function SwitchHost() {
-    axios.post("/api/member/nullcheck", {
-      memberId: account.id
-    })
-      .then(res => {
+    axios
+      .post("/api/member/nullcheck", {
+        memberId: account.id,
+      })
+      .then((res) => {
         const data = res.data;
-        const {key1, key2, key3} = data;
+        const { key1, key2, key3 } = data;
         if (key1 === null || key2 === null || key3 === null) {
           navigate(`/member/hostinfo/:accountId`);
         } else {
-          axios.put("/api/member/host", {
-            memberId: account.id,
-          })
+          axios
+            .put("/api/member/host", {
+              memberId: account.id,
+            })
             .then((res) => {
               account.login(res.data.token);
               navigate("/host/dashboard");
-            })
+            });
         }
-      })
+      });
   }
 
   function SwitchUser() {
@@ -112,7 +118,7 @@ const Header = () => {
         justify="space-between"
         wrap="wrap"
         padding="0.5rem 0.5rem"
-        bg="black"
+        bg="white"
         color="white"
         height="12vh"
       >
@@ -121,12 +127,13 @@ const Header = () => {
             icon={<HamburgerIcon />}
             onClick={onOpen}
             variant="outline"
-            color="whitesmoke"
+            color="#FF4E8B"
+            borderColor="#FF4E8B"
             aria-label="Open Menu"
             fontSize="2rem"
             h="5vh"
             w="5vh"
-            _hover={{ bg: "yellow.400", color: "black" }}
+            _hover={{ bg: "#FF4E8B", color: "black" }}
             ml={8}
           />
         </Box>
@@ -135,21 +142,22 @@ const Header = () => {
           <Image
             src={spaceImage}
             alt="Space Image"
-            height="12vh"
+            height="7vh"
             mr={3}
             onClick={() => navigate("/")}
             cursor="pointer"
           />
           <Text
             fontFamily="TTLaundryGothicB"
-            fontSize="2.75rem"
+            fontSize="3.5rem"
             fontWeight="bold"
             onClick={() => navigate("/")}
             cursor="pointer"
             lineHeight="12vh"
+            color="#FF4E8B"
           >
             Space
-            <Text as="span" color="yellow.400">
+            <Text as="span" color="#FF4E8B">
               Hub
             </Text>
           </Text>
@@ -170,20 +178,23 @@ const Header = () => {
           )}
           {account.isUser() && (
             <Button
-              colorScheme="yellow"
+              // colorScheme="yellow"
+              color="#FF4E8B"
+              borderColor="#FF4E8B"
               variant="outline"
               mr={4}
               onClick={SwitchHost}
               fontSize="lg"
               h="4vh"
-
             >
               호스트로 전환
             </Button>
           )}
           {account.isHost() && (
             <Button
-              colorScheme="yellow"
+              // colorScheme="yellow"
+              borderColor="#FF4E8B"
+              color="#FF4E8B"
               variant="outline"
               mr={4}
               onClick={SwitchUser}
@@ -209,7 +220,7 @@ const Header = () => {
                 w="6vh"
                 mr={6}
                 showBorder="true"
-                borderColor="white"
+                borderColor="#FF4E8B"
               />
             </MenuButton>
             <MenuList borderColor="gray.800">
@@ -223,56 +234,68 @@ const Header = () => {
               </MenuItem>
               <MenuItem
                 color="gray.800"
-                _hover={{bg: "gray.700", color: "yellow.400"}}
+                _hover={{ bg: "gray.700", color: "yellow.400" }}
                 icon={<FontAwesomeIcon icon={faClipboardQuestion} />}
-                onClick={() => navigate("/board/list")}>
+                onClick={() => navigate("/board/list")}
+              >
                 게시판
               </MenuItem>
               {account.isHost() && (
                 <MenuItem
                   color="gray.800"
-                  _hover={{bg: "gray.700", color: "yellow.400"}}
-                  icon={<FontAwesomeIcon icon={faMapMarkerAlt}/>}
-                  onClick={() => handleMenuClick("/space/register")}>
+                  _hover={{ bg: "gray.700", color: "yellow.400" }}
+                  icon={<FontAwesomeIcon icon={faMapMarkerAlt} />}
+                  onClick={() => handleMenuClick("/space/register")}
+                >
                   공간등록
-                </MenuItem>)}
+                </MenuItem>
+              )}
               {account.isHost() && (
                 <MenuItem
                   color="gray.800"
-                  _hover={{bg: "gray.700", color: "yellow.400"}}
-                  icon={<FontAwesomeIcon icon={faMapMarkerAlt}/>}
-                  onClick={() => navigate(`/host/spaceList/${account.id}`)}>
+                  _hover={{ bg: "gray.700", color: "yellow.400" }}
+                  icon={<FontAwesomeIcon icon={faMapMarkerAlt} />}
+                  onClick={() => navigate(`/host/spaceList`)}
+                >
                   나의 공간리스트
-                </MenuItem>)}
+                </MenuItem>
+              )}
               {account.isHost() && (
                 <MenuItem
                   color="gray.800"
-                  _hover={{bg: "gray.700", color: "yellow.400"}}
-                  icon={<FontAwesomeIcon icon={faCalendarAlt}/>}
-                  onClick={() => navigate(`/host/spaceList/${account.id}`)}>
+                  _hover={{ bg: "gray.700", color: "yellow.400" }}
+                  icon={<FontAwesomeIcon icon={faCalendarAlt} />}
+                  onClick={() => navigate(`/host/spaceList`)}
+                >
                   호스트 예약관리
-                </MenuItem>)}
+                </MenuItem>
+              )}
               {account.isUser() && (
                 <>
                   <MenuItem
                     color="gray.800"
-                    _hover={{bg: "gray.700", color: "yellow.400"}}
-                    icon={<FontAwesomeIcon icon={faStar}/>}
-                    onClick={() => navigate(`member/myFavoritesList`)}>
+                    _hover={{ bg: "gray.700", color: "yellow.400" }}
+                    icon={<FontAwesomeIcon icon={faStar} />}
+                    onClick={() => navigate(`member/myFavoritesList`)}
+                  >
                     즐겨찾기
                   </MenuItem>
                   <MenuItem
                     color="gray.800"
-                    _hover={{bg: "gray.700", color: "yellow.400"}}
-                    icon={<FontAwesomeIcon icon={faCalendarAlt}/>}
-                    onClick={() => navigate(`member/myReservationList/${account.id}`)}>
+                    _hover={{ bg: "gray.700", color: "yellow.400" }}
+                    icon={<FontAwesomeIcon icon={faCalendarAlt} />}
+                    onClick={() =>
+                      navigate(`member/myReservationList/${account.id}`)
+                    }
+                  >
                     예약리스트
                   </MenuItem>
                   <MenuItem
                     color="gray.800"
-                    _hover={{bg: "gray.700", color: "yellow.400"}}
-                    icon={<FontAwesomeIcon icon={faDollarSign}/>}
-                    onClick={() => navigate(`paid/myPaymentList`)}>
+                    _hover={{ bg: "gray.700", color: "yellow.400" }}
+                    icon={<FontAwesomeIcon icon={faDollarSign} />}
+                    onClick={() => navigate(`paid/myPaymentList`)}
+                  >
                     결제내역
                   </MenuItem>
                 </>
@@ -281,44 +304,53 @@ const Header = () => {
                 <>
                   <MenuItem
                     color="gray.800"
-                    _hover={{bg: "gray.700", color: "yellow.400"}}
-                    icon={<FontAwesomeIcon icon={faUser}/>}
-                    onClick={() => navigate(`member/info/${account.id}`)}>
+                    _hover={{ bg: "gray.700", color: "yellow.400" }}
+                    icon={<FontAwesomeIcon icon={faUser} />}
+                    onClick={() => navigate(`member/info/${account.id}`)}
+                  >
                     마이페이지
                   </MenuItem>
                   <MenuItem
                     color="gray.800"
-                    _hover={{bg: "gray.700", color: "yellow.400"}}
-                    icon={<FontAwesomeIcon icon={faSignOutAlt}/>}
+                    _hover={{ bg: "gray.700", color: "yellow.400" }}
+                    icon={<FontAwesomeIcon icon={faSignOutAlt} />}
                     onClick={() => {
                       account.logout();
                       navigate("/");
-                    }}>로그아웃
+                    }}
+                  >
+                    로그아웃
                   </MenuItem>
                 </>
               )}
               {account.isLoggedIn() || (
                 <MenuItem
                   color="gray.800"
-                  _hover={{bg: "gray.700", color: "yellow.400"}}
-                  icon={<FontAwesomeIcon icon={faSignOutAlt}/>}
+                  _hover={{ bg: "gray.700", color: "yellow.400" }}
+                  icon={<FontAwesomeIcon icon={faSignOutAlt} />}
                   onClick={() => {
                     navigate("/member/login");
-                  }}>로그인
-                </MenuItem>)}
+                  }}
+                >
+                  로그인
+                </MenuItem>
+              )}
             </MenuList>
           </Menu>
         </Flex>
       </Flex>
+      <Divider />
 
       <Drawer placement="left" onClose={onClose} isOpen={isOpen}>
-        <DrawerOverlay/>
+        <DrawerOverlay />
         <DrawerContent bg="gray.900">
           <DrawerHeader borderBottomWidth="1px" borderColor="gray.700">
             <Flex justify="space-between" align="center">
-              <Text color="white" fontWeight="bold">메뉴</Text>
+              <Text color="white" fontWeight="bold">
+                메뉴
+              </Text>
               <IconButton
-                icon={<CloseIcon/>}
+                icon={<CloseIcon />}
                 onClick={onClose}
                 variant="ghost"
                 color="white"
@@ -335,27 +367,29 @@ const Header = () => {
                     alt="Profile"
                     size="xl"
                   />
-                  <Text fontWeight="bold" fontSize="xl" color="white" mt={2}>{account.nickname}</Text>
+                  <Text fontWeight="bold" fontSize="xl" color="white" mt={2}>
+                    {account.nickname}
+                  </Text>
                 </Box>
               )}
-              <Divider borderColor="gray.700"/>
+              <Divider borderColor="gray.700" />
               <Button
-                leftIcon={<FontAwesomeIcon icon={faHome}/>}
+                leftIcon={<FontAwesomeIcon icon={faHome} />}
                 variant="ghost"
                 justifyContent="flex-start"
                 onClick={() => handleMenuClick("/")}
                 color="white"
-                _hover={{bg: "gray.700", color: "yellow.400"}}
+                _hover={{ bg: "gray.700", color: "yellow.400" }}
               >
                 홈
               </Button>
               <Button
-                leftIcon={<FontAwesomeIcon icon={faList}/>}
+                leftIcon={<FontAwesomeIcon icon={faList} />}
                 variant="ghost"
                 justifyContent="flex-start"
                 onClick={() => navigate("/board/list")}
                 color="white"
-                _hover={{bg: "gray.700", color: "yellow.400"}}
+                _hover={{ bg: "gray.700", color: "yellow.400" }}
               >
                 공지사항
               </Button>
@@ -383,69 +417,165 @@ const Header = () => {
                   </Button>
                 </>
               )}
-              <Button leftIcon={<FontAwesomeIcon icon={faClipboardQuestion} />} variant="ghost" justifyContent="flex-start"
-                      _hover={{bg: "gray.700", color: "yellow.400"}}
-                      onClick={() => handleMenuClick("/board/list")} color="white">게시판</Button>
+              <Button
+                leftIcon={<FontAwesomeIcon icon={faClipboardQuestion} />}
+                variant="ghost"
+                justifyContent="flex-start"
+                _hover={{ bg: "gray.700", color: "yellow.400" }}
+                onClick={() => handleMenuClick("/board/list")}
+                color="white"
+              >
+                게시판
+              </Button>
               {account.isHost() && (
-              <Button leftIcon={<FontAwesomeIcon icon={faMapMarkerAlt}/>} variant="ghost" justifyContent="flex-start"
-                      _hover={{bg: "gray.700", color: "yellow.400"}}
-                      onClick={() => handleMenuClick("/space/register")} color="white">공간등록</Button>)}
+                <Button
+                  leftIcon={<FontAwesomeIcon icon={faMapMarkerAlt} />}
+                  variant="ghost"
+                  justifyContent="flex-start"
+                  _hover={{ bg: "gray.700", color: "yellow.400" }}
+                  onClick={() => handleMenuClick("/space/register")}
+                  color="white"
+                >
+                  공간등록
+                </Button>
+              )}
               {account.isHost() && (
-                <Button leftIcon={<FontAwesomeIcon icon={faClipboard} />} variant="ghost" justifyContent="flex-start"
-                        _hover={{bg: "gray.700", color: "yellow.400"}}
-                        onClick={() => navigate(`/host/spaceList/${account.id}`)} color="white">나의 공간 리스트</Button>)}
+                <Button
+                  leftIcon={<FontAwesomeIcon icon={faClipboard} />}
+                  variant="ghost"
+                  justifyContent="flex-start"
+                  _hover={{ bg: "gray.700", color: "yellow.400" }}
+                  onClick={() => navigate(`/host/spaceList`)}
+                  color="white"
+                >
+                  나의 공간 리스트
+                </Button>
+              )}
               {account.isHost() && (
-                <Button leftIcon={<FontAwesomeIcon icon={faCalendarDays} />} variant="ghost" justifyContent="flex-start"
-                        _hover={{bg: "gray.700", color: "yellow.400"}}
-                        onClick={() => navigate(`/host/spaceList/${account.id}`)} color="white">호스트 예약 관리</Button>)}
+                <Button
+                  leftIcon={<FontAwesomeIcon icon={faCalendarDays} />}
+                  variant="ghost"
+                  justifyContent="flex-start"
+                  _hover={{ bg: "gray.700", color: "yellow.400" }}
+                  onClick={() => navigate(`/host/spaceList`)}
+                  color="white"
+                >
+                  호스트 예약 관리
+                </Button>
+              )}
               {account.isUser() && (
-                <Button leftIcon={<FontAwesomeIcon icon={faStar}/>} variant="ghost" justifyContent="flex-start"
-                        _hover={{bg: "gray.700", color: "yellow.400"}}
-                        onClick={() => navigate(`member/myFavoritesList`)} color="white">즐겨찾기</Button>)}
+                <Button
+                  leftIcon={<FontAwesomeIcon icon={faStar} />}
+                  variant="ghost"
+                  justifyContent="flex-start"
+                  _hover={{ bg: "gray.700", color: "yellow.400" }}
+                  onClick={() => navigate(`member/myFavoritesList`)}
+                  color="white"
+                >
+                  즐겨찾기
+                </Button>
+              )}
               {account.isUser() && (
-                <Button leftIcon={<FontAwesomeIcon icon={faCalendarAlt}/>} variant="ghost" justifyContent="flex-start"
-                        _hover={{bg: "gray.700", color: "yellow.400"}}
-                        onClick={() => navigate(`member/myReservationList/${account.id}`)} color="white">예약리스트</Button>)}
+                <Button
+                  leftIcon={<FontAwesomeIcon icon={faCalendarAlt} />}
+                  variant="ghost"
+                  justifyContent="flex-start"
+                  _hover={{ bg: "gray.700", color: "yellow.400" }}
+                  onClick={() =>
+                    navigate(`member/myReservationList/${account.id}`)
+                  }
+                  color="white"
+                >
+                  예약리스트
+                </Button>
+              )}
               {account.isUser() && (
-                <Button leftIcon={<FontAwesomeIcon icon={faDollarSign}/>} variant="ghost" justifyContent="flex-start"
-                        _hover={{bg: "gray.700", color: "yellow.400"}}
-                        onClick={() => navigate(`paid/myPaymentList`)} color="white">결제내역</Button>)}
+                <Button
+                  leftIcon={<FontAwesomeIcon icon={faDollarSign} />}
+                  variant="ghost"
+                  justifyContent="flex-start"
+                  _hover={{ bg: "gray.700", color: "yellow.400" }}
+                  onClick={() => navigate(`paid/myPaymentList`)}
+                  color="white"
+                >
+                  결제내역
+                </Button>
+              )}
               {account.isAdmin() && (
                 <>
-                  <Button leftIcon={<FontAwesomeIcon icon={faCog}/>} variant="ghost" justifyContent="flex-start"
-                          _hover={{bg: "gray.700", color: "yellow.400"}}
-                          onClick={() => handleMenuClick("/space/type")} color="white">공간유형</Button>
-                  <Button leftIcon={<FontAwesomeIcon icon={faCog}/>} variant="ghost" justifyContent="flex-start"
-                          _hover={{bg: "gray.700", color: "yellow.400"}}
-                          onClick={() => handleMenuClick("/space/option")} color="white">공간옵션</Button>
+                  <Button
+                    leftIcon={<FontAwesomeIcon icon={faCog} />}
+                    variant="ghost"
+                    justifyContent="flex-start"
+                    _hover={{ bg: "gray.700", color: "yellow.400" }}
+                    onClick={() => handleMenuClick("/space/type")}
+                    color="white"
+                  >
+                    공간유형
+                  </Button>
+                  <Button
+                    leftIcon={<FontAwesomeIcon icon={faCog} />}
+                    variant="ghost"
+                    justifyContent="flex-start"
+                    _hover={{ bg: "gray.700", color: "yellow.400" }}
+                    onClick={() => handleMenuClick("/space/option")}
+                    color="white"
+                  >
+                    공간옵션
+                  </Button>
                 </>
               )}
               {account.isLoggedIn() && (
-                  <>
-                  <Divider borderColor="gray.700"/>
-                  <Button leftIcon={<FontAwesomeIcon icon={faUser}/>} variant="ghost" justifyContent="flex-start"
-                          _hover={{bg: "gray.700", color: "yellow.400"}} color="white"
-                          onClick={() => handleMenuClick(`/member/info/${account.id}`)}>마이페이지</Button>
-                  </>
-              )}
-              {account.isHost() && (
-                  <Button leftIcon={<FontAwesomeIcon icon={faExchangeAlt}/>} variant="ghost" justifyContent="flex-start"
-                          _hover={{bg: "gray.700", color: "yellow.400"}}
-                          onClick={() => handleMenuClick("/host/dashboard")} color="white">호스트센터</Button>
+                <>
+                  <Divider borderColor="gray.700" />
+                  <Button
+                    leftIcon={<FontAwesomeIcon icon={faUser} />}
+                    variant="ghost"
+                    justifyContent="flex-start"
+                    _hover={{ bg: "gray.700", color: "yellow.400" }}
+                    color="white"
+                    onClick={() =>
+                      handleMenuClick(`/member/info/${account.id}`)
+                    }
+                  >
+                    마이페이지
+                  </Button>
+                  <Button
+                    leftIcon={<FontAwesomeIcon icon={faExchangeAlt} />}
+                    variant="ghost"
+                    justifyContent="flex-start"
+                    _hover={{ bg: "gray.700", color: "yellow.400" }}
+                    onClick={() => handleMenuClick("/host/dashboard")}
+                    color="white"
+                  >
+                    호스트센터
+                  </Button>
+                </>
               )}
               {account.isAdmin() && (
-                <Button leftIcon={<FontAwesomeIcon icon={faChartBar}/>} variant="ghost" justifyContent="flex-start"
-                        _hover={{bg: "gray.700", color: "yellow.400"}}
-                        onClick={() => handleMenuClick("/dashboard/admin")} color="white">관리자 페이지</Button>
+                <Button
+                  leftIcon={<FontAwesomeIcon icon={faChartBar} />}
+                  variant="ghost"
+                  justifyContent="flex-start"
+                  _hover={{ bg: "gray.700", color: "yellow.400" }}
+                  onClick={() => handleMenuClick("/dashboard/admin")}
+                  color="white"
+                >
+                  관리자 페이지
+                </Button>
               )}
               {account.isLoggedIn() && (
                 <>
-                  <Button leftIcon={<FontAwesomeIcon icon={faSignOutAlt}/>} variant="ghost" justifyContent="flex-start"
-                          _hover={{bg: "gray.700", color: "yellow.400"}} color="white"
-                          onClick={() => {
-                            account.logout();
-                            handleMenuClick("/");
-                          }}
+                  <Button
+                    leftIcon={<FontAwesomeIcon icon={faSignOutAlt} />}
+                    variant="ghost"
+                    justifyContent="flex-start"
+                    _hover={{ bg: "gray.700", color: "yellow.400" }}
+                    color="white"
+                    onClick={() => {
+                      account.logout();
+                      handleMenuClick("/");
+                    }}
                   >
                     로그아웃
                   </Button>

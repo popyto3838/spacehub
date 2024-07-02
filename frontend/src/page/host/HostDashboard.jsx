@@ -52,19 +52,19 @@ export function HostDashboard({ memberId }) {
   }, [memberId]);
 
   const handleNavigateToHostSpaceList = () => {
-    navigate(`/host/spaceList/${memberId}`);
+    navigate(`/host/spaceList`);
   };
 
   const handleNavigateToReservations = () => {
-    navigate(`/member/hostSpaceList/${memberId}`);
+    navigate(`/host/spaceList`);
   };
 
   const handleNavigateToReviews = () => {
-    navigate(`/member/reviews/${memberId}`);
+    navigate(`/member/reviews/review`);
   };
 
   const handleNavigateToInquiries = () => {
-    navigate(`/member/inquiries/${memberId}`);
+    navigate(`/member/reviews/qna`);
   };
 
   return (
