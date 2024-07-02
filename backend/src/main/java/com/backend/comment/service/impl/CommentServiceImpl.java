@@ -1,6 +1,7 @@
 package com.backend.comment.service.impl;
 
 import com.backend.comment.domain.Comment;
+import com.backend.comment.domain.FindRequestHostDetailDto;
 import com.backend.comment.mapper.CommentMapper;
 import com.backend.comment.service.CommentService;
 import lombok.RequiredArgsConstructor;
@@ -348,5 +349,10 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public void updateQna(Comment comment) {
         commentMapper.updateByCommentId(comment);
+    }
+
+    @Override
+    public List<Comment> selectAllByMemberIdReview(FindRequestHostDetailDto hostDetailDto) {
+        return commentMapper.selectAllByMemberIdReview(hostDetailDto);
     }
 }

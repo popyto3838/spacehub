@@ -21,6 +21,7 @@ public class Comment {
     private Integer categoryId; // board의 categoryId를 받음
     private String nickname; // nickname을 받음
     private Integer spaceId; // space의 spaceId를 받음
+    private String title;
 
     private Integer commentCount; // comment의 갯수
     private Integer rateScore; // comment의 별점을 받음

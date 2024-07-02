@@ -28,7 +28,10 @@ import axios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faCalendarAlt,
+  faCalendarDays,
   faChartBar,
+  faClipboard,
+  faClipboardQuestion,
   faCog,
   faDollarSign,
   faExchangeAlt,
@@ -115,7 +118,7 @@ const Header = () => {
         justify="space-between"
         wrap="wrap"
         padding="0.5rem 0.5rem"
-        bg="black"
+        bg="white"
         color="white"
         height="12vh"
       >
@@ -124,7 +127,7 @@ const Header = () => {
             icon={<HamburgerIcon />}
             onClick={onOpen}
             variant="outline"
-            color="whitesmoke"
+            color="black"
             aria-label="Open Menu"
             fontSize="2rem"
             h="5vh"
@@ -150,6 +153,7 @@ const Header = () => {
             onClick={() => navigate("/")}
             cursor="pointer"
             lineHeight="12vh"
+            color="black"
           >
             Space
             <Text as="span" color="yellow.400">
@@ -223,16 +227,46 @@ const Header = () => {
               >
                 공지사항
               </MenuItem>
-              {account.isLoggedIn() && (
+              <MenuItem
+                color="gray.800"
+                _hover={{ bg: "gray.700", color: "yellow.400" }}
+                icon={<FontAwesomeIcon icon={faClipboardQuestion} />}
+                onClick={() => navigate("/board/list")}
+              >
+                게시판
+              </MenuItem>
+              {account.isHost() && (
+                <MenuItem
+                  color="gray.800"
+                  _hover={{ bg: "gray.700", color: "yellow.400" }}
+                  icon={<FontAwesomeIcon icon={faMapMarkerAlt} />}
+                  onClick={() => handleMenuClick("/space/register")}
+                >
+                  공간등록
+                </MenuItem>
+              )}
+              {account.isHost() && (
+                <MenuItem
+                  color="gray.800"
+                  _hover={{ bg: "gray.700", color: "yellow.400" }}
+                  icon={<FontAwesomeIcon icon={faMapMarkerAlt} />}
+                  onClick={() => navigate(`/host/spaceList/${account.id}`)}
+                >
+                  나의 공간리스트
+                </MenuItem>
+              )}
+              {account.isHost() && (
+                <MenuItem
+                  color="gray.800"
+                  _hover={{ bg: "gray.700", color: "yellow.400" }}
+                  icon={<FontAwesomeIcon icon={faCalendarAlt} />}
+                  onClick={() => navigate(`/host/spaceList/${account.id}`)}
+                >
+                  호스트 예약관리
+                </MenuItem>
+              )}
+              {account.isUser() && (
                 <>
-                  <MenuItem
-                    color="gray.800"
-                    _hover={{ bg: "gray.700", color: "yellow.400" }}
-                    icon={<FontAwesomeIcon icon={faMapMarkerAlt} />}
-                    onClick={() => navigate(`/host/spaceList/${account.id}`)}
-                  >
-                    나의 공간리스트
-                  </MenuItem>
                   <MenuItem
                     color="gray.800"
                     _hover={{ bg: "gray.700", color: "yellow.400" }}
@@ -259,6 +293,10 @@ const Header = () => {
                   >
                     결제내역
                   </MenuItem>
+                </>
+              )}
+              {account.isLoggedIn() && (
+                <>
                   <MenuItem
                     color="gray.800"
                     _hover={{ bg: "gray.700", color: "yellow.400" }}
@@ -280,20 +318,23 @@ const Header = () => {
                   </MenuItem>
                 </>
               )}
-              <MenuItem
-                color="gray.800"
-                _hover={{ bg: "gray.700", color: "yellow.400" }}
-                icon={<FontAwesomeIcon icon={faSignOutAlt} />}
-                onClick={() => {
-                  navigate("/member/login");
-                }}
-              >
-                로그인
-              </MenuItem>
+              {account.isLoggedIn() || (
+                <MenuItem
+                  color="gray.800"
+                  _hover={{ bg: "gray.700", color: "yellow.400" }}
+                  icon={<FontAwesomeIcon icon={faSignOutAlt} />}
+                  onClick={() => {
+                    navigate("/member/login");
+                  }}
+                >
+                  로그인
+                </MenuItem>
+              )}
             </MenuList>
           </Menu>
         </Flex>
       </Flex>
+      <Divider />
 
       <Drawer placement="left" onClose={onClose} isOpen={isOpen}>
         <DrawerOverlay />
@@ -337,6 +378,16 @@ const Header = () => {
               >
                 홈
               </Button>
+              <Button
+                leftIcon={<FontAwesomeIcon icon={faList} />}
+                variant="ghost"
+                justifyContent="flex-start"
+                onClick={() => navigate("/board/list")}
+                color="white"
+                _hover={{ bg: "gray.700", color: "yellow.400" }}
+              >
+                공지사항
+              </Button>
               {account.isLoggedOut() && (
                 <>
                   <Button
@@ -362,7 +413,7 @@ const Header = () => {
                 </>
               )}
               <Button
-                leftIcon={<FontAwesomeIcon icon={faList} />}
+                leftIcon={<FontAwesomeIcon icon={faClipboardQuestion} />}
                 variant="ghost"
                 justifyContent="flex-start"
                 _hover={{ bg: "gray.700", color: "yellow.400" }}
@@ -371,46 +422,104 @@ const Header = () => {
               >
                 게시판
               </Button>
-              <Button
-                leftIcon={<FontAwesomeIcon icon={faMapMarkerAlt} />}
-                variant="ghost"
-                justifyContent="flex-start"
-                _hover={{ bg: "gray.700", color: "yellow.400" }}
-                onClick={() => handleMenuClick("/space/register")}
-                color="white"
-              >
-                공간등록
-              </Button>
-              <Button
-                leftIcon={<FontAwesomeIcon icon={faCog} />}
-                variant="ghost"
-                justifyContent="flex-start"
-                _hover={{ bg: "gray.700", color: "yellow.400" }}
-                onClick={() => handleMenuClick("/space/type")}
-                color="white"
-              >
-                공간유형
-              </Button>
-              <Button
-                leftIcon={<FontAwesomeIcon icon={faCog} />}
-                variant="ghost"
-                justifyContent="flex-start"
-                _hover={{ bg: "gray.700", color: "yellow.400" }}
-                onClick={() => handleMenuClick("/space/option")}
-                color="white"
-              >
-                공간옵션
-              </Button>
-              <Button
-                leftIcon={<FontAwesomeIcon icon={faChartBar} />}
-                variant="ghost"
-                justifyContent="flex-start"
-                _hover={{ bg: "gray.700", color: "yellow.400" }}
-                onClick={() => handleMenuClick("/dashboard/admin")}
-                color="white"
-              >
-                관리자 페이지
-              </Button>
+              {account.isHost() && (
+                <Button
+                  leftIcon={<FontAwesomeIcon icon={faMapMarkerAlt} />}
+                  variant="ghost"
+                  justifyContent="flex-start"
+                  _hover={{ bg: "gray.700", color: "yellow.400" }}
+                  onClick={() => handleMenuClick("/space/register")}
+                  color="white"
+                >
+                  공간등록
+                </Button>
+              )}
+              {account.isHost() && (
+                <Button
+                  leftIcon={<FontAwesomeIcon icon={faClipboard} />}
+                  variant="ghost"
+                  justifyContent="flex-start"
+                  _hover={{ bg: "gray.700", color: "yellow.400" }}
+                  onClick={() => navigate(`/host/spaceList/${account.id}`)}
+                  color="white"
+                >
+                  나의 공간 리스트
+                </Button>
+              )}
+              {account.isHost() && (
+                <Button
+                  leftIcon={<FontAwesomeIcon icon={faCalendarDays} />}
+                  variant="ghost"
+                  justifyContent="flex-start"
+                  _hover={{ bg: "gray.700", color: "yellow.400" }}
+                  onClick={() => navigate(`/host/spaceList/${account.id}`)}
+                  color="white"
+                >
+                  호스트 예약 관리
+                </Button>
+              )}
+              {account.isUser() && (
+                <Button
+                  leftIcon={<FontAwesomeIcon icon={faStar} />}
+                  variant="ghost"
+                  justifyContent="flex-start"
+                  _hover={{ bg: "gray.700", color: "yellow.400" }}
+                  onClick={() => navigate(`member/myFavoritesList`)}
+                  color="white"
+                >
+                  즐겨찾기
+                </Button>
+              )}
+              {account.isUser() && (
+                <Button
+                  leftIcon={<FontAwesomeIcon icon={faCalendarAlt} />}
+                  variant="ghost"
+                  justifyContent="flex-start"
+                  _hover={{ bg: "gray.700", color: "yellow.400" }}
+                  onClick={() =>
+                    navigate(`member/myReservationList/${account.id}`)
+                  }
+                  color="white"
+                >
+                  예약리스트
+                </Button>
+              )}
+              {account.isUser() && (
+                <Button
+                  leftIcon={<FontAwesomeIcon icon={faDollarSign} />}
+                  variant="ghost"
+                  justifyContent="flex-start"
+                  _hover={{ bg: "gray.700", color: "yellow.400" }}
+                  onClick={() => navigate(`paid/myPaymentList`)}
+                  color="white"
+                >
+                  결제내역
+                </Button>
+              )}
+              {account.isAdmin() && (
+                <>
+                  <Button
+                    leftIcon={<FontAwesomeIcon icon={faCog} />}
+                    variant="ghost"
+                    justifyContent="flex-start"
+                    _hover={{ bg: "gray.700", color: "yellow.400" }}
+                    onClick={() => handleMenuClick("/space/type")}
+                    color="white"
+                  >
+                    공간유형
+                  </Button>
+                  <Button
+                    leftIcon={<FontAwesomeIcon icon={faCog} />}
+                    variant="ghost"
+                    justifyContent="flex-start"
+                    _hover={{ bg: "gray.700", color: "yellow.400" }}
+                    onClick={() => handleMenuClick("/space/option")}
+                    color="white"
+                  >
+                    공간옵션
+                  </Button>
+                </>
+              )}
               {account.isLoggedIn() && (
                 <>
                   <Divider borderColor="gray.700" />
@@ -436,6 +545,22 @@ const Header = () => {
                   >
                     호스트센터
                   </Button>
+                </>
+              )}
+              {account.isAdmin() && (
+                <Button
+                  leftIcon={<FontAwesomeIcon icon={faChartBar} />}
+                  variant="ghost"
+                  justifyContent="flex-start"
+                  _hover={{ bg: "gray.700", color: "yellow.400" }}
+                  onClick={() => handleMenuClick("/dashboard/admin")}
+                  color="white"
+                >
+                  관리자 페이지
+                </Button>
+              )}
+              {account.isLoggedIn() && (
+                <>
                   <Button
                     leftIcon={<FontAwesomeIcon icon={faSignOutAlt} />}
                     variant="ghost"
