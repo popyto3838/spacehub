@@ -44,7 +44,7 @@ import {
   faUser,
   faUserPlus,
 } from "@fortawesome/free-solid-svg-icons";
-import spaceImage from "/img/space.png";
+import spaceImage from "/img/spacehub1.png";
 
 const Header = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -127,12 +127,13 @@ const Header = () => {
             icon={<HamburgerIcon />}
             onClick={onOpen}
             variant="outline"
-            color="black"
+            color="#FF4E8B"
+            borderColor="#FF4E8B"
             aria-label="Open Menu"
             fontSize="2rem"
             h="5vh"
             w="5vh"
-            _hover={{ bg: "yellow.400", color: "black" }}
+            _hover={{ bg: "#FF4E8B", color: "black" }}
             ml={8}
           />
         </Box>
@@ -141,22 +142,22 @@ const Header = () => {
           <Image
             src={spaceImage}
             alt="Space Image"
-            height="12vh"
+            height="7vh"
             mr={3}
             onClick={() => navigate("/")}
             cursor="pointer"
           />
           <Text
             fontFamily="TTLaundryGothicB"
-            fontSize="2.75rem"
+            fontSize="3.5rem"
             fontWeight="bold"
             onClick={() => navigate("/")}
             cursor="pointer"
             lineHeight="12vh"
-            color="black"
+            color="#FF4E8B"
           >
             Space
-            <Text as="span" color="yellow.400">
+            <Text as="span" color="#FF4E8B">
               Hub
             </Text>
           </Text>
@@ -177,7 +178,9 @@ const Header = () => {
           )}
           {account.isUser() && (
             <Button
-              colorScheme="yellow"
+              // colorScheme="yellow"
+              color="#FF4E8B"
+              borderColor="#FF4E8B"
               variant="outline"
               mr={4}
               onClick={SwitchHost}
@@ -189,7 +192,9 @@ const Header = () => {
           )}
           {account.isHost() && (
             <Button
-              colorScheme="yellow"
+              // colorScheme="yellow"
+              borderColor="#FF4E8B"
+              color="#FF4E8B"
               variant="outline"
               mr={4}
               onClick={SwitchUser}
@@ -215,7 +220,7 @@ const Header = () => {
                 w="6vh"
                 mr={6}
                 showBorder="true"
-                borderColor="white"
+                borderColor="#FF4E8B"
               />
             </MenuButton>
             <MenuList borderColor="gray.800">
@@ -250,7 +255,7 @@ const Header = () => {
                   color="gray.800"
                   _hover={{ bg: "gray.700", color: "yellow.400" }}
                   icon={<FontAwesomeIcon icon={faMapMarkerAlt} />}
-                  onClick={() => navigate(`/host/spaceList/${account.id}`)}
+                  onClick={() => navigate(`/host/spaceList`)}
                 >
                   나의 공간리스트
                 </MenuItem>
@@ -260,7 +265,7 @@ const Header = () => {
                   color="gray.800"
                   _hover={{ bg: "gray.700", color: "yellow.400" }}
                   icon={<FontAwesomeIcon icon={faCalendarAlt} />}
-                  onClick={() => navigate(`/host/spaceList/${account.id}`)}
+                  onClick={() => navigate(`/host/spaceList`)}
                 >
                   호스트 예약관리
                 </MenuItem>
@@ -440,7 +445,7 @@ const Header = () => {
                   variant="ghost"
                   justifyContent="flex-start"
                   _hover={{ bg: "gray.700", color: "yellow.400" }}
-                  onClick={() => navigate(`/host/spaceList/${account.id}`)}
+                  onClick={() => navigate(`/host/spaceList`)}
                   color="white"
                 >
                   나의 공간 리스트
@@ -452,7 +457,7 @@ const Header = () => {
                   variant="ghost"
                   justifyContent="flex-start"
                   _hover={{ bg: "gray.700", color: "yellow.400" }}
-                  onClick={() => navigate(`/host/spaceList/${account.id}`)}
+                  onClick={() => navigate(`/host/spaceList`)}
                   color="white"
                 >
                   호스트 예약 관리

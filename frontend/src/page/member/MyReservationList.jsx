@@ -65,6 +65,8 @@ function MyReservationList() {
         return "취소";
       case "COMPLETE_PAYMENT":
         return "결제완료";
+      case "REFUND":
+        return "환불완료";
       default:
         return status;
     }
