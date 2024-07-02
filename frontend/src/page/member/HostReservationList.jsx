@@ -159,6 +159,7 @@ function HostReservationList() {
                 <Td>
                   <Select
                     value={list.status}
+                    disabled={list.status === "REFUND"}
                     onChange={(e) =>
                       handleStatusChange(list.reservationId, e.target.value)
                     }
@@ -167,6 +168,13 @@ function HostReservationList() {
                     <option value="ACCEPT">수락</option>
                     <option value="CANCEL">취소</option>
                     <option value="COMPLETE_PAYMENT">결제완료</option>
+                    {list.status === "REFUND" ? (
+                      <option value="REFUND" disabled>
+                        환불완료
+                      </option>
+                    ) : (
+                      ""
+                    )}
                   </Select>
                 </Td>
                 <Td>{list.nickname}</Td>

@@ -5,6 +5,8 @@ import com.backend.paid.domain.PaymentCancelRequestDTO;
 import com.backend.paid.domain.PaymentStatus;
 import com.backend.paid.mapper.PaidMapper;
 import com.backend.paid.service.PaidService;
+import com.backend.reservation.domain.UpdateStatusRequestDTO;
+import com.backend.reservation.domain.status.ReservationStatus;
 import com.backend.reservation.mapper.ReservationMapper;
 import com.nimbusds.jose.shaded.gson.Gson;
 import com.nimbusds.jose.shaded.gson.JsonObject;
@@ -92,7 +94,7 @@ public class PaidServiceImpl implements PaidService {
         log.info("=====================1===========================");
         Paid paid = paidMapper.selectByPaidId(paidCancelRequest.getPaidId());
         if (paid.getStatus().equals(PaymentStatus.COMP)) {
-            log.info("=========================2=======================");
+            log.info("=========================2======================={}", paid);
 
             HttpsURLConnection conn = null;
 
@@ -115,6 +117,11 @@ public class PaidServiceImpl implements PaidService {
             String responseMessage = conn.getResponseMessage();
             log.info("==============responseMessage==========={}", responseMessage);
             conn.disconnect();
+            reservationMapper.updateStatus(UpdateStatusRequestDTO.builder()
+                    .reservationId(paid.getReservationId())
+                    .status(ReservationStatus.REFUND)
+                    .build());
+
             paidCancelRequest.setStatus(PaymentStatus.REFUND);
             paidMapper.paymentRefund(paidCancelRequest);
         }

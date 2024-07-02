@@ -4,5 +4,6 @@ public enum ReservationStatus {
     APPLY,
     ACCEPT,
     CANCEL,
-    COMPLETE_PAYMENT
+    COMPLETE_PAYMENT,
+    REFUND
 }

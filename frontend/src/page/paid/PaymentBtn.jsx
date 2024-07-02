@@ -133,7 +133,9 @@ const PaymentBtn = (param) => {
           ? "결제완료"
           : reservationStatus == "ACCEPT"
             ? "결제"
-            : "미승인"}
+            : reservationStatus == "REFUND"
+              ? "환불완료"
+              : "미승인"}
       </Button>
     </div>
   );
