@@ -60,7 +60,7 @@ export function HostDashboard({ memberId }) {
   };
 
   const handleNavigateToReviews = () => {
-    navigate(`/member/reviews/${memberId}`);
+    navigate(`/member/reviews`);
   };
 
   const handleNavigateToInquiries = () => {
