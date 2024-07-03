@@ -21,6 +21,7 @@ import {
   SimpleGrid,
   Spacer,
   Text,
+  Textarea,
   useDisclosure,
   useToast,
   VStack,
@@ -38,19 +39,20 @@ export function ReviewCommentItem({
   isProcessing,
   setIsProcessing,
   spaceId,
+  addReply,
 }) {
   const [isEditing, setIsEditing] = useState(false);
+  const [replies, setReplies] = useState([]);
+  const [newReplyContent, setNewReplyContent] = useState("");
+  const [editingReplyId, setEditingReplyId] = useState(null);
+  const [editingReplyContent, setEditingReplyContent] = useState("");
 
-  // 별점
   const starArray = [1, 2, 3, 4, 5];
-
-  // 좋아요
   const [like, setLike] = useState({
     like: false,
     count: 0,
   });
   const [isLikeProcessing, setIsLikeProcessing] = useState(false);
-
   const [member, setMember] = useState({});
 
   const account = useContext(LoginContext);
@@ -59,7 +61,6 @@ export function ReviewCommentItem({
 
   function handleClickDeleteReviewComment() {
     setIsProcessing(true);
-
     axios
       .delete("/api/comment/deleteReview", {
         data: { commentId: comment.commentId },
@@ -79,7 +80,6 @@ export function ReviewCommentItem({
       });
   }
 
-  // member 정보를 가져옴
   useEffect(() => {
     if (account.id) {
       axios
@@ -91,12 +91,112 @@ export function ReviewCommentItem({
     }
   }, [account]);
 
-  // aws 설정
+  useEffect(() => {
+    axios
+      .get(`/api/commentRe/listAll/${comment.commentId}`)
+      .then((response) => {
+        setReplies(response.data);
+      })
+      .catch((error) => console.error("Error fetching replies:", error));
+  }, [comment.commentId]);
+
+  function handleNewReplySubmit() {
+    if (!newReplyContent.trim()) {
+      toast({
+        status: "warning",
+        description: "대댓글 내용을 입력해주세요.",
+        position: "top",
+        duration: 700,
+      });
+      return;
+    }
+
+    setIsProcessing(true);
+    axios
+      .post("/api/commentRe/write", {
+        commentId: comment.commentId,
+        content: newReplyContent,
+        memberId: account.id,
+        nickname: account.nickname,
+        targetId: comment.memberId,
+      })
+      .then((res) => {
+        const newReply = {
+          ...res.data,
+          content: newReplyContent,
+          nickname: account.nickname,
+          targetName: comment.nickname,
+        };
+        setReplies([...replies, newReply]);
+        addReply(comment.commentId, newReply); // CommentList의 상태 업데이트
+
+        setNewReplyContent("");
+        toast({
+          status: "success",
+          description: "대댓글이 작성되었습니다.",
+          position: "top",
+          duration: 700,
+        });
+      })
+      .catch((err) => console.log(err))
+      .finally(() => setIsProcessing(false));
+  }
+
+  function handleReplyEdit(replyId, content) {
+    setEditingReplyId(replyId);
+    setEditingReplyContent(content);
+  }
+
+  function handleReplyUpdate() {
+    setIsProcessing(true);
+    axios
+      .put("/api/commentRe/update", {
+        commentReId: editingReplyId,
+        content: editingReplyContent,
+      })
+      .then(() => {
+        const updatedReplies = replies.map((reply) =>
+          reply.commentReId === editingReplyId
+            ? { ...reply, content: editingReplyContent }
+            : reply,
+        );
+        setReplies(updatedReplies);
+        setEditingReplyId(null);
+        toast({
+          status: "success",
+          description: "대댓글이 수정되었습니다.",
+          position: "top",
+          duration: 700,
+        });
+      })
+      .catch((err) => console.log(err))
+      .finally(() => setIsProcessing(false));
+  }
+
+  function handleReplyDelete(replyId) {
+    setIsProcessing(true);
+    axios
+      .delete(`/api/commentRe/delete/${replyId}`)
+      .then(() => {
+        const updatedReplies = replies.filter(
+          (reply) => reply.commentReId !== replyId,
+        );
+        setReplies(updatedReplies);
+        toast({
+          status: "success",
+          description: "대댓글이 삭제되었습니다.",
+          position: "top",
+          duration: 700,
+        });
+      })
+      .catch((err) => console.log(err))
+      .finally(() => setIsProcessing(false));
+  }
+
   const s3BaseUrl = "https://studysanta.s3.ap-northeast-2.amazonaws.com/prj3";
 
   return (
     <Card>
-      {/* 멤버이미지, 아이디, 수정/삭제 드롭다운 */}
       <CardBody>
         <VStack spacing={4} align="stretch">
           <Flex justify="space-between" align="center">
@@ -107,7 +207,6 @@ export function ReviewCommentItem({
             <Text>좋아요</Text>
           </Flex>
 
-          {/* 별점, 텍스트박스, 등록 버튼 */}
           {isEditing || (
             <Box>
               <Flex align="center" mb={2}>
@@ -143,7 +242,6 @@ export function ReviewCommentItem({
                 )}
               </Flex>
               <SimpleGrid columns={[2, 3, 4]} spacing={2} mb={2}>
-                {/* 수정중이 아닐때는 첨부한 이미지 파일이 보임 */}
                 {comment.commentFilesLists &&
                   comment.commentFilesLists.map((file) => (
                     <Image
@@ -160,7 +258,6 @@ export function ReviewCommentItem({
             </Box>
           )}
 
-          {/* 수정중일때 보이는 컴포넌트*/}
           {isEditing && (
             <ReviewCommentEdit
               comment={comment}
@@ -170,6 +267,95 @@ export function ReviewCommentItem({
               spaceId={spaceId}
             />
           )}
+
+          {/* 대댓글 목록 */}
+          {replies.length > 0 && (
+            <VStack spacing={2} align="stretch" pl={4} mt={2}>
+              {replies.map((reply) => (
+                <Box key={reply.commentReId} width="100%">
+                  <Flex justify="space-between" align="flex-start">
+                    <HStack spacing={2} alignItems="flex-start" flex={1}>
+                      <Text fontWeight="bold">@{reply.targetName}</Text>
+                      {editingReplyId === reply.commentReId ? (
+                        <VStack width="100%" align="stretch">
+                          <Textarea
+                            value={editingReplyContent}
+                            onChange={(e) =>
+                              setEditingReplyContent(e.target.value)
+                            }
+                            size="sm"
+                            resize="vertical"
+                            minHeight="100px"
+                          />
+                          <HStack justifyContent="flex-end">
+                            <Button size="sm" onClick={handleReplyUpdate}>
+                              저장
+                            </Button>
+                            <Button
+                              size="sm"
+                              onClick={() => setEditingReplyId(null)}
+                            >
+                              취소
+                            </Button>
+                          </HStack>
+                        </VStack>
+                      ) : (
+                        <Text flex={1}>{reply.content}</Text>
+                      )}
+                    </HStack>
+                    {!editingReplyId && (
+                      <HStack spacing={2}>
+                        <Text fontSize="sm" color="gray.500">
+                          {reply.nickname}
+                        </Text>
+                        {account.hasAccess(reply.memberId) && (
+                          <>
+                            <Button
+                              size="xs"
+                              onClick={() =>
+                                handleReplyEdit(
+                                  reply.commentReId,
+                                  reply.content,
+                                )
+                              }
+                            >
+                              수정
+                            </Button>
+                            <Button
+                              size="xs"
+                              colorScheme="red"
+                              onClick={() =>
+                                handleReplyDelete(reply.commentReId)
+                              }
+                            >
+                              삭제
+                            </Button>
+                          </>
+                        )}
+                      </HStack>
+                    )}
+                  </Flex>
+                </Box>
+              ))}
+            </VStack>
+          )}
+
+          {/* 대댓글 작성 폼 */}
+          <Box mt={4}>
+            <Textarea
+              placeholder="대댓글을 작성하세요"
+              value={newReplyContent}
+              onChange={(e) => setNewReplyContent(e.target.value)}
+            />
+            <Button
+              mt={2}
+              colorScheme="blue"
+              isLoading={isProcessing}
+              onClick={handleNewReplySubmit}
+            >
+              대댓글 작성
+            </Button>
+          </Box>
         </VStack>
       </CardBody>
 
