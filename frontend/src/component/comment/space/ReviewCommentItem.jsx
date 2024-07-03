@@ -130,6 +130,7 @@ export function ReviewCommentItem({
           content: newReplyContent,
           nickname: account.nickname,
           targetName: comment.nickname,
+          memberId: account.id,
         };
         setReplies([...replies, newReply]);
         addReply(comment.commentId, newReply); // CommentList의 상태 업데이트
