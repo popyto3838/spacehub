@@ -15,23 +15,28 @@ export function QnaCommentList({ spaceId, isProcessing, setIsProcessing }) {
 
   useEffect(() => {
     if (!isProcessing) {
-      axios
-        .get(`/api/comment/listQna/${spaceId}?${searchParams}`)
-        .then((res) => {
-          const comments = res.data.comments;
-          setCommentList(comments);
-          setPageInfo(res.data.pageInfo);
-        })
-        .catch((err) => {})
-        .finally(() => {});
+      fetchComments();
     }
   }, [isProcessing, searchParams]);
+
+  const fetchComments = () => {
+    axios
+      .get(`/api/comment/listQna/${spaceId}?${searchParams}`)
+      .then((res) => {
+        const comments = res.data.comments;
+        setCommentList(comments);
+        setPageInfo(res.data.pageInfo);
+      })
+      .catch((err) => {})
+      .finally(() => {});
+  };
 
   // 페이징
   const pageNumber = [];
   for (let i = pageInfo.leftPageNumber; i <= pageInfo.rightPageNumber; i++) {
     pageNumber.push(i);
   }
+
   function handleClickPageButton(pageNumber) {
     searchParams.set("qnaPage", pageNumber);
     navigate(`/space/${spaceId}?${searchParams}`);
@@ -46,6 +51,7 @@ export function QnaCommentList({ spaceId, isProcessing, setIsProcessing }) {
           setIsProcessing={setIsProcessing}
           comment={comment}
           key={comment.commentId}
+          fetchComments={fetchComments}
         />
       ))}
 
