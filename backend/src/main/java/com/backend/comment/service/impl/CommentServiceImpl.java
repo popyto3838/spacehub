@@ -3,6 +3,7 @@ package com.backend.comment.service.impl;
 import com.backend.comment.domain.Comment;
 import com.backend.comment.domain.FindRequestHostDetailDto;
 import com.backend.comment.mapper.CommentMapper;
+import com.backend.comment.mapper.CommentReMapper;
 import com.backend.comment.service.CommentService;
 import com.backend.file.domain.File;
 import lombok.RequiredArgsConstructor;
@@ -27,10 +28,10 @@ import java.util.stream.Collectors;
 @Transactional(rollbackFor = Exception.class)
 @RequiredArgsConstructor
 public class CommentServiceImpl implements CommentService {
-    final CommentMapper commentMapper;
-
+    private final CommentMapper commentMapper;
+    private final CommentReMapper commentReMapper;
     // AWS 설정
-    final S3Client s3Client;
+    private final S3Client s3Client;
 
     @Value("${aws.s3.bucket.name}")
     String bucketName;
@@ -68,6 +69,7 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public void delete(Comment comment) {
+        commentReMapper.deleteByCommentId(comment.getCommentId());
         commentMapper.deleteById(comment.getCommentId());
     }
 
