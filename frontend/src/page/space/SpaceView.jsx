@@ -287,7 +287,6 @@ function SpaceView() {
           <Flex direction={{ base: "column", lg: "row" }} gap={12}>
             <Box flex={3}>
               {" "}
-              {/* DatePicker와의 비율 조정 */}
               <Box
                 position="relative"
                 mb={8}
@@ -419,9 +418,6 @@ function SpaceView() {
                   <Heading as="h2" size="xl" mb={6} color="gray.700">
                     공간소개
                   </Heading>
-                  {/*<Text fontSize="lg" mb={8} lineHeight="tall">*/}
-                  {/*  {spaceDetails.introduce}*/}
-                  {/*</Text>*/}
                   <div
                     className="quill-content"
                     dangerouslySetInnerHTML={{ __html: spaceDetails.introduce }}
@@ -474,9 +470,6 @@ function SpaceView() {
                   <Heading as="h2" size="xl" mb={6} color="gray.700">
                     시설안내
                   </Heading>
-                  {/*<Text fontSize="lg" mb={8} lineHeight="tall">*/}
-                  {/*  {spaceDetails.facility}*/}
-                  {/*</Text>*/}
                   <div
                     className="quill-content"
                     dangerouslySetInnerHTML={{ __html: spaceDetails.facility }}
@@ -521,9 +514,6 @@ function SpaceView() {
                   <Heading as="h2" size="xl" mb={6} color="gray.700">
                     유의사항
                   </Heading>
-                  {/*<Text fontSize="lg" lineHeight="tall">*/}
-                  {/*  {spaceDetails.notice}*/}
-                  {/*</Text>*/}
                   <div
                     className="quill-content"
                     dangerouslySetInnerHTML={{ __html: spaceDetails.notice }}
@@ -534,7 +524,6 @@ function SpaceView() {
                   <Heading as="h2" size="xl" mb={6} color="gray.700">
                     Q&A
                   </Heading>
-                  {/* Q&A 내용 */}
                   {spaceDetails.spaceId && (
                     <QnaCommentComponent spaceId={spaceDetails.spaceId} />
                   )}
@@ -544,7 +533,6 @@ function SpaceView() {
                   <Heading as="h2" size="xl" mb={6} color="gray.700">
                     이용후기
                   </Heading>
-                  {/* 이용후기 내용 */}
                   {spaceDetails.spaceId && (
                     <ReviewCommentComponent spaceId={spaceDetails.spaceId} />
                   )}
