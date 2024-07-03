@@ -1,3 +1,4 @@
+// CommentList.jsx
 import { Box, Heading, VStack } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import axios from "axios";
@@ -6,23 +7,46 @@ import { CommentItem } from "./CommentItem.jsx";
 export function CommentList({ boardId, isProcessing, setIsProcessing }) {
   const [commentList, setCommentList] = useState([]);
 
-  useEffect(() => {
+  const fetchComments = () => {
     if (!isProcessing) {
       axios
         .get(`/api/comment/list/${boardId}`)
         .then((res) => {
-          setCommentList(res.data);
+          const commentsWithReplies = res.data.map((comment) =>
+            axios
+              .get(`/api/commentRe/listAll/${comment.commentId}`)
+              .then((replyRes) => ({
+                ...comment,
+                replies: replyRes.data,
+              })),
+          );
+
+          Promise.all(commentsWithReplies).then((updatedComments) => {
+            setCommentList(updatedComments);
+          });
         })
-        .catch((err) => console.log(err))
-        .finally(() => {});
+        .catch((err) => console.log(err));
     }
-  }, [isProcessing]);
+  };
+
+  useEffect(() => {
+    fetchComments();
+  }, [isProcessing, boardId]);
+
+  const addReply = (commentId, newReply) => {
+    setCommentList((prevList) =>
+      prevList.map((comment) =>
+        comment.commentId === commentId
+          ? { ...comment, replies: [...comment.replies, newReply] }
+          : comment,
+      ),
+    );
+  };
 
   if (commentList.length === 0) {
     return <Box>댓글이 없습니다. 첫 댓글을 작성해보세요.</Box>;
   }
 
-  /* 댓글을 하나 작성하지않으면 댓글들이 안나오는 오류 수정 */
   return (
     <Box>
       <Heading size="md" mb={4}>
@@ -35,6 +59,8 @@ export function CommentList({ boardId, isProcessing, setIsProcessing }) {
             setIsProcessing={setIsProcessing}
             comment={comment}
             key={comment.commentId}
+            targetId={comment.memberId}
+            addReply={addReply}
           />
         ))}
       </VStack>

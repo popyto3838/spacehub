@@ -481,4 +481,10 @@ public class MemberServiceImpl implements MemberService {
 
     }
 
+    @Override
+    public void modifyPhoneByMemberId(Member member){
+
+        mapper.modifyPhoneByMemberId(member);
+    }
+
 }

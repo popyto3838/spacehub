@@ -76,6 +76,7 @@ export function MemberInfo() {
           description: "회원 탈퇴하였습니다.",
           position: "top",
         });
+        account.logout();
         navigate("/");
       })
       .catch((err) => {

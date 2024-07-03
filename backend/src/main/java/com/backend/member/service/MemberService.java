@@ -72,4 +72,6 @@ public interface MemberService {
     void EdithostInfo(Host host);
 
     void EditAccountinfo(Host host);
+
+    void modifyPhoneByMemberId(Member member);
 }

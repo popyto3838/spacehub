@@ -97,13 +97,10 @@ export function LoginProvider({ children }) {
       position : "top"
     })
 
+    window.location.reload();
 
 
   }
-
-
-
-
 
 
   return (
