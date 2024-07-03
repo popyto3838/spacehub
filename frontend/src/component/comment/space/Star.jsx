@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Box, Image, Wrap, WrapItem } from "@chakra-ui/react";
+import { HStack, Image, Text } from "@chakra-ui/react";
 
 export function Star({ setRateScore, rateScore }) {
   // 별점
@@ -57,60 +57,23 @@ export function Star({ setRateScore, rateScore }) {
   };
 
   return (
-    <Wrap>
-      <WrapItem>
+    <HStack spacing={2} align="center">
+      {[1, 2, 3, 4, 5].map((starNumber) => (
         <Image
-          w={10}
-          onClick={() => clickStar(1)}
-          className={"star"}
-          src={`${s3BaseUrl}/ic-star-${icList[star1.toString()]}.png`}
-          alt={"star"}
-          cursor={"pointer"}
+          key={starNumber}
+          w={8}
+          h={8}
+          onClick={() => clickStar(starNumber)}
+          src={`${s3BaseUrl}/ic-star-${icList[eval(`star${starNumber}`).toString()]}.png`}
+          alt={`star ${starNumber}`}
+          cursor="pointer"
+          _hover={{ transform: "scale(1.1)" }}
+          transition="transform 0.2s"
         />
-      </WrapItem>
-      <WrapItem>
-        <Image
-          w={10}
-          onClick={() => clickStar(2)}
-          className={"star"}
-          src={`${s3BaseUrl}/ic-star-${icList[star2.toString()]}.png`}
-          alt={"star"}
-          cursor={"pointer"}
-        />
-      </WrapItem>
-      <WrapItem>
-        <Image
-          w={10}
-          onClick={() => clickStar(3)}
-          className={"star"}
-          src={`${s3BaseUrl}/ic-star-${icList[star3.toString()]}.png`}
-          alt={"star"}
-          cursor={"pointer"}
-        />
-      </WrapItem>
-      <WrapItem>
-        <Image
-          w={10}
-          onClick={() => clickStar(4)}
-          className={"star"}
-          src={`${s3BaseUrl}/ic-star-${icList[star4.toString()]}.png`}
-          alt={"star"}
-          cursor={"pointer"}
-        />
-      </WrapItem>
-      <WrapItem>
-        <Image
-          w={10}
-          onClick={() => clickStar(5)}
-          className={"star"}
-          src={`${s3BaseUrl}/ic-star-${icList[star5.toString()]}.png`}
-          alt={"star"}
-          cursor={"pointer"}
-        />
-      </WrapItem>
-      <WrapItem>
-        <Box>{rateScore}점</Box>
-      </WrapItem>
-    </Wrap>
+      ))}
+      <Text fontSize="lg" fontWeight="bold" ml={2}>
+        {rateScore}점
+      </Text>
+    </HStack>
   );
 }

@@ -3,9 +3,10 @@ import {
   Badge,
   Box,
   Button,
-  Flex,
   FormControl,
   FormHelperText,
+  HStack,
+  IconButton,
   Image,
   Input,
   Modal,
@@ -14,9 +15,12 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
+  SimpleGrid,
+  Text,
   Textarea,
   useDisclosure,
   useToast,
+  VStack,
   Wrap,
   WrapItem,
 } from "@chakra-ui/react";
@@ -36,7 +40,9 @@ export function ReviewCommentEdit({
   // 이미지 삭제를 위한 상태
   const [isHovered, setIsHovered] = useState(false);
   const [hoveredIndexes, setHoveredIndexes] = useState(
-    Array(comment.commentFilesLists.length).fill(false),
+    Array(
+      comment.commentFilesLists ? comment.commentFilesLists.length : 0,
+    ).fill(false),
   );
 
   // 별점 클릭 이벤트 핸들러
@@ -108,14 +114,16 @@ export function ReviewCommentEdit({
   const fileNameList = [];
   for (let addFile of addFileList) {
     let duplicate = false;
-    for (let file of comment.commentFilesLists) {
-      if (file.fileName === addFile.name) {
-        duplicate = true;
-        break;
+    if (comment.commentFilesLists) {
+      for (let file of comment.commentFilesLists) {
+        if (file.fileName === addFile.name) {
+          duplicate = true;
+          break;
+        }
       }
     }
     fileNameList.push(
-      <li>
+      <li key={addFile.name}>
         {addFile.name}
         {duplicate && <Badge colorScheme={"red"}>중복</Badge>}
       </li>,
@@ -136,111 +144,99 @@ export function ReviewCommentEdit({
   const s3BaseUrl = "https://studysanta.s3.ap-northeast-2.amazonaws.com/prj3";
 
   return (
-    <Box>
-      <Box>
-        {/* 별점 */}
-        <Wrap>
-          {starArray.map((star) => (
-            <WrapItem key={star}>
-              {comment.rateScore >= 1 && (
-                <Image
-                  w={10}
-                  onClick={() => clickStar(star)}
-                  src={`${s3BaseUrl}/ic-star-${star <= rateScore ? "on" : "off"}.png`}
-                  alt={"star"}
-                  cursor={"pointer"}
-                />
-              )}
-            </WrapItem>
-          ))}
-          <WrapItem>
-            <Box>{rateScore}점</Box>
-          </WrapItem>
-        </Wrap>
-
-        <Box>
-          {/* 코멘트에 첨부되어있는 파일 */}
-          <Flex>
-            {comment.commentFilesLists &&
-              comment.commentFilesLists.map((file, index) => (
-                <Flex
-                  position={"relative"}
-                  border={"1px solid green"}
-                  key={file.fileName}
-                  m={1}
-                >
-                  <Image
-                    w={150}
-                    h={150}
-                    src={file.src}
-                    onMouseEnter={() => handleMouseEnter(index)}
-                    onMouseLeave={() => handleMouseLeave(index)}
-                    sx={
-                      removeFileList.includes(file.fileName)
-                        ? { filter: "blur(8px)" }
-                        : {}
-                    }
-                  />
-                  {hoveredIndexes[index] && (
-                    <Box
-                      onMouseEnter={() => handleMouseEnter(index)}
-                      cursor={"pointer"}
-                      position={"absolute"}
-                      top={-1}
-                      right={0}
-                      p={1}
-                      fontSize={"2xl"}
-                      onClick={(e) => handleClickDeleteFiles(file.fileName)}
-                    >
-                      <FontAwesomeIcon icon={faX} />
-                    </Box>
-                  )}
-                </Flex>
-              ))}
-          </Flex>
-
-          <Flex>
-            <Textarea
-              h={"80px"}
-              value={commentText}
-              onChange={(e) => setCommentText(e.target.value)}
-              placeholder={"REVIEW를 작성해보세요."}
-            />
-
-            <Button mt={10} h={"40px"} onClick={() => setIsEditing(false)}>
-              취소
-            </Button>
-            <Button
-              mt={10}
-              h={"40px"}
-              isLoading={isProcessing}
-              isDisabled={commentText.length === 0}
-              onClick={onOpen}
-            >
-              등록
-            </Button>
-          </Flex>
-
-          {/* 게시물에 새롭게 파일 첨부 */}
-          <FormControl>
-            <Flex>
-              <Input
-                p={1}
-                w={"90px"}
-                h={"35px"}
-                multiple={true}
-                type={"file"}
-                accept={"image/*"}
-                onChange={(e) => setAddFileList(e.target.files)}
+    <VStack spacing={4} align="stretch">
+      {/* 별점 */}
+      <Wrap>
+        {starArray.map((star) => (
+          <WrapItem key={star}>
+            {comment.rateScore >= 1 && (
+              <Image
+                w={8}
+                onClick={() => clickStar(star)}
+                src={`${s3BaseUrl}/ic-star-${star <= rateScore ? "on" : "off"}.png`}
+                alt="star"
+                cursor="pointer"
               />
-              <Box>{fileNameList}</Box>
-            </Flex>
-            <FormHelperText>
-              첨부 파일의 총 용량은 10MB, 한 파일은 1MB를 초과할 수 없습니다.
-            </FormHelperText>
-          </FormControl>
-        </Box>
-      </Box>
+            )}
+          </WrapItem>
+        ))}
+        <WrapItem>
+          <Text>{rateScore}점</Text>
+        </WrapItem>
+      </Wrap>
+
+      <SimpleGrid columns={[2, 3, 4]} spacing={2}>
+        {/* 코멘트에 첨부되어 있는 파일 */}
+        {comment.commentFilesLists &&
+          comment.commentFilesLists.map((file, index) => (
+            <Box key={file.filename} position="relative">
+              <Image
+                w="full"
+                h={150}
+                objectFit="cover"
+                src={file.src}
+                alt={file.fileName}
+                onMouseEnter={() => handleMouseEnter(index)}
+                onMouseLeave={() => handleMouseLeave(index)}
+                filter={
+                  removeFileList.includes(file.fileName) ? "blur(8px)" : "none"
+                }
+              />
+              {hoveredIndexes[index] && (
+                <Box
+                  position="absolute"
+                  top={1}
+                  right={1}
+                  onMouseEnter={() => handleMouseEnter(index)}
+                  cursor="pointer"
+                  onClick={() => handleClickDeleteFiles(file.fileName)}
+                >
+                  <IconButton
+                    icon={<FontAwesomeIcon icon={faX} />}
+                    size="sm"
+                    aria-label="Delete file"
+                    colorScheme="red"
+                  />
+                </Box>
+              )}
+            </Box>
+          ))}
+      </SimpleGrid>
+
+      {/* 텍스트박스 */}
+      <Textarea
+        h="80px"
+        value={commentText}
+        onChange={(e) => setCommentText(e.target.value)}
+        placeholder="REVIEW를 작성해보세요."
+      />
+
+      {/* 게시물에 새롭게 파일 첨부 */}
+      <FormControl>
+        <Input
+          type="file"
+          multiple
+          accept="image/*"
+          onChange={(e) => setAddFileList(e.target.files)}
+        />
+        <FormHelperText>
+          첨부 파일의 총 용량은 10MB, 한 파일은 1MB를 초과할 수 없습니다.
+        </FormHelperText>
+      </FormControl>
+
+      {fileNameList && <Box>{fileNameList}</Box>}
+
+      <HStack justify="flex-end">
+        <Button onClick={() => setIsEditing(false)}>취소</Button>
+        <Button
+          colorScheme="blue"
+          isLoading={isProcessing}
+          isDisabled={commentText.length === 0}
+          onClick={onOpen}
+        >
+          등록
+        </Button>
+      </HStack>
 
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
@@ -248,8 +244,11 @@ export function ReviewCommentEdit({
           <ModalHeader>리뷰 수정</ModalHeader>
           <ModalBody>작성하신 리뷰를 수정하시겠습니까?</ModalBody>
           <ModalFooter>
-            <Button onClick={onClose}>취소</Button>
+            <Button mr={3} onClick={onClose}>
+              취소
+            </Button>
             <Button
+              colorScheme="blue"
               isLoading={isProcessing}
               onClick={handleClickUpdateReviewContent}
             >
@@ -258,6 +257,6 @@ export function ReviewCommentEdit({
           </ModalFooter>
         </ModalContent>
       </Modal>
-    </Box>
+    </VStack>
   );
 }

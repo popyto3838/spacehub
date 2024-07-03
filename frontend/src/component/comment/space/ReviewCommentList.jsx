@@ -1,4 +1,4 @@
-import { Box, Button, Center } from "@chakra-ui/react";
+import { Button, Center, HStack, VStack } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { ReviewCommentItem } from "./ReviewCommentItem.jsx";
@@ -38,7 +38,8 @@ export function ReviewCommentList({ spaceId, isProcessing, setIsProcessing }) {
   }
 
   return (
-    <Box>
+    <VStack spacing={6} align="stretch">
+      {/* 각각의 리뷰를 가져오는 컴포넌트 */}
       {commentList.map((comment) => (
         <ReviewCommentItem
           isProcessing={isProcessing}
@@ -51,43 +52,46 @@ export function ReviewCommentList({ spaceId, isProcessing, setIsProcessing }) {
 
       {/* 페이징 */}
       <Center>
-        {pageInfo.prevPageNumber && (
-          <Box>
-            <Button onClick={() => handleClickPageButton(1)}>처음</Button>
-            <Button
-              onClick={() => handleClickPageButton(pageInfo.prevPageNumber)}
-            >
-              이전
-            </Button>
-          </Box>
-        )}
+        <HStack spacing={2}>
+          {pageInfo.prevPageNumber && (
+            <>
+              <Button onClick={() => handleClickPageButton(1)}>처음</Button>
+              <Button
+                onClick={() => handleClickPageButton(pageInfo.prevPageNumber)}
+              >
+                이전
+              </Button>
+            </>
+          )}
 
-        {pageNumber.map((pageNumber) => (
-          <Button
-            key={pageNumber}
-            onClick={() => handleClickPageButton(pageNumber)}
-            colorScheme={
-              pageNumber === pageInfo.currentPageNumber ? "blue" : "gray"
-            }
-          >
-            {pageNumber}
-          </Button>
-        ))}
-        {pageInfo.nextPageNumber && (
-          <Box>
+          {pageNumber.map((pageNumber) => (
             <Button
-              onClick={() => handleClickPageButton(pageInfo.nextPageNumber)}
+              key={pageNumber}
+              onClick={() => handleClickPageButton(pageNumber)}
+              colorScheme={
+                pageNumber === pageInfo.currentPageNumber ? "blue" : "gray"
+              }
             >
-              다음
+              {pageNumber}
             </Button>
-            <Button
-              onClick={() => handleClickPageButton(pageInfo.lastPageNumber)}
-            >
-              맨끝
-            </Button>
-          </Box>
-        )}
+          ))}
+
+          {pageInfo.nextPageNumber && (
+            <>
+              <Button
+                onClick={() => handleClickPageButton(pageInfo.nextPageNumber)}
+              >
+                다음
+              </Button>
+              <Button
+                onClick={() => handleClickPageButton(pageInfo.lastPageNumber)}
+              >
+                맨끝
+              </Button>
+            </>
+          )}
+        </HStack>
       </Center>
-    </Box>
+    </VStack>
   );
 }

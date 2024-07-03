@@ -1,7 +1,6 @@
 import {
-  Box,
   Button,
-  Flex,
+  HStack,
   Modal,
   ModalBody,
   ModalContent,
@@ -11,6 +10,7 @@ import {
   Textarea,
   useDisclosure,
   useToast,
+  VStack,
 } from "@chakra-ui/react";
 import { useContext, useState } from "react";
 import { LoginContext } from "../../LoginProvider.jsx";
@@ -52,30 +52,26 @@ export function QnaCommentEdit({
   }
 
   return (
-    <Box>
-      <Box>
-        <Flex>
-          <Textarea
-            h={"80px"}
-            value={commentText}
-            onChange={(e) => setCommentText(e.target.value)}
-            placeholder={"QNA를 작성해보세요."}
-          />
+    <VStack spacing={4} align="stretch">
+      {/* 텍스트박스, 버튼 */}
+      <Textarea
+        h="80px"
+        value={commentText}
+        onChange={(e) => setCommentText(e.target.value)}
+        placeholder="QNA를 작성해보세요."
+      />
 
-          <Button mt={10} h={"40px"} onClick={() => setIsEditing(false)}>
-            취소
-          </Button>
-          <Button
-            mt={10}
-            h={"40px"}
-            isDisabled={commentText.length === 0}
-            isLoading={isProcessing}
-            onClick={onOpen}
-          >
-            등록
-          </Button>
-        </Flex>
-      </Box>
+      <HStack justify="flex-end">
+        <Button onClick={() => setIsEditing(false)}>취소</Button>
+        <Button
+          colorScheme="blue"
+          isDisabled={commentText.length === 0}
+          isLoading={isProcessing}
+          onClick={onOpen}
+        >
+          등록
+        </Button>
+      </HStack>
 
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
@@ -83,8 +79,11 @@ export function QnaCommentEdit({
           <ModalHeader>QNA 수정</ModalHeader>
           <ModalBody>작성하신 QNA를 수정하시겠습니까?</ModalBody>
           <ModalFooter>
-            <Button onClick={onClose}>취소</Button>
+            <Button mr={3} onClick={onClose}>
+              취소
+            </Button>
             <Button
+              colorScheme="blue"
               isLoading={isProcessing}
               onClick={handleClickEditCommentQna}
             >
@@ -93,6 +92,6 @@ export function QnaCommentEdit({
           </ModalFooter>
         </ModalContent>
       </Modal>
-    </Box>
+    </VStack>
   );
 }
