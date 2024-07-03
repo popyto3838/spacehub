@@ -531,11 +531,7 @@ function SpaceView() {
                     <QnaCommentComponent spaceId={spaceDetails.spaceId} />
                   )}
                 </Box>
-                <Divider />
                 <Box id="comment" p={8} bg="gray.50" borderRadius="lg">
-                  <Heading as="h2" size="xl" mb={6} color="gray.700">
-                    이용후기
-                  </Heading>
                   {spaceDetails.spaceId && (
                     <ReviewCommentComponent spaceId={spaceDetails.spaceId} />
                   )}

@@ -1,4 +1,4 @@
-import { Button, Center, HStack, VStack } from "@chakra-ui/react";
+import { Box, Button, Center, HStack, Text, VStack } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { ReviewCommentItem } from "./ReviewCommentItem.jsx";
@@ -68,60 +68,81 @@ export function ReviewCommentList({ spaceId, isProcessing, setIsProcessing }) {
 
   return (
     <VStack spacing={6} align="stretch">
-      {/* 각각의 리뷰를 가져오는 컴포넌트 */}
-      {commentList.map((comment) => (
-        <ReviewCommentItem
-          isProcessing={isProcessing}
-          setIsProcessing={setIsProcessing}
-          comment={comment}
-          key={comment.commentId}
-          spaceId={spaceId}
-          addReply={addReply}
-        />
-      ))}
-
-      {/* 페이징 */}
-      <Center>
-        <HStack spacing={2}>
-          {pageInfo.prevPageNumber && (
-            <>
-              <Button onClick={() => handleClickPageButton(1)}>처음</Button>
-              <Button
-                onClick={() => handleClickPageButton(pageInfo.prevPageNumber)}
-              >
-                이전
-              </Button>
-            </>
-          )}
-
-          {pageNumber.map((pageNumber) => (
-            <Button
-              key={pageNumber}
-              onClick={() => handleClickPageButton(pageNumber)}
-              colorScheme={
-                pageNumber === pageInfo.currentPageNumber ? "blue" : "gray"
-              }
-            >
-              {pageNumber}
-            </Button>
+      {commentList.length > 0 ? (
+        <>
+          {commentList.map((comment) => (
+            <ReviewCommentItem
+              isProcessing={isProcessing}
+              setIsProcessing={setIsProcessing}
+              comment={comment}
+              key={comment.commentId}
+              spaceId={spaceId}
+              addReply={addReply}
+            />
           ))}
 
-          {pageInfo.nextPageNumber && (
-            <>
-              <Button
-                onClick={() => handleClickPageButton(pageInfo.nextPageNumber)}
-              >
-                다음
-              </Button>
-              <Button
-                onClick={() => handleClickPageButton(pageInfo.lastPageNumber)}
-              >
-                맨끝
-              </Button>
-            </>
-          )}
-        </HStack>
-      </Center>
+          {/* 페이징 */}
+          <Center>
+            <HStack spacing={2}>
+              {pageInfo.prevPageNumber && (
+                <>
+                  <Button size="sm" onClick={() => handleClickPageButton(1)}>
+                    처음
+                  </Button>
+                  <Button
+                    size="sm"
+                    onClick={() =>
+                      handleClickPageButton(pageInfo.prevPageNumber)
+                    }
+                  >
+                    이전
+                  </Button>
+                </>
+              )}
+
+              {pageNumber.map((pageNumber) => (
+                <Button
+                  key={pageNumber}
+                  size="sm"
+                  onClick={() => handleClickPageButton(pageNumber)}
+                  colorScheme={
+                    pageNumber === pageInfo.currentPageNumber ? "blue" : "gray"
+                  }
+                >
+                  {pageNumber}
+                </Button>
+              ))}
+
+              {pageInfo.nextPageNumber && (
+                <>
+                  <Button
+                    size="sm"
+                    onClick={() =>
+                      handleClickPageButton(pageInfo.nextPageNumber)
+                    }
+                  >
+                    다음
+                  </Button>
+                  <Button
+                    size="sm"
+                    onClick={() =>
+                      handleClickPageButton(pageInfo.lastPageNumber)
+                    }
+                  >
+                    맨끝
+                  </Button>
+                </>
+              )}
+            </HStack>
+          </Center>
+        </>
+      ) : (
+        <Box textAlign="center" py={10}>
+          <Text fontSize="lg" color="gray.500">
+            아직 작성된 리뷰가 없습니다.
+          </Text>
+        </Box>
+      )}
     </VStack>
   );
 }
