@@ -1,16 +1,18 @@
 import {
+  Avatar,
   Box,
   Button,
   Flex,
   FormControl,
   FormHelperText,
   Heading,
-  Image,
+  HStack,
   Input,
-  Spacer,
+  Text,
   Textarea,
   Tooltip,
   useToast,
+  VStack,
 } from "@chakra-ui/react";
 import { useContext, useEffect, useState } from "react";
 import { LoginContext } from "../../LoginProvider.jsx";
@@ -95,96 +97,78 @@ export function ReviewCommentWrite({ spaceId, isProcessing, setIsProcessing }) {
   for (let i = 0; i < files.length; i++) {}
 
   return (
-    <Box border={"1px solid black"}>
+    <Box>
       {/* 맨 윗줄 */}
-      <Flex>
-        <Heading as="h2" size="xl" mb={6} color="gray.700">
+      <Flex justify="space-between" align="center" mb={6}>
+        <Heading as="h2" size="xl" color="gray.700">
           REVIEW {commentList.length > 0 ? commentList[0].commentCount : ""} 개
         </Heading>
-        <Box>
+        <HStack>
           <Box>
-            <FontAwesomeIcon icon={faStar} />
-            {commentList.length > 0 ? commentList[0].rateScoreAvg : ""}점
+            <FontAwesomeIcon icon={faStar} color="yellow.400" />
+            <Text as="span" ml={2}>
+              {commentList.length > 0 ? commentList[0].rateScoreAvg : ""}점
+            </Text>
           </Box>
-        </Box>
-        <Spacer />
-        <Tooltip
-          label={"로그인 하세요"}
-          isDisabled={account.isLoggedIn()}
-          placement={"top"}
-        >
-          <Button
-            isDisabled={!account.isLoggedIn()}
-            onClick={() => setIsWriting(!isWriting)}
+          <Tooltip
+            label="로그인 하세요"
+            isDisabled={account.isLoggedIn()}
+            placement="top"
           >
-            REVIEW 작성하기
-          </Button>
-        </Tooltip>
+            <Button
+              colorScheme="blue"
+              isDisabled={!account.isLoggedIn()}
+              onClick={() => setIsWriting(!isWriting)}
+            >
+              REVIEW 작성하기
+            </Button>
+          </Tooltip>
+        </HStack>
       </Flex>
 
       {/* 멤버이미지, 아이디, 수정/삭제 드롭다운
-          QNA 작성하기 버튼을 눌러야만 나옴 */}
+          REVIEW 작성하기 버튼을 눌러야만 나옴 */}
       {isWriting && (
-        <Box>
-          <Flex>
-            <Image
-              border={"1px solid red"}
-              borderRadius={"full"}
-              w={"50px"}
-              src={member.profileImage}
-            />
-            <Box fontSize={"2xl"}>{member.nickname}</Box>
+        <VStack spacing={4} align="stretch">
+          <Flex align="center">
+            <Avatar src={member.profileImage} size="md" mr={4} />
+            <Text fontSize="xl">{member.nickname}</Text>
           </Flex>
 
           {/* 별점, 텍스트박스, 파일첨부 등록 버튼 */}
           {/* 별점 컴포넌트 */}
           <Star setRateScore={setRateScore} rateScore={rateScore} />
 
-          <Flex>
-            <Box>
-              <Box border={"1px solid green"}>
-                {fileNameList}(수정) 첨부한 파일이 보임
-              </Box>
-              <Textarea
-                h={"80px"}
-                w={"450px"}
-                placeholder={
-                  "사실과 관계없는 내용을 작성시 관계 법령에 따라 처벌받을 수 있습니다."
-                }
-                value={content}
-                onChange={(e) => setContent(e.target.value)}
-              />
-              {/* 파일 첨부 */}
-              <FormControl>
-                <Flex>
-                  <Input
-                    p={1}
-                    w={"90px"}
-                    h={"35px"}
-                    multiple={true}
-                    type={"file"}
-                    accept={"image/*"}
-                    onChange={(e) => setFiles(e.target.files)}
-                  />
-                  <Box>{fileNameList}</Box>
-                </Flex>
-                <FormHelperText>
-                  첨부 파일의 총 용량은 10MB, 한 파일은 1MB를 초과할 수
-                  없습니다.
-                </FormHelperText>
-              </FormControl>
-            </Box>
+          <Textarea
+            h="80px"
+            placeholder="사실과 관계없는 내용을 작성시 관계 법령에 따라 처벌받을 수 있습니다."
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
+          />
 
-            <Button
-              h={"80px"}
-              isLoading={isProcessing}
-              isDisabled={content.trim().length === 0}
-              onClick={handleClickWriteReview}
-            >
-              등록
-            </Button>
-          </Flex>
-        </Box>
+          <FormControl>
+            <Input
+              type="file"
+              multiple
+              accept="image/*"
+              onChange={(e) => setFiles(e.target.files)}
+            />
+            <FormHelperText>
+              첨부 파일의 총 용량은 10MB, 한 파일은 1MB를 초과할 수 없습니다.
+            </FormHelperText>
+          </FormControl>
+
+          {fileNameList && <Box>{fileNameList}</Box>}
+
+          <Button
+            colorScheme="blue"
+            isLoading={isProcessing}
+            isDisabled={content.trim().length === 0}
+            onClick={handleClickWriteReview}
+          >
+            등록
+          </Button>
+        </VStack>
       )}
     </Box>
   );
