@@ -30,7 +30,12 @@ import { useContext, useEffect, useState } from "react";
 import { LoginContext } from "../../LoginProvider.jsx";
 import { ReviewCommentEdit } from "./ReviewCommentEdit.jsx";
 import axios from "axios";
-import { FaEllipsisV, FaReply } from "react-icons/fa";
+import {
+  FaChevronDown,
+  FaChevronUp,
+  FaEllipsisV,
+  FaReply,
+} from "react-icons/fa";
 
 export function ReviewCommentItem({
   comment,
@@ -44,6 +49,7 @@ export function ReviewCommentItem({
   const [newReplyContent, setNewReplyContent] = useState("");
   const [editingReplyId, setEditingReplyId] = useState(null);
   const [editingReplyContent, setEditingReplyContent] = useState("");
+  const [showReplies, setShowReplies] = useState(false);
 
   const starArray = [1, 2, 3, 4, 5];
   const [like, setLike] = useState({
@@ -193,6 +199,10 @@ export function ReviewCommentItem({
 
   const s3BaseUrl = "https://studysanta.s3.ap-northeast-2.amazonaws.com/prj3";
 
+  const toggleReplies = () => {
+    setShowReplies(!showReplies);
+  };
+
   return (
     <Box borderWidth="1px" borderRadius="lg" p={4} bg="white" shadow="sm">
       <VStack spacing={4} align="stretch">
@@ -272,93 +282,110 @@ export function ReviewCommentItem({
         )}
 
         <Divider />
+        <Button
+          onClick={toggleReplies}
+          leftIcon={showReplies ? <FaChevronUp /> : <FaChevronDown />}
+          variant="outline"
+          size="sm"
+        >
+          {showReplies ? "대댓글 숨기기" : "대댓글 보기"}
+        </Button>
 
-        {/* 대댓글 목록 */}
-        {replies.length > 0 && (
-          <VStack spacing={2} align="stretch" pl={4} mt={2}>
-            {replies.map((reply) => (
-              <Box key={reply.commentReId} bg="gray.50" p={3} borderRadius="md">
-                <Flex justify="space-between" align="flex-start">
-                  <HStack spacing={2} alignItems="flex-start" flex={1}>
-                    <Text fontSize="sm" fontWeight="bold" color="blue.500">
-                      @{reply.targetName}
-                    </Text>
-                    {editingReplyId === reply.commentReId ? (
-                      <VStack width="100%" align="stretch">
-                        <Textarea
-                          value={editingReplyContent}
-                          onChange={(e) =>
-                            setEditingReplyContent(e.target.value)
-                          }
-                          size="sm"
-                          resize="vertical"
-                          minHeight="80px"
-                        />
-                        <HStack justifyContent="flex-end">
-                          <Button size="sm" onClick={handleReplyUpdate}>
-                            저장
+        {showReplies && (
+          <>
+            {/* 대댓글 목록 */}
+            {replies.length > 0 && (
+              <VStack spacing={2} align="stretch" pl={4} mt={2}>
+                {replies.map((reply) => (
+                  <Box
+                    key={reply.commentReId}
+                    bg="gray.50"
+                    p={3}
+                    borderRadius="md"
+                  >
+                    <Flex justify="space-between" align="flex-start">
+                      <HStack spacing={2} alignItems="flex-start" flex={1}>
+                        <Text fontSize="sm" fontWeight="bold" color="blue.500">
+                          @{reply.targetName}
+                        </Text>
+                        {editingReplyId === reply.commentReId ? (
+                          <VStack width="100%" align="stretch">
+                            <Textarea
+                              value={editingReplyContent}
+                              onChange={(e) =>
+                                setEditingReplyContent(e.target.value)
+                              }
+                              size="sm"
+                              resize="vertical"
+                              minHeight="80px"
+                            />
+                            <HStack justifyContent="flex-end">
+                              <Button size="sm" onClick={handleReplyUpdate}>
+                                저장
+                              </Button>
+                              <Button
+                                size="sm"
+                                onClick={() => setEditingReplyId(null)}
+                              >
+                                취소
+                              </Button>
+                            </HStack>
+                          </VStack>
+                        ) : (
+                          <VStack align="start" spacing={1} flex={1}>
+                            <Text fontSize="sm" fontWeight="bold">
+                              {reply.nickname}
+                            </Text>
+                            <Text fontSize="sm">{reply.content}</Text>
+                          </VStack>
+                        )}
+                      </HStack>
+                      {!editingReplyId && account.hasAccess(reply.memberId) && (
+                        <HStack spacing={2}>
+                          <Button
+                            size="xs"
+                            onClick={() =>
+                              handleReplyEdit(reply.commentReId, reply.content)
+                            }
+                          >
+                            수정
                           </Button>
                           <Button
-                            size="sm"
-                            onClick={() => setEditingReplyId(null)}
+                            size="xs"
+                            colorScheme="red"
+                            onClick={() => handleReplyDelete(reply.commentReId)}
                           >
-                            취소
+                            삭제
                           </Button>
                         </HStack>
-                      </VStack>
-                    ) : (
-                      <VStack align="start" spacing={1} flex={1}>
-                        <Text fontSize="sm" fontWeight="bold">
-                          {reply.nickname}
-                        </Text>
-                        <Text fontSize="sm">{reply.content}</Text>
-                      </VStack>
-                    )}
-                  </HStack>
-                  {!editingReplyId && account.hasAccess(reply.memberId) && (
-                    <HStack spacing={2}>
-                      <Button
-                        size="xs"
-                        onClick={() =>
-                          handleReplyEdit(reply.commentReId, reply.content)
-                        }
-                      >
-                        수정
-                      </Button>
-                      <Button
-                        size="xs"
-                        colorScheme="red"
-                        onClick={() => handleReplyDelete(reply.commentReId)}
-                      >
-                        삭제
-                      </Button>
-                    </HStack>
-                  )}
-                </Flex>
-              </Box>
-            ))}
-          </VStack>
-        )}
+                      )}
+                    </Flex>
+                  </Box>
+                ))}
+              </VStack>
+            )}
 
-        {/* 대댓글 작성 폼 */}
-        <Box mt={4}>
-          <Textarea
-            placeholder="대댓글을 작성하세요"
-            value={newReplyContent}
-            onChange={(e) => setNewReplyContent(e.target.value)}
-            size="sm"
-          />
-          <Button
-            mt={2}
-            size="sm"
-            colorScheme="blue"
-            isLoading={isProcessing}
-            onClick={handleNewReplySubmit}
-            leftIcon={<FaReply />}
-          >
-            대댓글 작성
-          </Button>
-        </Box>
+            {/* 대댓글 작성 폼 */}
+            <Box mt={4}>
+              <Textarea
+                placeholder="대댓글을 작성하세요"
+                value={newReplyContent}
+                onChange={(e) => setNewReplyContent(e.target.value)}
+                size="sm"
+              />
+              <Button
+                mt={2}
+                size="sm"
+                colorScheme="blue"
+                isLoading={isProcessing}
+                onClick={handleNewReplySubmit}
+                leftIcon={<FaReply />}
+              >
+                대댓글 작성
+              </Button>
+            </Box>
+          </>
+        )}
       </VStack>
 
       <Modal isOpen={isOpen} onClose={onClose}>
