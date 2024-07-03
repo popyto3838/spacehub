@@ -1,10 +1,14 @@
 import {
   Box,
   Button,
+  Card,
+  CardBody,
+  Container,
   Flex,
   FormControl,
   FormLabel,
   Heading,
+  HStack,
   Image,
   Input,
   Modal,
@@ -13,12 +17,13 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
-  Spacer,
+  SimpleGrid,
   Spinner,
   Textarea,
   Tooltip,
   useDisclosure,
   useToast,
+  VStack,
 } from "@chakra-ui/react";
 import { useContext, useEffect, useState } from "react";
 import axios from "axios";
@@ -100,100 +105,126 @@ export function BoardView() {
   }
 
   return (
-    <Box>
-      <Flex>
-        <Heading>{board.boardId}번 게시물</Heading>
-        <Spacer />
-        {isLikeProcessing || (
-          <Flex>
-            <Tooltip
-              isDisabled={account.isLoggedIn()}
-              hasArrow
-              label={"로그인 해주세요."}
-            >
-              <Box
-                onClick={handleClickLike}
-                cursor={"pointer"}
-                fontSize={"3xl"}
-              >
-                {like.like && <FontAwesomeIcon icon={fullHeart} />}
-                {like.like || <FontAwesomeIcon icon={emptyHeart} />}
-              </Box>
-            </Tooltip>
-            <Box fontSize={"3xl"}>{like.count}</Box>
-          </Flex>
-        )}
-        {isLikeProcessing && (
-          <Box pr={3}>
-            <Spinner />
-          </Box>
-        )}
-      </Flex>
-      <Box>
-        <Box>
-          <FormControl>
-            <FormLabel>제목</FormLabel>
-            <Input value={board.title} readOnly />
-          </FormControl>
-        </Box>
-        <Box>
-          <FormControl>
-            <FormLabel>내용</FormLabel>
-            <Textarea value={board.content} readOnly />
-          </FormControl>
-        </Box>
-        <Box>
-          <FormControl>
-            <FormLabel>작성자</FormLabel>
-            <Input value={board.writer} readOnly />
-          </FormControl>
-        </Box>
-        <Box>
-          <FormControl>
-            {/* 수정되면 작성일시 수정한 시간으로 변함 */}
-            <FormLabel>작성일시</FormLabel>
-            {/*<Box>inputDt : {board.inputDateAndTime}</Box>*/}
-            {/*<Box>updateDt : {board.updateDateAndTime}</Box>*/}
-            {board.inputDt !== board.updateDt && (
-              <Flex>
-                <Input value={board.updateDateAndTime} readOnly />
-                <Box>(수정됨)</Box>
+    <Box bg="gray.100" minHeight="100vh" py={8}>
+      <Container maxW="container.xl">
+        <VStack spacing={8}>
+          <Card w="full">
+            <CardBody>
+              <Flex justify="space-between" align="center">
+                <Heading>{board.boardId}번 게시물</Heading>
+                {isLikeProcessing || (
+                  <Flex align="center">
+                    <Tooltip
+                      isDisabled={account.isLoggedIn()}
+                      hasArrow
+                      label="로그인 해주세요."
+                    >
+                      <Box
+                        onClick={handleClickLike}
+                        cursor="pointer"
+                        fontSize="3xl"
+                        mr={2}
+                      >
+                        {like.like ? (
+                          <FontAwesomeIcon icon={fullHeart} />
+                        ) : (
+                          <FontAwesomeIcon icon={emptyHeart} />
+                        )}
+                      </Box>
+                    </Tooltip>
+                    <Box fontSize="3xl">{like.count}</Box>
+                  </Flex>
+                )}
+                {isLikeProcessing && <Spinner />}
               </Flex>
-            )}
-            {board.inputDt === board.updateDt && (
-              <Input value={board.inputDateAndTime} readOnly />
-            )}
-          </FormControl>
-        </Box>
+            </CardBody>
+          </Card>
 
-        <Box>
-          <Box>첨부 파일</Box>
-          {board.filesLists &&
-            board.filesLists.map((file) => (
-              <Box border={"1px solid black"} key={file.fileName}>
-                <Image src={file.src} alt={file.fileName} />
-              </Box>
-            ))}
-        </Box>
+          <Card w="full">
+            <CardBody>
+              <VStack spacing={4} align="stretch">
+                <FormControl>
+                  <FormLabel>제목</FormLabel>
+                  <Input value={board.title} readOnly />
+                </FormControl>
+                <FormControl>
+                  <FormLabel>내용</FormLabel>
+                  <Textarea value={board.content} readOnly />
+                </FormControl>
+                <FormControl>
+                  <FormLabel>작성자</FormLabel>
+                  <Input value={board.writer} readOnly />
+                </FormControl>
+                <FormControl>
+                  <FormLabel>작성일시</FormLabel>
+                  {board.inputDt !== board.updateDt ? (
+                    <Flex align="center">
+                      <Input w={750} value={board.updateDateAndTime} readOnly />
+                      <Box ml={2}>(수정됨)</Box>
+                    </Flex>
+                  ) : (
+                    <Input value={board.inputDateAndTime} readOnly />
+                  )}
+                </FormControl>
+              </VStack>
+            </CardBody>
+          </Card>
 
-        {account.hasAccess(board.memberId) && (
-          <Box>
-            <Button onClick={onOpen}>삭제</Button>
-            <Button onClick={() => navigate(`/board/${boardId}/edit`)}>
-              수정
-            </Button>
-          </Box>
-        )}
-        <Button onClick={() => navigate(-1)}>목록</Button>
-      </Box>
+          {board.filesLists && board.filesLists.length > 0 && (
+            <Card w="full">
+              <CardBody>
+                <Heading size="md" mb={4}>
+                  첨부 파일
+                </Heading>
+                <SimpleGrid columns={[1, 2, 3]} spacing={4}>
+                  {board.filesLists.map((file) => (
+                    <Box
+                      key={file.fileName}
+                      borderWidth={1}
+                      borderRadius="lg"
+                      overflow="hidden"
+                    >
+                      <Image src={file.src} alt={file.fileName} />
+                    </Box>
+                  ))}
+                </SimpleGrid>
+              </CardBody>
+            </Card>
+          )}
 
-      {/* comment component -> boardId가 있을때만 넘겨줌(undefined 해결) */}
-      {board.boardId && (
-        <CommentComponent
-          boardId={board.boardId}
-          categoryId={board.categoryId}
-        />
-      )}
+          <Card w="full">
+            <CardBody>
+              <HStack spacing={4}>
+                <Button onClick={() => navigate(-1)}>목록</Button>
+                {account.hasAccess(board.memberId) && (
+                  <>
+                    <Button ml={"auto"} colorScheme="red" onClick={onOpen}>
+                      삭제
+                    </Button>
+                    <Button
+                      colorScheme="blue"
+                      onClick={() => navigate(`/board/${boardId}/edit`)}
+                    >
+                      수정
+                    </Button>
+                  </>
+                )}
+              </HStack>
+            </CardBody>
+          </Card>
+
+          {board.boardId && (
+            <Card w="full">
+              <CardBody>
+                <CommentComponent
+                  boardId={board.boardId}
+                  categoryId={board.categoryId}
+                />
+              </CardBody>
+            </Card>
+          )}
+        </VStack>
+      </Container>
 
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
@@ -201,8 +232,12 @@ export function BoardView() {
           <ModalHeader>게시물 삭제</ModalHeader>
           <ModalBody>정말 삭제하시겠습니까?</ModalBody>
           <ModalFooter>
-            <Button onClick={onClose}>취소</Button>
-            <Button onClick={handleClickRemove}>삭제</Button>
+            <Button mr={3} onClick={onClose}>
+              취소
+            </Button>
+            <Button colorScheme="red" onClick={handleClickRemove}>
+              삭제
+            </Button>
           </ModalFooter>
         </ModalContent>
       </Modal>

@@ -1,5 +1,4 @@
 import {
-  Box,
   Button,
   Flex,
   Modal,
@@ -11,6 +10,7 @@ import {
   Textarea,
   useDisclosure,
   useToast,
+  VStack,
 } from "@chakra-ui/react";
 import { useState } from "react";
 import axios from "axios";
@@ -49,19 +49,22 @@ export function CommentEdit({
   }
 
   return (
-    <Flex>
-      <Box>
-        <Textarea
-          value={commentText}
-          onChange={(e) => setCommentText(e.target.value)}
-        />
-      </Box>
-      <Box>
-        <Button onClick={() => setIsEditing(false)}>취소</Button>
-        <Button isLoading={isProcessing} onClick={onOpen}>
+    <VStack spacing={3} align="stretch">
+      <Textarea
+        value={commentText}
+        onChange={(e) => setCommentText(e.target.value)}
+        borderColor="gray.300"
+        _hover={{ borderColor: "gray.400" }}
+        _focus={{ borderColor: "blue.500", boxShadow: "0 0 0 1px #3182ce" }}
+      />
+      <Flex justify="flex-end">
+        <Button mr={2} onClick={() => setIsEditing(false)}>
+          취소
+        </Button>
+        <Button colorScheme="blue" isLoading={isProcessing} onClick={onOpen}>
           저장
         </Button>
-      </Box>
+      </Flex>
 
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
@@ -69,11 +72,15 @@ export function CommentEdit({
           <ModalHeader>댓글 수정</ModalHeader>
           <ModalBody>댓글을 수정하시겠습니까?</ModalBody>
           <ModalFooter>
-            <Button onClick={onClose}>취소</Button>
-            <Button onClick={handleClickSave}>수정</Button>
+            <Button mr={3} onClick={onClose}>
+              취소
+            </Button>
+            <Button colorScheme="blue" onClick={handleClickSave}>
+              수정
+            </Button>
           </ModalFooter>
         </ModalContent>
       </Modal>
-    </Flex>
+    </VStack>
   );
 }
