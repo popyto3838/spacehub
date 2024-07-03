@@ -12,30 +12,59 @@ export function ReviewCommentList({ spaceId, isProcessing, setIsProcessing }) {
 
   const navigate = useNavigate();
 
+  const fetchCommmnet = () => {
+    axios
+      .get(`/api/comment/listReview/${spaceId}?${searchParams}`)
+      .then((res) => {
+        // res.data가 객체인지 확인하고 comments 배열을 추출
+        const comments = res.data.comments;
+
+        // 각 댓글에 대한 대댓글을 가져오는 Promise 배열 생성
+        const commentPromises = comments.map((comment) =>
+          axios
+            .get(`/api/commentRe/listAll/${comment.commentId}`)
+            .then((replyRes) => ({
+              ...comment,
+              replies: replyRes.data,
+            })),
+        );
+
+        // 모든 Promise가 해결되면 상태 업데이트
+        Promise.all(commentPromises).then((commentsWithReplies) => {
+          setCommentList(commentsWithReplies);
+        });
+
+        setPageInfo(res.data.pageInfo);
+      })
+      .catch((err) => {});
+  };
+
   useEffect(() => {
-    if (!isProcessing) {
-      axios
-        .get(`/api/comment/listReview/${spaceId}?${searchParams}`)
-        .then((res) => {
-          // res.data가 객체인지 확인하고 comments 배열을 추출
-          const comments = res.data.comments;
-          setCommentList(comments);
-          setPageInfo(res.data.pageInfo);
-        })
-        .catch((err) => {})
-        .finally(() => {});
-    }
-  }, [isProcessing, searchParams]);
+    fetchCommmnet();
+  }, [isProcessing, searchParams, spaceId]);
+
+  const addReply = (commentId, newReply) => {
+    setCommentList((prevList) =>
+      prevList.map((comment) =>
+        comment.commentId === commentId
+          ? { ...comment, replies: [...(comment.replies || []), newReply] }
+          : comment,
+      ),
+    );
+  };
 
   // 페이징
   const pageNumber = [];
   for (let i = pageInfo.leftPageNumber; i <= pageInfo.rightPageNumber; i++) {
     pageNumber.push(i);
   }
+
   function handleClickPageButton(pageNumber) {
     searchParams.set("reviewPage", pageNumber);
     navigate(`/space/${spaceId}?${searchParams}`);
   }
+
+  // 대댓글 추가 함수
 
   return (
     <VStack spacing={6} align="stretch">
@@ -47,6 +76,7 @@ export function ReviewCommentList({ spaceId, isProcessing, setIsProcessing }) {
           comment={comment}
           key={comment.commentId}
           spaceId={spaceId}
+          addReply={addReply}
         />
       ))}
 
