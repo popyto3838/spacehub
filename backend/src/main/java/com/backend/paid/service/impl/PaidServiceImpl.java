@@ -91,10 +91,8 @@ public class PaidServiceImpl implements PaidService {
 
     @Override
     public void cancelPayment(PaymentCancelRequestDTO paidCancelRequest) throws IOException {
-        log.info("=====================1===========================");
         Paid paid = paidMapper.selectByPaidId(paidCancelRequest.getPaidId());
         if (paid.getStatus().equals(PaymentStatus.COMP)) {
-            log.info("=========================2======================={}", paid);
 
             HttpsURLConnection conn = null;
 
