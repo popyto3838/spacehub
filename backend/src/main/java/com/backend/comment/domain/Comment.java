@@ -25,7 +25,8 @@ public class Comment {
 
     private Integer commentCount; // comment의 갯수
     private Integer rateScore; // comment의 별점을 받음
-    private Integer rateScoreAvg; // comment의 별점의 평균
+    private Double rateScoreAvg; // comment의 별점의 평균
+    private String profileImage; // member의 이미지를 받아옴
 
     private List<File> commentFilesLists;
 
