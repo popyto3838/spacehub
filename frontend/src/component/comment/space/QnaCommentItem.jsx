@@ -114,6 +114,7 @@ export function QnaCommentItem({ comment, isProcessing, setIsProcessing }) {
           content: newReplyContent,
           nickname: account.nickname,
           targetName: comment.nickname,
+          memberId: account.id,
         };
         setReplies([...replies, newReply]);
         setNewReplyContent("");
