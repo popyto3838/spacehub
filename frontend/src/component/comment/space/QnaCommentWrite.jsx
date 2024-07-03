@@ -1,14 +1,15 @@
 import { useContext, useEffect, useState } from "react";
 import {
+  Avatar,
   Box,
   Button,
   Flex,
   Heading,
-  Image,
-  Spacer,
+  Text,
   Textarea,
   Tooltip,
   useToast,
+  VStack,
 } from "@chakra-ui/react";
 import { LoginContext } from "../../LoginProvider.jsx";
 import axios from "axios";
@@ -71,19 +72,19 @@ export function QnaCommentWrite({ spaceId, isProcessing, setIsProcessing }) {
   }
 
   return (
-    <Box border={"1px solid black"}>
+    <Box>
       {/* 맨윗줄 */}
-      <Flex>
-        <Heading as="h2" size="xl" mb={6} color="gray.700">
+      <Flex justify="space-between" align="center" mb={6}>
+        <Heading as="h2" size="xl" color="gray.700">
           QNA {commentList.length > 0 ? commentList[0].commentCount : ""} 개
         </Heading>
-        <Spacer />
         <Tooltip
-          label={"로그인 하세요"}
+          label="로그인 하세요"
           isDisabled={account.isLoggedIn()}
-          placement={"top"}
+          placement="top"
         >
           <Button
+            colorScheme="blue"
             isDisabled={!account.isLoggedIn()}
             onClick={() => setIsWriting(!isWriting)}
           >
@@ -95,35 +96,29 @@ export function QnaCommentWrite({ spaceId, isProcessing, setIsProcessing }) {
       {/* 멤버이미지, 아이디, 수정/삭제 드롭다운
           QNA 작성하기 버튼을 눌러야만 나옴 */}
       {isWriting && (
-        <Box>
-          <Flex>
-            <Image
-              border={"1px solid red"}
-              borderRadius={"full"}
-              w={"50px"}
-              src={member.profileImage}
-            />
-            <Box fontSize={"2xl"}>{member.nickname}</Box>
+        <VStack spacing={4} align="stretch">
+          <Flex align="center">
+            <Avatar src={member.profileImage} size="md" mr={4} />
+            <Text fontSize="xl">{member.nickname}</Text>
           </Flex>
 
           {/* 텍스트박스, 등록 버튼 */}
-          <Flex>
-            <Textarea
-              h={"80px"}
-              placeholder={"QNA를 작성해주세요."}
-              value={content}
-              onChange={(e) => setContent(e.target.value)}
-            />
-            <Button
-              h={"80px"}
-              isLoading={isProcessing}
-              isDisabled={content.trim().length === 0}
-              onClick={handleClickWriteQNA}
-            >
-              등록
-            </Button>
-          </Flex>
-        </Box>
+          <Textarea
+            h="80px"
+            placeholder="QNA를 작성해주세요."
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
+          />
+
+          <Button
+            colorScheme="blue"
+            isLoading={isProcessing}
+            isDisabled={content.trim().length === 0}
+            onClick={handleClickWriteQNA}
+          >
+            등록
+          </Button>
+        </VStack>
       )}
     </Box>
   );

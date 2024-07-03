@@ -1,7 +1,12 @@
 import {
+  Avatar,
   Box,
   Button,
+  Card,
+  CardBody,
   Flex,
+  HStack,
+  IconButton,
   Image,
   Menu,
   MenuButton,
@@ -13,10 +18,12 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
+  SimpleGrid,
   Spacer,
-  Textarea,
+  Text,
   useDisclosure,
   useToast,
+  VStack,
   Wrap,
   WrapItem,
 } from "@chakra-ui/react";
@@ -24,6 +31,7 @@ import { useContext, useEffect, useState } from "react";
 import { LoginContext } from "../../LoginProvider.jsx";
 import { ReviewCommentEdit } from "./ReviewCommentEdit.jsx";
 import axios from "axios";
+import { FaEllipsisV } from "react-icons/fa";
 
 export function ReviewCommentItem({
   comment,
@@ -87,100 +95,103 @@ export function ReviewCommentItem({
   const s3BaseUrl = "https://studysanta.s3.ap-northeast-2.amazonaws.com/prj3";
 
   return (
-    <Box border={"1px solid black"}>
+    <Card>
       {/* 멤버이미지, 아이디, 수정/삭제 드롭다운 */}
-      <Flex>
-        <Image
-          border={"1px solid red"}
-          borderRadius={"full"}
-          w={"50px"}
-          src={member.profileImage}
-        />
-        <Box fontSize={"2xl"}>{comment.nickname}</Box>
-        <Spacer />
-        <Box>좋아요</Box>
-      </Flex>
-
-      {/* 별점, 텍스트박스, 등록 버튼 */}
-      {isEditing || (
-        <Box>
-          <Flex border={"1px solid black"} m={1}>
-            {/* 별점 */}
-            <Wrap>
-              {starArray.map((star) => (
-                <WrapItem key={star}>
-                  {comment.rateScore >= 1 && (
-                    <Image
-                      w={10}
-                      src={`${s3BaseUrl}/ic-star-${star <= comment.rateScore ? "on" : "off"}.png`}
-                      alt={"star"}
-                    />
-                  )}
-                </WrapItem>
-              ))}
-            </Wrap>
-            <Box>{comment.rateScore}점</Box>
-
-            <Spacer />
-            {account.hasAccess(comment.memberId) && (
-              <Menu>
-                <MenuButton m={1} fontSize={"2xl"}>
-                  ...
-                </MenuButton>
-                <MenuList minWidth={"50px"}>
-                  <MenuItem onClick={() => setIsEditing(!isEditing)}>
-                    수정
-                  </MenuItem>
-                  <MenuItem onClick={onOpen}>삭제</MenuItem>
-                </MenuList>
-              </Menu>
-            )}
+      <CardBody>
+        <VStack spacing={4} align="stretch">
+          <Flex justify="space-between" align="center">
+            <HStack>
+              <Avatar src={member.profileImage} size="md" />
+              <Text fontSize="xl">{comment.nickname}</Text>
+            </HStack>
+            <Text>좋아요</Text>
           </Flex>
-          <Box>
-            {/* 수정중이 아닐때는 첨부한 이미지 파일이 보임*/}
-            <Flex>
-              {comment.commentFilesLists &&
-                comment.commentFilesLists.map((file) => (
-                  <Flex border={"1px solid green"} key={file.fileName}>
-                    <Image w={150} src={file.src} />
-                  </Flex>
-                ))}
-            </Flex>
-            <Textarea h={"80px"} readOnly={true} value={comment.content} />
-          </Box>
-          <Box>{comment.inputDt}</Box>
-        </Box>
-      )}
 
-      {/* 수정중일때 */}
-      {isEditing && (
-        <ReviewCommentEdit
-          comment={comment}
-          isProcessing={isProcessing}
-          setIsProcessing={setIsProcessing}
-          setIsEditing={setIsEditing}
-          spaceId={spaceId}
-        />
-      )}
+          {/* 별점, 텍스트박스, 등록 버튼 */}
+          {isEditing || (
+            <Box>
+              <Flex align="center" mb={2}>
+                <Wrap>
+                  {starArray.map((star) => (
+                    <WrapItem key={star}>
+                      {comment.rateScore >= 1 && (
+                        <Image
+                          w={6}
+                          src={`${s3BaseUrl}/ic-star-${star <= comment.rateScore ? "on" : "off"}.png`}
+                          alt="star"
+                        />
+                      )}
+                    </WrapItem>
+                  ))}
+                </Wrap>
+                <Text ml={2}>{comment.rateScore}점</Text>
+                <Spacer />
+                {account.hasAccess(comment.memberId) && (
+                  <Menu>
+                    <MenuButton
+                      as={IconButton}
+                      icon={<FaEllipsisV />}
+                      variant="ghost"
+                    />
+                    <MenuList minWidth={"60px"}>
+                      <MenuItem onClick={() => setIsEditing(!isEditing)}>
+                        수정
+                      </MenuItem>
+                      <MenuItem onClick={onOpen}>삭제</MenuItem>
+                    </MenuList>
+                  </Menu>
+                )}
+              </Flex>
+              <SimpleGrid columns={[2, 3, 4]} spacing={2} mb={2}>
+                {/* 수정중이 아닐때는 첨부한 이미지 파일이 보임 */}
+                {comment.commentFilesLists &&
+                  comment.commentFilesLists.map((file) => (
+                    <Image
+                      key={file.fileName}
+                      src={file.src}
+                      alt={file.fileName}
+                    />
+                  ))}
+              </SimpleGrid>
+              <Text>{comment.content}</Text>
+              <Text fontSize="sm" color="gray.500" mt={2}>
+                {comment.inputDt}
+              </Text>
+            </Box>
+          )}
 
-      {account.hasAccess(comment.memberId) && (
-        <Modal isOpen={isOpen} onClose={onClose}>
-          <ModalOverlay />
-          <ModalContent>
-            <ModalHeader>리뷰 삭제</ModalHeader>
-            <ModalBody>작성하신 리뷰를 삭제하시겠습니까?</ModalBody>
-            <ModalFooter>
-              <Button onClick={onClose}>취소</Button>
-              <Button
-                isLoading={isProcessing}
-                onClick={handleClickDeleteReviewComment}
-              >
-                확인
-              </Button>
-            </ModalFooter>
-          </ModalContent>
-        </Modal>
-      )}
-    </Box>
+          {/* 수정중일때 보이는 컴포넌트*/}
+          {isEditing && (
+            <ReviewCommentEdit
+              comment={comment}
+              isProcessing={isProcessing}
+              setIsProcessing={setIsProcessing}
+              setIsEditing={setIsEditing}
+              spaceId={spaceId}
+            />
+          )}
+        </VStack>
+      </CardBody>
+
+      <Modal isOpen={isOpen} onClose={onClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>리뷰 삭제</ModalHeader>
+          <ModalBody>작성하신 리뷰를 삭제하시겠습니까?</ModalBody>
+          <ModalFooter>
+            <Button mr={3} onClick={onClose}>
+              취소
+            </Button>
+            <Button
+              colorScheme="red"
+              isLoading={isProcessing}
+              onClick={handleClickDeleteReviewComment}
+            >
+              확인
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+    </Card>
   );
 }
