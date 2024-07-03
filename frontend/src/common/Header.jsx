@@ -387,7 +387,7 @@ const Header = () => {
                 leftIcon={<FontAwesomeIcon icon={faList} />}
                 variant="ghost"
                 justifyContent="flex-start"
-                onClick={() => navigate("/board/list")}
+                onClick={() => handleMenuClick("/board/list")}
                 color="white"
                 _hover={{ bg: "gray.700", color: "yellow.400" }}
               >
@@ -445,7 +445,7 @@ const Header = () => {
                   variant="ghost"
                   justifyContent="flex-start"
                   _hover={{ bg: "gray.700", color: "yellow.400" }}
-                  onClick={() => navigate(`/host/spaceList`)}
+                  onClick={() => handleMenuClick(`/host/spaceList`)}
                   color="white"
                 >
                   나의 공간 리스트
@@ -457,7 +457,7 @@ const Header = () => {
                   variant="ghost"
                   justifyContent="flex-start"
                   _hover={{ bg: "gray.700", color: "yellow.400" }}
-                  onClick={() => navigate(`/host/spaceList`)}
+                  onClick={() => handleMenuClick(`/host/spaceList`)}
                   color="white"
                 >
                   호스트 예약 관리
@@ -469,7 +469,7 @@ const Header = () => {
                   variant="ghost"
                   justifyContent="flex-start"
                   _hover={{ bg: "gray.700", color: "yellow.400" }}
-                  onClick={() => navigate(`member/myFavoritesList`)}
+                  onClick={() => handleMenuClick(`member/myFavoritesList`)}
                   color="white"
                 >
                   즐겨찾기
@@ -482,7 +482,7 @@ const Header = () => {
                   justifyContent="flex-start"
                   _hover={{ bg: "gray.700", color: "yellow.400" }}
                   onClick={() =>
-                    navigate(`member/myReservationList/${account.id}`)
+                    handleMenuClick(`member/myReservationList/${account.id}`)
                   }
                   color="white"
                 >
@@ -495,7 +495,7 @@ const Header = () => {
                   variant="ghost"
                   justifyContent="flex-start"
                   _hover={{ bg: "gray.700", color: "yellow.400" }}
-                  onClick={() => navigate(`paid/myPaymentList`)}
+                  onClick={() => handleMenuClick(`paid/myPaymentList`)}
                   color="white"
                 >
                   결제내역
