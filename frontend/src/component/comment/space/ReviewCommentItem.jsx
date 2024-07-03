@@ -273,9 +273,18 @@ export function ReviewCommentItem({
             <VStack spacing={2} align="stretch" pl={4} mt={2}>
               {replies.map((reply) => (
                 <Box key={reply.commentReId} width="100%">
-                  <Flex justify="space-between" align="flex-start">
+                  <Text fontSize="lg" color="gray.500">
+                    ↪︎ 작성자: {reply.nickname}
+                  </Text>
+                  <Box justify="space-between" align="flex-start">
                     <HStack spacing={2} alignItems="flex-start" flex={1}>
-                      <Text fontWeight="bold">@{reply.targetName}</Text>
+                      <Text
+                        fontSize="lg"
+                        fontWeight="bold"
+                        textColor={"blue.400"}
+                      >
+                        @{reply.targetName}
+                      </Text>
                       {editingReplyId === reply.commentReId ? (
                         <VStack width="100%" align="stretch">
                           <Textarea
@@ -305,9 +314,6 @@ export function ReviewCommentItem({
                     </HStack>
                     {!editingReplyId && (
                       <HStack spacing={2}>
-                        <Text fontSize="sm" color="gray.500">
-                          {reply.nickname}
-                        </Text>
                         {account.hasAccess(reply.memberId) && (
                           <>
                             <Button
@@ -334,7 +340,7 @@ export function ReviewCommentItem({
                         )}
                       </HStack>
                     )}
-                  </Flex>
+                  </Box>
                 </Box>
               ))}
             </VStack>
