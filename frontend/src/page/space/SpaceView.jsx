@@ -475,7 +475,7 @@ function SpaceView() {
                     className="quill-content"
                     dangerouslySetInnerHTML={{ __html: spaceDetails.facility }}
                   ></div>
-                  <Divider />
+                  <Divider my={8} />
                   <Heading as="h3" size="lg" mb={6} mt={6} color="gray.600">
                     제공 편의시설
                   </Heading>
@@ -513,7 +513,7 @@ function SpaceView() {
                   </Box>
                 </Box>
                 <Divider />
-                <Box id="noticeArea" p={8} bg="gray.50" borderRadius="lg">
+                <Box id="noticeArea" p={8} borderRadius="lg">
                   <Heading as="h2" size="xl" mb={6} color="gray.700">
                     유의사항
                   </Heading>
@@ -556,9 +556,9 @@ function SpaceView() {
               >
                 <VStack spacing={8} align="stretch">
                   <HStack justify="space-between">
-                    <Heading size="xl" color="gray.800">
-                      <FontAwesomeIcon icon={faWonSign} /> {spaceDetails.price}{" "}
-                      / 시간
+                    <Heading size="md" color="gray.800">
+                      <FontAwesomeIcon icon={faWonSign} />{" "}
+                      {spaceDetails.price?.toLocaleString()} / 시간
                     </Heading>
                     <HStack>
                       <Box>{renderStars(space.averageRating)}</Box>
