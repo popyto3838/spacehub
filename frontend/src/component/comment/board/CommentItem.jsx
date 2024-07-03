@@ -203,46 +203,48 @@ export function CommentItem({
           {replies.length > 0 && (
             <VStack spacing={2} align="stretch" pl={4} mt={2}>
               {replies.map((reply) => (
-                <Box key={reply.commentReId} w="full">
-                  {editingReplyId === reply.commentReId ? (
-                    <VStack align="stretch" spacing={2}>
-                      <HStack justify="space-between">
-                        <Text fontWeight="bold">@{reply.targetName}</Text>
-                        <Text fontSize="sm" color="gray.500">
-                          {reply.nickname}
-                        </Text>
-                      </HStack>
-                      <Textarea
-                        value={editingReplyContent}
-                        onChange={(e) => setEditingReplyContent(e.target.value)}
-                        rows={3}
-                      />
-                      <HStack justifyContent="flex-end">
-                        <Button
-                          size="sm"
-                          onClick={() => setEditingReplyId(null)}
-                        >
-                          취소
-                        </Button>
-                        <Button
-                          size="sm"
-                          colorScheme="blue"
-                          onClick={handleReplyUpdate}
-                        >
-                          저장
-                        </Button>
-                      </HStack>
-                    </VStack>
-                  ) : (
-                    <Flex justify="space-between" align="center">
-                      <HStack spacing={2} flex={1}>
-                        <Text fontWeight="bold">@{reply.targetName}</Text>
+                <Box key={reply.commentReId} width="100%">
+                  <Text fontSize="lg" color="gray.500">
+                    ↪︎ 작성자: {reply.nickname}
+                  </Text>
+                  <Box justify="space-between" align="flex-start">
+                    <HStack spacing={2} alignItems="flex-start" flex={1}>
+                      <Text
+                        fontSize="lg"
+                        fontWeight="bold"
+                        textColor={"blue.400"}
+                      >
+                        @{reply.targetName}
+                      </Text>
+                      {editingReplyId === reply.commentReId ? (
+                        <VStack width="100%" align="stretch">
+                          <Textarea
+                            value={editingReplyContent}
+                            onChange={(e) =>
+                              setEditingReplyContent(e.target.value)
+                            }
+                            size="sm"
+                            resize="vertical"
+                            minHeight="100px"
+                          />
+                          <HStack justifyContent="flex-end">
+                            <Button size="sm" onClick={handleReplyUpdate}>
+                              저장
+                            </Button>
+                            <Button
+                              size="sm"
+                              onClick={() => setEditingReplyId(null)}
+                            >
+                              취소
+                            </Button>
+                          </HStack>
+                        </VStack>
+                      ) : (
                         <Text flex={1}>{reply.content}</Text>
-                      </HStack>
+                      )}
+                    </HStack>
+                    {!editingReplyId && (
                       <HStack spacing={2}>
-                        <Text fontSize="sm" color="gray.500">
-                          {reply.nickname}
-                        </Text>
                         {account.hasAccess(reply.memberId) && (
                           <>
                             <Button
@@ -259,18 +261,17 @@ export function CommentItem({
                             <Button
                               size="xs"
                               colorScheme="red"
-                              onClick={() => {
-                                setDeleteReplyId(reply.commentReId);
-                                onReplyDeleteOpen(reply.commentReId);
-                              }}
+                              onClick={() =>
+                                handleReplyDelete(reply.commentReId)
+                              }
                             >
                               삭제
                             </Button>
                           </>
                         )}
                       </HStack>
-                    </Flex>
-                  )}
+                    )}
+                  </Box>
                 </Box>
               ))}
             </VStack>
