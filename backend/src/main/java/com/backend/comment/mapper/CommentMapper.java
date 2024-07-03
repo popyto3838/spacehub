@@ -73,7 +73,8 @@ public interface CommentMapper {
             SELECT C.COMMENT_ID, C.CONTENT, C.INPUT_DT, C.UPDATE_DT, C.PARENT_ID, C.MEMBER_ID,C.RATE_SCORE,
                    (SELECT AVG(RATE_SCORE) FROM COMMENT WHERE DIVISION = 'REVIEW' AND PARENT_ID = #{parentId}) rate_score_avg,
                    (SELECT COUNT(COMMENT_ID) FROM COMMENT WHERE DIVISION = 'REVIEW' AND PARENT_ID = #{parentId}) comment_count,
-                   CASE WHEN M.WITHDRAWN = 'Y' THEN '탈퇴한 회원입니다.' ELSE M.NICKNAME END AS NICKNAME
+                   CASE WHEN M.WITHDRAWN = 'Y' THEN '탈퇴한 회원입니다.' ELSE M.NICKNAME END AS NICKNAME,
+                   M.PROFILE_IMAGE profile_image
             FROM COMMENT C JOIN MEMBER M ON C.MEMBER_ID = M.MEMBER_ID
             WHERE C.PARENT_ID = #{parentId}
               AND C.DIVISION = 'REVIEW'
@@ -85,6 +86,7 @@ public interface CommentMapper {
     @Select("""
             SELECT C.COMMENT_ID, C.CONTENT, C.INPUT_DT, C.UPDATE_DT, C.PARENT_ID, C.MEMBER_ID,C.RATE_SCORE,
                    SUM(C.RATE_SCORE) / COUNT(C.COMMENT_ID) AS rate_score_avg,
+                   M.PROFILE_IMAGE profile_image,
                    CASE WHEN M.WITHDRAWN = 'Y' THEN '탈퇴한 회원입니다.' ELSE M.NICKNAME END AS NICKNAME
             FROM COMMENT C JOIN MEMBER M ON C.MEMBER_ID = M.MEMBER_ID
             WHERE C.PARENT_ID = #{parentId}
@@ -136,7 +138,8 @@ public interface CommentMapper {
     @Select("""
             SELECT C.COMMENT_ID, C.CONTENT, C.INPUT_DT, C.UPDATE_DT, C.PARENT_ID, C.MEMBER_ID,C.RATE_SCORE,
                    CASE WHEN M.WITHDRAWN = 'Y' THEN '탈퇴한 회원입니다.' ELSE M.NICKNAME END AS NICKNAME,
-                   (SELECT COUNT(COMMENT_ID) FROM COMMENT WHERE DIVISION = 'QNA' AND PARENT_ID = #{parentId}) comment_count
+                   (SELECT COUNT(COMMENT_ID) FROM COMMENT WHERE DIVISION = 'QNA' AND PARENT_ID = #{parentId}) comment_count,
+                   M.PROFILE_IMAGE profile_image
             FROM COMMENT C JOIN MEMBER M ON C.MEMBER_ID = M.MEMBER_ID
             WHERE C.PARENT_ID = #{parentId}
               AND C.DIVISION = 'QNA'

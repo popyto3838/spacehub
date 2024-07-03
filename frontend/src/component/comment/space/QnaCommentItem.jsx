@@ -78,7 +78,7 @@ export function QnaCommentItem({ comment, isProcessing, setIsProcessing }) {
         <VStack spacing={4} align="stretch">
           <Flex justify="space-between" align="center">
             <HStack>
-              <Avatar src={member.profileImage} size="md" />
+              <Avatar src={comment.profileImage} size="md" />
               <Text fontSize="xl">{comment.nickname}</Text>
             </HStack>
             {account.hasAccess(comment.memberId) && !isEditing && (
