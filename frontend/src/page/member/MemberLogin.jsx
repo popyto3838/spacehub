@@ -279,6 +279,113 @@ export function MemberLogin() {
           </VStack>
         </Box>
       </Box>
+
+      <Modal isOpen={isFirstModalOpen} onClose={onFirstModalClose}>
+        <ModalOverlay/>
+        <ModalContent>
+          <ModalHeader>아이디 찾기</ModalHeader>
+          <ModalCloseButton/>
+          <ModalBody>
+            <FormControl>
+              <FormLabel>핸드폰번호를 입력해주세요</FormLabel>
+              <Input
+                onChange={(e) => {
+                  setMobile(e.target.value);
+                }}
+                placeholder="01012345678"/>
+              <Button colorScheme={"purple"} type="button" onClick={sendNumberMobile}>
+                인증번호받기
+              </Button>
+              {isCodeSent && (
+                <Box>
+                  <InputGroup>
+                    <Input
+                      type={"text"}
+                      onChange={(e) => {
+                        setInputCode(e.target.value);
+                      }}
+                    />
+                    <InputRightElement w="75px" mr={1}>
+                      <Button onClick={confirmNumberMobile}>핸드폰 인증</Button>
+                    </InputRightElement>
+                  </InputGroup>
+                  {expirationTime && <TimerComponent expirationTime={expirationTime}/>}
+                </Box>
+              )}
+            </FormControl>
+
+            <FormControl mt={4}>
+              <FormLabel>가입하신 아이디는</FormLabel>
+              <Input placeholder={foundEmail ? `${foundEmail} 입니다` : ''} readOnly/>
+            </FormControl>
+          </ModalBody>
+          <ModalFooter>
+            <Button colorScheme="blue" mr={3} onClick={onFirstModalClose}>
+              닫기
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+      <Modal isOpen={isSecondModalOpen} onClose={onSecondModalClose}>
+        <ModalOverlay/>
+        <ModalContent>
+          <ModalHeader>비밀번호 찾기</ModalHeader>
+          <ModalCloseButton/>
+          <ModalBody>
+            <FormControl>
+              <FormLabel>핸드폰번호를 입력해주세요</FormLabel>
+              <Input
+                onChange={(e) => {
+                  setMobile(e.target.value);
+                }}
+                placeholder="01012345678"/>
+              <Button colorScheme={"purple"} type="button" onClick={sendNumberMobile}>
+                인증번호받기
+              </Button>
+              {isCodeSent && (
+                <Box>
+                  <InputGroup>
+                    <Input
+                      type={"text"}
+                      onChange={(e) => {
+                        setInputCode(e.target.value);
+                      }}
+                    />
+                    <InputRightElement w="75px" mr={1}>
+                      <Button onClick={confirmNumberMobilePassword}>핸드폰 인증</Button>
+                    </InputRightElement>
+                  </InputGroup>
+                  {expirationTime && <TimerComponent expirationTime={expirationTime}/>}
+                </Box>
+              )}
+            </FormControl>
+
+            <FormControl mt={4}>
+              <FormLabel>비밀번호를 재설정 해주세요</FormLabel>
+              <Input
+                type={"password"}
+                onChange={(e) =>
+                  setPassword(e.target.value)
+                }
+                placeholder={"새 비밀번호"}/>
+
+              <Input
+                type={"password"}
+                onChange={(e) => setPasswordCheck(e.target.value)}
+                mt={7} placeholder={"새 비밀번호 확인"}/>
+              {password === passwordCheck || (
+                <FormHelperText>암호가 일치하지 않습니다.</FormHelperText>
+              )}
+            </FormControl>
+          </ModalBody>
+          <ModalFooter>
+            <Button onClick={onSecondModalClose}>취소</Button>
+            <Button colorScheme="blue" mr={3} onClick={handleClickSave}>
+              저장
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </Box>
   );
 }

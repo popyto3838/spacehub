@@ -113,10 +113,12 @@ public class MemberController {
 
     @DeleteMapping("{id}")
     public ResponseEntity delete(@RequestBody Member member, Authentication authentication) {
-
+        System.out.println("member = " + member);
         if (service.hasAccess(member, authentication)) {
             service.remove(member.getMemberId());
-            return ResponseEntity.ok().build();
+            ResponseEntity<Object> build = ResponseEntity.ok().build();
+            log.info("=============build============{}",build);
+            return build;
         }
         return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
     }
@@ -139,6 +141,7 @@ public class MemberController {
         System.out.println(member);
         System.out.println(authentication);
         if (service.hasAccessModify(member, authentication)) {
+            System.out.println("member = " + member);
             Map<String, Object> result = service.modify(member, authentication);
             return ResponseEntity.ok(result);
         } else {
@@ -307,6 +310,7 @@ public class MemberController {
 
     @PostMapping("signup")
     public ResponseEntity signup(@RequestBody Member member) {
+        System.out.println("member = " + member);
 
         if (service.validate(member)) {
 
@@ -371,5 +375,15 @@ public class MemberController {
 
         return ResponseEntity.ok(host);
     }
+
+
+    @PostMapping("phone")
+    public ResponseEntity phone(@RequestBody Member member) {
+
+        service.modifyPhoneByMemberId(member);
+        return ResponseEntity.ok().build();
+    }
+
+
 
 }
