@@ -44,7 +44,7 @@ import {
   faUser,
   faUserPlus,
 } from "@fortawesome/free-solid-svg-icons";
-import spaceImage from "/img/spacehub1.png";
+import spaceImage from "/img/SpaceHub.png";
 
 const Header = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -127,13 +127,13 @@ const Header = () => {
             icon={<HamburgerIcon />}
             onClick={onOpen}
             variant="outline"
-            color="#FF4E8B"
-            borderColor="#FF4E8B"
+            color="#E63D3D"
+            borderColor="#E63D3D"
             aria-label="Open Menu"
             fontSize="2rem"
             h="5vh"
             w="5vh"
-            _hover={{ bg: "#FF4E8B", color: "black" }}
+            _hover={{ bg: "#E63D3D", color: "white" }}
             ml={8}
           />
         </Box>
@@ -154,10 +154,10 @@ const Header = () => {
             onClick={() => navigate("/")}
             cursor="pointer"
             lineHeight="12vh"
-            color="#FF4E8B"
+            color="black"
           >
             Space
-            <Text as="span" color="#FF4E8B">
+            <Text as="span" color="#E63D3D">
               Hub
             </Text>
           </Text>
@@ -166,8 +166,9 @@ const Header = () => {
         <Flex align="center" justify="flex-end" width="33%">
           {account.isLoggedOut() && (
             <Button
-              colorScheme="yellow"
+              color="#E63D3D"
               variant="outline"
+              borderColor="#E63D3D"
               mr={4}
               onClick={() => navigate(`/member/signup`)}
               fontSize="lg"
@@ -178,9 +179,8 @@ const Header = () => {
           )}
           {account.isUser() && (
             <Button
-              // colorScheme="yellow"
-              color="#FF4E8B"
-              borderColor="#FF4E8B"
+              color="#E63D3D"
+              borderColor="#E63D3D"
               variant="outline"
               mr={4}
               onClick={SwitchHost}
@@ -192,9 +192,8 @@ const Header = () => {
           )}
           {account.isHost() && (
             <Button
-              // colorScheme="yellow"
-              borderColor="#FF4E8B"
-              color="#FF4E8B"
+              borderColor="#E63D3D"
+              color="#E63D3D"
               variant="outline"
               mr={4}
               onClick={SwitchUser}
@@ -219,8 +218,6 @@ const Header = () => {
                 h="6vh"
                 w="6vh"
                 mr={6}
-                showBorder="true"
-                borderColor="#FF4E8B"
               />
             </MenuButton>
             <MenuList borderColor="gray.800">
@@ -387,7 +384,7 @@ const Header = () => {
                 leftIcon={<FontAwesomeIcon icon={faList} />}
                 variant="ghost"
                 justifyContent="flex-start"
-                onClick={() => navigate("/board/list")}
+                onClick={() => handleMenuClick("/board/list")}
                 color="white"
                 _hover={{ bg: "gray.700", color: "yellow.400" }}
               >
@@ -445,7 +442,7 @@ const Header = () => {
                   variant="ghost"
                   justifyContent="flex-start"
                   _hover={{ bg: "gray.700", color: "yellow.400" }}
-                  onClick={() => navigate(`/host/spaceList`)}
+                  onClick={() => handleMenuClick(`/host/spaceList`)}
                   color="white"
                 >
                   나의 공간 리스트
@@ -457,7 +454,7 @@ const Header = () => {
                   variant="ghost"
                   justifyContent="flex-start"
                   _hover={{ bg: "gray.700", color: "yellow.400" }}
-                  onClick={() => navigate(`/host/spaceList`)}
+                  onClick={() => handleMenuClick(`/host/spaceList`)}
                   color="white"
                 >
                   호스트 예약 관리
@@ -469,7 +466,7 @@ const Header = () => {
                   variant="ghost"
                   justifyContent="flex-start"
                   _hover={{ bg: "gray.700", color: "yellow.400" }}
-                  onClick={() => navigate(`member/myFavoritesList`)}
+                  onClick={() => handleMenuClick(`member/myFavoritesList`)}
                   color="white"
                 >
                   즐겨찾기
@@ -482,7 +479,7 @@ const Header = () => {
                   justifyContent="flex-start"
                   _hover={{ bg: "gray.700", color: "yellow.400" }}
                   onClick={() =>
-                    navigate(`member/myReservationList/${account.id}`)
+                    handleMenuClick(`member/myReservationList/${account.id}`)
                   }
                   color="white"
                 >
@@ -495,7 +492,7 @@ const Header = () => {
                   variant="ghost"
                   justifyContent="flex-start"
                   _hover={{ bg: "gray.700", color: "yellow.400" }}
-                  onClick={() => navigate(`paid/myPaymentList`)}
+                  onClick={() => handleMenuClick(`paid/myPaymentList`)}
                   color="white"
                 >
                   결제내역
