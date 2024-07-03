@@ -107,7 +107,10 @@ export function ReviewCommentWrite({ spaceId, isProcessing, setIsProcessing }) {
           <Box>
             <FontAwesomeIcon icon={faStar} color="yellow.400" />
             <Text as="span" ml={2}>
-              {commentList.length > 0 ? commentList[0].rateScoreAvg : ""}점
+              {commentList.length > 0
+                ? commentList[0].rateScoreAvg.toFixed(1)
+                : ""}
+              점
             </Text>
           </Box>
           <Tooltip
