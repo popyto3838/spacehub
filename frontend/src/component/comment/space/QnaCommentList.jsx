@@ -6,7 +6,6 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 
 export function QnaCommentList({ spaceId, isProcessing, setIsProcessing }) {
   const [commentList, setCommentList] = useState([]);
-
   // 페이징
   const [pageInfo, setPageInfo] = useState({});
   const [searchParams] = useSearchParams();

@@ -2,6 +2,7 @@ import {
   Avatar,
   Box,
   Button,
+  Divider,
   Flex,
   FormControl,
   FormHelperText,
@@ -19,7 +20,7 @@ import { LoginContext } from "../../LoginProvider.jsx";
 import axios from "axios";
 import { Star } from "./Star.jsx";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faStar } from "@fortawesome/free-solid-svg-icons";
+import { faPen, faStar } from "@fortawesome/free-solid-svg-icons";
 
 export function ReviewCommentWrite({ spaceId, isProcessing, setIsProcessing }) {
   const [content, setContent] = useState("");
@@ -97,19 +98,18 @@ export function ReviewCommentWrite({ spaceId, isProcessing, setIsProcessing }) {
   for (let i = 0; i < files.length; i++) {}
 
   return (
-    <Box>
-      {/* 맨 윗줄 */}
+    <Box borderWidth="1px" borderRadius="lg" p={6} bg="white" shadow="md">
       <Flex justify="space-between" align="center" mb={6}>
-        <Heading as="h2" size="xl" color="gray.700">
-          REVIEW {commentList.length > 0 ? commentList[0].commentCount : ""} 개
+        <Heading as="h3" size="lg" color="gray.700">
+          이용후기 작성
         </Heading>
         <HStack>
           <Box>
             <FontAwesomeIcon icon={faStar} color="yellow.400" />
-            <Text as="span" ml={2}>
+            <Text as="span" ml={2} fontWeight="bold">
               {commentList.length > 0
                 ? commentList[0].rateScoreAvg.toFixed(1)
-                : ""}
+                : "0.0"}
               점
             </Text>
           </Box>
@@ -119,34 +119,35 @@ export function ReviewCommentWrite({ spaceId, isProcessing, setIsProcessing }) {
             placement="top"
           >
             <Button
+              leftIcon={<FontAwesomeIcon icon={faPen} />}
               colorScheme="blue"
               isDisabled={!account.isLoggedIn()}
               onClick={() => setIsWriting(!isWriting)}
             >
-              REVIEW 작성하기
+              리뷰 작성
             </Button>
           </Tooltip>
         </HStack>
       </Flex>
 
-      {/* 멤버이미지, 아이디, 수정/삭제 드롭다운
-          REVIEW 작성하기 버튼을 눌러야만 나옴 */}
       {isWriting && (
         <VStack spacing={4} align="stretch">
+          <Divider />
           <Flex align="center">
             <Avatar src={member.profileImage} size="md" mr={4} />
-            <Text fontSize="xl">{member.nickname}</Text>
+            <Text fontSize="lg" fontWeight="bold">
+              {member.nickname}
+            </Text>
           </Flex>
 
-          {/* 별점, 텍스트박스, 파일첨부 등록 버튼 */}
-          {/* 별점 컴포넌트 */}
           <Star setRateScore={setRateScore} rateScore={rateScore} />
 
           <Textarea
-            h="80px"
+            h="120px"
             placeholder="사실과 관계없는 내용을 작성시 관계 법령에 따라 처벌받을 수 있습니다."
             value={content}
             onChange={(e) => setContent(e.target.value)}
+            borderColor="gray.300"
           />
 
           <FormControl>
@@ -155,13 +156,21 @@ export function ReviewCommentWrite({ spaceId, isProcessing, setIsProcessing }) {
               multiple
               accept="image/*"
               onChange={(e) => setFiles(e.target.files)}
+              borderColor="gray.300"
             />
             <FormHelperText>
               첨부 파일의 총 용량은 10MB, 한 파일은 1MB를 초과할 수 없습니다.
             </FormHelperText>
           </FormControl>
 
-          {fileNameList && <Box>{fileNameList}</Box>}
+          {fileNameList.length > 0 && (
+            <Box borderWidth="1px" borderRadius="md" p={2}>
+              <Text fontWeight="bold" mb={2}>
+                첨부된 파일:
+              </Text>
+              {fileNameList}
+            </Box>
+          )}
 
           <Button
             colorScheme="blue"
