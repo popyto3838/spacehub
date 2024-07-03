@@ -45,7 +45,6 @@ import {
   faUserPlus,
 } from "@fortawesome/free-solid-svg-icons";
 import spaceImage from "/img/SpaceHub.png";
-import { AiOutlineUser } from "react-icons/ai";
 
 const Header = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -214,15 +213,11 @@ const Header = () => {
             >
               <Avatar
                 src={`${member.profileImage}?t=${timestamp}`}
-                icon={<AiOutlineUser fontSize="2.5rem" />}
-                bgColor={"#E63D3D"}
                 alt="Profile"
                 size="lg"
                 h="6vh"
                 w="6vh"
                 mr={6}
-                showBorder="true"
-                borderColor="#E63D3D"
               />
             </MenuButton>
             <MenuList borderColor="gray.800">

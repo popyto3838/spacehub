@@ -413,9 +413,10 @@ function SpaceView() {
                   </Link>
                 ))}
               </HStack>
+              <Divider />
               <VStack spacing={16} align="stretch">
-                <Box id="introduceArea" p={8} bg="gray.50" borderRadius="lg">
-                  <Heading as="h2" size="xl" mb={6} color="gray.700">
+                <Box id="introduceArea" p={8} borderRadius="lg">
+                  <Heading as="h2" size="xl" mb={6}>
                     공간소개
                   </Heading>
                   <div
@@ -427,7 +428,7 @@ function SpaceView() {
                     gap={8}
                     textAlign="center"
                   >
-                    <Box>
+                    <Box mt={6}>
                       <Image
                         src="/public/img/층수.png"
                         boxSize="80px"
@@ -439,7 +440,7 @@ function SpaceView() {
                       </Text>
                       <Text fontSize="xl">{spaceDetails.floor}</Text>
                     </Box>
-                    <Box>
+                    <Box mt={6}>
                       <Image
                         src="/public/img/인원.png"
                         boxSize="80px"
@@ -451,7 +452,7 @@ function SpaceView() {
                       </Text>
                       <Text fontSize="xl">{spaceDetails.capacity}</Text>
                     </Box>
-                    <Box>
+                    <Box mt={6}>
                       <Image
                         src="/public/img/자동차.png"
                         boxSize="80px"
@@ -474,6 +475,7 @@ function SpaceView() {
                     className="quill-content"
                     dangerouslySetInnerHTML={{ __html: spaceDetails.facility }}
                   ></div>
+                  <Divider />
                   <Heading as="h3" size="lg" mb={6} mt={6} color="gray.600">
                     제공 편의시설
                   </Heading>
@@ -495,7 +497,8 @@ function SpaceView() {
                       </Box>
                     ))}
                   </Grid>
-                  <Heading as="h3" size="lg" mb={6} color="gray.600">
+                  <Divider />
+                  <Heading as="h3" size="lg" my={6} color="gray.600">
                     지도 안내
                   </Heading>
                   <Box height="400px" mb={4}>
