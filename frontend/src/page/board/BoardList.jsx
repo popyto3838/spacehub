@@ -129,16 +129,20 @@ export function BoardList() {
                 <Center p={8}>조회 결과가 없습니다.</Center>
               ) : (
                 <TableContainer>
-                  <Table variant="simple">
+                  <Table
+                    variant="simple"
+                    width="100%"
+                    sx={{ tableLayout: "fixed" }}
+                  >
                     <Thead>
-                      <Tr>
-                        <Th>카테고리</Th>
-                        <Th>#</Th>
-                        <Th>제목</Th>
-                        <Th>작성자</Th>
-                        <Th>작성일시</Th>
-                        <Th>조회수</Th>
-                        <Th>좋아요</Th>
+                      <Tr bg="gray.50">
+                        <Th width="110px">카테고리</Th>
+                        <Th width="20px">#</Th>
+                        <Th width="50%">제목</Th>
+                        <Th width="150px">작성자</Th>
+                        <Th width="100px">작성일시</Th>
+                        <Th width="65px">조회수</Th>
+                        <Th width="65px">좋아요</Th>
                       </Tr>
                     </Thead>
                     <Tbody>
@@ -149,31 +153,55 @@ export function BoardList() {
                           cursor="pointer"
                           _hover={{ bg: "blue.50" }}
                         >
-                          {categoryList.map(
-                            (category) =>
-                              category.categoryId === board.categoryId && (
-                                <Td key={category.categoryId}>
-                                  {category.categoryName}
-                                </Td>
-                              ),
-                          )}
-                          <Td>{board.boardId}</Td>
-                          <Td>
+                          <Td
+                            width="110px"
+                            overflow="hidden"
+                            textOverflow="ellipsis"
+                            whiteSpace="nowrap"
+                          >
+                            {
+                              categoryList.find(
+                                (category) =>
+                                  category.categoryId === board.categoryId,
+                              )?.categoryName
+                            }
+                          </Td>
+                          <Td textAlign={"center"} width="20px">
+                            {board.boardId}
+                          </Td>
+                          <Td
+                            width="50%"
+                            overflow="hidden"
+                            textOverflow="ellipsis"
+                            whiteSpace="nowrap"
+                          >
                             {board.title}
-                            {/* 첨부된 이미지가 있으면 Badge에 파일수 출력 */}
                             {board.numberOfImages > 0 && (
-                              <Badge>이미지 : {board.numberOfImages}</Badge>
+                              <Badge ml={2}>
+                                이미지 : {board.numberOfImages}
+                              </Badge>
                             )}
-                            {/* 글 목록 볼때, 댓글 갯수 */}
                             {board.numberOfComments > 0 && (
-                              <Badge>댓글 : {board.numberOfComments}</Badge>
+                              <Badge ml={2}>
+                                댓글 : {board.numberOfComments}
+                              </Badge>
                             )}
                           </Td>
-                          <Td>{board.writer}</Td>
-                          <Td>{board.inputDt}</Td>
-                          <Td>{board.views}</Td>
-                          {/* 좋아요 갯수 */}
-                          <Td>
+                          <Td
+                            width="150px"
+                            overflow="hidden"
+                            textOverflow="ellipsis"
+                            whiteSpace="nowrap"
+                          >
+                            {board.writer}
+                          </Td>
+                          <Td textAlign={"center"} width="100px">
+                            {board.inputDt}
+                          </Td>
+                          <Td textAlign={"center"} width="65px">
+                            {board.views}
+                          </Td>
+                          <Td textAlign={"center"} width="65px">
                             {board.numberOfLikes > 0 && board.numberOfLikes}
                           </Td>
                         </Tr>
