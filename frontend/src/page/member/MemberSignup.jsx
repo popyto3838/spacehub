@@ -215,6 +215,14 @@ export function MemberSignup() {
       setIsCodeSentPhone(true);
       setSignUp(true);
 
+      axios.post("/api/member/phone", {
+        memberId: account.id,
+        mobile: mobile,
+
+      });
+
+      window.location.reload();
+
     } else {
       alert("인증에 실패했습니다");
     }

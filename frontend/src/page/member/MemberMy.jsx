@@ -8,13 +8,14 @@ import {
   InputGroup,
   InputRightElement,
   Modal,
+  Text,
   ModalBody,
   ModalCloseButton,
   ModalContent,
   ModalFooter,
   ModalHeader,
   ModalOverlay,
-  useDisclosure, FormHelperText, Spinner,
+  useDisclosure, FormHelperText, Spinner, useToast, VStack, Switch,
 } from "@chakra-ui/react";
 
 import React, { useContext, useEffect, useState } from "react";
@@ -53,7 +54,7 @@ export function MemberMy() {
 
   const account = useContext(LoginContext);
   const { memberId } = useParams();
-  const toast = useToast();
+  const toast=  useToast();
   const navigate = useNavigate();
 
   const fetchMemberData = () => {
@@ -335,21 +336,21 @@ export function MemberMy() {
           {account.isHost() && (
             <Box bg="purple.700" color="white" p={3} borderRadius="md">
               <FormControl>
-                <FormLabel>사업자명</FormLabel>
+                <FormLabel fontWeight="bold">사업자명</FormLabel>
                 <Input
                   placeholder={host.businessName}
                   onChange={(e) => {
                     setBusinessName(e.target.value);
                   }}
                 />
-                <FormLabel>사업자번호</FormLabel>
+                <FormLabel fontWeight="bold">사업자번호</FormLabel>
                 <Input
                   placeholder={host.businessNumber}
                   onChange={(e) => {
                     setBusinessNumber(e.target.value);
                   }}
                 />
-                <FormLabel>대표자명</FormLabel>
+                <FormLabel fontWeight="bold">대표자명</FormLabel>
                 <Input
                   placeholder={host.repName}
                   onChange={(e) => {
@@ -428,13 +429,13 @@ export function MemberMy() {
 
 
           <FormControl>
-            <FormLabel>이메일</FormLabel>
+            <FormLabel fontWeight="bold">이메일</FormLabel>
             <Input value={member.email} isReadOnly />
           </FormControl>
 
           <Box>
             <FormControl>
-              <FormLabel>암호</FormLabel>
+              <FormLabel fontWeight="bold">암호</FormLabel>
               <Input
                 onChange={(e) =>
                   setMember({ ...member, password: e.target.value })
@@ -445,7 +446,7 @@ export function MemberMy() {
           </Box>
           <Box>
             <FormControl>
-              <FormLabel>암호 확인</FormLabel>
+              <FormLabel fontWeight="bold">암호 확인</FormLabel>
               <Input onChange={(e) => setPasswordCheck(e.target.value)}
                      placeholder={"위와 동일한 암호를 입력해주세요"}
               />
@@ -455,7 +456,7 @@ export function MemberMy() {
             </FormControl>
           </Box>
           <Box>
-            <FormControl>별명</FormControl>
+            <FormControl fontWeight="bold" >별명</FormControl>
             <InputGroup>
               <Input
                 onChange={(e) => {
