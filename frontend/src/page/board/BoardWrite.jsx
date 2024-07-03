@@ -110,6 +110,7 @@ export function BoardWrite() {
                 <FormControl>
                   <FormLabel>내용</FormLabel>
                   <Textarea
+                    minHeight={"400px"}
                     placeholder="내용을 입력하세요."
                     onChange={(e) => setContent(e.target.value)}
                   />
