@@ -20,6 +20,8 @@ public class Board {
     // 멤버의 nickname을 받음
     private String writer;
 
+    private String division;
+
     public String getInputDt() {
         // 하루 전의 TIMESTAMP
         Timestamp beforeOneDay = new Timestamp(System.currentTimeMillis() - 24 * 60 * 60 * 1000);

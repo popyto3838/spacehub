@@ -39,14 +39,26 @@ public interface BoardMapper {
             <script>
             SELECT B.BOARD_ID, B.VIEWS, B.TITLE, B.INPUT_DT, B.UPDATE_DT,
                    C.CATEGORY_NAME, C.CATEGORY_ID,
+                   CASE WHEN C.CATEGORY_ID = 1 THEN 'NOTICE'
+                        WHEN C.CATEGORY_ID = 2 THEN 'FAQ'
+                        ELSE 'UNKNOWN'
+                   END AS DIVISION,
                    CASE WHEN M.WITHDRAWN = 'Y' THEN '탈퇴한 회원입니다.' ELSE M.NICKNAME END AS WRITER,
-                   COUNT(DISTINCT SUBQUERY_TABLE.FILE_NAME) number_of_images,
-                   COUNT(DISTINCT D.COMMENT_ID) number_of_comments,
+                   COUNT(DISTINCT CASE
+                       WHEN SUBQUERY_TABLE.DIVISION IN ('NOTICE', 'FAQ') THEN SUBQUERY_TABLE.FILE_NAME
+                       ELSE NULL
+                   END) AS number_of_images,
+                   COUNT(DISTINCT CASE
+                       WHEN D.DIVISION IN ('NOTICE', 'FAQ') THEN D.COMMENT_ID
+                       ELSE NULL
+                   END) AS number_of_comments,
                    COUNT(DISTINCT L.MEMBER_ID) number_of_likes
             FROM BOARD B LEFT JOIN MEMBER M ON B.MEMBER_ID = M.MEMBER_ID
                          LEFT JOIN CATEGORY C ON B.CATEGORY_ID = C.CATEGORY_ID
-                         LEFT JOIN (SELECT PARENT_ID, FILE_NAME FROM FILE) AS SUBQUERY_TABLE ON B.BOARD_ID = SUBQUERY_TABLE.PARENT_ID
-                         LEFT JOIN (SELECT COMMENT_ID, PARENT_ID FROM COMMENT) AS D ON B.BOARD_ID = D.PARENT_ID
+                         LEFT JOIN (SELECT PARENT_ID, FILE_NAME, DIVISION FROM FILE) AS SUBQUERY_TABLE
+                                ON B.BOARD_ID = SUBQUERY_TABLE.PARENT_ID
+                         LEFT JOIN (SELECT COMMENT_ID, PARENT_ID, DIVISION FROM COMMENT) AS D
+                                ON B.BOARD_ID = D.PARENT_ID
                          LEFT JOIN LIKES L ON B.BOARD_ID = L.BOARD_ID
                 <trim prefix="WHERE" prefixOverrides="AND">
                     <trim prefix="(" suffix=")" prefixOverrides="OR">
@@ -100,12 +112,13 @@ public interface BoardMapper {
             FROM BOARD B JOIN MEMBER M ON B.MEMBER_ID = M.MEMBER_ID
                          JOIN CATEGORY C ON B.CATEGORY_ID = C.CATEGORY_ID
             WHERE B.BOARD_ID = #{boardId}
+              AND C.CATEGORY_NAME IN ('NOTICE', 'FAQ')
             """)
     Board selectByBoardId(Integer boardId);
 
     // 하나의 게시물에서 파일 이름 조회(2개 테스트)
     @Select("""
-            SELECT F.FILE_NAME, F.PARENT_ID, F.FILE_ID, B.BOARD_ID
+            SELECT F.FILE_NAME, F.PARENT_ID, F.FILE_ID, B.BOARD_ID, F.DIVISION
             FROM FILE F
             JOIN BOARD B ON F.PARENT_ID = B.BOARD_ID
             WHERE PARENT_ID = #{parentId}
@@ -137,6 +150,7 @@ public interface BoardMapper {
                 CONTENT = #{content},
                 UPDATE_DT = CURRENT_TIMESTAMP
             WHERE BOARD_ID = #{boardId}
+              AND CATEGORY_ID IN (1, 2)
             """)
     int update(Board board);
 
@@ -321,4 +335,49 @@ public interface BoardMapper {
             </script>
             """)
     int insertFileListByFullPath(Integer parentId, String fullPath, Integer categoryId);
+
+    String getDivision();
+
+    @Delete("""
+            DELETE FROM FILE
+            WHERE PARENT_ID = #{boardId}
+              AND DIVISION = #{division}
+            """)
+    int deleteFileByBoardIdAndCategory(Integer boardId, String division);
+
+    @Select("""
+            SELECT F.FILE_ID, F.PARENT_ID, F.DIVISION, F.FILE_NAME, F.INPUT_DT, F.UPDATE_DT
+            FROM FILE F 
+            JOIN BOARD B ON F.PARENT_ID = B.BOARD_ID
+            WHERE F.PARENT_ID = #{boardId}
+              AND F.DIVISION = #{division}
+            """)
+    List<File> selectFileByBoardIdAndCategory(Integer boardId, String division);
+
+    @Select("""
+            SELECT F.FILE_ID, F.PARENT_ID, F.DIVISION, F.FILE_NAME, F.INPUT_DT, F.UPDATE_DT
+            FROM FILE F 
+            WHERE F.PARENT_ID = #{boardId}
+              AND F.DIVISION IN 
+            <foreach item="item" index="index" collection="divisions"
+                     open="(" separator="," close=")">
+                #{item}
+            </foreach>
+            """)
+    List<File> selectFileByBoardIdAndCategories(Integer boardId, List<String> targetDivisions);
+
+    @Delete("""
+            DELETE FROM FILE
+            WHERE PARENT_ID = #{boardId}
+              AND DIVISION IN 
+            <foreach item="item" index="index" collection="divisions"
+                     open="(" separator="," close=")">
+                #{item}
+            </foreach>
+            """)
+    int deleteFileByBoardIdAndCategories(Integer boardId, List<String> targetDivisions);
+
+    List<File> selectFileByBoardIdAndDivision(Integer boardId, String division);
+
+    int deleteFileByFileId(int fileId);
 }

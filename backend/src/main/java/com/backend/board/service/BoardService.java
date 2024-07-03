@@ -24,4 +24,6 @@ public interface BoardService {
     boolean hasAccess(Integer boardId, Authentication authentication);
 
     Map<String, Object> like(Map<String, Object> req, Authentication authentication);
+
+    boolean isNoticeOrFaq(Integer boardId);
 }
