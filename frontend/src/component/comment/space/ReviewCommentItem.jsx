@@ -197,7 +197,7 @@ export function ReviewCommentItem({
       .finally(() => setIsProcessing(false));
   }
 
-  const s3BaseUrl = "https://studysanta.s3.ap-northeast-2.amazonaws.com/prj3";
+  const s3BaseUrl = "https://studysanta.s3.ap-northeast-2.amazonaws.com";
 
   const toggleReplies = () => {
     setShowReplies(!showReplies);
@@ -253,7 +253,7 @@ export function ReviewCommentItem({
                     {comment.rateScore >= 1 && (
                       <Image
                         w={5}
-                        src={`${s3BaseUrl}/ic-star-${star <= comment.rateScore ? "on" : "off"}.png`}
+                        src={`${s3BaseUrl}/prj3/ic-star-${star <= comment.rateScore ? "on" : "off"}.png`}
                         alt="star"
                       />
                     )}
@@ -305,40 +305,50 @@ export function ReviewCommentItem({
                   >
                     <Flex justify="space-between" align="flex-start">
                       <HStack spacing={2} alignItems="flex-start" flex={1}>
-                        <Text fontSize="sm" fontWeight="bold" color="blue.500">
-                          @{reply.targetName}
-                        </Text>
-                        {editingReplyId === reply.commentReId ? (
-                          <VStack width="100%" align="stretch">
-                            <Textarea
-                              value={editingReplyContent}
-                              onChange={(e) =>
-                                setEditingReplyContent(e.target.value)
-                              }
-                              size="sm"
-                              resize="vertical"
-                              minHeight="80px"
-                            />
-                            <HStack justifyContent="flex-end">
-                              <Button size="sm" onClick={handleReplyUpdate}>
-                                저장
-                              </Button>
-                              <Button
-                                size="sm"
-                                onClick={() => setEditingReplyId(null)}
-                              >
-                                취소
-                              </Button>
-                            </HStack>
-                          </VStack>
-                        ) : (
-                          <VStack align="start" spacing={1} flex={1}>
+                        <Avatar
+                          src={`${s3BaseUrl}/profile${reply.memberId}`}
+                          size="sm"
+                        />{" "}
+                        <VStack align="start" spacing={1} flex={1}>
+                          <HStack>
                             <Text fontSize="sm" fontWeight="bold">
                               {reply.nickname}
                             </Text>
+                            <Text
+                              fontSize="sm"
+                              fontWeight="bold"
+                              color="blue.500"
+                            >
+                              @{reply.targetName}
+                            </Text>
+                          </HStack>
+                          {editingReplyId === reply.commentReId ? (
+                            <VStack width="100%" align="stretch">
+                              <Textarea
+                                value={editingReplyContent}
+                                onChange={(e) =>
+                                  setEditingReplyContent(e.target.value)
+                                }
+                                size="sm"
+                                resize="vertical"
+                                minHeight="80px"
+                              />
+                              <HStack justifyContent="flex-end">
+                                <Button size="sm" onClick={handleReplyUpdate}>
+                                  저장
+                                </Button>
+                                <Button
+                                  size="sm"
+                                  onClick={() => setEditingReplyId(null)}
+                                >
+                                  취소
+                                </Button>
+                              </HStack>
+                            </VStack>
+                          ) : (
                             <Text fontSize="sm">{reply.content}</Text>
-                          </VStack>
-                        )}
+                          )}
+                        </VStack>
                       </HStack>
                       {!editingReplyId && account.hasAccess(reply.memberId) && (
                         <HStack spacing={2}>

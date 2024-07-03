@@ -524,9 +524,6 @@ function SpaceView() {
                 </Box>
                 <Divider />
                 <Box id="QA" p={8}>
-                  <Heading as="h2" size="xl" mb={6} color="gray.700">
-                    Q&A
-                  </Heading>
                   {spaceDetails.spaceId && (
                     <QnaCommentComponent spaceId={spaceDetails.spaceId} />
                   )}

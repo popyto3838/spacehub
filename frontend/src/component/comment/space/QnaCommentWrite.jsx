@@ -5,6 +5,7 @@ import {
   Button,
   Flex,
   Heading,
+  HStack,
   Text,
   Textarea,
   Tooltip,
@@ -13,6 +14,8 @@ import {
 } from "@chakra-ui/react";
 import { LoginContext } from "../../LoginProvider.jsx";
 import axios from "axios";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faPen } from "@fortawesome/free-solid-svg-icons";
 
 export function QnaCommentWrite({ spaceId, isProcessing, setIsProcessing }) {
   const [content, setContent] = useState("");
@@ -72,29 +75,34 @@ export function QnaCommentWrite({ spaceId, isProcessing, setIsProcessing }) {
   }
 
   return (
-    <Box>
-      {/* 맨윗줄 */}
+    <Box borderWidth="1px" borderRadius="lg" p={6} bg="white" shadow="md">
       <Flex justify="space-between" align="center" mb={6}>
         <Heading as="h2" size="xl" color="gray.700">
-          QNA {commentList.length > 0 ? commentList[0].commentCount : ""} 개
+          문의댓글 작성
         </Heading>
-        <Tooltip
-          label="로그인 하세요"
-          isDisabled={account.isLoggedIn()}
-          placement="top"
-        >
-          <Button
-            colorScheme="blue"
-            isDisabled={!account.isLoggedIn()}
-            onClick={() => setIsWriting(!isWriting)}
+        <HStack>
+          <Box>
+            <Text as="span" ml={2} fontWeight="bold">
+              {commentList.length > 0 ? commentList[0].commentCount : ""} 개
+            </Text>
+          </Box>
+          <Tooltip
+            label="로그인 하세요"
+            isDisabled={account.isLoggedIn()}
+            placement="top"
           >
-            QNA 작성하기
-          </Button>
-        </Tooltip>
+            <Button
+              leftIcon={<FontAwesomeIcon icon={faPen} />}
+              colorScheme="blue"
+              isDisabled={!account.isLoggedIn()}
+              onClick={() => setIsWriting(!isWriting)}
+            >
+              문의 작성
+            </Button>
+          </Tooltip>
+        </HStack>
       </Flex>
 
-      {/* 멤버이미지, 아이디, 수정/삭제 드롭다운
-          QNA 작성하기 버튼을 눌러야만 나옴 */}
       {isWriting && (
         <VStack spacing={4} align="stretch">
           <Flex align="center">
@@ -102,10 +110,9 @@ export function QnaCommentWrite({ spaceId, isProcessing, setIsProcessing }) {
             <Text fontSize="xl">{member.nickname}</Text>
           </Flex>
 
-          {/* 텍스트박스, 등록 버튼 */}
           <Textarea
             h="80px"
-            placeholder="QNA를 작성해주세요."
+            placeholder="공간에 대한 문의글을 작성해주세요."
             value={content}
             onChange={(e) => setContent(e.target.value)}
           />
