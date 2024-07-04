@@ -48,9 +48,11 @@ export function BoardEdit() {
   useEffect(() => {
     axios.get(`/api/board/${boardId}`).then((res) => {
       /*res.data -> res.data.board*/
-      setBoard(res.data.board);
+      const boardData = res.data.board;
+      boardData.filesLists = boardData.filesLists || [];
+      setBoard(boardData);
     });
-  }, []);
+  }, [boardId]);
 
   function handleClickSave() {
     axios
@@ -124,6 +126,7 @@ export function BoardEdit() {
                 <FormControl>
                   <FormLabel>내용</FormLabel>
                   <Textarea
+                    minHeight={"400px"}
                     defaultValue={board.content}
                     onChange={(e) =>
                       setBoard({ ...board, content: e.target.value })
@@ -139,47 +142,49 @@ export function BoardEdit() {
           </Card>
 
           {/* 게시물에 첨부된 파일 */}
-          {board.filesLists && board.filesLists.length > 0 && (
-            <Card w="full">
-              <CardBody>
-                <Heading size="md" mb={4}>
-                  첨부 파일 목록
-                </Heading>
-                <SimpleGrid columns={[1, 2, 3]} spacing={4}>
-                  {board.filesLists.map((file) => (
-                    <Box
-                      key={file.fileName}
-                      borderWidth={1}
-                      borderRadius="lg"
-                      overflow="hidden"
-                    >
-                      <Flex justify="space-between" p={2}>
-                        <Text>지우기:</Text>
-                        <Switch
-                          onChange={(e) =>
-                            handleSwitchChangeRemove(
-                              file.fileName,
-                              e.target.checked,
-                            )
+          {board.filesLists &&
+            Array.isArray(board.filesLists) &&
+            board.filesLists.length > 0 && (
+              <Card w="full">
+                <CardBody>
+                  <Heading size="md" mb={4}>
+                    첨부 파일 목록
+                  </Heading>
+                  <SimpleGrid columns={[1, 2, 3]} spacing={4}>
+                    {board.filesLists.map((file) => (
+                      <Box
+                        key={file.fileName}
+                        borderWidth={1}
+                        borderRadius="lg"
+                        overflow="hidden"
+                      >
+                        <Flex justify="space-between" p={2}>
+                          <Text>지우기:</Text>
+                          <Switch
+                            onChange={(e) =>
+                              handleSwitchChangeRemove(
+                                file.fileName,
+                                e.target.checked,
+                              )
+                            }
+                          />
+                        </Flex>
+                        <Text p={2}>{file.fileName}</Text>
+                        <Image
+                          sx={
+                            removeFileList.includes(file.fileName)
+                              ? { filter: "blur(8px)" }
+                              : {}
                           }
+                          src={file.src}
+                          alt={file.fileName}
                         />
-                      </Flex>
-                      <Text p={2}>{file.fileName}</Text>
-                      <Image
-                        sx={
-                          removeFileList.includes(file.fileName)
-                            ? { filter: "blur(8px)" }
-                            : {}
-                        }
-                        src={file.src}
-                        alt={file.fileName}
-                      />
-                    </Box>
-                  ))}
-                </SimpleGrid>
-              </CardBody>
-            </Card>
-          )}
+                      </Box>
+                    ))}
+                  </SimpleGrid>
+                </CardBody>
+              </Card>
+            )}
 
           {/* 게시물에 파일 첨부 */}
           <Card w="full">

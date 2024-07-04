@@ -149,7 +149,11 @@ export function BoardView() {
                 </FormControl>
                 <FormControl>
                   <FormLabel>내용</FormLabel>
-                  <Textarea value={board.content} readOnly />
+                  <Textarea
+                    minHeight={"400px"}
+                    value={board.content}
+                    readOnly
+                  />
                 </FormControl>
                 <FormControl>
                   <FormLabel>작성자</FormLabel>

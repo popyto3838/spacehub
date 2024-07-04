@@ -115,9 +115,12 @@ public class BoardServiceImpl implements BoardService {
         pageInfo.put("leftPageNumber", leftPageNumber);
         pageInfo.put("rightPageNumber", rightPageNumber);
 
-        return Map.of("pageInfo", pageInfo, "boardList", boardMapper.selectAllPaging(offset, searchType, searchKeyword, categoryType),
+        List<Board> boardList = boardMapper.selectAllPaging(offset, searchType, searchKeyword, categoryType);
+
+        return Map.of("pageInfo", pageInfo, "boardList", boardList,
                 "categoryList", boardMapper.selectAllPagingForCategory(offset, searchType, searchKeyword, categoryType));
     }
+
 
     @Override
     public Map<String, Object> view(Integer boardId, Authentication authentication) {
@@ -126,10 +129,19 @@ public class BoardServiceImpl implements BoardService {
         // 하나의 게시물 조회
         Board board = boardMapper.selectByBoardId(boardId);
 
-        String division = getDivisionByCategoryId(board.getCategoryId());
+        // board가 null이면 (NOTICE나 FAQ가 아니면) 빈 결과 반환
+        if (board == null) {
+            return result;
+        }
+        System.out.println("board.getDivision() = " + board.getDivision());
+
+        String division = board.getDivision(); // getDivisionByCategoryId 메서드 사용 불필요
+        System.out.println("division = " + division);
 
         // s3에서 파일 조회
         List<File> files = boardMapper.selectFileByDivisionAndParentId(division, boardId);
+        System.out.println("files = " + files);
+
         if (files != null && !files.isEmpty()) {
             // 모든 이미지 파일 가져오기
             List<File> filesWithUrls = files.stream()
@@ -171,6 +183,11 @@ public class BoardServiceImpl implements BoardService {
 
     @Override
     public void update(Board board, List<String> removeFileList, MultipartFile[] addFileList) throws IOException {
+        // NOTICE 또는 FAQ 카테고리인지 확인
+        if (!isNoticeOrFaq(board.getBoardId())) {
+            throw new IllegalArgumentException("NOTICE 또는 FAQ 카테고리의 게시물만 수정 가능합니다.");
+        }
+
         String division = getDivisionByCategoryId(board.getCategoryId());
 
         // 첨부된 파일 삭제
@@ -226,6 +243,12 @@ public class BoardServiceImpl implements BoardService {
 
         // 업데이트
         boardMapper.update(board);
+    }
+
+    @Override
+    public boolean isNoticeOrFaq(Integer boardId) {
+        Board board = boardMapper.selectByBoardId(boardId);
+        return board != null && (board.getDivision().equals("NOTICE") || board.getDivision().equals("FAQ"));
     }
 
     @Override

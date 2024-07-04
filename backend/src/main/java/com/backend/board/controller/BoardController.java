@@ -6,6 +6,7 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -46,7 +47,7 @@ public class BoardController {
         // Board board = boardService.view(boardId);
         Map<String, Object> result = boardService.view(boardId, authentication);
 
-        if (result.get("board") == null) {
+        if (result.isEmpty() || result.get("board") == null) {
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok().body(result);
@@ -54,16 +55,19 @@ public class BoardController {
 
     @PutMapping("{boardId}/edit")
     @PreAuthorize("isAuthenticated()")
-    public void edit(Board board,
-                     @RequestParam(value = "removeFileList[]", required = false)
-                     List<String> removeFileList,
-                     @RequestParam(value = "addFileList[]", required = false)
-                     MultipartFile[] addFileList,
-                     Authentication authentication) throws IOException {
-        // 권한이 있어야 수정 가능
-        if (boardService.hasAccess(board.getBoardId(), authentication)) {
+    public ResponseEntity edit(@PathVariable Integer boardId,
+                               Board board,
+                               @RequestParam(value = "removeFileList[]", required = false)
+                               List<String> removeFileList,
+                               @RequestParam(value = "addFileList[]", required = false)
+                               MultipartFile[] addFileList,
+                               Authentication authentication) throws IOException {
+        // 권한이 있고 NOTICE 또는 FAQ 카테고리인 경우에만 수정 가능
+        if (boardService.hasAccess(boardId, authentication) && boardService.isNoticeOrFaq(boardId)) {
             boardService.update(board, removeFileList, addFileList);
+            return ResponseEntity.ok().build();
         }
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body("수정 권한이 없거나 해당 카테고리의 게시물이 아닙니다.");
     }
 
     @DeleteMapping("{boardId}/delete")
