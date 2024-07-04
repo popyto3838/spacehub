@@ -262,6 +262,7 @@ public class BoardServiceImpl implements BoardService {
         Board board = boardMapper.selectByBoardId(boardId);
 
         String division = getDivisionByCategoryId(board.getCategoryId());
+        System.out.println("division = " + division);
 
         // file명 조회
         List<File> files = boardMapper.selectFileByDivisionAndParentId(division, boardId);

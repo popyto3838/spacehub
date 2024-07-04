@@ -320,6 +320,7 @@ public interface BoardMapper {
     @Delete("""
             DELETE FROM FILE
             WHERE PARENT_ID = #{parentId}
+              AND DIVISION IN ('NOTICE', 'FAQ')
             """)
     int deleteFileByBoardId(Integer parentId);
 
