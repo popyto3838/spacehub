@@ -1,11 +1,10 @@
-import {useEffect, useRef} from "react";
-import {Box, Button, Flex, Image, Img} from "@chakra-ui/react";
-
+import { useEffect } from "react";
+import { Box } from "@chakra-ui/react";
 
 export const NaverLogin = () => {
   const { naver } = window;
-  const NAVER_CLIENT_ID = "Tfi7kSJEmh9bNFWbZ3oD"; // 발급 받은 Client ID 입력
-  const NAVER_CALLBACK_URL = "http://localhost:5173/member/naverlogin"; // 작성했던 Callback URL 입력
+  const NAVER_CLIENT_ID = "fovm3yhY3SsPcaR76LDj"; // 발급 받은 Client ID 입력
+  const NAVER_CALLBACK_URL = "http://43.201.65.136:8080/member/naverlogin"; // 작성했던 Callback URL 입력
 
   // 네이버 로그인 기능 및 버튼 구현
   const naverLogin = new naver.LoginWithNaverId({
@@ -30,8 +29,7 @@ export const NaverLogin = () => {
       응답
       http://localhost:3000/auth/naverLogin#access_token=AAAAOJVd5J9VsZr4FoB************&state=74075dc6-cfeb-40f9-87c5-d144e34a3983&token_type=bearer&expires_in=3600 */}
 
-
-      <Box  id="naverIdLogin" />
+      <Box id="naverIdLogin" />
     </>
   );
 };

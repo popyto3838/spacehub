@@ -42,6 +42,9 @@ import ReportModal from "../../component/ReportModal.jsx";
 import { QnaCommentComponent } from "../../component/comment/space/QnaCommentComponent.jsx";
 import { ReviewCommentComponent } from "../../component/comment/space/ReviewCommentComponent.jsx";
 import { LoginContext } from "../../component/LoginProvider.jsx";
+import floorImage from "/img/층수.png";
+import capacityImage from "/img/인원.png";
+import parkingSpaceImage from "/img/자동차.png";
 
 function SpaceView() {
   const [space, setSpace] = useState({});
@@ -429,12 +432,7 @@ function SpaceView() {
                     textAlign="center"
                   >
                     <Box mt={6}>
-                      <Image
-                        src="/public/img/층수.png"
-                        boxSize="80px"
-                        mx="auto"
-                        mb={4}
-                      />
+                      <Image src={floorImage} boxSize="80px" mx="auto" mb={4} />
                       <Text fontSize="lg" fontWeight="bold">
                         층수
                       </Text>
@@ -442,7 +440,7 @@ function SpaceView() {
                     </Box>
                     <Box mt={6}>
                       <Image
-                        src="/public/img/인원.png"
+                        src={capacityImage}
                         boxSize="80px"
                         mx="auto"
                         mb={4}
@@ -454,7 +452,7 @@ function SpaceView() {
                     </Box>
                     <Box mt={6}>
                       <Image
-                        src="/public/img/자동차.png"
+                        src={parkingSpaceImage}
                         boxSize="80px"
                         mx="auto"
                         mb={4}
