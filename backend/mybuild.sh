@@ -11,19 +11,19 @@ mv ../frontend/dist src/main/resources/static
 ./gradlew bootJar
 
 # build image
-#docker build -t kwonsanta/spacehub .
-docker buildx build --platform linux/amd64 -t kwonsanta/spacehub .
+#docker build -t popyto/spacehub .
+docker buildx build --platform linux/amd64 -t popyto/spacehub .
 
 # push image
-docker push kwonsanta/spacehub
+docker push popyto/spacehub
 
 # remote 에서
 
 # 컨테이너 멈추고
-ssh -i src/main/resources/secret/EC2_keyfile.pem ubuntu@43.201.65.136 'docker stop spacehub'
+ssh -i src/main/resources/secret/key0527.pem ubuntu@13.209.49.141 'docker stop spacehub'
 # 컨테이너 삭제
-ssh -i src/main/resources/secret/EC2_keyfile.pem ubuntu@43.201.65.136 'docker rm spacehub'
+ssh -i src/main/resources/secret/key0527.pem ubuntu@13.209.49.141 'docker rm spacehub'
 # pull image
-ssh -i src/main/resources/secret/EC2_keyfile.pem ubuntu@43.201.65.136 'docker pull kwonsanta/spacehub'
+ssh -i src/main/resources/secret/key0527.pem ubuntu@13.209.49.141 'docker pull popyto/spacehub'
 # 컨테이너 실행
-ssh -i src/main/resources/secret/EC2_keyfile.pem ubuntu@43.201.65.136 'docker run -d -p 8080:8080 --restart always --name spacehub kwonsanta/spacehub'
+ssh -i src/main/resources/secret/key0527.pem ubuntu@13.209.49.141 'docker run -d -p 8080:8080 --restart always --name spacehub popyto/spacehub'
